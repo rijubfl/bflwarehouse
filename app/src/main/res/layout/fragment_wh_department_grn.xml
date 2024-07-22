@@ -26,7 +26,7 @@
             android:textSize="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView5" />
+            app:layout_constraintTop_toBottomOf="@+id/TextView8" />
         <!--        <TextView-->
         <!--            android:id="@+id/TextView6"-->
         <!--            android:layout_width="0dp"-->
@@ -177,6 +177,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:singleLine="true"
+            android:text=""
             android:background="@drawable/et_custom"
             android:padding="10dp"
             android:maxLines="1"
@@ -190,7 +191,7 @@
             android:layout_width="60dp"
             android:layout_height="40dp"
             android:singleLine="true"
-            android:text=""
+
             android:hint="0"
             android:padding="10dp"
             android:inputType="text"
@@ -218,6 +219,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/TextView4" />
 
+
+
         <EditText
             android:id="@+id/et_rack_in_out_BoxCount"
             android:layout_width="0dp"
@@ -226,9 +229,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
-
             android:text=""
-
             android:padding="10dp"
             android:textSize="14dp"
             app:layout_constraintStart_toEndOf="@+id/TextView5"
@@ -245,6 +246,7 @@
             android:layout_height="40dp"
             android:text="Search"
             android:padding="10dp"
+
             android:singleLine="true"
             android:layout_marginLeft="2dp"
             android:textAlignment="center"
@@ -254,6 +256,58 @@
             app:layout_constraintTop_toTopOf="@+id/TextView5"
             >
         </Button>
+
+        <EditText
+            android:id="@+id/et_rack_in_out_toteid"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:text=""
+            android:visibility="gone"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:maxLines="1"
+            android:textSize="14dp"
+            app:layout_constraintStart_toEndOf="@+id/TextView8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_rack_in_out_BoxCount" />
+
+        <!--        <TextView-->
+        <!--            android:id="@+id/box_count_pallet1"-->
+        <!--            android:layout_width="60dp"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:singleLine="true"-->
+        <!--            android:text=""-->
+        <!--            android:hint="0"-->
+        <!--            android:padding="10dp"-->
+        <!--            android:inputType="text"-->
+        <!--            android:layout_marginLeft="2dp"-->
+        <!--            android:textAlignment="center"-->
+        <!--            android:background="@drawable/et_custom_total"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/et_rack_in_out_pallettop"-->
+        <!--            app:layout_constraintTop_toTopOf="@+id/TextView4"-->
+        <!--            >-->
+        <!--        </TextView>-->
+
+        <TextView
+            android:id="@+id/TextView8"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:textColor="@color/coloBlack"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:visibility="gone"
+            android:text="Box/Toteid"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView5" />
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/lyt_listheader"
@@ -426,6 +480,55 @@
             app:layout_constraintTop_toTopOf="@+id/bt_rack_in_out_save" />
 
         <TextView
+            android:id="@+id/TextView16"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Type"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/rg_pallet_building_category"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@+id/TextView16"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RadioButton
+                android:id="@+id/rb_pallet_category"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:background="@drawable/et_custom"
+                android:checked="true"
+                android:text="Pallet no"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/TextView16"
+                app:layout_constraintTop_toTopOf="@+id/TextView16"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:id="@+id/rb_toteid_category"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/et_custom"
+                android:text="Toteid"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/rb_usa_box_usa_category"
+                app:layout_constraintTop_toTopOf="@+id/TextView16"
+                tools:ignore="TouchTargetSizeCheck" />
+        </RadioGroup>
+
+
+        <TextView
             android:id="@+id/TextView1"
             android:layout_width="120dp"
             android:layout_height="40dp"
@@ -434,11 +537,12 @@
             android:gravity="left"
             android:hint=""
             android:padding="10dp"
+            android:layout_marginTop="5dp"
             android:text="Warehouse From"
             android:textColor="@color/coloBlack"
             android:textSize="13dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/TextView16" />
 
         <TextView
             android:id="@+id/TextView2"

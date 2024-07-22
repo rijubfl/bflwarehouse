@@ -101,7 +101,7 @@ public class PalletBoxCountFragment extends Fragment {
             objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
             lv_details.setAdapter(objMyListBoxAdapter);
             try {
-                String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase());
+                String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase(),tv_rack_in_out_warehouse.getText().toString());
 
                 int Count = objPalletBoxCountControl.getCountBoxesScanned(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString());
                 objMyListBoxAdapter.notifyDataSetChanged();
@@ -178,20 +178,22 @@ public class PalletBoxCountFragment extends Fragment {
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
                     String pallet = et_rack_in_out_pallettop.getText().toString();
+                    String warehouse = tv_rack_in_out_warehouse.getText().toString();
                     if(pallet.equals("")){
                         okMessage("Alert", "Pallet number should not be empty");
                     }else {
-                        if (isPalletvalid(pallet)) {
+                        if (isPalletvalid(pallet,warehouse)) {
                             //isvalidrack = true;
-
-                            String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase());
-                            box_count_pallet1.setText(BoxCountPallet1);
                             ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.loadBoxespallet(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString());
                             objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
                             lv_details.setAdapter(objMyListBoxAdapter);
+                            objMyListBoxAdapter.notifyDataSetChanged();
+
                             et_rack_in_out_BoxCount.setEnabled(true);
                             et_rack_in_out_BoxCount.setFocusable(true);
 
+                            String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase(),tv_rack_in_out_warehouse.getText().toString());
+                            box_count_pallet1.setText(BoxCountPallet1);
 
                             return true;
                         } else {
@@ -301,13 +303,13 @@ public class PalletBoxCountFragment extends Fragment {
         }
 
 
-        if(isBoxvalid(et_rack_in_out_BoxCount.getText().toString())){
+        if(isBoxvalid(et_rack_in_out_BoxCount.getText().toString().trim())){
             tv_rack_in_out_warehouse.setEnabled(false);
             tv_rack_in_out_warehouse.setClickable(false);
 
             try {
-                if(objPalletBoxCountControl.BoxesInPallets(et_rack_in_out_BoxCount.getText().toString(),et_rack_in_out_pallettop.getText().toString(),tv_rack_in_out_warehouse.getText().toString())){
-                    listBinScanToteId = objPalletBoxCountControl.UpdateLoadBoxes(et_rack_in_out_BoxCount.getText().toString(),et_rack_in_out_pallettop.getText().toString(),tv_rack_in_out_warehouse.getText().toString());
+                if(objPalletBoxCountControl.BoxesInPallets(et_rack_in_out_BoxCount.getText().toString().trim(),et_rack_in_out_pallettop.getText().toString(),tv_rack_in_out_warehouse.getText().toString())){
+                    listBinScanToteId = objPalletBoxCountControl.UpdateLoadBoxes(et_rack_in_out_BoxCount.getText().toString().trim(),et_rack_in_out_pallettop.getText().toString(),tv_rack_in_out_warehouse.getText().toString());
                     objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
                     lv_details.setAdapter(objMyListBoxAdapter);
                     int Count = objPalletBoxCountControl.getCountBoxesScanned(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString());
@@ -327,18 +329,17 @@ public class PalletBoxCountFragment extends Fragment {
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    listBinScanToteId = objPalletBoxCountControl.InsertloadBoxes(et_rack_in_out_BoxCount.getText().toString(),et_rack_in_out_pallettop.getText().toString(),tv_rack_in_out_warehouse.getText().toString());
+                                    listBinScanToteId = objPalletBoxCountControl.InsertloadBoxes(et_rack_in_out_BoxCount.getText().toString().trim(),et_rack_in_out_pallettop.getText().toString(),tv_rack_in_out_warehouse.getText().toString());
                                     objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
                                     lv_details.setAdapter(objMyListBoxAdapter);
-                                    int Count = objPalletBoxCountControl.getCountBoxesScanned(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString());
+                                    int Count = objPalletBoxCountControl.getCountBoxesScanned(et_rack_in_out_pallettop.getText().toString().trim(), tv_rack_in_out_warehouse.getText().toString());
                                     objMyListBoxAdapter.notifyDataSetChanged();
                                     box_count_pallet1.setText(Count +"/" + PalletBoxCountGlobal.getPalletCount());
                                     et_rack_in_out_pallettop.setEnabled(false);
-//                                                    et_rack_in_out_rack.setEnabled(false);
+//                                   et_rack_in_out_rack.setEnabled(false);
                                     objPalletBoxCountShared.savePalletno(et_rack_in_out_pallettop.getText().toString());
-//                                                    objPalletBoxCountShared.saveRackno(et_rack_in_out_rack.getText().toString());
+//                                   objPalletBoxCountShared.saveRackno(et_rack_in_out_rack.getText().toString());
                                     et_rack_in_out_BoxCount.setText("");
-
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -346,39 +347,30 @@ public class PalletBoxCountFragment extends Fragment {
                                 public void onClick(DialogInterface dialog, int which) {
                                     objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
                                     et_rack_in_out_BoxCount.setText("");
-
                                 }
                             })
                             .show();
-
-
                 }
-
 //                et_rack_in_out_BoxCount.setFocusable(true);
 //                et_rack_in_out_BoxCount.requestFocus();
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
             return true;
-
         }
         else{
-
             strflg = true;
             okMessage("Alert", "Box is Closed/Invalid - " + et_rack_in_out_BoxCount.getText().toString());
             et_rack_in_out_BoxCount.setText("");
-
             return false;
         }
-
     }
 
-    private Boolean isPalletvalid(String pallet){
+    private Boolean isPalletvalid(String pallet, String warehouse){
         try {
 
-            if(objPalletBoxCountControl.isPalletSaved(pallet)){
+            if(objPalletBoxCountControl.isPalletSaved(pallet,warehouse)){
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                 alert.setMessage("This Pallet is already saved. Do you want to make Changes to this Pallet again? -" +et_rack_in_out_pallettop.getText().toString())
                         .setTitle("Confirmation")
@@ -387,7 +379,7 @@ public class PalletBoxCountFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    listBinScanToteId = objPalletBoxCountControl.LoadPalletDetails(et_rack_in_out_pallettop.getText().toString());
+                                    listBinScanToteId = objPalletBoxCountControl.LoadPalletDetails(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString());
                                     objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
                                     lv_details.setAdapter(objMyListBoxAdapter);
                                     int Count = objPalletBoxCountControl.getCountBoxesScanned(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString());
@@ -413,8 +405,8 @@ public class PalletBoxCountFragment extends Fragment {
                 if (objPalletBoxCountControl.isValidPallet(pallet, getContext())) {
                     return true;
                 } else {
+                     return false;
 
-                    return false;
                 }
             }
 

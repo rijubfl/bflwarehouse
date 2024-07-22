@@ -25,7 +25,7 @@ public class UsaBoxBuildingControl {
     public UsaBoxBuildingControl() {
         objGlobal.setDbName("USA");
         b_Result = dbConnection.connectDb();
-        if (!b_Result) {
+        if (b_Result == false) {
             objGlobal.setErrorMessage("UsaBoxBuildingControl : Connection error");
         }
     }
@@ -33,9 +33,9 @@ public class UsaBoxBuildingControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("USA");
-        if (!dbConnection.checkConnectionClosed()) {
+        if (dbConnection.checkConnectionClosed() == false) {
             b_Result = dbConnection.connectDb();
-            if (!b_Result) {
+            if (b_Result == false) {
                 objGlobal.setErrorMessage("BinBatchInControl.checkConnection : Connection error");
                 return false;
             }
@@ -108,7 +108,14 @@ public class UsaBoxBuildingControl {
                         objGlobal.setErrorMessage("ToteID " + toteID + " is invalid");
                         return false;
                     }
-                } else {
+                }  else if(objGlobal.getWorkLocation().equals("BAHRAIN")) {
+                    rs = dbConnection.getResultSet("select * from bflbahrain.dbo.ToteIDMaster where ToteID='" + toteID + "'", objGlobal.getConnection());
+                    if (!rs.next()) {
+                        objGlobal.setErrorMessage("ToteID " + toteID + " is invalid");
+                        return false;
+                    }
+                }
+                else {
                     rs = dbConnection.getResultSet("select * from bfldata.dbo.BlueToteIDMaster where ToteID='" + toteID + "'", objGlobal.getConnection());
                     if (!rs.next()) {
                         objGlobal.setErrorMessage("ToteID " + toteID + " is invalid");
@@ -136,10 +143,6 @@ public class UsaBoxBuildingControl {
     public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType) {
         try {
             itemcode = objControls.seperateBarcode(objControls.replaceString(itemcode));
-            if(itemcode.isEmpty()){
-                objGlobal.setErrorMessage("Please scan itemcode/upc");
-                return false;
-            }
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 if (edit) {
@@ -366,10 +369,9 @@ public class UsaBoxBuildingControl {
                 }
             } else {
                 if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead (BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
-                        "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) values ('" + objUsaBoxBuildingGlobal.getBoxNo() + "','" + objGlobal.getServerDate() + "'," +
-                        "'" + objGlobal.getServerTime() + "','','" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getUserId() + "','" + palletType + "','N','" + groupCode + "'," +
-                        "'" + catCode + "','" + objGlobal.getUserId() + "','" + objGlobal.getUserId() + "','" + objGlobal.getWarehouse() + "','" + taskType + "','" + doneBy + "'," +
-                        "'" + palletType + "','" + fSize + "','" + gender + "','" + toteID + "')", objGlobal.getConnection())) {
+                        "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) values ('" + objUsaBoxBuildingGlobal.getBoxNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','','" + objGlobal.getUserName() + "'," +
+                        "'" + remarks + "','" + objGlobal.getUserId() + "','" + palletType + "','N','" + groupCode + "','" + catCode + "','" + objGlobal.getUserId() + "','" + objGlobal.getUserId() + "','" + objGlobal.getWarehouse() + "'," +
+                        "'" + taskType + "','" + doneBy + "','" + palletType + "','" + fSize + "','" + gender + "','" + toteID + "')", objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
@@ -384,9 +386,8 @@ public class UsaBoxBuildingControl {
                             "'" + objGlobal.getServerDate() + "','" + objUsaBoxBuildingGlobal.getPalletNo() + "'," + objGlobal.getUserId() + ",'" + pltRemarks + "','N','','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
                         return false;
                     }
-                    if (!dbConnection.insertUpdate("insert into bfldata.dbo.usapalletsdet(Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details,ToteID) " +
-                            "select top 1 " + objUsaBoxBuildingGlobal.getPalletSno() + ",'" + objUsaBoxBuildingGlobal.getBoxNo() + "',itemcode,Department,Qty,'" + objGlobal.getUserName() + "',''," +
-                            "'" + palletType + "','' from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+                    if (!dbConnection.insertUpdate("insert into bfldata.dbo.usapalletsdet(Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details,ToteID) select top 1 " + objUsaBoxBuildingGlobal.getPalletSno() + "," +
+                            "'" + objUsaBoxBuildingGlobal.getBoxNo() + "',itemcode,Department,Qty,'" + objGlobal.getUserName() + "','','" + palletType + "','' from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                         return false;
                     }
                     if (!dbConnection.insertUpdate("insert into usa.dbo.BoXPallet(Boxno,Palletno) values ('" + objUsaBoxBuildingGlobal.getBoxNo() + "','" + objUsaBoxBuildingGlobal.getPalletNo() + "')", objGlobal.getConnection())) {

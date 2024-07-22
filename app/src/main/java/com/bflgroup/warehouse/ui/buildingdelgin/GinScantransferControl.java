@@ -198,11 +198,11 @@ public class GinScantransferControl {
                 for (int i = 0; i < dataname.size(); i++) {
 
                     if (dataname.get(i) != dataname.get(dataname.size() - 1)) {
-                        query += "select top 1 b.trfno, a.StoreIssue, ShopName,BoxNo, Qty, a.PreparedBy, a.Narration, a.TrfDate, b.actualshop  from " + dataname.get(i) + "..vTransferDetail a, vGoodsIssue b where (b.PalletNo = '" + palletno + "')  and (a.TrfNo = '" + transferno + "' or storeissue = '"+transferno+"')  and a.TrfNo = b.TrfNo Union ";
+                        query += "select top 1 b.trfno, a.StoreIssue, ShopName,BoxNo, Qty, a.PreparedBy, a.Narration, b.TrfDate, b.actualshop  from " + dataname.get(i) + "..vTransferDetail a with(NOLOCK), vGoodsIssue b with(NOLOCK) where (b.PalletNo = '" + palletno + "')  and (a.TrfNo = '" + transferno + "' or storeissue = '"+transferno+"')  and a.TrfNo = b.TrfNo Union ";
 
                     }
                     else{
-                        query += "select top 1 b.trfno, a.StoreIssue, ShopName,BoxNo, Qty, a.PreparedBy, a.Narration, a.TrfDate, b.actualshop  from "+dataname.get(i)+"..vTransferDetail a, vGoodsIssue b where (b.PalletNo = '"+palletno+"') and (a.TrfNo = '" + transferno + "' or storeissue = '"+transferno+"')  and a.TrfNo = b.TrfNo";
+                        query += "select top 1 b.trfno, a.StoreIssue, ShopName,BoxNo, Qty, a.PreparedBy, a.Narration, b.TrfDate, b.actualshop  from "+dataname.get(i)+"..vTransferDetail a with(NOLOCK), vGoodsIssue b with(NOLOCK) where (b.PalletNo = '"+palletno+"') and (a.TrfNo = '" + transferno + "' or storeissue = '"+transferno+"')  and a.TrfNo = b.TrfNo";
 
                     }
                 }
@@ -295,7 +295,7 @@ public class GinScantransferControl {
         ArrayList<GinScanItem> arrayList = new ArrayList<>();
         try {
             String query = "select * from BFLDATA..tmpGinRoute where (TrfNo='" + TrfNo + "' or ToteId = '" + TrfNo + "') and shopname = '"+ShopName+"' and DeviceName = '" + objGlobal.getDeviceName() + "'";
-            String query2 = "select * from BFLDATA..vGoodsIssuePlt where TrfNo='" + TrfNo + "' and ShopIssue='" + ShopName + "'";
+            String query2 = "select * from BFLDATA..vGoodsIssuePlt with(NOLOCK) where TrfNo='" + TrfNo + "' and ShopIssue='" + ShopName + "'";
 
             Log.e("Query1", query);
             //Log.e("Query", query2);

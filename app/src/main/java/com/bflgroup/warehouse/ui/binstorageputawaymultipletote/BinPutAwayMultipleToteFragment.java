@@ -63,26 +63,26 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bin_put_away_multiple_tote, container, false);
 
-            sp_bin_put_away_multiple_inout = (Spinner) view.findViewById(R.id.sp_bin_put_away_multiple_inout);
-            //tv_bin_put_away_multiple_warehouse = (Spinner) view.findViewById(R.id.sp_bin_put_away_multiple_warehouse);
-            et_bin_put_away_multiple_binlocation = (EditText) view.findViewById(R.id.et_bin_put_away_multiple_binlocation);
-            et_bin_put_away_multiple_toteid = (EditText) view.findViewById(R.id.et_bin_put_away_multiple_toteid);
-            lv_bin_put_away_multiple_history = (ListView) view.findViewById(R.id.lv_bin_put_away_multiple_history);
-            bt_bin_put_away_multiple_clear = (Button) view.findViewById(R.id.bt_bin_put_away_multiple_clear);
-            bt_bin_put_away_multiple_save = (Button) view.findViewById(R.id.bt_bin_put_away_multiple_save);
-            tv_wh_grn_total_plt_count = (TextView) view.findViewById(R.id.tv_wh_grn_total_plt_count);
+        sp_bin_put_away_multiple_inout = (Spinner) view.findViewById(R.id.sp_bin_put_away_multiple_inout);
+        tv_bin_put_away_multiple_warehouse = (Spinner) view.findViewById(R.id.sp_bin_put_away_multiple_warehouse);
+        et_bin_put_away_multiple_binlocation = (EditText) view.findViewById(R.id.et_bin_put_away_multiple_binlocation);
+        et_bin_put_away_multiple_toteid = (EditText) view.findViewById(R.id.et_bin_put_away_multiple_toteid);
+        lv_bin_put_away_multiple_history = (ListView) view.findViewById(R.id.lv_bin_put_away_multiple_history);
+        bt_bin_put_away_multiple_clear = (Button) view.findViewById(R.id.bt_bin_put_away_multiple_clear);
+        bt_bin_put_away_multiple_save = (Button) view.findViewById(R.id.bt_bin_put_away_multiple_save);
+        tv_wh_grn_total_plt_count = (TextView) view.findViewById(R.id.tv_wh_grn_total_plt_count);
 
-            objBinPutAwayMultipleToteSaredRef = new BinPutAwayMultipleToteSaredRef(getContext());
+        objBinPutAwayMultipleToteSaredRef = new BinPutAwayMultipleToteSaredRef(getContext());
 
-            List<String> arr;
-            arr = new ArrayList<String>();
-            arr.add("IN");
-            arr.add("OUT");
+        List<String> arr;
+        arr = new ArrayList<String>();
+        arr.add("IN");
+        arr.add("OUT");
         try {
             List<String> location;
             location = new ArrayList<String>();
             String warehouse = objGlobal.getWarehouse();
-            // warehouse = "YOTO";
+            //warehouse = "JAFZA";
             location.add(warehouse);
 
             ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
@@ -93,31 +93,34 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
             if (objGlobal.getWarehouse().equals("TECHNO")) {
                 location.add("TECHNO-E");
             }
+            if(objGlobal.getWarehouse().equals("BFLKSA")){
+                location.add("RUKOON");
+            }
             ArrayAdapter<String> array = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, location);
             tv_bin_put_away_multiple_warehouse.setAdapter(array);
         } catch(Exception e){
             okMessage("",e.toString());
         }
 
-            // tv_bin_put_away_multiple_warehouse.setText(objGlobal.getWarehouse());
+        // tv_bin_put_away_multiple_warehouse.setText(objGlobal.getWarehouse());
 
-            if (objBinPutAwayMultipleToteSaredRef.loadInOrOut() != "") {
-                if (objBinPutAwayMultipleToteSaredRef.loadInOrOut().equals("IN")) {
-                    sp_bin_put_away_multiple_inout.setSelection(0);
-                } else {
-                    sp_bin_put_away_multiple_inout.setSelection(1);
-                }
-                sp_bin_put_away_multiple_inout.setEnabled(false);
+        if (objBinPutAwayMultipleToteSaredRef.loadInOrOut() != "") {
+            if (objBinPutAwayMultipleToteSaredRef.loadInOrOut().equals("IN")) {
+                sp_bin_put_away_multiple_inout.setSelection(0);
+            } else {
+                sp_bin_put_away_multiple_inout.setSelection(1);
             }
-            if (objBinPutAwayMultipleToteSaredRef.loadLocation() != "") {
-                et_bin_put_away_multiple_binlocation.setText(objBinPutAwayMultipleToteSaredRef.loadLocation());
-                et_bin_put_away_multiple_binlocation.setEnabled(false);
-            }
+            sp_bin_put_away_multiple_inout.setEnabled(false);
+        }
+        if (objBinPutAwayMultipleToteSaredRef.loadLocation() != "") {
+            et_bin_put_away_multiple_binlocation.setText(objBinPutAwayMultipleToteSaredRef.loadLocation());
+            et_bin_put_away_multiple_binlocation.setEnabled(false);
+        }
 
-            ArrayList<BinPutAwayMultipleTotePendingSaveTicket> listBinPutAwayMultipleTotePendingSaveTicket = objBinPutAwayMultipleToteControl.loadBinPutAwayMultipleTotePendingSave();
-            objBinPutAwayMultipleTotePendingSaveAdp = new BinPutAwayMultipleTotePendingSaveAdp(listBinPutAwayMultipleTotePendingSaveTicket);
-            lv_bin_put_away_multiple_history.setAdapter(objBinPutAwayMultipleTotePendingSaveAdp);
-            tv_wh_grn_total_plt_count.setText(String.valueOf(objBinPutAwayMultipleToteGlobal.getScanCount()));
+        ArrayList<BinPutAwayMultipleTotePendingSaveTicket> listBinPutAwayMultipleTotePendingSaveTicket = objBinPutAwayMultipleToteControl.loadBinPutAwayMultipleTotePendingSave();
+        objBinPutAwayMultipleTotePendingSaveAdp = new BinPutAwayMultipleTotePendingSaveAdp(listBinPutAwayMultipleTotePendingSaveTicket);
+        lv_bin_put_away_multiple_history.setAdapter(objBinPutAwayMultipleTotePendingSaveAdp);
+        tv_wh_grn_total_plt_count.setText(String.valueOf(objBinPutAwayMultipleToteGlobal.getScanCount()));
 
         et_bin_put_away_multiple_binlocation.setOnTouchListener(new View.OnTouchListener() {
             @Override

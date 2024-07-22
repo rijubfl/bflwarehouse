@@ -1,10 +1,9 @@
 package com.bflgroup.warehouse.ui.buildingdelpallet;
 
-import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.getPltCount;
 import static com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferGlobal.setCount;
+import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.getPltCount;
 import static com.loopj.android.http.AsyncHttpClient.log;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;

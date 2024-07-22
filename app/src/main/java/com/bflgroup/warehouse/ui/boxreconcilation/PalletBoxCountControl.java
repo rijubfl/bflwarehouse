@@ -151,7 +151,7 @@ public class PalletBoxCountControl {
 
         String box = "";
         String toteid = "";
-        String Query = "select distinct boxno,toteid from usa.dbo.vupcboxDet where (BoxNo='" + Boxno.trim() + "'  or toteid = '" + Boxno.trim() + "' )  and Closed='N'";
+        String Query = "select distinct boxno,toteid from usa.dbo.vupcboxDet with(NOLOCK) where (BoxNo='" + Boxno.trim() + "'  or toteid = '" + Boxno.trim() + "' )  and Closed='N'";
         rs = dbConnection.getResultSet(Query, objGlobal.getConnection());
         if (rs.next()) {
             box = rs.getString("boxno");
@@ -159,7 +159,7 @@ public class PalletBoxCountControl {
             PalletBoxCountGlobal.setBoxNo(box);
             PalletBoxCountGlobal.setToteId(toteid);
         } else {
-            ResultSet rs1 = dbConnection.getResultSet("select distinct a.boxno, TotiD from bfldata.dbo.TCMBoxes a,bfldata.dbo.TcmboxesHeader b where a.BoxNo=b.Boxno " +
+            ResultSet rs1 = dbConnection.getResultSet("select distinct a.boxno, TotiD from bfldata.dbo.TCMBoxes a with(NOLOCK),bfldata.dbo.TcmboxesHeader b with(NOLOCK) where a.BoxNo=b.Boxno " +
                     "and (b.BoxNo='" + Boxno + "' or TotiD = '" + Boxno + "' )   and a.Closed='N'", objGlobal.getConnection());
             if (rs1.next()) {
                 box = rs1.getString("boxno");
@@ -168,18 +168,16 @@ public class PalletBoxCountControl {
                 PalletBoxCountGlobal.setToteId(toteid);
 
             } else {
-                ResultSet rs2 = dbConnection.getResultSet("select * from usa..knbboxes where BoxNo = '" + Boxno + "' and closed = 'N'", objGlobal.getConnection());
+                ResultSet rs2 = dbConnection.getResultSet("select distinct boxno from usa..knbboxes with(NOLOCK) where BoxNo = '" + Boxno + "' and closed = 'N'", objGlobal.getConnection());
                 if (rs2.next()) {
                     box = rs2.getString("boxno");
-
                     PalletBoxCountGlobal.setBoxNo(box);
                     PalletBoxCountGlobal.setToteId(toteid);
 
                 } else {
-                    ResultSet rs3 = dbConnection.getResultSet("select * from bfldata..vGoodsIssue where trfno = '" + Boxno + "' and palletno =  '"+Palletno+"' ", objGlobal.getConnection());
+                    ResultSet rs3 = dbConnection.getResultSet("select * from bfldata..vGoodsIssue with(NOLOCK) where trfno = '" + Boxno + "' and palletno =  '"+Palletno+"' ", objGlobal.getConnection());
                     if (rs3.next()) {
                         box = rs3.getString("trfno");
-
                         PalletBoxCountGlobal.setBoxNo(box);
                         PalletBoxCountGlobal.setToteId(toteid);
                     }else {
@@ -205,13 +203,11 @@ public class PalletBoxCountControl {
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");
             }
-
             String query1 = "update tmpScannedBoxes set BoxScanned = '" + PalletBoxCountGlobal.getBoxNo() + "', updateTime= '" + objGlobal.getServerTime() + "' where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and BoxOriginal = '" + PalletBoxCountGlobal.getBoxNo() + "' and warehouse = '" + Warehouse + "'";
             if (!dbConnection.insertUpdate(query1, objGlobal.getConnection())) {
 
                 //  return false;
             }
-
             String query2 = "select BoxOriginal,toteid=isnull(toteid,''),BoxScanned from tmpScannedBoxes where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' order by Date,updatetime desc";
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             while (rs.next()) {
@@ -258,8 +254,8 @@ public class PalletBoxCountControl {
     }
 
 
-    public boolean isPalletSaved(String palletno) throws SQLException {
-        ResultSet rs1 = dbConnection.getResultSet("select * from bfldata..WarehouseScannedBoxes where Palletno = '" + palletno + "'", objGlobal.getConnection());
+    public boolean isPalletSaved(String palletno, String warehouse) throws SQLException {
+        ResultSet rs1 = dbConnection.getResultSet("select * from bfldata..WarehouseScannedBoxes with(NOLOCK) where Palletno = '" + palletno + "' and warehouse = '"+warehouse+"'", objGlobal.getConnection());
         if(rs1.next())
         {
             return true;
@@ -267,10 +263,10 @@ public class PalletBoxCountControl {
         return false;
     }
 
-    public ArrayList<BoxItemList> LoadPalletDetails(String palletno) throws SQLException {
+    public ArrayList<BoxItemList> LoadPalletDetails(String palletno, String warehouse) throws SQLException {
         ArrayList<BoxItemList> boxItemLists = new ArrayList<>();
         int srno = 0;
-        String query2 = "select * from bfldata..WarehouseScannedBoxes where Palletno = '" + palletno + "'";
+        String query2 = "select * from bfldata..WarehouseScannedBoxes with(NOLOCK) where Palletno = '" + palletno + "' and warehouse = '"+warehouse+"'";
         rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
         while (rs.next()) {
             srno++;
@@ -282,16 +278,16 @@ public class PalletBoxCountControl {
     public Boolean isValidPallet(String palletno, Context context){
         try {
 
-            ResultSet rs = dbConnection.getResultSet("select * from bfldata.dbo.r1pallethead where palletno='" + palletno + "' and closed='N'", objGlobal.getConnection());
+            ResultSet rs = dbConnection.getResultSet("select * from bfldata.dbo.r1pallethead with(NOLOCK) where palletno='" + palletno + "' and closed='N'", objGlobal.getConnection());
 
             if (!rs.next()) {
-                rs = dbConnection.getResultSet("select * from bfldata.dbo.usapallets where palletno='" + palletno + "' and closed='N'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.usapallets with(NOLOCK) where palletno='" + palletno + "' and closed='N'", objGlobal.getConnection());
                 if (!rs.next()) {
-                    rs = dbConnection.getResultSet("select * from usa.dbo.usapallets where palletno='" + palletno + "'", objGlobal.getConnection());
+                    rs = dbConnection.getResultSet("select * from usa.dbo.usapallets with(NOLOCK) where palletno='" + palletno + "'", objGlobal.getConnection());
                     if (!rs.next()) {
-                        rs = dbConnection.getResultSet("select * from bfldata.dbo.GoodsIssueHead where palletno='" + palletno + "'", objGlobal.getConnection());
+                        rs = dbConnection.getResultSet("select * from bfldata.dbo.GoodsIssueHead with(NOLOCK) where palletno='" + palletno + "'", objGlobal.getConnection());
                         if (!rs.next()) {
-                            rs = dbConnection.getResultSet("select top 1 * from abudata.dbo.tcmitemsall where palletno='" + palletno + "'", objGlobal.getConnection());
+                            rs = dbConnection.getResultSet("select top 1 * from abudata.dbo.tcmitemsall with(NOLOCK)  where palletno='" + palletno + "'", objGlobal.getConnection());
                             if (!rs.next()) {
                                 objGlobal.setErrorMessage("Pallet Number " + palletno + " is closed already");
                                 okMessage("Alert", "Pallet Number " + palletno + " is closed already", context);
@@ -343,15 +339,15 @@ public class PalletBoxCountControl {
 
     public Boolean isValidbox(String BoxNo, Context context){
         try {
-            String Query = "select * from usa.dbo.vupcboxDet where (BoxNo='" + BoxNo.trim() + "'  or toteid = '"+BoxNo.trim()+"' ) and Closed='N'";
+            String Query = "select * from usa.dbo.vupcboxDet with(NOLOCK) where (BoxNo='" + BoxNo.trim() + "'  or toteid = '"+BoxNo.trim()+"' ) and Closed='N'";
             rs = dbConnection.getResultSet(Query, objGlobal.getConnection());
             if (!rs.next()) {
-                rs = dbConnection.getResultSet("select distinct a.boxno from bfldata.dbo.TCMBoxes a,bfldata.dbo.TcmboxesHeader b where a.BoxNo=b.Boxno " +
+                rs = dbConnection.getResultSet("select distinct a.boxno from bfldata.dbo.TCMBoxes a with(NOLOCK),bfldata.dbo.TcmboxesHeader b with(NOLOCK) where a.BoxNo=b.Boxno " +
                         "and (b.BoxNo='" + BoxNo + "' or TotiD = '"+BoxNo+"' )and a.Closed='N'", objGlobal.getConnection());
                 if (!rs.next()) {
-                    rs = dbConnection.getResultSet("select * from usa..knbboxes where BoxNo = '"+BoxNo+"' and closed = 'N'", objGlobal.getConnection());
+                    rs = dbConnection.getResultSet("select * from usa..knbboxes with(NOLOCK) where BoxNo = '"+BoxNo+"' and closed = 'N'", objGlobal.getConnection());
                     if (!rs.next()) {
-                        rs = dbConnection.getResultSet("select * from BFLDATA..vGoodsIssue where trfno = '"+BoxNo.trim()+"' ", objGlobal.getConnection());
+                        rs = dbConnection.getResultSet("select * from BFLDATA..vGoodsIssue with(NOLOCK)  where trfno = '"+BoxNo.trim()+"' ", objGlobal.getConnection());
                         if (!rs.next()) {
                             objGlobal.setErrorMessage("Invalid box or box is closed - " + BoxNo);
                             return false;
@@ -390,8 +386,8 @@ public class PalletBoxCountControl {
     public Boolean SavePalletDetails( String palletNo, String Warehouse){
         // String Boxcount = "0";
         try {
-            if(isPalletSaved(palletNo)){
-                String query = "Delete from bfldata..WarehouseScannedBoxes where palletno = '"+palletNo+"'";
+            if(isPalletSaved(palletNo,Warehouse)){
+                String query = "Delete from bfldata..WarehouseScannedBoxes where palletno = '"+palletNo+"' and warehouse = '"+Warehouse+"'";
                 if (!dbConnection.insertUpdate(query, objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;
@@ -412,39 +408,96 @@ public class PalletBoxCountControl {
     }
 
 
-    public String BoxPalletCount(String palletNo){
+//    public String BoxPalletCount(String palletNo){
+//        String Boxcount = "0";
+//        try {
+//            if(palletNo.substring(0,3).equals("USA") || palletNo.substring(0,3).equals("FAC") ) {
+//                String query = "select count = count(distinct Boxno) from USA..vUPCBOXdet where palletno = '" + palletNo + "' and closed = 'N'";
+//                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
+//                if (rs.next()) {
+//                    Boxcount = rs.getString("count");
+//                }
+//            }else if(palletNo.substring(0,3).equals("PLT")){
+//                String query = "select count = count(distinct Boxno) from BFLDATA..vR1Pallet where palletno = '" + palletNo + "' and closed = 'N'";
+//                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
+//                if (rs.next()) {
+//                    Boxcount = rs.getString("count");
+//                }
+//            }
+//            else if(palletNo.substring(0,3).equals("KNB") || palletNo.substring(0,5).equals("AEINT") || palletNo.substring(0,5).equals("AELOC")){
+//                String query = "select count = count(distinct Boxno) from usa..knbboxes where palletno = '" + palletNo + "' and closed = 'N'";
+//                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
+//                if (rs.next()) {
+//                    Boxcount = rs.getString("count");
+//                }
+//            }else{
+//                String query = "select count = count(distinct trfno) from Bfldata..vGoodsIssue where palletno = '" + palletNo + "'";
+//                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
+//                if (rs.next()) {
+//                    Boxcount = rs.getString("count");
+//                }
+//            }
+//            PalletBoxCountGlobal.setPalletCount(Integer.valueOf(Boxcount));
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return Boxcount;
+//    }
+
+
+//    public String BoxPalletCount(String palletNo) {
+//        String Boxcount = "0";
+//        try {
+//            String Query = "select count = count(distinct Boxno) from USA..vUPCBOXdet where palletno = '" + palletNo + "' and closed = 'N'";
+//            rs = dbConnection.getResultSet(Query, objGlobal.getConnection());
+//            if (rs.next()) {
+//                Boxcount = rs.getString("count");
+//            } else {
+//                ResultSet rs1 = dbConnection.getResultSet("select count = count(distinct Boxno) from BFLDATA..vR1Pallet where palletno = '" + palletNo + "' and closed = 'N'", objGlobal.getConnection());
+//                if (rs1.next()) {
+//                    Boxcount = rs.getString("count");
+//
+//                } else {
+//                    ResultSet rs2 = dbConnection.getResultSet("select count = count(distinct Boxno) from usa..knbboxes  where palletno = '" + palletNo + "' and closed = 'N'", objGlobal.getConnection());
+//                    if (rs2.next()) {
+//                        Boxcount = rs.getString("count");
+//
+//                    } else {
+//                        ResultSet rs3 = dbConnection.getResultSet("select count = count(distinct trfno) from BFLDATA..vGoodsIssue where palletno = '" + palletNo + "'", objGlobal.getConnection());
+//                        if (rs3.next()) {
+//                            Boxcount = rs.getString("count");
+//                        } else {
+//                            Boxcount = "";
+//                        }
+//                    }
+//                }
+//            }
+//            PalletBoxCountGlobal.setPalletCount(Integer.valueOf(Boxcount));
+//        } catch (SQLException e) {
+////            throw new RuntimeException(e);
+////        }
+//
+//        }
+//        return Boxcount;
+//    }
+
+    public String BoxPalletCount(String palletno, String warehouse) {
         String Boxcount = "0";
+        //int Count = 0;
         try {
-            if(palletNo.substring(0,3).equals("USA")) {
-                String query = "select count = count(distinct Boxno) from USA..vUPCBOXdet where palletno = '" + palletNo + "' and closed = 'N'";
-                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
-                if (rs.next()) {
-                    Boxcount = rs.getString("count");
-                }
-            }else if(palletNo.substring(0,3).equals("PLT")){
-                String query = "select count = count(distinct Boxno) from BFLDATA..vR1Pallet where palletno = '" + palletNo + "' and closed = 'N'";
-                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
-                if (rs.next()) {
-                    Boxcount = rs.getString("count");
-                }
-            }else if(palletNo.substring(0,3).equals("KNB")){
-                String query = "select count = count(distinct Boxno) from usa..knbboxes where palletno = '" + palletNo + "' and closed = 'N'";
-                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
-                if (rs.next()) {
-                    Boxcount = rs.getString("count");
-                }
-            }else{
-                String query = "select count = count(distinct trfno) from Bfldata..vGoodsIssue where palletno = '" + palletNo + "'";
-                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
-                if (rs.next()) {
-                    Boxcount = rs.getString("count");
-                }
+            String query2 = "select count = Count(distinct boxOriginal) from tmpScannedBoxes where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + palletno + "' and warehouse = '" + warehouse + "' and isnull(boxOriginal,'')<>''";
+            rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
+            while (rs.next()) {
+                //Count = rs.getInt(1);
+                Boxcount = rs.getString("count");
             }
-            PalletBoxCountGlobal.setPalletCount(Integer.valueOf(Boxcount));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        PalletBoxCountGlobal.setPalletCount(Integer.valueOf(Boxcount));
+        //PalletBoxCountShared.savePalletCount(Count);
         return Boxcount;
+
     }
 
     private void okMessage(String title, String message, Context context) {

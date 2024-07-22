@@ -14,6 +14,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -34,14 +36,23 @@ public class DepartmentGrnFragment extends Fragment {
     DepartmentGRNControl objPalletBoxCountControl;
     ListView lv_details;
     EditText et_rack_in_out_pallettop;
+
+    EditText et_rack_in_out_toteid;
     EditText et_rack_in_out_BoxCount;
+
+    TextView TextView8;
     //  Spinner sp_rack_in_out_warehouse;
     TextView box_count_pallet1;
+    TextView TextView4;
+    TextView TextView5;
     Button bt_rack_in_out_clear;
     Button bt_rack_in_out_save;
     //    EditText et_rack_in_out_rack;
     Spinner sp_rack_in_out_warehouseFrom;
     Spinner sp_rack_in_out_warehouseTo;
+    RadioButton rb_pallet_category;
+    RadioButton rb_toteid_category;
+    RadioGroup rg_pallet_building_category;
 
     //    Button bt_search;
     Button btn_Box_search;
@@ -75,13 +86,20 @@ public class DepartmentGrnFragment extends Fragment {
 
         lv_details =  view.findViewById(R.id.lv_details);
         et_rack_in_out_pallettop =  view.findViewById(R.id.et_rack_in_out_pallettop);
+        et_rack_in_out_toteid =  view.findViewById(R.id.et_rack_in_out_toteid);
         sp_rack_in_out_warehouseFrom = (Spinner) view.findViewById(R.id.sp_rack_in_out_warehouseFrom);
         sp_rack_in_out_warehouseTo = (Spinner) view.findViewById(R.id.sp_rack_in_out_warehouseTo);
         box_count_pallet1 = view.findViewById(R.id.box_count_pallet1);
         et_rack_in_out_BoxCount = view.findViewById(R.id.et_rack_in_out_BoxCount);
         bt_rack_in_out_clear = view.findViewById(R.id.bt_rack_in_out_clear);
         bt_rack_in_out_save = view.findViewById(R.id.bt_rack_in_out_save);
-          btn_Box_search = view.findViewById(R.id.btn_Box_search);
+        rb_pallet_category = (RadioButton) view.findViewById(R.id.rb_pallet_category);
+        rb_toteid_category = (RadioButton) view.findViewById(R.id.rb_toteid_category);
+        rg_pallet_building_category = (RadioGroup) view.findViewById(R.id.rg_pallet_building_category);
+        btn_Box_search = view.findViewById(R.id.btn_Box_search);
+        TextView5 = view.findViewById(R.id.TextView5);
+        TextView8 = view.findViewById(R.id.TextView8);
+        TextView4 = view.findViewById(R.id.TextView4);
         objPalletBoxCountControl = new DepartmentGRNControl();
 
         objPalletBoxCountShared=new DepartmentGRNShared(getContext());
@@ -100,6 +118,59 @@ public class DepartmentGrnFragment extends Fragment {
         ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
         sp_rack_in_out_warehouseTo.setAdapter(arrayAdp1);
 
+        rg_pallet_building_category.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                //Log.d("chk", "id" + checkedId);
+
+                if (checkedId == R.id.rb_toteid_category) {
+                    //R.id.a = RadioButton ID in layout
+
+                  //  okMessage("","Checked");
+                    et_rack_in_out_BoxCount.setVisibility(View.GONE);
+                    TextView5.setVisibility(View.GONE);
+                    btn_Box_search.setVisibility(View.GONE);
+
+                    et_rack_in_out_pallettop.setVisibility(View.GONE);
+                    TextView4.setVisibility(View.GONE);
+                    box_count_pallet1.setVisibility(View.GONE);
+                    et_rack_in_out_toteid.setVisibility(View.VISIBLE);
+                    TextView8.setVisibility(View.VISIBLE);
+
+                    et_rack_in_out_toteid.setFocusable(true);
+                    et_rack_in_out_toteid.requestFocus();
+
+                    bt_rack_in_out_save.setVisibility(View.GONE);
+                    bt_rack_in_out_clear.setVisibility(View.GONE);
+
+                    ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.loadTotehistory();
+                    objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
+                    lv_details.setAdapter(objMyListBoxAdapter);
+
+                    //some code
+                } else if (checkedId == R.id.rb_pallet_category) {
+                    //some code
+                    et_rack_in_out_BoxCount.setVisibility(View.VISIBLE);
+                    TextView5.setVisibility(View.VISIBLE);
+                    btn_Box_search.setVisibility(View.VISIBLE);
+                    et_rack_in_out_pallettop.setVisibility(View.VISIBLE);
+                    TextView4.setVisibility(View.VISIBLE);
+                    box_count_pallet1.setVisibility(View.VISIBLE);
+
+                    et_rack_in_out_toteid.setVisibility(View.GONE);
+                    TextView8.setVisibility(View.GONE);
+                    lv_details.setAdapter(null);
+                    bt_rack_in_out_save.setVisibility(View.VISIBLE);
+                    bt_rack_in_out_clear.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+        });
+
+
+
         if(!objPalletBoxCountShared.loadPalletno().equals("")){
 
             et_rack_in_out_pallettop.setText(objPalletBoxCountShared.loadPalletno());
@@ -112,6 +183,7 @@ public class DepartmentGrnFragment extends Fragment {
             et_rack_in_out_pallettop.setEnabled(false);
             sp_rack_in_out_warehouseTo.setEnabled(false);
             sp_rack_in_out_warehouseFrom.setEnabled(false);
+            rb_toteid_category.setEnabled(false);
 
             objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
             lv_details.setAdapter(objMyListBoxAdapter);
@@ -181,7 +253,7 @@ public class DepartmentGrnFragment extends Fragment {
                 return objGlobal.getHideKeyPad();
             }
         });
-        et_rack_in_out_BoxCount.setOnTouchListener(new View.OnTouchListener() {
+        et_rack_in_out_toteid.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 view.onTouchEvent(motionEvent);
@@ -190,6 +262,55 @@ public class DepartmentGrnFragment extends Fragment {
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
                 return objGlobal.getHideKeyPad();
+            }
+        });
+
+        et_rack_in_out_toteid.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
+                    String Toteid = et_rack_in_out_toteid.getText().toString();
+
+                    if (sp_rack_in_out_warehouseTo.getSelectedItemId()==0 || sp_rack_in_out_warehouseFrom.getSelectedItemId()==0) {
+                        okMessage("Alert", "Please select the Warehouse");
+                        et_rack_in_out_toteid.setText("");
+                        et_rack_in_out_toteid.requestFocus();
+                    } else {
+                        if (Toteid.equals("")) {
+                            okMessage("Alert", "Pallet number should not be empty");
+                        } else {
+                            if (isPalletvalid(Toteid.trim())) {
+                                //isvalidrack = true;
+
+                               // String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase());
+                               // box_count_pallet1.setText(BoxCountPallet1);
+                                ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.loadhistory(et_rack_in_out_toteid.getText().toString().trim(), sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString());
+                                objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
+                                lv_details.setAdapter(objMyListBoxAdapter);
+                                et_rack_in_out_BoxCount.setEnabled(true);
+                                et_rack_in_out_BoxCount.setFocusable(true);
+                                objPalletBoxCountShared.saveWarehouseTo(sp_rack_in_out_warehouseTo.getSelectedItem().toString());
+                                objPalletBoxCountShared.saveWarehouseFrom(sp_rack_in_out_warehouseFrom.getSelectedItem().toString());
+                                et_rack_in_out_toteid.setText("");
+                                et_rack_in_out_toteid.requestFocus();
+                                et_rack_in_out_toteid.setFocusable(true);
+                                return true;
+                            } else {
+                                et_rack_in_out_toteid.setText("");
+                                et_rack_in_out_toteid.requestFocus();
+                                et_rack_in_out_toteid.setFocusable(true);
+                                // isvalidrack = false;
+
+                            }
+                        }
+
+                    }
+                }
+                else{
+                   return false;
+                }
+                return false;
+
             }
         });
 
@@ -352,7 +473,7 @@ public class DepartmentGrnFragment extends Fragment {
                     box_count_pallet1.setText(Count +"/" + DepartmentGRNGlobal.getPalletCount());
                     et_rack_in_out_BoxCount.setText("");
                     et_rack_in_out_pallettop.setEnabled(false);
-
+                    rb_toteid_category.setEnabled(false);
                     objPalletBoxCountShared.savePalletno(et_rack_in_out_pallettop.getText().toString());
 
                     strflg = true;
@@ -388,43 +509,31 @@ public class DepartmentGrnFragment extends Fragment {
 
             if(objPalletBoxCountControl.isPalletSaved(pallet, sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString())){
 
-                okMessage("Alert","Pallet already saved in WH department GRN");
-//                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-//                alert.setMessage("This Pallet is already saved. Do you want to make Changes to this Pallet again? -" +et_rack_in_out_pallettop.getText().toString())
-//                        .setTitle("Confirmation")
-//                        .setCancelable(false)
-//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                try {
-//                                    listBinScanToteId = objPalletBoxCountControl.LoadPalletDetails(et_rack_in_out_pallettop.getText().toString());
-//                                    objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
-//                                    lv_details.setAdapter(objMyListBoxAdapter);
-//                                    int Count = objPalletBoxCountControl.getCountBoxesScanned(et_rack_in_out_pallettop.getText().toString(), sp_rack_in_out_warehouseTo.getSelectedItem().toString());
-//                                    objMyListBoxAdapter.notifyDataSetChanged();
-//                                    box_count_pallet1.setText(Count +"/" + DepartmentGRNGlobal.getPalletCount());
-//                                    et_rack_in_out_BoxCount.setText("");
-//                                    et_rack_in_out_pallettop.setEnabled(false);
-//                                    objPalletBoxCountShared.savePalletno(et_rack_in_out_pallettop.getText().toString());
-//                                } catch (SQLException e) {
-//                                    throw new RuntimeException(e);
-//                                }
-//                            }
-//                        })
-//                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                et_rack_in_out_pallettop.setText("");
-//                            }
-//                        })
-//                        .show();
-                return true;
+                okMessage("Alert","Pallet/tote already saved in WH department GRN");
+                et_rack_in_out_toteid.setText("");
+                et_rack_in_out_toteid.requestFocus();
+                et_rack_in_out_toteid.setFocusable(true);
+
+                et_rack_in_out_pallettop.setText("");
+                et_rack_in_out_pallettop.requestFocus();
+                et_rack_in_out_pallettop.setFocusable(true);
+
+                return false;
             }else {
                 if (objPalletBoxCountControl.isValidPallet(pallet, getContext())) {
+                    return true;
+                }
+                else if (objPalletBoxCountControl.isValidbox(pallet, getContext())) {
 
                     return true;
-                } else {
-                    okMessage("Alert 1", "Pallet Number " + et_rack_in_out_pallettop.getText().toString() + " is closed already");
+                }
+                else {
+
+                    okMessage("Alert 1", "Pallet Number " + pallet.trim() + " is closed already");
+                    et_rack_in_out_toteid.setText("");
+                    et_rack_in_out_pallettop.setText("");
+                    et_rack_in_out_toteid.requestFocus();
+                    et_rack_in_out_toteid.setFocusable(true);
                     et_rack_in_out_pallettop.requestFocus();
                     et_rack_in_out_pallettop.setFocusable(true);
                     return false;
@@ -509,6 +618,7 @@ public class DepartmentGrnFragment extends Fragment {
         objPalletBoxCountShared.savePalletno("");
         sp_rack_in_out_warehouseTo.setEnabled(true);
         sp_rack_in_out_warehouseFrom.setEnabled(true);
+        rb_toteid_category.setEnabled(true);
         objPalletBoxCountShared.savePalletno("");
         objPalletBoxCountShared.saveWarehouseTo("");
         objPalletBoxCountShared.saveWarehouseFrom("");

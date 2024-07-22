@@ -255,7 +255,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
         if (category.equals("Online Returns")) arr.add("Shop Returns For Online");
         if (category.equals("Shop Transfer")) arr.add("Shop Transfer");
         if (category.equals("WH Transfer")) arr.add("WH Transfer");
-        if (category.equals("Quality Issues")) arr.add("Quality Issues");
+        if (category.equals("Quality Issues") || category.equals("Quality issues")) arr.add("Quality Issues");
         if (category.equals("NO Barcode")) {
             arr.add("NO Barcode");
         }
