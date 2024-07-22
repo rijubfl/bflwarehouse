@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp">
+
+    <TextView
+        android:id="@+id/tv_check_in_check_out_tickte_itemcode"
+        android:layout_width="130dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left"
+        android:hint=""
+        android:textColor="@color/coloBlack"
+        android:padding="8dp"
+        android:text=""
+        android:textSize="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_check_in_check_out_tickte_description"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left"
+        android:hint=""
+        android:textColor="@color/coloBlack"
+        android:padding="8dp"
+        android:text=""
+        android:textSize="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_check_in_check_out_tickte_qty"
+        app:layout_constraintStart_toEndOf="@+id/tv_check_in_check_out_tickte_itemcode"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_check_in_check_out_tickte_qty"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="right"
+        android:textColor="@color/coloBlack"
+        android:hint=""
+        android:padding="8dp"
+        android:text=""
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

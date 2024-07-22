@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.transfer.TransferFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp">
+
+        <Spinner
+            android:id="@+id/sp_transfer_printer"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/ch_transfer_printer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_transfer_shopname"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <CheckBox
+            android:id="@+id/ch_transfer_printer"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:text="Reprint"
+            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
+            app:layout_constraintTop_toTopOf="@+id/sp_transfer_printer" />
+
+        <Spinner
+            android:id="@+id/sp_transfer_type"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/et_transfer_pallet_box_no"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <EditText
+            android:id="@+id/et_transfer_pallet_box_no"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:enabled="false"
+            android:gravity="left"
+            android:hint="Pallet / Box"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_transfer_shopname"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint="Shop"
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sp_transfer_type" />
+
+        <Button
+            android:id="@+id/bt_transfer_scan"
+            android:layout_width="90dp"
+            android:layout_height="0dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Scan"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/sp_transfer_printer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_transfer_shopname" />
+
+        <TextView
+            android:id="@+id/TextView2"
+            android:layout_width="140dp"
+            android:layout_height="33dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left|center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Barcode"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sp_transfer_printer" />
+
+        <TextView
+            android:id="@+id/TextView4"
+            android:layout_width="0dp"
+            android:layout_height="33dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left|center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Description"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView3"
+            app:layout_constraintStart_toEndOf="@+id/TextView2"
+            app:layout_constraintTop_toTopOf="@+id/TextView2" />
+
+        <TextView
+            android:id="@+id/TextView3"
+            android:layout_width="50dp"
+            android:layout_height="33dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="right|center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Qty"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView2" />
+
+        <ListView
+            android:id="@+id/lv_transfer_items"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/TextView15"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView2" />
+
+        <EditText
+            android:id="@+id/et_transfer_toteid"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:enabled="false"
+            android:gravity="left"
+            android:hint="Tote ID"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_transfer_total" />
+
+        <TextView
+            android:id="@+id/TextView15"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Total Qty."
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_transfer_last_transfer"
+            app:layout_constraintEnd_toStartOf="@+id/tv_transfer_total"
+            app:layout_constraintStart_toEndOf="@+id/et_transfer_toteid" />
+
+        <TextView
+            android:id="@+id/tv_transfer_last_transfer"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/et_custom"
+            android:gravity="center"
+            android:hint=""
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloRed"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/bt_transfer_clear"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_transfer_total"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:hint=""
+            android:padding="8dp"
+            android:text="0"
+            android:gravity="right"
+            android:textColor="@color/coloRed"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView15" />
+
+        <Button
+            android:id="@+id/bt_transfer_transfer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Transfer"
+            android:textAllCaps="false"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/bt_transfer_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bt_transfer_delete" />
+
+        <Button
+            android:id="@+id/bt_transfer_clear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Clear All"
+            android:textAllCaps="false"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/bt_transfer_delete"
+            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_delete"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/bt_transfer_delete"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Delete"
+            android:textAllCaps="false"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

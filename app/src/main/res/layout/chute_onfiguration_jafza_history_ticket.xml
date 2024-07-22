@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:background="@drawable/dr_wave_list_main"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_chute_config_jafza_ticket_chuteid"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Chute ID"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_chute_config_jafza_ticket_trndate"
+        android:layout_width="170dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left"
+        android:hint=""
+        android:padding="6dp"
+        android:text="10/08/2022 02:05:00"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_chute_config_jafza_ticket_chuteid" />
+
+    <TextView
+        android:id="@+id/tv_chute_config_jafza_ticket_shopname"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Shop Name"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_chute_config_jafza_ticket_chuteid"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_chute_config_jafza_ticket_status"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Status"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_chute_config_jafza_ticket_shopname"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_chute_config_jafza_ticket_toteid"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Tote Id"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_chute_config_jafza_ticket_trndate"
+        app:layout_constraintTop_toTopOf="@+id/tv_chute_config_jafza_ticket_trndate" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

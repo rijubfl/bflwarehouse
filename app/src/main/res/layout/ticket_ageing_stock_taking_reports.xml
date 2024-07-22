@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp">
+
+    <TextView
+        android:id="@+id/tv_ticket_ageing_stock_taking_user"
+        android:layout_width="105dp"
+        android:layout_height="35dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:padding="6dp"
+        android:text="User"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_ticket_ageing_stock_taking_zone"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Zone"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_ticket_ageing_stock_taking_quantity"
+        app:layout_constraintStart_toEndOf="@+id/tv_ticket_ageing_stock_taking_user"
+        app:layout_constraintTop_toTopOf="@+id/tv_ticket_ageing_stock_taking_user" />
+
+    <TextView
+        android:id="@+id/tv_ticket_ageing_stock_taking_quantity"
+        android:layout_width="75dp"
+        android:layout_height="35dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="right|center"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Quantity"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_ticket_ageing_stock_taking_user" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

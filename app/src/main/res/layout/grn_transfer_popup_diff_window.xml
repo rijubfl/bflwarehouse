@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="250dp"
+    android:padding="5dp"
+    android:background="@color/colorBackPopup"
+    android:layout_gravity="center"
+    android:layout_height="230dp">
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:padding="15dp"
+        android:layout_marginRight="5dp"
+        android:textColor="@color/coloBlack"
+        android:background="@drawable/et_custom_total"
+        android:text="Excess"
+        android:textSize="15dp"
+        app:layout_constraintEnd_toStartOf="@+id/et_grn_transfer_popup_excess_qty"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:padding="15dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/et_custom_total"
+        android:text="Missing"
+        android:textColor="@color/coloBlack"
+        android:textSize="15dp"
+        app:layout_constraintEnd_toStartOf="@+id/et_grn_transfer_popup_missing_qty"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView1" />
+
+    <EditText
+        android:id="@+id/et_grn_transfer_popup_excess_qty"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:background="@drawable/et_custom"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="0"
+        android:inputType="number"
+        android:padding="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView1" />
+
+    <EditText
+        android:id="@+id/et_grn_transfer_popup_missing_qty"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:background="@drawable/et_custom"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="0"
+        android:inputType="number"
+        android:padding="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView3" />
+
+    <EditText
+        android:id="@+id/et_grn_transfer_popup_diff_verify"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/et_custom"
+        android:layout_marginTop="5dp"
+        android:hint="Manager To Verify"
+        android:inputType="textPassword"
+        android:padding="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <Button
+        android:id="@+id/bt_grn_transfer_popup_miss_ok"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/btn_custom1"
+        android:text="OK"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_grn_transfer_popup_diff_verify" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

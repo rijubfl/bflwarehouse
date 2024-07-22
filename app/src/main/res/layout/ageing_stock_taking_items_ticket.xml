@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp">
+
+    <TextView
+        android:id="@+id/tv_aging_stock_taking_itemdetails"
+        android:layout_width="0dp"
+        android:layout_height="33dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Item Details"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_aging_stock_taking_date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_aging_stock_taking_time"
+        android:layout_width="75dp"
+        android:layout_height="33dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Time"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_aging_stock_taking_result"
+        app:layout_constraintTop_toTopOf="@+id/tv_aging_stock_taking_itemdetails" />
+
+    <TextView
+        android:id="@+id/tv_aging_stock_taking_result"
+        android:layout_width="75dp"
+        android:layout_height="33dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Result"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_aging_stock_taking_itemdetails" />
+
+    <TextView
+        android:id="@+id/tv_aging_stock_taking_date"
+        android:layout_width="100dp"
+        android:layout_height="33dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Date"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_aging_stock_taking_time"
+        app:layout_constraintTop_toTopOf="@+id/tv_aging_stock_taking_itemdetails" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="370dp"
+    android:padding="5dp"
+    android:background="@color/colorBackPopup"
+    android:layout_gravity="center"
+    android:layout_height="600dp">
+
+    <CheckBox
+        android:id="@+id/ch_ageing_stock_taking_popup_rpt_main_server"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:background="@drawable/et_custom"
+        android:text="Main Server"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/sp_ageing_stock_taking_popup_rpt_sort"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/et_custom"
+        android:ems="10"
+        android:padding="10dp"
+        android:textSize="14dp"
+        app:layout_constraintStart_toEndOf="@+id/ch_ageing_stock_taking_popup_rpt_main_server"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/bt_ageing_stock_taking_popup_rpt_refresh"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/btn_custom1"
+        android:text="Refresh"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sp_ageing_stock_taking_popup_rpt_sort"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/TextView5"
+        android:layout_width="105dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:textStyle="bold"
+        android:padding="6dp"
+        android:text="User"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bt_ageing_stock_taking_popup_rpt_refresh" />
+
+    <TextView
+        android:id="@+id/TextView10"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Zone"
+        android:textStyle="bold"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/TextView7"
+        app:layout_constraintStart_toEndOf="@+id/TextView5"
+        app:layout_constraintTop_toTopOf="@+id/TextView5" />
+
+    <TextView
+        android:id="@+id/TextView7"
+        android:layout_width="75dp"
+        android:layout_height="35dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:textStyle="bold"
+        android:padding="6dp"
+        android:text="Quantity"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/TextView5" />
+
+    <ListView
+        android:id="@+id/lv_sales_invoice_popup_rpt"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/et_custom_total"
+        app:layout_constraintBottom_toTopOf="@+id/TextView6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextView5" />
+
+    <TextView
+        android:id="@+id/TextView6"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left|center"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Total"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/bt_ageing_stock_taking_popup_rpt_close"
+        app:layout_constraintEnd_toStartOf="@+id/tv_ageing_stock_taking_popup_rpt_total"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_ageing_stock_taking_popup_rpt_total"
+        android:layout_width="105dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="right|center"
+        android:hint=""
+        android:padding="6dp"
+        android:text="0"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/bt_ageing_stock_taking_popup_rpt_close"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/bt_ageing_stock_taking_popup_rpt_close"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/btn_custom1"
+        android:text="Close"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

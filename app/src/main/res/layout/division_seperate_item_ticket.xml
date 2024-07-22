@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp">
+
+    <TextView
+        android:id="@+id/tv_div_seperate_tickte_itemcode"
+        android:layout_width="130dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Itemcode"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_div_seperate_tickte_division"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Division"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_div_seperate_tickte_trfqty"
+        app:layout_constraintStart_toEndOf="@+id/tv_div_seperate_tickte_itemcode"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_div_seperate_tickte_trfqty"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="right"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Qty."
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_div_seperate_tickte_scanqty"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_div_seperate_tickte_scanqty"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="right"
+        android:hint=""
+        android:padding="6dp"
+        android:text="Qty."
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.grn3pl.Grn3PlFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/TextView1"
+            android:layout_width="130dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Trf.No. / Tote.ID."
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/bt_3pl_wh_grn_scan"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SCAN"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <EditText
+            android:id="@+id/et_3pl_wh_grn_trfno"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_3pl_wh_grn_scan"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/TextView1"
+            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+
+        <TextView
+            android:id="@+id/tv_3pl_wh_grn_result"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="center"
+            android:hint=""
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloRed"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_3pl_wh_grn_trfno"
+            app:layout_constraintTop_toTopOf="@+id/tv_3pl_wh_grn_trfno" />
+
+        <TextView
+            android:id="@+id/tv_3pl_wh_grn_trfno"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/et_custom"
+            android:gravity="center"
+            android:hint=""
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloRed"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
+
+        <TextView
+            android:id="@+id/TextView3"
+            android:layout_width="120dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Trf.No."
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_3pl_wh_grn_trfno" />
+
+        <TextView
+            android:id="@+id/TextView4"
+            android:layout_width="100dp"
+            android:layout_height="38dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Tote. ID."
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/TextView3"
+            app:layout_constraintTop_toTopOf="@+id/TextView3" />
+
+        <TextView
+            android:id="@+id/TextView7"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Status"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/TextView4"
+            app:layout_constraintTop_toTopOf="@+id/TextView3" />
+
+        <ListView
+            android:id="@+id/lv_3pl_wh_grn_details"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/TextView13"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView3"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/bt_3pl_wh_grn_clear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/btn_custom1"
+            android:text="CLEAR"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/bt_3pl_wh_grn_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SAVE"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/TextView13"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Remarks."
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/bt_3pl_wh_grn_clear"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/et_3pl_wh_grn_remarks"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/TextView13"
+            app:layout_constraintTop_toTopOf="@+id/TextView13"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="   "
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

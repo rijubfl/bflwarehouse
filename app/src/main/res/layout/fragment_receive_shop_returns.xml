@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.shopreturns.ReceiveShopReturnsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/TextView1"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Entry No."
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ch_shop_return_itemwise_scan" />
+
+        <EditText
+            android:id="@+id/et_shop_return_entryno"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:hint=""
+            android:inputType="text"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_shop_return_scan"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/TextView1"
+            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <CheckBox
+            android:id="@+id/ch_shop_return_itemwise_scan"
+            android:layout_width="0dp"
+            android:layout_marginRight="5dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:text="Skip SKU Wise Scan"
+            app:layout_constraintEnd_toStartOf="@+id/ch_shop_return_itemwise_autobuild"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/ch_shop_return_itemwise_autobuild"
+            android:layout_width="125dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:text="Auto Build"
+            app:layout_constraintEnd_toStartOf="@+id/tv_shop_return_auto_build_pallettype"
+            app:layout_constraintTop_toTopOf="@+id/ch_shop_return_itemwise_scan" />
+
+        <TextView
+            android:id="@+id/tv_shop_return_auto_build_pallettype"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="center"
+            android:hint=""
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ch_shop_return_itemwise_scan" />
+
+        <Button
+            android:id="@+id/bt_shop_return_scan"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SCAN"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <EditText
+            android:id="@+id/et_shop_return_remarks"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:inputType="text"
+            android:padding="10dp"
+            android:hint="Remarks"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/et_shop_return_toteid"
+            app:layout_constraintTop_toBottomOf="@+id/tv_shop_return_shopname" />
+
+        <EditText
+            android:id="@+id/et_shop_return_toteid"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:inputType="text"
+            android:padding="10dp"
+            android:hint="Tote Id"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_shop_return_shopname" />
+
+        <TextView
+            android:id="@+id/tv_shop_return_shopname"
+            android:layout_width="160dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint="Shop Name"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
+
+        <TextView
+            android:id="@+id/tv_shop_return_category"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:padding="10dp"
+            android:hint="Shop Return Category"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_shop_return_shopname"
+            app:layout_constraintTop_toTopOf="@+id/tv_shop_return_shopname" />
+
+        <TextView
+            android:id="@+id/TextView7"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="5dp"
+            android:text="Item Details"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_shop_return_toteid" />
+
+        <TextView
+            android:id="@+id/TextView4"
+            android:layout_width="60dp"
+            android:layout_height="38dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Scan"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView5"
+            app:layout_constraintTop_toTopOf="@+id/TextView7" />
+
+        <TextView
+            android:id="@+id/TextView5"
+            android:layout_width="60dp"
+            android:layout_height="38dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Trf."
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView6"
+            app:layout_constraintTop_toTopOf="@+id/TextView7" />
+
+        <TextView
+            android:id="@+id/TextView6"
+            android:layout_width="60dp"
+            android:layout_height="38dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Diff"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView7" />
+
+        <ListView
+            android:id="@+id/lv_shop_return_details"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/TextView11"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView7"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/TextView11"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Total"
+            android:textColor="@color/coloRed"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/bt_shop_return_save"
+            app:layout_constraintEnd_toStartOf="@+id/tv_shop_return_scan_total"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_shop_return_scan_total"
+            android:layout_width="60dp"
+            android:layout_height="38dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="right"
+            android:hint=""
+            android:padding="10dp"
+            android:text="0"
+            android:textColor="@color/coloRed"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_shop_return_trf_total"
+            app:layout_constraintTop_toTopOf="@+id/TextView11" />
+
+        <TextView
+            android:id="@+id/tv_shop_return_trf_total"
+            android:layout_width="60dp"
+            android:layout_height="38dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="right"
+            android:hint=""
+            android:padding="10dp"
+            android:text="0"
+            android:textColor="@color/coloRed"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_shop_return_diff_total"
+            app:layout_constraintTop_toTopOf="@+id/TextView11" />
+
+        <TextView
+            android:id="@+id/tv_shop_return_diff_total"
+            android:layout_width="60dp"
+            android:layout_height="38dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="right"
+            android:hint=""
+            android:padding="10dp"
+            android:text="0"
+            android:textColor="@color/coloRed"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView11" />
+
+        <Button
+            android:id="@+id/bt_shop_return_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SAVE"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/bt_shop_return_clear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/btn_custom1"
+            android:text="CLEAR"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/bt_shop_return_save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.448"
+            app:layout_constraintStart_toEndOf="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="24dp"
+            android:text=""
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

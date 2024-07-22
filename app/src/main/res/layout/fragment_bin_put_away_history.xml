@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.binstorageputaway.BinPutAwayHistoryFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/TextView1"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Tote ID"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/et_bin_put_away_toteid"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/TextView1"
+            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/TextView2"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Location"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
+
+        <EditText
+            android:id="@+id/et_bin_put_away_location"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/TextView1"
+            app:layout_constraintTop_toTopOf="@+id/TextView2"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <Button
+            android:id="@+id/bt_bin_put_away_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SEARCH"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView2" />
+
+        <TextView
+            android:id="@+id/TextView9"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="6dp"
+            android:text="History (IN / OUT)"
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_bin_put_away_save" />
+
+        <TextView
+            android:id="@+id/tv_bin_putaway_history_ticket_toteid"
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="6dp"
+            android:text="Tote ID"
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9" />
+
+        <TextView
+            android:id="@+id/tv_bin_putaway_history_ticket_boxno"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="6dp"
+            android:text="Box No"
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/tv_bin_putaway_history_ticket_toteid"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9" />
+
+        <TextView
+            android:id="@+id/tv_bin_putaway_history_ticket_direction"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="6dp"
+            android:text="In/Out"
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/tv_bin_putaway_history_ticket_boxno"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9" />
+
+        <TextView
+            android:id="@+id/tv_bin_putaway_history_ticket_location"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="6dp"
+            android:text="Location"
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/tv_bin_putaway_history_ticket_direction"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9" />
+
+        <TextView
+            android:id="@+id/tv_bin_putaway_history_ticket_time"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="6dp"
+            android:text="Date Time"
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_bin_putaway_history_ticket_location"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9" />
+
+        <ListView
+            android:id="@+id/lv_bin_put_away_history"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_bin_putaway_history_ticket_toteid" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</FrameLayout>

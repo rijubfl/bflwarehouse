@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.rack.RackInRackOutFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/TextView6"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/et_custom_total"
+            android:textColor="@color/coloBlack"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Last Saved Data"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_rack_in_out_save" />
+
+        <Spinner
+            android:id="@+id/sp_rack_in_out_warehouse"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/coloBlack"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/TextView1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+<!--        <Spinner-->
+<!--            android:id="@+id/sp_rack_in_out_inout"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginStart="5dp"-->
+<!--            android:layout_marginLeft="5dp"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:background="@drawable/et_custom_total"-->
+<!--            android:gravity="center"-->
+<!--            android:entries="@array/rackInOut"-->
+<!--            android:hint=""-->
+<!--            android:padding="8dp"-->
+<!--            android:text="Last Saved Data"-->
+<!--            android:textSize="10dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/TextView2"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/tv_rack_in_out_warehouse" />-->
+
+        <EditText
+            android:id="@+id/et_rack_in_out_rack"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+
+            android:singleLine="true"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textSize="14dp"
+            app:layout_constraintStart_toEndOf="@+id/TextView3"
+            app:layout_constraintEnd_toStartOf="@+id/et_rack_in_out_cellno"
+            app:layout_constraintTop_toBottomOf="@+id/sp_rack_in_out_warehouse" />
+
+<!--        <Spinner-->
+<!--            android:id="@+id/sp_rack_in_out_rack"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginStart="5dp"-->
+<!--            android:layout_marginLeft="5dp"-->
+<!--            android:layout_marginRight="5dp"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:singleLine="true"-->
+<!--            android:background="@drawable/et_custom"-->
+<!--            android:padding="10dp"-->
+<!--            android:textSize="14dp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/TextView3"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/sp_rack_in_out_cellno"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/sp_rack_in_out_warehouse" />-->
+
+        <TextView
+            android:id="@+id/et_rack_in_out_cellno"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+
+            android:singleLine="true"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textSize="14dp"
+            app:layout_constraintStart_toEndOf="@+id/et_rack_in_out_rack"
+            app:layout_constraintEnd_toStartOf="@+id/bt_search"
+            app:layout_constraintTop_toBottomOf="@+id/sp_rack_in_out_warehouse" />
+
+
+
+        <Button
+            android:id="@+id/bt_search"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Search"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/btn_custom1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/et_rack_in_out_cellno"
+            app:layout_constraintTop_toTopOf="@+id/TextView3"
+            />
+
+
+        <EditText
+            android:id="@+id/et_rack_in_out_pallettop"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:singleLine="true"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textSize="14dp"
+            android:screenReaderFocusable="true"
+            android:focusable="true"
+            app:layout_constraintStart_toEndOf="@+id/TextView4"
+            app:layout_constraintEnd_toStartOf="@+id/box_count_pallet1"
+            app:layout_constraintTop_toBottomOf="@+id/et_rack_in_out_rack" />
+
+        <TextView
+            android:id="@+id/box_count_pallet1"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:singleLine="true"
+            android:text=""
+            android:hint="0"
+            android:padding="10dp"
+            android:layout_marginLeft="2dp"
+            android:textAlignment="center"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/et_rack_in_out_pallettop"
+            app:layout_constraintTop_toTopOf="@+id/TextView4"
+            >
+        </TextView>
+
+        <TextView
+            android:id="@+id/TextView5"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:textColor="@color/coloBlack"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Pallet 2"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView4" />
+
+        <EditText
+            android:id="@+id/et_rack_in_out_palletdown"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:singleLine="true"
+            android:padding="10dp"
+            android:textSize="14dp"
+
+
+            app:layout_constraintStart_toEndOf="@+id/TextView5"
+            app:layout_constraintEnd_toStartOf="@+id/box_count_pallet2"
+            app:layout_constraintTop_toBottomOf="@+id/et_rack_in_out_pallettop" />
+
+        <TextView
+            android:id="@+id/box_count_pallet2"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:text=""
+            android:hint="0"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:layout_marginLeft="2dp"
+            android:textAlignment="center"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/et_rack_in_out_palletdown"
+            app:layout_constraintTop_toTopOf="@+id/TextView5"
+            >
+        </TextView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lyt_listheader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView6">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:weightSum="5"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1.0"
+                    android:background="@drawable/et_custom_total"
+                    android:gravity="center"
+                    android:hint=""
+                    android:text="PalletNo 1"
+                    android:textColor="@color/coloBlack"
+                    android:textSize="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1.0"
+                    android:background="@drawable/et_custom_total"
+                    android:gravity="center"
+                    android:hint=""
+                    android:text="Pallet No 2"
+                    android:textColor="@color/coloBlack"
+                    android:textSize="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/et_custom_total"
+                    android:gravity="center"
+                    android:hint=""
+                    android:text="Rack No"
+                    android:textColor="@color/coloBlack"
+                    android:textSize="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+<!--                <TextView-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    android:layout_weight=".8"-->
+<!--                    android:background="@drawable/et_custom_total"-->
+<!--                    android:gravity="center"-->
+<!--                    android:hint=""-->
+<!--                    android:text="Direction"-->
+<!--                    android:textColor="@color/coloBlack"-->
+<!--                    android:textSize="10dp"-->
+<!--                    app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/et_custom_total"
+                    android:gravity="center"
+                    android:hint=""
+                    android:text="Warehouse"
+                    android:textColor="@color/coloBlack"
+                    android:textSize="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="1.0"
+                    android:background="@drawable/et_custom_total"
+                    android:gravity="center"
+                    android:hint=""
+                    android:text="Date Time"
+                    android:textColor="@color/coloBlack"
+                    android:textSize="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/listempty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
+            android:text="Nothing to show"
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lyt_listheader" />
+        <ListView
+            android:id="@+id/lv_rack_in_out_details"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lyt_listheader"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="   "
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/bt_rack_in_out_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SAVE"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/textView3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView5" />
+
+        <Button
+            android:id="@+id/bt_rack_in_out_chear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_custom1"
+            android:text="CLEAR"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/textView3"
+            app:layout_constraintTop_toTopOf="@+id/bt_rack_in_out_save" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/TextView2"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:textColor="@color/coloBlack"-->
+<!--            android:background="@drawable/et_custom"-->
+<!--            android:gravity="left"-->
+<!--            android:hint=""-->
+<!--            android:padding="10dp"-->
+<!--            android:text="IN / OUT"-->
+<!--            android:textSize="14dp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/TextView1" />-->
+
+<!--        <Spinner-->
+<!--            android:id="@+id/sp_rack_in_out_inout"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginStart="5dp"-->
+<!--            android:layout_marginLeft="5dp"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:background="@drawable/et_custom_total"-->
+<!--            android:gravity="center"-->
+<!--            android:entries="@array/rackInOut"-->
+<!--            android:hint=""-->
+<!--            android:padding="8dp"-->
+<!--            android:text="Last Saved Data"-->
+<!--            android:textSize="10dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/TextView2"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/sp_rack_in_out_warehouse" />-->
+
+        <TextView
+            android:id="@+id/TextView1"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:textColor="@color/coloBlack"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Warehouse"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/TextView2"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:textColor="@color/coloBlack"-->
+<!--            android:background="@drawable/et_custom"-->
+<!--            android:gravity="left"-->
+<!--            android:hint=""-->
+<!--            android:padding="10dp"-->
+<!--            android:text="IN / OUT"-->
+<!--            android:textSize="14dp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/TextView1" />-->
+
+        <TextView
+            android:id="@+id/TextView3"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/coloBlack"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Rack"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sp_rack_in_out_warehouse" />
+
+
+
+        <TextView
+            android:id="@+id/TextView4"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/coloBlack"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Pallet 1"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView3" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>

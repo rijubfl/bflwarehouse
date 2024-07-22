@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.ageingstocktaking.AgeingStockTakingFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/tv_ageing_stock_taking_date"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:hint=""
+            android:padding="10dp"
+            android:text="15/08/2022"
+            android:textAlignment="center"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/ly_ageing_stock_taking_baterry_percentage"
+            app:layout_constraintTop_toTopOf="@+id/TextView1" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ly_ageing_stock_taking_baterry_percentage"
+            android:layout_width="75dp"
+            android:layout_height="0dp"
+            android:padding="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/TextView1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_ageing_stock_taking_user">
+
+            <TextView
+                android:id="@+id/TextView17"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/et_custom"
+                android:hint=""
+                android:padding="8dp"
+                android:text="Battery"
+                android:gravity="center|center"
+                android:textColor="@color/coloBlack"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"></TextView>
+
+            <TextView
+                android:id="@+id/tv_ageing_stock_taking_battery_percentage"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/et_custom"
+                android:hint=""
+                android:padding="0dp"
+                android:text="100 %"
+                android:gravity="center|center"
+                android:textColor="@color/colorGreen"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/TextView17"></TextView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_ageing_stock_taking_user"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:hint=""
+            android:padding="10dp"
+            android:text="1743"
+            android:textAlignment="center"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_ageing_stock_taking_shop"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:hint=""
+            android:padding="10dp"
+            android:text="BFLDFC"
+            android:textAlignment="center"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/ly_ageing_stock_taking_baterry_percentage"
+            app:layout_constraintStart_toEndOf="@+id/tv_ageing_stock_taking_user"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/TextView1"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Zone."
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_ageing_stock_taking_user" />
+
+        <TextView
+            android:id="@+id/TextView6"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Total."
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toTopOf="@+id/bt_ageing_stock_taking_import"
+            app:layout_constraintStart_toStartOf="@+id/bt_ageing_stock_taking_import" />
+
+        <TextView
+            android:id="@+id/tv_ageing_stock_taking_total_scan"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:hint=""
+            android:padding="8dp"
+            android:text="0"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/coloRed"
+            android:textSize="18dp"
+            app:layout_constraintStart_toEndOf="@+id/TextView6"
+            app:layout_constraintTop_toTopOf="@+id/TextView6" />
+
+        <TextView
+            android:id="@+id/TextView7"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Exported."
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_ageing_stock_taking_total_exported"
+            app:layout_constraintTop_toTopOf="@+id/TextView6" />
+
+        <TextView
+            android:id="@+id/tv_ageing_stock_taking_total_exported"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:hint=""
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:text="0"
+            android:textAlignment="center"
+            android:textColor="@color/coloRed"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView6" />
+
+        <Spinner
+            android:id="@+id/sp_ageing_stock_taking_zone"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:ems="10"
+            android:padding="10dp"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_ageing_stock_taking_date"
+            app:layout_constraintStart_toEndOf="@+id/TextView1"
+            app:layout_constraintTop_toTopOf="@+id/TextView1" />
+
+        <TextView
+            android:id="@+id/TextView15"
+            android:layout_width="0dp"
+            android:layout_height="33dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left|center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Last 50 item Scanned"
+            android:textAlignment="center"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_ageing_stock_taking_add" />
+
+        <TextView
+            android:id="@+id/TextView2"
+            android:layout_width="0dp"
+            android:layout_height="33dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left|center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Item Details"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView15" />
+
+        <TextView
+            android:id="@+id/TextView3"
+            android:layout_width="75dp"
+            android:layout_height="33dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left|center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Time"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView8"
+            app:layout_constraintTop_toTopOf="@+id/TextView2" />
+
+        <TextView
+            android:id="@+id/TextView8"
+            android:layout_width="75dp"
+            android:layout_height="33dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left|center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Result"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView2" />
+
+        <TextView
+            android:id="@+id/TextView4"
+            android:layout_width="100dp"
+            android:layout_height="33dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left|center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Date"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView3"
+            app:layout_constraintTop_toTopOf="@+id/TextView2" />
+
+        <ListView
+            android:id="@+id/lv_ageing_stock_taking"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/TextView6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView2" />
+
+        <Button
+            android:id="@+id/bt_ageing_stock_taking_add"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Scan Barcode"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_ageing_stock_taking_report"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
+
+        <Button
+            android:id="@+id/bt_ageing_stock_taking_report"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Report"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_ageing_stock_taking_delete"
+            app:layout_constraintTop_toTopOf="@+id/bt_ageing_stock_taking_add" />
+
+        <Button
+            android:id="@+id/bt_ageing_stock_taking_delete"
+            android:layout_width="75dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Delete"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/bt_ageing_stock_taking_report" />
+
+        <Button
+            android:id="@+id/bt_ageing_stock_taking_clear"
+            android:layout_width="100dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/btn_custom1"
+            android:text="CLEAR"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/bt_ageing_stock_taking_import"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/btn_custom1"
+            android:drawableStart="@drawable/ic_download"
+            android:enabled="false"
+            android:paddingLeft="20dp"
+            android:text="IMPORT"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_ageing_stock_taking_clear"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/bt_ageing_stock_taking_clear" />
+
+        <Button
+            android:id="@+id/bt_ageing_stock_taking_export"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/btn_custom1"
+            android:drawableEnd="@drawable/ic_upload"
+            android:paddingRight="20dp"
+            android:text="EXPORT"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bt_ageing_stock_taking_clear"
+            app:layout_constraintTop_toTopOf="@+id/bt_ageing_stock_taking_clear" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</FrameLayout>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.bflgroup.warehouse.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_chute_configuration_techno"
+        android:name="com.bflgroup.warehouse.ui.chuteconfiguration.techno.ChuteConfigurationTechnoFragment"
+        android:label="@string/menu_chute_configuraion_techno"
+        tools:layout="@layout/fragment_chute_configuration_techno" />
+
+    <fragment
+        android:id="@+id/nav_chute_configuration_jafza"
+        android:name="com.bflgroup.warehouse.ui.chuteconfiguration.jafza.ChuteConfigurationJafzaFragment"
+        android:label="@string/menu_chute_configuraion_jafza"
+        tools:layout="@layout/fragment_chute_configuration_jafza" />
+
+    <fragment
+        android:id="@+id/nav_chute_check_in_check_out"
+        android:name="com.bflgroup.warehouse.ui.chutestatusinout.techno.ChuteCheckInCheckOutFragment"
+        android:label="@string/menu_chute_check_in_check_out_techno"
+        tools:layout="@layout/fragment_chute_check_in_check_out" />
+
+    <fragment
+        android:id="@+id/nav_chute_check_in_check_out_jafza"
+        android:name="com.bflgroup.warehouse.ui.chutestatusinout.jafza.ChuteCheckInCheckOutJafzaFragment"
+        android:label="@string/menu_chute_check_in_check_out_jafza"
+        tools:layout="@layout/fragment_chute_check_in_check_out_jafza" />
+
+    <fragment
+        android:id="@+id/nav_auto_building"
+        android:name="com.bflgroup.warehouse.ui.building.techno.BuildingFragment"
+        android:label="@string/menu_building_box"
+        tools:layout="@layout/fragment_building" />
+
+    <fragment
+        android:id="@+id/nav_auto_building_jafza"
+        android:name="com.bflgroup.warehouse.ui.building.jafza.BoxBuildingAutoJafzaFragment"
+        android:label="@string/menu_building_box_jafza"
+        tools:layout="@layout/fragment_box_building_auto_jafza" />
+
+    <fragment
+        android:id="@+id/nav_build_usa_box"
+        android:name="com.bflgroup.warehouse.ui.usaboxbuilding.UsaBoxBuildingFragment"
+        android:label="@string/menu_building_usa_box"
+        tools:layout="@layout/fragment_usa_box_building" />
+
+    <fragment
+        android:id="@+id/nav_build_pallet"
+        android:name="com.bflgroup.warehouse.ui.palletbuilding.PalletBuildingFragment"
+        android:label="@string/menu_building_pallet"
+        tools:layout="@layout/fragment_pallet_building" />
+
+    <fragment
+        android:id="@+id/nav_rack_in_out"
+        android:name="com.bflgroup.warehouse.ui.rack.RackInRackOutFragment"
+        android:label="@string/menu_rack_in_out"
+        tools:layout="@layout/fragment_rack_in_rack_out" />
+
+    <fragment
+        android:id="@+id/nav_stocktake"
+        android:name="com.bflgroup.warehouse.ui.rackstocktake.StockTakeFragment"
+        android:label="@string/menu_stocktake"
+        tools:layout="@layout/fragment_stocktake" />
+
+    <fragment
+        android:id="@+id/nav_pallet_box_count"
+        android:name="com.bflgroup.warehouse.ui.boxreconcilation.PalletBoxCountFragment"
+        android:label="@string/menu_BoxReconcilation"
+        tools:layout="@layout/fragment_pallet_box_count" />
+
+    <fragment
+        android:id="@+id/nav_show_pallets"
+        android:name="com.bflgroup.warehouse.ui.checkpallets.CheckPalletsFragment"
+        android:label="@string/menu_show_pallets"
+        tools:layout="@layout/fragment_check_pallet" />
+
+    <fragment
+        android:id="@+id/nav_bin_storage_put_away"
+        android:name="com.bflgroup.warehouse.ui.binstorageputaway.BinPutAwayFragment"
+        android:label="@string/menu_bin_storage_put_away"
+        tools:layout="@layout/fragment_bin_put_away" />
+
+    <fragment
+        android:id="@+id/nav_bin_storage_put_away_multiple_tote"
+        android:name="com.bflgroup.warehouse.ui.binstorageputawaymultipletote.BinPutAwayMultipleToteFragment"
+        android:label="@string/menu_bin_storage_put_away_multiple_tote"
+        tools:layout="@layout/fragment_bin_put_away_multiple_tote" />
+
+    <fragment
+        android:id="@+id/nav_bin_storage_put_away_history"
+        android:name="com.bflgroup.warehouse.ui.binstorageputaway.BinPutAwayHistoryFragment"
+        android:label="@string/menu_bin_storage_put_away_history"
+        tools:layout="@layout/fragment_bin_put_away_history" />
+
+    <fragment
+        android:id="@+id/nav_bin_storage_wave_pick"
+        android:name="com.bflgroup.warehouse.ui.binstoragewavepick.BinStorageWavePickFragment"
+        android:label="@string/menu_bin_storage_wave_pick"
+        tools:layout="@layout/fragment_bin_storage_wave_pick" />
+
+    <fragment
+        android:id="@+id/nav_bin_storage_batch_in"
+        android:name="com.bflgroup.warehouse.ui.binstoragebatchin.BinBatchInFragment"
+        android:label="@string/menu_bin_storage_batch_in"
+        tools:layout="@layout/fragment_bin_batch_in" />
+
+    <fragment
+        android:id="@+id/nav_build_del_gin"
+        android:name="com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferFragment"
+        android:label="@string/menu_building_del_pallet"
+        tools:layout="@layout/fragment_gin_scan_transfers" />
+
+    <fragment
+        android:id="@+id/nav_build_del_pallet"
+        android:name="com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletFragment"
+        android:label="@string/menu_building_del_pallet"
+        tools:layout="@layout/fragment_building_delivery_pallet" />
+
+    <fragment
+        android:id="@+id/nav_divsion_seperate"
+        android:name="com.bflgroup.warehouse.ui.divisionseperate.DivisionSeperationFragment"
+        android:label="@string/menu_divsion_seperate"
+        tools:layout="@layout/fragment_division_seperation" />
+
+    <fragment
+        android:id="@+id/nav_gin_verification"
+        android:name="com.bflgroup.warehouse.ui.ginverify.GinVerificationFragment"
+        android:label="@string/menu_gin_verification"
+        tools:layout="@layout/fragment_gin_verification" />
+
+    <fragment
+        android:id="@+id/nav_pallet_status"
+        android:name="com.bflgroup.warehouse.ui.palletstatus.PalletStatusFragment"
+        android:label="@string/menu_pallet_status"
+        tools:layout="@layout/fragment_pallet_status" />
+
+    <fragment
+        android:id="@+id/nav_r1_wh_grn"
+        android:name="com.bflgroup.warehouse.ui.r1whgrn.R1WhGrnFragment"
+        android:label="@string/menu_r1_wh_grn"
+        tools:layout="@layout/fragment_r1_wh_grn" />
+
+    <fragment
+        android:id="@+id/nav_warehouse_grn"
+        android:name="com.bflgroup.warehouse.ui.warehousegrnnew.WarehouseGRNNewFragment"
+        android:label="@string/menu_warehouse_grn"
+        tools:layout="@layout/fragment_warehouse_g_r_n_new" />
+
+    <fragment
+        android:id="@+id/nav_3pl_wh_grn"
+        android:name="com.bflgroup.warehouse.ui.grn3pl.Grn3PlFragment"
+        android:label="@string/menu_3pl_grn"
+        tools:layout="@layout/fragment_grn3_pl" />
+
+    <fragment
+        android:id="@+id/nav_shop_return"
+        android:name="com.bflgroup.warehouse.ui.shopreturns.ReceiveShopReturnsFragment"
+        android:label="@string/menu_shop_return"
+        tools:layout="@layout/fragment_receive_shop_returns" />
+
+    <fragment
+        android:id="@+id/nav_blue_tote_transfer"
+        android:name="com.bflgroup.warehouse.ui.transferbluetotote.single.TransferBlueToteFragment"
+        android:label="@string/menu_blue_tote_transfer"
+        tools:layout="@layout/fragment_transfer_blue_tote" />
+
+    <fragment
+        android:id="@+id/nav_blue_to_euro_box"
+        android:name="com.bflgroup.warehouse.ui.transferbluetotote.eurobox.TransferBlueToEuroBoxFragment"
+        android:label="@string/menu_blue_tote_euro_box"
+        tools:layout="@layout/fragment_blue_to_euro_box" />
+
+    <fragment
+        android:id="@+id/nav_update_box_quantity"
+        android:name="com.bflgroup.warehouse.ui.updateboxqty.updateBoxQuantityFragment"
+        android:label="@string/menu_update_box_qnty"
+        tools:layout="@layout/fragment_update_box_quantity" />
+
+    <fragment
+        android:id="@+id/nav_transfer"
+        android:name="com.bflgroup.warehouse.ui.transfer.TransferFragment"
+        android:label="@string/menu_transfer"
+        tools:layout="@layout/fragment_transfer" />
+
+    <fragment
+        android:id="@+id/nav_stock_taking"
+        android:name="com.bflgroup.warehouse.ui.ageingstocktaking.AgeingStockTakingFragment"
+        android:label="@string/menu_stock_taking"
+        tools:layout="@layout/fragment_ageing_stock_taking" />
+
+    <fragment
+        android:id="@+id/nav_generate_barcode"
+        android:name="com.bflgroup.warehouse.ui.generatebarcode.GenerateBarcodeFragment"
+        android:label="@string/menu_generate_barcode"
+        tools:layout="@layout/fragment_generate_barcode" />
+
+    <fragment
+        android:id="@+id/nav_build_box_barcode"
+        android:name="com.bflgroup.warehouse.ui.factorybuildbox.BuildBoxFragment"
+        android:label="@string/menu_build_Box"
+        tools:layout="@layout/fragment_build_box_barcode" />
+
+    <fragment
+        android:id="@+id/nav_pallets_verification"
+        android:name="com.bflgroup.warehouse.ui.palletsverify.PalletsVerificationFragment"
+        android:label="@string/menu_pallets_verification"
+        tools:layout="@layout/fragment_gin_verification" />
+    <fragment
+        android:id="@+id/nav_validate_toteid"
+        android:name="com.bflgroup.warehouse.ui.validatetoteid.ValidateToteFragment"
+        android:label="@string/menu_validate_tote"
+        tools:layout="@layout/fragment_validatetote" />
+    <fragment
+        android:id="@+id/nav_shuttle_task_create"
+        android:name="com.bflgroup.warehouse.ui.shuttletask.ShuttleTaskFragment"
+        android:label="@string/menu_shuttle_task_create"
+        tools:layout="@layout/fragment_shuttle_task" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.bflgroup.warehouse.ui.settings.SettinFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settin" />
+
+    <fragment
+        android:id="@+id/nav_logoff"
+        android:name="com.bflgroup.warehouse.ui.logout.LogoutFragment"
+        android:label="@string/menu_logout"
+        tools:layout="@layout/fragment_logout" />
+
+
+</navigation>

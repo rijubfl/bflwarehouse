@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.binstorageputawaymultipletote.BinPutAwayMultipleToteFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/TextView3"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="IN / OUT"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/sp_bin_put_away_multiple_inout"
+            android:layout_width="160dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginLeft="6dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/TextView3"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/tv_bin_put_away_multiple_warehouse"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/sp_bin_put_away_multiple_inout"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/TextView2"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:text="Bin Location"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView3" />
+
+        <EditText
+            android:id="@+id/et_bin_put_away_multiple_binlocation"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/TextView2"
+            app:layout_constraintTop_toTopOf="@+id/TextView2"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/TextView1"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:layout_marginTop="5dp"
+            android:padding="10dp"
+            android:text="Tote / Box"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView2" />
+
+        <EditText
+            android:id="@+id/et_bin_put_away_multiple_toteid"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/TextView1"
+            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/TextView9"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:textStyle="bold"
+            android:padding="6dp"
+            android:text="Pending For Save"
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
+
+        <TextView
+            android:id="@+id/TextView10"
+            android:layout_width="110dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:textStyle="bold"
+            android:padding="6dp"
+            android:text="Tote ID"
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9" />
+
+        <TextView
+            android:id="@+id/TextView11"
+            android:layout_width="130dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:hint=""
+            android:padding="6dp"
+            android:text="Box. No. / Trf. No."
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/TextView10"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9" />
+
+        <TextView
+            android:id="@+id/TextView14"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="6dp"
+            android:text="Scan Time"
+            android:textColor="@color/coloBlack"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/TextView11"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9" />
+
+        <ListView
+            android:id="@+id/lv_bin_put_away_multiple_history"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/TextView25"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView10" />
+
+        <TextView
+            android:id="@+id/TextView25"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Total Scaned (Pending for Save)"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toTopOf="@+id/bt_bin_put_away_multiple_clear"
+            app:layout_constraintEnd_toStartOf="@+id/tv_wh_grn_total_plt_count"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_wh_grn_total_plt_count"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="right"
+            android:hint=""
+            android:padding="10dp"
+            android:text="0"
+            android:textColor="@color/coloBlack"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView25" />
+
+        <Button
+            android:id="@+id/bt_bin_put_away_multiple_clear"
+            android:layout_width="150dp"
+            android:layout_marginBottom="5dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_custom1"
+            android:text="CLEAR"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/bt_bin_put_away_multiple_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SAVE"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bt_bin_put_away_multiple_clear"
+            app:layout_constraintTop_toTopOf="@+id/bt_bin_put_away_multiple_clear" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
+
+

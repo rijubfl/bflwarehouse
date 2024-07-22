@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.updateboxqty.updateBoxQuantityFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/tv_gin_toteid"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Tote id"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/et_tote_id"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:text=""
+            android:textStyle="bold"
+            android:textColor="@color/coloBlack"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/bt_tote_process"
+            app:layout_constraintStart_toEndOf="@+id/tv_gin_toteid"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <Button
+            android:id="@+id/bt_tote_process"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Display Items"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <RadioGroup
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:id="@+id/radioGroup"
+            app:layout_constraintTop_toBottomOf="@+id/bt_tote_process"
+            app:layout_constraintBottom_toTopOf="@+id/et_item_code"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/remove"
+                android:layout_width="160dp"
+                android:layout_height="40dp"
+                android:text="Remove Item Qty"
+                android:layout_marginRight="10dp"
+                android:checked="true"
+                android:background="@drawable/et_custom"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/add"
+                android:layout_width="130dp"
+                android:layout_height="40dp"
+                android:text="Add Item Qty"
+                android:background="@drawable/et_custom"
+                android:layout_marginLeft="10dp"
+                android:checked="false"
+                android:textSize="14sp" />
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/et_item_code"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint="Item Code"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/bt_remove_itemcode"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+<!--        <Spinner-->
+<!--            android:id="@+id/sp_add_item"-->
+<!--            android:layout_width="80dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_margin="5dp"-->
+<!--            android:background="@drawable/et_custom_total"-->
+<!--            android:gravity="center"-->
+<!--            android:textAlignment="center"-->
+<!--            android:padding="2dp"-->
+<!--            android:textSize="14sp"-->
+<!--            android:entries='@array/sprItems'-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/bt_remove_itemcode"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/et_item_code"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/radioGroup"-->
+<!--            />-->
+
+<!--        <EditText-->
+<!--             android:id="@+id/sp_add_item"-->
+<!--             android:layout_height="wrap_content"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_margin="5dp"-->
+<!--            android:padding="10dp"-->
+<!--             android:hint="QTY"-->
+<!--             android:inputType="number"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/bt_remove_itemcode"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/et_item_code"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/et_tote_id"-->
+<!--            />-->
+
+        <Button
+            android:id="@+id/bt_remove_itemcode"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Update"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_item_code"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/TextView8"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="6dp"
+            android:text="Itemcode"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_item_code" />
+
+        <TextView
+            android:id="@+id/TextView6"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:hint=""
+            android:padding="6dp"
+            android:text="Box Qty"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView7"
+            app:layout_constraintTop_toTopOf="@+id/TextView8" />
+
+        <TextView
+            android:id="@+id/TextView7"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:hint=""
+            android:padding="6dp"
+            android:text="Qty"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView9"
+            app:layout_constraintTop_toTopOf="@+id/TextView6" />
+
+        <TextView
+            android:id="@+id/TextView9"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:hint=""
+            android:padding="6dp"
+            android:text="New Qty"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView8" />
+
+        <ListView
+            android:id="@+id/lv_div_det"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/textView12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView8" />
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:padding="6dp"
+            android:text="Total Qty"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/bt_clear_field"
+            app:layout_constraintEnd_toStartOf="@+id/totalBoxQty"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/totalBoxQty"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="right"
+            android:hint="0"
+            android:padding="6dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/reducedQty"
+            app:layout_constraintTop_toTopOf="@+id/textView12" />
+
+        <TextView
+            android:id="@+id/reducedQty"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="right"
+            android:hint="0"
+            android:padding="6dp"
+            android:textColor="@color/coloBlack"
+            android:textStyle="bold"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/NewBoxTotal"
+            app:layout_constraintTop_toTopOf="@+id/totalBoxQty" />
+
+        <TextView
+            android:id="@+id/NewBoxTotal"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="right"
+            android:padding="6dp"
+            android:hint="0"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView12" />
+
+        <Button
+            android:id="@+id/bt_clear_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:background="@drawable/btn_custom1"
+            android:text="CLEAR"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/bt_status_Save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SAVE"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="."
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

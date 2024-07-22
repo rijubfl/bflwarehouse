@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.transfervalidation.ValidateTransferFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/coloBlack"
+            android:background="@drawable/et_custom_total"
+            android:padding="7dp"
+            android:text="Item Details"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/textView14"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_item_code" />
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/et_custom_total"
+            android:padding="7dp"
+            android:textColor="@color/coloBlack"
+            android:text="Trf."
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/textView15"
+            app:layout_constraintTop_toBottomOf="@+id/et_item_code" />
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/et_custom_total"
+            android:padding="7dp"
+            android:text="Scan."
+            android:textColor="@color/coloBlack"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/textView16"
+            app:layout_constraintTop_toBottomOf="@+id/et_item_code" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/coloBlack"
+            android:background="@drawable/et_custom_total"
+            android:padding="7dp"
+            android:text="Diff."
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/bt_grn_transfer_scan"
+            app:layout_constraintTop_toBottomOf="@+id/et_item_code" />
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:padding="7dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/coloBlack"
+            android:background="@drawable/et_custom_total"
+            android:text="  Total"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/bt_grn_transfer_save"
+            app:layout_constraintEnd_toStartOf="@+id/tv_grn_transfer_trf_total"
+            app:layout_constraintStart_toStartOf="@+id/lv_grn_transfer_det" />
+
+        <TextView
+            android:id="@+id/tv_grn_transfer_trf_total"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:padding="5dp"
+            android:textColor="@color/coloBlack"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom_total"
+            android:text="0"
+            android:gravity="right"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_grn_transfer_clear"
+            app:layout_constraintEnd_toStartOf="@+id/tv_grn_transfer_scan_total" />
+
+        <TextView
+            android:id="@+id/tv_grn_transfer_scan_total"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:padding="5dp"
+            android:textColor="@color/coloBlack"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom_total"
+            android:text="0"
+            android:gravity="right"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_grn_transfer_clear"
+            app:layout_constraintEnd_toStartOf="@+id/tv_grn_transfer_diff_total" />
+
+        <TextView
+            android:id="@+id/tv_grn_transfer_diff_total"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="10dp"
+            android:padding="5dp"
+            android:textColor="@color/coloBlack"
+            android:background="@drawable/et_custom_total"
+            android:text="0"
+            android:textSize="22sp"
+            android:gravity="right"
+            app:layout_constraintBottom_toTopOf="@+id/btn_grn_transfer_clear"
+            app:layout_constraintEnd_toEndOf="@+id/lv_grn_transfer_det" />
+
+        <ListView
+            android:id="@+id/lv_grn_transfer_det"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/textView12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+        <EditText
+            android:id="@+id/et_grn_transfer_transfer_number"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/et_custom"
+            android:ems="10"
+            android:hint="Transfer No. / Tote Id "
+            android:inputType="textEmailAddress"
+            android:padding="15dp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_grn_transfer_scan"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sp_grn_shopname" />
+
+        <EditText
+            android:id="@+id/et_item_code"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/et_custom"
+            android:ems="10"
+            android:hint="Itemcode"
+            android:inputType="text"
+            android:padding="15dp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_itemcode_scan"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_grn_transfer_transfer_number" />
+
+        <!--        <Spinner-->
+        <!--            android:id="@+id/sp_grn_shopname"-->
+
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            android:layout_height="50dp"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_marginTop="5dp"-->
+        <!--            android:layout_marginEnd="8dp"-->
+        <!--            android:layout_marginRight="8dp"-->
+        <!--            android:background="@drawable/et_custom"-->
+        <!--            android:ems="10"-->
+
+        <!--            android:padding="15dp"-->
+
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
+        <TextView
+            android:id="@+id/sp_grn_shopname"
+            android:hint="Select Shopname"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/et_custom"
+            android:ems="10"
+            android:padding="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+
+        <Button
+            android:id="@+id/bt_grn_transfer_scan"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SCAN"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_grn_transfer_transfer_number" />
+        <Button
+            android:id="@+id/bt_itemcode_scan"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SCAN"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_item_code" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="24dp"
+            android:text="."
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/bt_grn_transfer_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SAVE"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/btn_grn_transfer_clear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/btn_custom1"
+            android:text="CLEAR"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/bt_grn_transfer_save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.448"
+            app:layout_constraintStart_toEndOf="@+id/textView2" />
+
+        <!--        <CheckBox-->
+        <!--            android:id="@+id/chk_grn_transfer_from_shop"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:text="Transfer Received From Other Shop"-->
+        <!--            android:textSize="14sp"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"-->
+        <!--            tools:ignore="TouchTargetSizeCheck" />-->
+
+        <!--        <CheckBox-->
+        <!--            android:id="@+id/chk_grn_view_saved"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:text="View"-->
+        <!--            android:layout_marginRight="8dp"-->
+        <!--            android:textSize="14sp"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"-->
+        <!--            tools:ignore="TouchTargetSizeCheck" />-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

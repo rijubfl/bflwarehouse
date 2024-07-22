@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:id="@+id/group1" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="@string/menu_home" />
+        <item android:title="@string/menu_chute_status_techno">
+            <menu>
+                <item
+                    android:id="@+id/nav_chute_configuration_techno"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_chute_configuraion_techno" />
+                <item
+                    android:id="@+id/nav_chute_check_in_check_out"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_chute_check_in_check_out_techno" />
+                <item
+                    android:id="@+id/nav_chute_check_in_check_out_detail"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_chute_check_in_check_out_detail_techno" />
+            </menu>
+        </item>
+
+        <item android:title="@string/menu_chute_status_jafza">
+            <menu>
+                <item
+                    android:id="@+id/nav_chute_configuration_jafza"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_chute_configuraion_jafza" />
+                <item
+                    android:id="@+id/nav_chute_check_in_check_out_jafza"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_chute_check_in_check_out_jafza" />
+                <item
+                    android:id="@+id/nav_chute_check_in_check_out_detail_jafza"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_chute_check_in_check_out_detail_jafza" />
+            </menu>
+        </item>
+
+        <item android:title="@string/menu_building_auto">
+            <menu>
+                <item
+                    android:id="@+id/nav_auto_building"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_building_box" />
+                <item
+                    android:id="@+id/nav_auto_building_jafza"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_building_box_jafza" />
+            </menu>
+        </item>
+
+        <item android:title="@string/menu_bin_storage_rack">
+            <menu>
+                <item
+                    android:id="@+id/nav_pallet_status"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_pallet_status" />
+                <item
+                    android:id="@+id/nav_bin_storage_batch_in"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_bin_storage_batch_in" />
+                <item
+                    android:id="@+id/nav_bin_storage_put_away"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_bin_storage_put_away" />
+                <item
+                    android:id="@+id/nav_bin_storage_put_away_multiple_tote"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_bin_storage_put_away_multiple_tote" />
+                <item
+                    android:id="@+id/nav_bin_storage_wave_pick"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_bin_storage_wave_pick" />
+                <item
+                    android:id="@+id/nav_bin_storage_put_away_history"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_bin_storage_put_away_history" />
+            </menu>
+        </item>
+
+        <item android:title="@string/menu_rack">
+            <menu>
+                <item
+                    android:id="@+id/nav_rack_in_out"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_rack_in_out" />
+                <item
+                    android:id="@+id/nav_show_pallets"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_show_pallets" />
+                <item
+                    android:id="@+id/nav_stocktake"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_stocktake" />
+                <item
+                    android:id="@+id/nav_pallet_box_count"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_BoxReconcilation" />
+            </menu>
+        </item>
+
+        <item android:title="@string/menu_building">
+            <menu>
+                <item
+                    android:id="@+id/nav_build_usa_box"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_building_usa_box" />
+                <item
+                    android:id="@+id/nav_build_pallet"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_building_pallet" />
+                <item
+                    android:id="@+id/nav_blue_tote_transfer"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_blue_tote_transfer" />
+                <item
+                    android:id="@+id/nav_blue_to_euro_box"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_blue_tote_euro_box" />
+                <item
+                    android:id="@+id/nav_update_box_quantity"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_update_box_qnty" />
+            </menu>
+        </item>
+        <item android:title="@string/menu_black_box">
+            <menu>
+                <item
+                    android:id="@+id/nav_shuttle_git"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_shuttle_git" />
+                <item
+                    android:id="@+id/nav_shuttle_task_create"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_shuttle_task_create" />
+
+            </menu>
+        </item>
+        <item android:title="@string/menu_building_delivery">
+            <menu>
+                <item
+                    android:id="@+id/nav_transfer"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_transfer" />
+                <item
+                    android:id="@+id/nav_build_del_gin"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_building_del_gin" />
+                <item
+                    android:id="@+id/nav_build_del_pallet"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_building_del_pallet" />
+                <item
+                    android:id="@+id/nav_gin_verification"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_gin_verification" />
+                <item
+                    android:id="@+id/nav_pallets_verification"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_pallets_verification" />
+                <item
+                    android:id="@+id/nav_warehouse_grn"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_warehouse_grn" />
+                <item
+                    android:id="@+id/nav_r1_wh_grn"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_r1_wh_grn" />
+                <item
+                    android:id="@+id/nav_3pl_wh_grn"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_3pl_grn" />
+            </menu>
+        </item>
+        <item android:title="@string/menu_rerturns_repair">
+            <menu>
+                <item
+                    android:id="@+id/nav_shop_return"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_shop_return" />
+                <item
+                    android:id="@+id/nav_divsion_seperate"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_divsion_seperate" />
+                <item
+                    android:id="@+id/nav_generate_barcode"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_generate_barcode" />
+                <item
+                    android:id="@+id/nav_build_box_barcode"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_build_Box" />
+                <item
+                    android:id="@+id/nav_validate_toteid"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_validate_tote" />
+            </menu>
+        </item>
+
+        <item android:title="@string/menu_inventory">
+            <menu>
+                <item
+                    android:id="@+id/nav_stock_taking"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_stock_taking" />
+            </menu>
+        </item>
+
+        <item android:title="@string/menu_file">
+            <menu>
+                <item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_settings" />
+                <item
+                    android:id="@+id/nav_logoff"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_logout" />
+            </menu>
+        </item>
+
+
+    </group>
+
+</menu>
