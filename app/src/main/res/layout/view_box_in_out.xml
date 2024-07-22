@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp">
+
+    <TextView
+        android:id="@+id/tv_sr_no"
+        android:layout_width="50dp"
+        android:layout_height="35dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="center_vertical"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Sr No"
+        android:textColor="@color/coloBlack"
+        android:textSize="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/tv_box_no"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="center_vertical"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Box No"
+        android:textColor="@color/coloBlack"
+        android:textSize="12dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_sr_no"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/tv_toteid"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="center_vertical"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Toteid"
+        android:textColor="@color/coloBlack"
+        android:textSize="12dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_box_no"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/tv_qty"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="center_vertical"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Qty"
+        android:textColor="@color/coloBlack"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="12dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_toteid"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/tv_pallet_type"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="center_vertical"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Pallet Type"
+        android:visibility="gone"
+        android:textColor="@color/coloBlack"
+        android:textSize="12dp"
+        app:layout_constraintStart_toEndOf="@+id/tv_qty"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/tv_group_code"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="center_vertical"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Group Code"
+        android:textColor="@color/coloBlack"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_pallet_type"
+        tools:ignore="MissingConstraints" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

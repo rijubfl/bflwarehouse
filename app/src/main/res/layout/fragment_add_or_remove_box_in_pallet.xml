@@ -1,14 +1,520 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.addorremoveboxfrompallet.AddOrRemoveBoxInPalletFragment">
+    android:background="@color/backColor"
+    tools:context=".ui.UpdateBoxfromPallet.AddOrRemoveBoxInPalletFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_add_remove"
+            android:layout_width="130dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Add / Remove"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/et_box_no"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/et_custom"
+            android:focusable="true"
+            android:hint=""
+            android:padding="8dp"
+            android:singleLine="true"
+            android:text=""
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@id/btn_scan_box"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/tv_box"
+            app:layout_constraintTop_toTopOf="@+id/tv_box" />
+
+        <Button
+            android:id="@+id/btn_scan_box"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SCAN"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_box_no"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <RadioGroup
+            android:id="@+id/rg_add_remove"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+
+            android:orientation="horizontal"
+            android:layout_marginLeft="5dp"
+            android:layout_centerInParent="true"
+            app:layout_constraintLeft_toRightOf="@id/tv_add_remove"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_add_remove"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RadioButton
+                android:id="@+id/rb_add"
+                android:layout_width="0dp"
+                android:checked="true"
+                android:layout_weight="1"
+                android:background="@drawable/et_custom_total"
+                android:layout_marginRight="5dp"
+                android:layout_height="match_parent"
+                android:text="Add" />
+
+
+            <RadioButton
+                android:id="@+id/rb_remove"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="1dp"
+                android:background="@drawable/et_custom_total"
+                android:layout_weight="1"
+                android:text="Remove" />
+
+
+        </RadioGroup>
+
+        <!--        <RadioButton-->
+        <!--            android:id="@+id/rb_add"-->
+        <!--            android:layout_width="130dp"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:layout_marginStart="5dp"-->
+        <!--            android:background="@drawable/et_custom_total"-->
+        <!--            android:gravity="center"-->
+        <!--            android:hint=""-->
+        <!--            android:padding="8dp"-->
+        <!--            android:textSize="14dp"-->
+        <!--            android:text="Add"-->
+        <!--            app:layout_constraintLeft_toRightOf="@id/tv_add_remove"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"/>-->
+        <!--        <RadioButton-->
+        <!--            android:id="@+id/rb_remove"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:layout_marginStart="5dp"-->
+        <!--            android:background="@drawable/et_custom_total"-->
+        <!--            android:gravity="center"-->
+        <!--            android:hint=""-->
+        <!--            android:padding="8dp"-->
+        <!--            android:textSize="14dp"-->
+        <!--            android:text="Remove"-->
+        <!--            app:layout_constraintRight_toRightOf="parent"-->
+        <!--            app:layout_constraintLeft_toRightOf="@id/rb_add"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+
+
+        <TextView
+            android:id="@+id/tv_pallets"
+            android:layout_width="130dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Pallet No"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_add_remove" />
+
+        <TextView
+            android:id="@+id/tv_box"
+            android:layout_width="130dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Box No"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_pallets" />
+
+        <EditText
+            android:id="@+id/et_pallet"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginEnd="5dp"
+            android:singleLine="true"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/btn_scan"
+            app:layout_constraintStart_toEndOf="@+id/tv_pallets"
+            app:layout_constraintTop_toTopOf="@+id/tv_pallets"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SCAN"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_pallet"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/TextView4"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:text="Pallet Details"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_box" />
+
+        <TextView
+            android:id="@+id/tv_sr_no"
+            android:layout_width="50dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Sn"
+            android:textStyle="bold"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView4" />
+
+        <TextView
+            android:id="@+id/tv_box_no"
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Box No"
+            android:textStyle="bold"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_sr_no"
+            app:layout_constraintTop_toBottomOf="@+id/TextView4" />
+
+        <TextView
+            android:id="@+id/tv_toteid"
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Toteid"
+            android:textStyle="bold"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_box_no"
+            app:layout_constraintTop_toBottomOf="@+id/TextView4" />
+
+        <TextView
+            android:id="@+id/tv_qty"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Qty"
+            android:textStyle="bold"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_toteid"
+            app:layout_constraintTop_toBottomOf="@+id/TextView4" />
+
+        <TextView
+            android:id="@+id/tv_pallet_type"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:visibility="gone"
+            android:padding="8dp"
+            android:text="Pallet Type"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_qty"
+            app:layout_constraintTop_toBottomOf="@+id/TextView4" />
+
+        <TextView
+            android:id="@+id/tv_group_code"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:visibility="gone"
+            android:padding="8dp"
+            android:text="Group Code"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_pallet_type"
+            app:layout_constraintTop_toBottomOf="@+id/TextView4" />
+
+        <ListView
+            android:id="@+id/lv_box_in_out"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_total_count_text"
+            app:layout_constraintTop_toBottomOf="@+id/tv_sr_no" />
+        <TextView
+            android:id="@+id/tv_action"
+            android:layout_width="50dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Add/Remove"
+            android:textStyle="bold"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView5" />
+
+        <TextView
+            android:id="@+id/TextView5"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textStyle="bold"
+            android:text="Updating box details"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_total_count_text" />
+
+
+        <TextView
+            android:id="@+id/tv_updated_box"
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Box No"
+            android:textStyle="bold"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toTopOf="@id/lv_box_update"
+            app:layout_constraintStart_toEndOf="@+id/tv_action"
+            app:layout_constraintTop_toBottomOf="@+id/TextView5" />
+
+        <TextView
+            android:id="@+id/tv_toteId"
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Tote id"
+            android:textStyle="bold"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toTopOf="@id/lv_box_update"
+            app:layout_constraintStart_toEndOf="@+id/tv_updated_box"
+            app:layout_constraintTop_toBottomOf="@+id/TextView5" />
+
+        <TextView
+            android:id="@+id/tv_updated_box_qty"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center_vertical"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Qty"
+            android:textStyle="bold"
+            android:textColor="@color/coloBlack"
+            app:layout_constraintBottom_toTopOf="@id/lv_box_update"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_toteId"
+            app:layout_constraintTop_toBottomOf="@+id/TextView5" />
+
+        <ListView
+            android:id="@+id/lv_box_update"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btn_clear"
+            app:layout_constraintTop_toBottomOf="@+id/tv_action" />
+
+
+        <TextView
+            android:id="@+id/tv_total_count_text"
+            android:layout_width="104dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:layout_marginTop="2dp"
+            android:padding="10dp"
+            android:text="Total Count."
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toTopOf="@+id/TextView5"
+            app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/tv_total_count"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_total_count_text"
+            app:layout_constraintTop_toTopOf="@+id/tv_total_count_text"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+
+        <TextView
+            android:id="@+id/tv_total_qty"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:gravity="center"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_total_count_text"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+        <TextView
+            android:id="@+id/tv_total_qty_txt"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Total Qty."
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_total_qty"
+            app:layout_constraintTop_toTopOf="@+id/tv_total_count_text" />
+
+
+
+
+        <Button
+            android:id="@+id/btn_clear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="CLEAR"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SAVE"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="   "
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <ProgressBar
+            android:id="@+id/pr_bin_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
