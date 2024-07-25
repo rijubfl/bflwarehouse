@@ -179,10 +179,11 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                    if(!TextUtils.isEmpty(et_chute_status_inout_totid.getText())) {
-                        if(et_chute_status_inout_totid.getText().length()>8) et_chute_status_inout_totid.setText(et_chute_status_inout_totid.getText().toString().substring(0, 8));
+                    if (!TextUtils.isEmpty(et_chute_status_inout_totid.getText())) {
+                        if (et_chute_status_inout_totid.getText().length() > 8)
+                            et_chute_status_inout_totid.setText(et_chute_status_inout_totid.getText().toString().substring(0, 8));
                     }
-                    b_Result = validateToteId(et_chute_status_inout_totid.getText().toString(),tv_chute_checkinout_shop_tote_type.getText().toString());
+                    b_Result = validateToteId(et_chute_status_inout_totid.getText().toString(), tv_chute_checkinout_shop_tote_type.getText().toString());
                     if (!b_Result) {
                         et_chute_status_inout_totid.getText().clear();
                     }
@@ -226,68 +227,72 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                     okMessage("Check In", objGlobal.getErrorMessage());
                     bt_chute_status_inout_in.requestFocus();
                 } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setMessage("Are You sure to save?")
-                            .setTitle("Conformation")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try {
-                                        mWaitDialog = ProgressDialog.show(getContext(), null, "Please wait...");
-                                        mWaitDialog.setCancelable(false);
-                                        final AsyncHttpClient client = new AsyncHttpClient();
-                                        JSONObject json = new JSONObject();
-                                        json.put("ChuteId", chuteId);
-                                        if(objGlobal.getWorkLocation().equals("UAE"))
-                                            json.put("Status", "0");
-                                        else
-                                            json.put("status", true);
-                                        StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
-                                        entity.setContentType("application/json");
-                                        if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
-                                        client.post(getContext(), objGlobal.getRoboChuteStatusAPI() , entity, "application/json",
-                                                new AsyncHttpResponseHandler() {
-                                                    @Override
-                                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                                        try {
-                                                            if (objChuteCheckInCheckOutControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
+                    try {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                        alert.setMessage("Are You sure to save?")
+                                .setTitle("Conformation")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        try {
+                                            mWaitDialog = ProgressDialog.show(getContext(), null, "Please wait...");
+                                            mWaitDialog.setCancelable(false);
+                                            final AsyncHttpClient client = new AsyncHttpClient();
+                                            JSONObject json = new JSONObject();
+                                            json.put("ChuteId", chuteId);
+                                            if (objGlobal.getWorkLocation().equals("UAE"))
+                                                json.put("Status", "0");
+                                            else
+                                                json.put("status", true);
+                                            StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
+                                            entity.setContentType("application/json");
+                                            if (!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
+                                            client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
+                                                    new AsyncHttpResponseHandler() {
+                                                        @Override
+                                                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                                            try {
+                                                                if (objChuteCheckInCheckOutControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
+                                                                    clearAll();
+                                                                } else {
+                                                                    closeWaitDialog();
+                                                                    vibrate(500);
+                                                                    okMessage("Chute Status IN", objGlobal.getErrorMessage());
+                                                                }
+                                                                et_chute_status_inout_chuteid.requestFocus();
+                                                            } catch (Exception e) {
                                                                 clearAll();
-                                                            } else {
-                                                                closeWaitDialog();
                                                                 vibrate(500);
-                                                                okMessage("Chute Status IN", objGlobal.getErrorMessage());
+                                                                okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:try: " + e.toString());
+                                                                et_chute_status_inout_chuteid.requestFocus();
                                                             }
-                                                            et_chute_status_inout_chuteid.requestFocus();
-                                                        } catch (Exception e) {
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                                                             clearAll();
-                                                            vibrate(500);
-                                                            okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:try: " + e.toString());
+                                                            okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure: " + error.toString());
                                                             et_chute_status_inout_chuteid.requestFocus();
                                                         }
-                                                    }
-
-                                                    @Override
-                                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                                        clearAll();
-                                                        okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure: " + error.toString());
-                                                        et_chute_status_inout_chuteid.requestFocus();
-                                                    }
-                                                });
-                                    } catch (Exception e) {
-                                        clearAll();
-                                        okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure: " + e.toString());
+                                                    });
+                                        } catch (Exception e) {
+                                            clearAll();
+                                            okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure: " + e.toString());
+                                            et_chute_status_inout_chuteid.requestFocus();
+                                        }
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
                                         et_chute_status_inout_chuteid.requestFocus();
                                     }
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    et_chute_status_inout_chuteid.requestFocus();
-                                }
-                            })
-                            .show();
+                                })
+                                .show();
+                    } catch (Exception e) {
+                        okMessage("Chute status(updateChuteStatusApiNew)", "bt_chute_status_inout_out.setOnClickListener:onFailure-2: " + e);
+                    }
                 }
             }
         });
@@ -305,54 +310,58 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                 if (!b_Result) {
                     okMessage("Check In", objGlobal.getErrorMessage());
                 } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setMessage("Are You sure to save?")
-                            .setTitle("Conformation")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try {
-                                        mWaitDialog = ProgressDialog.show(getContext(), null, "Please wait...");
-                                        mWaitDialog.setCancelable(false);
-                                        final AsyncHttpClient client = new AsyncHttpClient();
-                                        JSONObject json = new JSONObject();
-                                        json.put("ChuteId", et_chute_status_inout_chuteid.getText().toString());
-                                        if(objGlobal.getWorkLocation().equals("UAE"))
-                                            json.put("Status", "2");
-                                        else
-                                            json.put("status", false);
-                                        StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
-                                        entity.setContentType("application/json");
-                                        if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
-                                        client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
-                                                new AsyncHttpResponseHandler() {
-                                                    @Override
-                                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                                        sortTask(chuteId, totId, shopId, shopName);
-                                                    }
+                    try {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                        alert.setMessage("Are You sure to save?")
+                                .setTitle("Conformation")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        try {
+                                            mWaitDialog = ProgressDialog.show(getContext(), null, "Please wait...");
+                                            mWaitDialog.setCancelable(false);
+                                            final AsyncHttpClient client = new AsyncHttpClient();
+                                            JSONObject json = new JSONObject();
+                                            json.put("ChuteId", et_chute_status_inout_chuteid.getText().toString());
+                                            if (objGlobal.getWorkLocation().equals("UAE"))
+                                                json.put("Status", "2");
+                                            else
+                                                json.put("status", false);
+                                            StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
+                                            entity.setContentType("application/json");
+                                            if (!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
+                                            client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
+                                                    new AsyncHttpResponseHandler() {
+                                                        @Override
+                                                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                                            sortTask(chuteId, totId, shopId, shopName);
+                                                        }
 
-                                                    @Override
-                                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                                        closeWaitDialog();
-                                                        okMessage("Chute status", "validateChuteId:onFailure: " + error.toString());
-                                                        et_chute_status_inout_chuteid.requestFocus();
-                                                    }
-                                                });
-                                    } catch (Exception e) {
-                                        closeWaitDialog();
-                                        okMessage("Chute status", "validateChuteId:Exception: " + e.toString());
+                                                        @Override
+                                                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                                            closeWaitDialog();
+                                                            okMessage("Chute status", "validateChuteId:onFailure: " + error.toString());
+                                                            et_chute_status_inout_chuteid.requestFocus();
+                                                        }
+                                                    });
+                                        } catch (Exception e) {
+                                            closeWaitDialog();
+                                            okMessage("Chute status", "validateChuteId:Exception: " + e.toString());
+                                            et_chute_status_inout_chuteid.requestFocus();
+                                        }
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
                                         et_chute_status_inout_chuteid.requestFocus();
                                     }
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    et_chute_status_inout_chuteid.requestFocus();
-                                }
-                            })
-                            .show();
+                                })
+                                .show();
+                    } catch (Exception e) {
+                        okMessage("Chute status(updateChuteStatusApiNew)", "bt_chute_status_inout_out.setOnClickListener:onFailure-2: " + e);
+                    }
                 }
             }
         });

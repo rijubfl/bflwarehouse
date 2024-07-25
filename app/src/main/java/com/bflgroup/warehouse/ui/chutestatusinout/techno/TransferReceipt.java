@@ -15,27 +15,47 @@ public class TransferReceipt {
     private Global objGlobal = Global.getInstance();
     private InOutGlobal objInOutGlobal = InOutGlobal.getInstance();
     private ResultSet rs;
+    private boolean b_Result;
+    private String s_Result;
+    Connection con = null;
+
+    public TransferReceipt() {
+        con = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(),"ROBOTICS");
+        if (!b_Result) {
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:tmpConnectDb : "+ objGlobal.getRoboServerIP());
+        }
+    }
+
+    public boolean checkConnection() {
+        objGlobal.setErrorMessage("");
+        con = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(),"ROBOTICS");
+        if (!b_Result) {
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:tmpConnectDb : "+ objGlobal.getRoboServerIP());
+        }
+        return true;
+    }
 
     public boolean transferReceipt(String chuteId, String toteId, String shopId, String shopName) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", storeIssue = toteId, trfType = "R", palletNo = "", cartonNo = "1", empName = "", labelInfo="";
         int totalQty = 0;
         float totalAmt = 0, fcRate = 1;
-        Connection con = null;
-        con = objGlobal.getConnection();
+        if (!checkConnection()) {
+            return false;
+        }
         try {
             objInOutGlobal.setTrfRecNo("");
-            if (!dbConnection.insertUpdate("delete from tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("delete from tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", con)) {
                 objGlobal.setErrorNo("transferReceipt:001: "+objGlobal.getConnection().getClientInfo());
                 return false;
             }
             if (!dbConnection.insertUpdate("insert into tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName) " +
                     "select itemcode,sum(qty),0.01,'','',''," + objGlobal.getUserId() + ",'',0,'','','" + objGlobal.getDeviceName() + "' from SortingConformationDetail where TransferNo='' " +
-                    "and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode", objGlobal.getConnection())) {
+                    "and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode", con)) {
                 objGlobal.setErrorNo("transferReceipt:002");
                 return false;
             }
-            rs = dbConnection.getResultSet("select amount=round(sum(qty*rate),2),qty=(sum(qty)) from tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select amount=round(sum(qty*rate),2),qty=(sum(qty)) from tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", con);
             if (rs.next()) {
                 totalAmt = rs.getFloat("amount");
                 totalQty = rs.getInt("qty");
@@ -43,7 +63,7 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt: No Records found");
                 return false;
             }
-            if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
+            if (!dbConnection.getServerDateTime(con)) {
                 objGlobal.setErrorNo("transferReceipt:007");
                 return false;
             }
@@ -52,7 +72,7 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:031");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.datasettings where shopname='" + shopName + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.datasettings where shopname='" + shopName + "'", con);
             if (rs.next()) {
                 dataName = rs.getString("dataName");
                 costCodeTo = rs.getString("costCodeTo");
@@ -62,7 +82,7 @@ public class TransferReceipt {
             }
             if (shopInShop.equals("Y")) {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.datasettings where ShopName in(select mainshop from bfldata.dbo.shopinshop " +
-                        "where subshop='" + shopName + "')", objGlobal.getConnection());
+                        "where subshop='" + shopName + "')", con);
                 if (rs.next()) {
                     dataName = rs.getString("dataName");
                     costCodeTo = rs.getString("costCodeTo");
@@ -196,14 +216,14 @@ public class TransferReceipt {
     }
 
     private String getChuteNo(String shopId) {
-        return dbConnection.stringReturn(objGlobal.getConnection(), "DeliveryChuteConfiguration", "ChuteNo", "shopid", shopId);
+        return dbConnection.stringReturn(con, "DeliveryChuteConfiguration", "ChuteNo", "shopid", shopId);
     }
 
     private String getCartonNo(String dataName, String delDate, String costCodeTo, String locCodeTo) {
         String str = "1";
         try {
             rs = dbConnection.getResultSet("select cartonno=isnull(max(cartonno),0)+1 from " + dataName + ".dbo.transferheader where trfdate='" + delDate + "' and " +
-                    "costcodeto='" + costCodeTo + "' and loccodeto='" + locCodeTo + "'", objGlobal.getConnection());
+                    "costcodeto='" + costCodeTo + "' and loccodeto='" + locCodeTo + "'", con);
             if (rs.next()) {
                 str = rs.getString("cartonno");
             }
@@ -218,13 +238,13 @@ public class TransferReceipt {
         int autoSn = 0;
         try {
             rs = dbConnection.getResultSet("select en=isnull(max(cast(right(trfno,7) as int)),0)+1 from " + dataName + ".dbo.transferheader where left(trfno,2)='" + objGlobal.getTransferPrefix() + "' and (trftype='R') " +
-                    "and substring(trfno,3,1)<>'D'", objGlobal.getConnection());
+                    "and substring(trfno,3,1)<>'D'", con);
             if (rs.next()) {
                 autoSn = Integer.parseInt(rs.getString("en").toString());
             }
             return objGlobal.getTransferPrefix() + String.format("%07d", autoSn);
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("TransferReceipt:getLatestTrfNo:" + ex.toString());
+            objGlobal.setErrorMessage("TransferReceipt:getLatestTrfNo:" + ex);
             return "";
         }
     }

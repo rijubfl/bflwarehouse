@@ -250,7 +250,7 @@ public class BuildingFragment extends Fragment {
                                         StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                                         entity.setContentType("application/json");
                                         if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
-                                        client.post(getContext(), objGlobal.getRoboChuteStatusAPI() + "chute/", entity, "application/json",
+                                        client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
                                                 new AsyncHttpResponseHandler() {
                                                     @Override
                                                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -334,7 +334,7 @@ public class BuildingFragment extends Fragment {
                                         StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                                         entity.setContentType("application/json");
                                         if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
-                                        client.post(getContext(), objGlobal.getRoboChuteStatusAPI() + "chute/", entity, "application/json",
+                                        client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
                                                 new AsyncHttpResponseHandler() {
                                                     @Override
                                                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {

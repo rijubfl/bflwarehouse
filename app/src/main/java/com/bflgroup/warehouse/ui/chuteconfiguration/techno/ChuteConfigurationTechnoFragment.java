@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -22,6 +23,7 @@ import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.comm.Global;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,8 @@ public class ChuteConfigurationTechnoFragment extends Fragment {
     private Button bt_chute_status_techno_config_clear;
     private Button bt_chute_status_techno_config_update;
     private ListView lv_chute_status_techno_config_update;
+
+    private Global objGlobal = Global.getInstance();
 
     private boolean b_Result;
 
@@ -76,7 +80,13 @@ public class ChuteConfigurationTechnoFragment extends Fragment {
         bt_chute_status_techno_config_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                okMessage("getRoboServerIP",  objGlobal.getRoboServerIP());
+                okMessage("getRoboChuteStatusAPI",  objGlobal.getRoboChuteStatusAPI());
+                okMessage("getRoboChuteMapingAPI",  objGlobal.getRoboChuteMapingAPI());
+                okMessage("getRoboSortTaskAPI",  objGlobal.getRoboSortTaskAPI());
+                okMessage("getRoboLabelInfoAPI",  objGlobal.getRoboLabelInfoAPI());
+                okMessage("getRoboChuteStatusAPIToken",  objGlobal.getRoboChuteStatusAPIToken());
+                okMessage("getRoboChuteMapingAPIToken",  objGlobal.getRoboChuteMapingAPIToken());
             }
         });
 
@@ -144,4 +154,14 @@ public class ChuteConfigurationTechnoFragment extends Fragment {
             }
         });
     }
+
+    void okMessage(String title, String message) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+        alert.setMessage(message);
+        alert.setTitle(title);
+        alert.setPositiveButton("OK", null);
+        alert.setCancelable(true);
+        alert.create().show();
+    }
+
 }
