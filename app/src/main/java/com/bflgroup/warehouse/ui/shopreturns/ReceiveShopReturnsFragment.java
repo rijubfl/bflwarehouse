@@ -61,6 +61,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
     private EditText et_shop_return_popup_qty;
     private TextView tv_shop_return_popup_last_scan;
     private TextView tv_shop_return_popup_division;
+    private TextView tv_shop_return_popup_season;
     private Button bt_shop_return_popup_scan;
     private ListView lv_shop_return_popup_scandetail;
     private Button bt_shop_return_popup_ok;
@@ -355,6 +356,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
         String actions = sp_shop_return_popup_action.getSelectedItem().toString();
         tv_shop_return_popup_last_scan.setText("");
         tv_shop_return_popup_division.setText("");
+        tv_shop_return_popup_season.setText("");
         if (TextUtils.isEmpty(et_shop_return_popup_qty.getText())) {
             et_shop_return_popup_qty.setText("1");
         }
@@ -392,6 +394,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
         }
         tv_shop_return_popup_last_scan.setText(itemcode);
         tv_shop_return_popup_division.setText(objReceiveShopReturnsGlobal.getScanItemDivision());
+        tv_shop_return_popup_season.setText(objReceiveShopReturnsGlobal.getScanItemSeason());
         ArrayList<ReceiveShopReturnsScanItemPopupTicket> listReceiveShopReturnsScanItemPopup = objReceiveShopReturnsControl.loadPopupScanItems();
         objMyLoadScanItemPopupAdp = new ReceiveShopReturnsFragment.MyLoadScanItemPopupAdp(listReceiveShopReturnsScanItemPopup);
         lv_shop_return_popup_scandetail.setAdapter(objMyLoadScanItemPopupAdp);
@@ -431,6 +434,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
         et_shop_return_popup_qty = (EditText) myDialog.findViewById(R.id.et_shop_return_popup_qty);
         tv_shop_return_popup_last_scan = (TextView) myDialog.findViewById(R.id.tv_shop_return_popup_last_scan);
         tv_shop_return_popup_division = (TextView) myDialog.findViewById(R.id.tv_shop_return_popup_division);
+        tv_shop_return_popup_season = (TextView) myDialog.findViewById(R.id.tv_shop_return_popup_season);
         bt_shop_return_popup_scan = (Button) myDialog.findViewById(R.id.bt_shop_return_popup_scan);
         lv_shop_return_popup_scandetail = (ListView) myDialog.findViewById(R.id.lv_shop_return_popup_scandetail);
         bt_shop_return_popup_ok = (Button) myDialog.findViewById(R.id.bt_shop_return_popup_ok);

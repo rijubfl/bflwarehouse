@@ -16,6 +16,7 @@ public class ReceiveShopReturnsControl {
     private ReceiveShopReturnsGlobal objReceiveShopReturnsGlobal = ReceiveShopReturnsGlobal.getInstance();
     private boolean b_Result;
     private ResultSet rs;
+    private ResultSet rs1;
 
     public ReceiveShopReturnsControl() {
         objGlobal.setDbName("BFLDATA");
@@ -50,12 +51,14 @@ public class ReceiveShopReturnsControl {
 
     public boolean validItemcode(String itemcode) {
         try {
-            rs = dbConnection.getResultSet("select description,groupcode,department,division from hodata.dbo.vitemmaster where itemcode='" + itemcode + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select description,groupcode,department,division,season = (select IIF(itemType='W','WINTER','SUMMER') from HODATA..itemmaster where itemcode = a.itemcode) from hodata.dbo.vitemmaster a where itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objReceiveShopReturnsGlobal.setScanItemDescription(rs.getString("description").toString());
                 objReceiveShopReturnsGlobal.setScanItemGroup(rs.getString("groupcode").toString());
                 objReceiveShopReturnsGlobal.setScanItemDepartment(rs.getString("department").toString());
                 objReceiveShopReturnsGlobal.setScanItemDivision(rs.getString("division").toString());
+                objReceiveShopReturnsGlobal.setScanItemSeason(rs.getString("season").toString());
+
             } else {
                 objGlobal.setErrorMessage("ReceiveShopReturnsControl:validItemcode : Itemcode is not valid, " + itemcode);
                 return false;

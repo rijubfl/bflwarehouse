@@ -55,9 +55,18 @@ public class BinPutAwayMultipleToteControl {
             objGlobal.setErrorMessage("Tote Id is empty");
             return false;
         }
+
+
+
+
         try {
+
             objBinPutAwayMultipleToteGlobal.setBoxNo("");
-            rs = dbConnection.getResultSet("select top 1 Boxno=TrfNo from " + objGlobal.getCountryDbName() + ".dbo.TransferHeader a where (storeissue='" + toteId + "' or trfno='" + toteId + "') and trfno not in (select palletno from bfldata..closeR1pallet) and LEFT(TrfNo, 2) not in ('SN','SR','SO') and LEFT(storeissue, 2) not in ('SG') order by TrfDate desc", objGlobal.getConnection());
+            if(objGlobal.getWorkLocation().equals("KSA")) {
+                rs = dbConnection.getResultSet("select top 1 Boxno=TrfNo from " + objGlobal.getCountryDbName() + ".dbo.TransferHeader a where (storeissue='" + toteId + "' or trfno='" + toteId + "') and trfno not in (select palletno from bfldata..closeR1pallet) and LEFT(TrfNo, 2) not in ('SN','SR','SO') and LEFT(storeissue, 2) not in ('SG') and trfno in (select trfno from bfldata..verifyGin where trfno = a.trfno) order by TrfDate desc", objGlobal.getConnection());
+            }else {
+                rs = dbConnection.getResultSet("select top 1 Boxno=TrfNo from " + objGlobal.getCountryDbName() + ".dbo.TransferHeader a where (storeissue='" + toteId + "' or trfno='" + toteId + "') and trfno not in (select palletno from bfldata..closeR1pallet) order by TrfDate desc", objGlobal.getConnection());
+            }
             if (!rs.next()) {
                 rs = dbConnection.getResultSet("select Boxno=boxno from usa.dbo.upcboxhead where (ToteID='" + toteId + "' or BoxNo='" + toteId + "') and Closed='N'", objGlobal.getConnection());
                 if (!rs.next()) {
@@ -73,7 +82,11 @@ public class BinPutAwayMultipleToteControl {
                                     if (!rs.next()) {
                                         rs = dbConnection.getResultSet("select top 1 Boxno=palletno from abudata.dbo.tcmitemsall where palletno='" + toteId + "' and palletno not in (select palletno from bfldata..closeR1pallet)", objGlobal.getConnection());
                                         if (!rs.next()) {
-                                            objGlobal.setErrorMessage("Invalid Box / Pallet Number is closed or Invalid (" + toteId + ")");
+                                            if(objGlobal.getWorkLocation().equals("KSA")) {
+                                                objGlobal.setErrorMessage("Invalid Box / Pallet Number is closed Or GRN is not DONE for - (" + toteId + ") ");
+                                            }else{
+                                                objGlobal.setErrorMessage("Invalid Box / Pallet Number is closed or Invalid- (" + toteId + ") ");
+                                            }
                                             return false;
                                         }else objBinPutAwayMultipleToteGlobal.setBoxNo(rs.getString("Boxno"));
                                     }else objBinPutAwayMultipleToteGlobal.setBoxNo(rs.getString("Boxno"));

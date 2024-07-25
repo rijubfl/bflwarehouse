@@ -12,13 +12,13 @@
 
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:weightSum="4"
+        android:weightSum="5"
         app:layout_constraintTop_toTopOf="parent">
         <TextView
             android:id="@+id/tv_srno"
             android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_weight="0.5"
+            android:layout_height="40dp"
+            android:layout_weight="0.4"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
@@ -31,7 +31,7 @@
         <TextView
             android:id="@+id/tv_palletno"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:layout_weight="1.0"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
@@ -46,8 +46,22 @@
         <TextView
             android:id="@+id/tv_boxno_original"
             android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_weight="1.25"
+            android:layout_height="40dp"
+            android:layout_weight="1.30"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="1dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tv_toteid"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1.20"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
@@ -61,8 +75,8 @@
         <TextView
             android:id="@+id/tv_boxno_scanned"
             android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_weight="1.25"
+            android:layout_height="40dp"
+            android:layout_weight="1.1"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
@@ -71,7 +85,9 @@
             android:textSize="12dp"
             app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+
+            />
 
 
     </LinearLayout>

@@ -28,20 +28,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/TextView5" />
 
-<!--        <Spinner-->
-<!--            android:id="@+id/sp_rack_in_out_warehouse"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:textColor="@color/coloBlack"-->
-<!--            android:background="@drawable/et_custom"-->
-<!--            android:gravity="left"-->
-<!--            android:hint=""-->
-<!--            android:padding="10dp"-->
-<!--            android:textSize="14dp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/TextView1"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
+        <!--        <Spinner-->
+        <!--            android:id="@+id/sp_rack_in_out_warehouse"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:layout_marginLeft="5dp"-->
+        <!--            android:textColor="@color/coloBlack"-->
+        <!--            android:background="@drawable/et_custom"-->
+        <!--            android:gravity="left"-->
+        <!--            android:hint=""-->
+        <!--            android:padding="10dp"-->
+        <!--            android:textSize="14dp"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/TextView1"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
 
         <TextView
             android:id="@+id/tv_rack_in_out_warehouse"
@@ -58,50 +58,50 @@
             app:layout_constraintStart_toEndOf="@+id/TextView1"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/TextView3"-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_marginTop="5dp"-->
-<!--            android:textColor="@color/coloBlack"-->
-<!--            android:background="@drawable/et_custom"-->
-<!--            android:gravity="left"-->
-<!--            android:hint=""-->
-<!--            android:padding="10dp"-->
-<!--            android:text="Rack"-->
-<!--            android:textSize="14dp"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/tv_rack_in_out_warehouse" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/TextView3"-->
+        <!--            android:layout_width="100dp"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:layout_marginTop="5dp"-->
+        <!--            android:textColor="@color/coloBlack"-->
+        <!--            android:background="@drawable/et_custom"-->
+        <!--            android:gravity="left"-->
+        <!--            android:hint=""-->
+        <!--            android:padding="10dp"-->
+        <!--            android:text="Rack"-->
+        <!--            android:textSize="14dp"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/tv_rack_in_out_warehouse" />-->
 
 
-<!--        <EditText-->
-<!--            android:id="@+id/et_rack_in_out_rack"-->
+        <!--        <EditText-->
+        <!--            android:id="@+id/et_rack_in_out_rack"-->
 
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_marginStart="5dp"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:layout_marginRight="5dp"-->
-<!--            android:layout_marginTop="5dp"-->
-<!--            android:singleLine="true"-->
-<!--            android:background="@drawable/et_custom"-->
-<!--            android:padding="10dp"-->
-<!--            android:textSize="14dp"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/TextView3"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/bt_search"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/tv_rack_in_out_warehouse" />-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:layout_marginStart="5dp"-->
+        <!--            android:layout_marginLeft="5dp"-->
+        <!--            android:layout_marginRight="5dp"-->
+        <!--            android:layout_marginTop="5dp"-->
+        <!--            android:singleLine="true"-->
+        <!--            android:background="@drawable/et_custom"-->
+        <!--            android:padding="10dp"-->
+        <!--            android:textSize="14dp"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/TextView3"-->
+        <!--            app:layout_constraintEnd_toStartOf="@+id/bt_search"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/tv_rack_in_out_warehouse" />-->
 
-<!--        <Button-->
-<!--            android:id="@+id/bt_search"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:text="Search"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:background="@drawable/btn_custom1"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/et_rack_in_out_rack"-->
-<!--            app:layout_constraintTop_toTopOf="@+id/TextView3"-->
-<!--            />-->
+        <!--        <Button-->
+        <!--            android:id="@+id/bt_search"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:text="Search"-->
+        <!--            android:layout_marginLeft="5dp"-->
+        <!--            android:background="@drawable/btn_custom1"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/et_rack_in_out_rack"-->
+        <!--            app:layout_constraintTop_toTopOf="@+id/TextView3"-->
+        <!--            />-->
 
         <!--        <Spinner-->
         <!--            android:id="@+id/sp_rack_in_out_inout"-->
@@ -121,34 +121,34 @@
         <!--            app:layout_constraintStart_toEndOf="@+id/TextView2"-->
         <!--            app:layout_constraintTop_toBottomOf="@+id/tv_rack_in_out_warehouse" />-->
 
-<!--        <EditText-->
-<!--            android:id="@+id/et_rack_in_out_rack"-->
+        <!--        <EditText-->
+        <!--            android:id="@+id/et_rack_in_out_rack"-->
 
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_marginStart="5dp"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:layout_marginRight="5dp"-->
-<!--            android:layout_marginTop="5dp"-->
-<!--            android:singleLine="true"-->
-<!--            android:background="@drawable/et_custom"-->
-<!--            android:padding="10dp"-->
-<!--            android:textSize="14dp"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/TextView3"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/bt_search"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/sp_rack_in_out_warehouse" />-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:layout_marginStart="5dp"-->
+        <!--            android:layout_marginLeft="5dp"-->
+        <!--            android:layout_marginRight="5dp"-->
+        <!--            android:layout_marginTop="5dp"-->
+        <!--            android:singleLine="true"-->
+        <!--            android:background="@drawable/et_custom"-->
+        <!--            android:padding="10dp"-->
+        <!--            android:textSize="14dp"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/TextView3"-->
+        <!--            app:layout_constraintEnd_toStartOf="@+id/bt_search"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/sp_rack_in_out_warehouse" />-->
 
-<!--        <Button-->
-<!--            android:id="@+id/bt_search"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:text="Search"-->
-<!--            android:layout_marginLeft="5dp"-->
-<!--            android:background="@drawable/btn_custom1"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/et_rack_in_out_rack"-->
-<!--            app:layout_constraintTop_toTopOf="@+id/TextView3"-->
-<!--            />-->
+        <!--        <Button-->
+        <!--            android:id="@+id/bt_search"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:text="Search"-->
+        <!--            android:layout_marginLeft="5dp"-->
+        <!--            android:background="@drawable/btn_custom1"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toEndOf="@+id/et_rack_in_out_rack"-->
+        <!--            app:layout_constraintTop_toTopOf="@+id/TextView3"-->
+        <!--            />-->
 
 
         <EditText
@@ -159,6 +159,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:singleLine="true"
+            android:text=""
             android:background="@drawable/et_custom"
             android:padding="10dp"
             android:maxLines="1"
@@ -208,9 +209,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
-
             android:text=""
-
             android:padding="10dp"
             android:textSize="14dp"
             app:layout_constraintStart_toEndOf="@+id/TextView5"
@@ -218,7 +217,7 @@
             app:layout_constraintTop_toBottomOf="@+id/et_rack_in_out_pallettop"
             app:layout_constraintEnd_toStartOf="@+id/btn_Box_search"
             />
-          <!--  app:layout_constraintEnd_toStartOf="@+id/btn_Box_search"-->
+        <!--  app:layout_constraintEnd_toStartOf="@+id/btn_Box_search"-->
 
 
         <Button
@@ -250,14 +249,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:weightSum="4"
+                android:weightSum="5"
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="0.5"
+                    android:layout_height="35dp"
+                    android:layout_weight="0.4"
                     android:background="@drawable/et_custom_total"
                     android:gravity="center"
                     android:hint=""
@@ -269,7 +268,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="35dp"
                     android:layout_weight="1.0"
                     android:background="@drawable/et_custom_total"
                     android:gravity="center"
@@ -283,8 +282,8 @@
 
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="1.25"
+                    android:layout_height="35dp"
+                    android:layout_weight="1.30"
                     android:background="@drawable/et_custom_total"
                     android:gravity="center"
                     android:hint=""
@@ -297,16 +296,31 @@
 
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="1.25"
+                    android:layout_height="35dp"
+                    android:layout_weight="1.20"
                     android:background="@drawable/et_custom_total"
                     android:gravity="center"
                     android:hint=""
-                    android:text="New Scanned Boxes"
+                    android:text="Toteid"
                     android:textColor="@color/coloBlack"
                     android:textSize="10dp"
                     app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1.1"
+                    android:background="@drawable/et_custom_total"
+                    android:gravity="center"
+                    android:hint=""
+                    android:text="New Scanned"
+                    android:textColor="@color/coloBlack"
+                    android:textSize="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_stocktaking_tickte_date"
+                    app:layout_constraintStart_toStartOf="parent"
+
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <!--                <TextView-->
@@ -423,20 +437,20 @@
         <!--            app:layout_constraintStart_toStartOf="parent"-->
         <!--            app:layout_constraintTop_toBottomOf="@+id/TextView1" />-->
 
-<!--        <TextView-->
-<!--            android:id="@+id/TextView3"-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_marginTop="5dp"-->
-<!--            android:textColor="@color/coloBlack"-->
-<!--            android:background="@drawable/et_custom"-->
-<!--            android:gravity="left"-->
-<!--            android:hint=""-->
-<!--            android:padding="10dp"-->
-<!--            android:text="Rack"-->
-<!--            android:textSize="14dp"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/sp_rack_in_out_warehouse" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/TextView3"-->
+        <!--            android:layout_width="100dp"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            android:layout_marginTop="5dp"-->
+        <!--            android:textColor="@color/coloBlack"-->
+        <!--            android:background="@drawable/et_custom"-->
+        <!--            android:gravity="left"-->
+        <!--            android:hint=""-->
+        <!--            android:padding="10dp"-->
+        <!--            android:text="Rack"-->
+        <!--            android:textSize="14dp"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/sp_rack_in_out_warehouse" />-->
 
         <TextView
             android:id="@+id/TextView4"

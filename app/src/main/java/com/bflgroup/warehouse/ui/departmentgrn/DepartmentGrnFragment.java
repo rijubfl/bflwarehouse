@@ -342,14 +342,13 @@ public class DepartmentGrnFragment extends Fragment {
                                 objPalletBoxCountShared.saveWarehouseTo(sp_rack_in_out_warehouseTo.getSelectedItem().toString());
                                 objPalletBoxCountShared.saveWarehouseFrom(sp_rack_in_out_warehouseFrom.getSelectedItem().toString());
                                 sp_rack_in_out_warehouseTo.setEnabled(false);
-
                                 sp_rack_in_out_warehouseFrom.setEnabled(false);
-
 
                                 return true;
                             } else {
                                 et_rack_in_out_pallettop.setText("");
                                 et_rack_in_out_pallettop.requestFocus();
+                                et_rack_in_out_pallettop.setFocusable(true);
                                 // isvalidrack = false;
 
                             }
@@ -509,14 +508,14 @@ public class DepartmentGrnFragment extends Fragment {
 
             if(objPalletBoxCountControl.isPalletSaved(pallet, sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString())){
 
-                okMessage("Alert","Pallet/tote already saved in WH department GRN");
-                et_rack_in_out_toteid.setText("");
-                et_rack_in_out_toteid.requestFocus();
-                et_rack_in_out_toteid.setFocusable(true);
+                okMessage("Alert","Pallet no/tote id already saved in WH department GRN - " + pallet.toString());
+                //et_rack_in_out_toteid.setText("");
+               // et_rack_in_out_toteid.requestFocus();
+              //  et_rack_in_out_toteid.setFocusable(true);
 
-                et_rack_in_out_pallettop.setText("");
-                et_rack_in_out_pallettop.requestFocus();
-                et_rack_in_out_pallettop.setFocusable(true);
+//                et_rack_in_out_pallettop.setText("");
+//                et_rack_in_out_pallettop.requestFocus();
+//                et_rack_in_out_pallettop.setFocusable(true);
 
                 return false;
             }else {
@@ -524,16 +523,14 @@ public class DepartmentGrnFragment extends Fragment {
                     return true;
                 }
                 else if (objPalletBoxCountControl.isValidbox(pallet, getContext())) {
-
                     return true;
                 }
                 else {
-
-                    okMessage("Alert 1", "Pallet Number " + pallet.trim() + " is closed already");
+                    okMessage("Alert 1", "Pallet Number/Toteid " + pallet.trim() + " is closed already");
                     et_rack_in_out_toteid.setText("");
-                    et_rack_in_out_pallettop.setText("");
                     et_rack_in_out_toteid.requestFocus();
                     et_rack_in_out_toteid.setFocusable(true);
+                    et_rack_in_out_pallettop.setText("");
                     et_rack_in_out_pallettop.requestFocus();
                     et_rack_in_out_pallettop.setFocusable(true);
                     return false;

@@ -92,31 +92,60 @@ public class BuildingDeliveryPalletFragment extends Fragment {
 
         PltScanTransferShared=new PltScanTransferShared(getContext());
 
-        List<Integer> arr1 = objbuildingdelPalletControl.loadRoute();
-        ArrayAdapter<Integer> arrayAdp1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
-        sp_plt_route_id.setAdapter(arrayAdp1);
+        if ( objGlobal.getCountryCode().equals("KSA")){
+            List<String> arr1 = objbuildingdelPalletControl.loadKsaShops();
+            ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
+            sp_plt_route_id.setAdapter(arrayAdp1);
+            if (PltScanTransferShared.Routeidload() != "") {
 
-        if (PltScanTransferShared.Routeidload() != "") {
 
+                sp_plt_route_id.setSelection(arrayAdp1.getPosition(PltScanTransferShared.Routeidload().toString()));
+                sp_plt_route_id.setEnabled(false);
 
-            sp_plt_route_id.setSelection(arrayAdp1.getPosition(Integer.parseInt(PltScanTransferShared.Routeidload().toString())));
-            sp_plt_route_id.setEnabled(false);
+                try {
 
-            try {
+                    PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
 
-                PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
+                    count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
+                    count = getPltCount();
+                    tv_count.setText(count+"");
 
-                count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
-                count = getPltCount();
-                tv_count.setText(count+"");
+                    objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
+                    lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
+                    Log.e("item","reached");
+                } catch (SQLException e) {
+                    Log.e("Log",e.toString());
+                }
 
-                objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
-                lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
-                Log.e("item","reached");
-            } catch (SQLException e) {
-                Log.e("Log",e.toString());
             }
+        }
+        else{
+            List<Integer> arr1 = objbuildingdelPalletControl.loadRoute();
+            ArrayAdapter<Integer> arrayAdp1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
+            sp_plt_route_id.setAdapter(arrayAdp1);
+            Log.e("ROUTEIDLOAD -- UAE",PltScanTransferShared.Routeidload());
+            if (PltScanTransferShared.Routeidload() != "") {
 
+
+                sp_plt_route_id.setSelection(arrayAdp1.getPosition(Integer.parseInt(PltScanTransferShared.Routeidload().toString())));
+                sp_plt_route_id.setEnabled(false);
+
+                try {
+
+                    PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
+
+                    count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
+                    count = getPltCount();
+                    tv_count.setText(count+"");
+
+                    objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
+                    lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
+                    Log.e("item","reached");
+                } catch (SQLException e) {
+                    Log.e("Log",e.toString());
+                }
+
+            }
         }
 
 
@@ -124,10 +153,23 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // your code here
-                get_route_id = Integer.parseInt(sp_plt_route_id.getSelectedItem().toString());
+                if (objGlobal.getCountryCode().equals("KSA")){
 
-                String get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
-                tv_shopnames_col.setText(get_shop_names);
+
+
+
+                    get_route_id = objbuildingdelPalletControl.loadKsaRoute(sp_plt_route_id.getSelectedItem().toString().split("\\(")[0]);
+                    String get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
+                    tv_shopnames_col.setText(get_shop_names);
+
+                }
+                else
+                {
+                    get_route_id = Integer.parseInt(sp_plt_route_id.getSelectedItem().toString());
+
+                    String get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
+                    tv_shopnames_col.setText(get_shop_names);
+                }
             }
 
             @Override
@@ -434,7 +476,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             // Log.e("getCount spinner", SpinnerCount + "");
 
 
-
+            et_plt_shop_transferno.setText("");
             et_plt_shop_transferno.requestFocus();
             return false;
         }

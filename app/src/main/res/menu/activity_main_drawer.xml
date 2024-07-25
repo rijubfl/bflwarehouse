@@ -51,6 +51,7 @@
                     android:id="@+id/nav_auto_building_jafza"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_building_box_jafza" />
+
             </menu>
         </item>
 
@@ -90,6 +91,10 @@
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_rack_in_out" />
                 <item
+                    android:id="@+id/nav_jafza_racks"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_jafza_racks" />
+                <item
                     android:id="@+id/nav_show_pallets"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_show_pallets" />
@@ -126,6 +131,10 @@
                     android:id="@+id/nav_update_box_quantity"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_update_box_qnty" />
+                <item
+                    android:id="@+id/nav_update_box_from_pallet"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_update_box_from_pallet" />
             </menu>
         </item>
         <item android:title="@string/menu_black_box">
@@ -159,6 +168,11 @@
                     android:id="@+id/nav_gin_verification"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_gin_verification" />
+
+                <item
+                    android:id="@+id/nav_gin_verify_local"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_gin_verification_local" />
                 <item
                     android:id="@+id/nav_pallets_verification"
                     android:icon="@drawable/ic_menu_send"
@@ -167,6 +181,17 @@
                     android:id="@+id/nav_warehouse_grn"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_warehouse_grn" />
+                <item
+                    android:id="@+id/nav_department_grn"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_wh_department" />
+
+
+                <item
+                    android:id="@+id/nav_transfer_validate"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_transfer_validate" />
+
                 <item
                     android:id="@+id/nav_r1_wh_grn"
                     android:icon="@drawable/ic_menu_send"

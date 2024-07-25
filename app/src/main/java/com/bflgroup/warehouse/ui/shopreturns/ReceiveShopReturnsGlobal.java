@@ -8,6 +8,7 @@ public class ReceiveShopReturnsGlobal {
     private String scanItemGroup;
     private String scanItemDepartment;
     private String scanItemDivision;
+    private String setScanItemSeason;
     private String autoBuildPalletType;
     private int totalScanQty;
     private int totalTrfQty;
@@ -117,6 +118,9 @@ public class ReceiveShopReturnsGlobal {
     public String getScanItemDivision() {
         return scanItemDivision;
     }
+    public String getScanItemSeason() {
+        return setScanItemSeason;
+    }
 
     public String getAutoBuildPalletType() {
         return autoBuildPalletType;
@@ -128,5 +132,8 @@ public class ReceiveShopReturnsGlobal {
 
     public void setScanItemDivision(String scanItemDivision) {
         this.scanItemDivision = scanItemDivision;
+    }
+    public void setScanItemSeason(String setScanItemSeason) {
+        this.setScanItemSeason = setScanItemSeason;
     }
 }

@@ -116,7 +116,7 @@
     <fragment
         android:id="@+id/nav_build_del_gin"
         android:name="com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferFragment"
-        android:label="@string/menu_building_del_pallet"
+        android:label="@string/menu_building_del_gin"
         tools:layout="@layout/fragment_gin_scan_transfers" />
 
     <fragment
@@ -136,12 +136,40 @@
         android:name="com.bflgroup.warehouse.ui.ginverify.GinVerificationFragment"
         android:label="@string/menu_gin_verification"
         tools:layout="@layout/fragment_gin_verification" />
+    <fragment
+        android:id="@+id/nav_gin_verify_local"
+        android:name="com.bflgroup.warehouse.ui.ginverifylocal.GinVerificationlocalFragment"
+        android:label="@string/menu_gin_verification_local"
+        tools:layout="@layout/fragment_gin_verification" />
 
     <fragment
         android:id="@+id/nav_pallet_status"
         android:name="com.bflgroup.warehouse.ui.palletstatus.PalletStatusFragment"
         android:label="@string/menu_pallet_status"
         tools:layout="@layout/fragment_pallet_status" />
+    <fragment
+        android:id="@+id/nav_transfer_validate"
+        android:name="com.bflgroup.warehouse.ui.transfervalidation.ValidateTransferFragment"
+        android:label="@string/menu_transfer_validate"
+        tools:layout="@layout/fragment_grn_transfer" />
+
+    <fragment
+        android:id="@+id/nav_jafza_racks"
+        android:name="com.bflgroup.warehouse.ui.jafzaracks.JafzaRackInRackOutFragment"
+        android:label="@string/menu_jafza_racks"
+        tools:layout="@layout/fragment_rack_in_rack_out_jafza" />
+
+    <fragment
+        android:id="@+id/nav_update_box_from_pallet"
+        android:name="com.bflgroup.warehouse.ui.Updateboxfrompallet.AddOrRemoveBoxInPalletFragment"
+        android:label="@string/menu_update_box_from_pallet"
+        tools:layout="@layout/fragment_pallet_box_count" />
+
+    <fragment
+        android:id="@+id/nav_department_grn"
+        android:name="com.bflgroup.warehouse.ui.departmentgrn.DepartmentGrnFragment"
+        android:label="@string/menu_wh_department"
+        tools:layout="@layout/fragment_wh_department_grn" />
 
     <fragment
         android:id="@+id/nav_r1_wh_grn"

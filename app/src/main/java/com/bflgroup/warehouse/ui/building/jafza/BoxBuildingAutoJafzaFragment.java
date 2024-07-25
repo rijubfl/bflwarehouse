@@ -183,8 +183,8 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
                     if (!TextUtils.isEmpty(et_chute_building_totid.getText())) {
-                        if (et_chute_building_totid.getText().length() > 8)
-                            et_chute_building_totid.setText(et_chute_building_totid.getText().toString().substring(0, 8));
+                        if (et_chute_building_totid.getText().length() > 9)
+                            et_chute_building_totid.setText(et_chute_building_totid.getText().toString().substring(0, 9));
                     }
                     b_Result = validateToteId(et_chute_building_totid.getText().toString());
                     if (!b_Result) {

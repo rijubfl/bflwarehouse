@@ -108,7 +108,7 @@ public class DepartmentGRNControl {
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");
             }
-            String query = "select * from WHDepartmentGRNHead where  palletno = '" + Toteid + "' and warehouseFrom = '"+WarehouseFrom+"' and warehouseTo = '"+WarehouseTo+"'  ";
+            String query = "select * from WHDepartmentGRNHead where  palletno = '" + Toteid + "' and warehouseFrom = '"+WarehouseFrom+"' and warehouseTo = '"+WarehouseTo+"'  and Convert(varchar,GETDATE(),103) = Date ";
             rs = dbConnection.getResultSet(query, objGlobal.getConnection());
             if (!rs.next()) {
             int Srno = GetGrnNum();

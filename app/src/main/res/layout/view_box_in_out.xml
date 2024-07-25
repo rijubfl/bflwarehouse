@@ -36,7 +36,7 @@
         tools:ignore="MissingConstraints" />
     <TextView
         android:id="@+id/tv_toteid"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="35dp"
         android:background="@drawable/et_custom_total"
         android:gravity="center_vertical"
