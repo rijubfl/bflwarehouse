@@ -11,68 +11,74 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp">
+        android:padding="5dp">
 
-        <TextView
-            android:id="@+id/TextView12"
-            android:layout_width="125dp"
+        <Spinner
+            android:id="@+id/sp_pallet_building_category"
+            android:layout_width="100dp"
             android:layout_height="40dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
             android:hint=""
-            android:padding="10dp"
-            android:text="Pallet Category"
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
+            android:padding="8dp"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/TextView1"
-            android:layout_width="125dp"
+        <Spinner
+            android:id="@+id/sp_pallet_building_printer"
+            android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
             android:hint=""
-            android:padding="10dp"
-            android:text="ToteID. / BoxNo."
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView10" />
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/ch_pallet_building_printer"
+            app:layout_constraintStart_toEndOf="@+id/sp_pallet_building_category"
+            app:layout_constraintTop_toTopOf="@+id/sp_pallet_building_category" />
+
+        <CheckBox
+            android:id="@+id/ch_pallet_building_printer"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:text="Reprint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/sp_pallet_building_category" />
 
         <EditText
             android:id="@+id/et_pallet_building_box_toteid"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="5dp"
             android:background="@drawable/et_custom"
+            android:hint="ToteID. / BoxNo"
             android:padding="10dp"
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             app:layout_constraintEnd_toStartOf="@+id/bt_pallet_building_scan"
-            app:layout_constraintStart_toEndOf="@+id/TextView1"
-            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_pallet_building_remarks"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <EditText
             android:id="@+id/et_pallet_building_remarks"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
+            android:hint="Remarks"
             android:inputType="text"
             android:padding="10dp"
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/TextView10"
-            app:layout_constraintTop_toTopOf="@+id/TextView10"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sp_pallet_building_category"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <TextView
@@ -80,8 +86,8 @@
             android:layout_width="80dp"
             android:layout_height="40dp"
             android:background="@drawable/et_custom"
-            android:padding="10dp"
             android:gravity="center"
+            android:padding="10dp"
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +98,7 @@
             android:id="@+id/tv_pallet_building_tot_count"
             android:layout_width="80dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="3dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:padding="10dp"
@@ -104,20 +110,20 @@
 
         <Button
             android:id="@+id/bt_pallet_building_scan"
-            android:layout_width="70dp"
+            android:layout_width="100dp"
             android:layout_height="40dp"
             android:background="@drawable/btn_custom1"
             android:text="SCAN"
             android:textAllCaps="false"
-            android:textStyle="bold"
             android:textSize="12sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/et_pallet_building_box_toteid"
             tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
             android:id="@+id/TextView9"
-            android:layout_width="130dp"
+            android:layout_width="100dp"
             android:layout_height="40dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/et_custom"
@@ -134,7 +140,6 @@
             android:id="@+id/tv_pallet_building_lastsave"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
@@ -145,21 +150,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/TextView9"
             app:layout_constraintTop_toTopOf="@+id/TextView9" />
-
-        <TextView
-            android:id="@+id/TextView10"
-            android:layout_width="125dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="Remarks."
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView12" />
 
         <TextView
             android:id="@+id/TextView14"
@@ -180,7 +170,7 @@
             android:id="@+id/TextView15"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="3dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint=""
@@ -235,7 +225,7 @@
             android:id="@+id/TextView5"
             android:layout_width="90dp"
             android:layout_height="30dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/et_custom_total"
             android:gravity="left"
             android:hint=""
@@ -245,7 +235,7 @@
             android:textSize="14dp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
+            app:layout_constraintTop_toBottomOf="@+id/et_pallet_building_box_toteid" />
 
         <TextView
             android:id="@+id/TextView8"
@@ -283,12 +273,12 @@
             android:layout_height="30dp"
             android:background="@drawable/et_custom_total"
             android:gravity="left"
-            android:textStyle="bold"
             android:hint=""
             android:padding="6dp"
             android:text="Remarks"
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/TextView7"
             app:layout_constraintStart_toEndOf="@+id/TextView8"
             app:layout_constraintTop_toTopOf="@+id/TextView5" />
@@ -299,12 +289,12 @@
             android:layout_height="30dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
-            android:textStyle="bold"
             android:hint=""
             android:padding="6dp"
             android:text="Qty."
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/TextView5" />
 
@@ -319,39 +309,6 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/TextView5" />
-
-        <RadioGroup
-            android:id="@+id/rg_pallet_building_category"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/TextView12"
-            app:layout_constraintTop_toTopOf="parent">
-
-        <RadioButton
-            android:id="@+id/rb_pallet_building_usa_category"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:checked="true"
-            android:text="USA"
-            android:textStyle="bold"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <RadioButton
-            android:id="@+id/rb_pallet_building_tcm_category"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:enabled="false"
-            android:text="TCM"
-            android:textStyle="bold"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        </RadioGroup>
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

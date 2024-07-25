@@ -1,10 +1,19 @@
 package com.bflgroup.warehouse.ui.transfer;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -35,15 +44,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.comm.BarcodePrinting;
 import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Controls;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.ui.building.jafza.BuildingJafzaGLobal;
 import com.bflgroup.warehouse.ui.palletbuilding.PalletBuildingBoxTicket;
 import com.bflgroup.warehouse.ui.palletbuilding.PalletBuildingFragment;
+import com.sewoo.jpos.command.ZPLConst;
+import com.sewoo.port.android.BluetoothPort;
+import com.sewoo.request.android.RequestHandler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class TransferFragment extends Fragment {
     private TextView tv_transfer_shopname;
@@ -88,7 +103,20 @@ public class TransferFragment extends Fragment {
     private boolean b_Result;
     private boolean allowChangeShop;
 
+    private BarcodePrinting objSample_Print;
     private BluetoothDevices objBluetoothDevices = new BluetoothDevices();
+    private BluetoothPort bluetoothPort;
+    private BroadcastReceiver connectDevice;
+    private Thread btThread;
+    private boolean testPrint=false;
+    private BluetoothAdapter mBluetoothAdapter;
+    private BroadcastReceiver discoveryResult;
+    private BroadcastReceiver searchStart;
+    private BroadcastReceiver searchFinish;
+    private Vector<BluetoothDevice> remoteDevices;
+    private ArrayAdapter<String> adapter;
+    private boolean searchflags;
+    private static final int REQUEST_ENABLE_BT = 2;
 
     public TransferFragment() {
         // Required empty public constructor
@@ -112,6 +140,9 @@ public class TransferFragment extends Fragment {
         sp_transfer_type = (Spinner) view.findViewById(R.id.sp_transfer_type);
         ch_transfer_printer = (CheckBox) view.findViewById(R.id.ch_transfer_printer);
 
+        allowChangeShop = true;
+        saredRef = new TransferSharedRef(getContext());
+
         b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
         if (!b_Result) {
             okMessage("Transfer",objGlobal.getErrorMessage());
@@ -119,6 +150,10 @@ public class TransferFragment extends Fragment {
             ArrayAdapter<String> arrayAdpYellow;
             arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
             sp_transfer_printer.setAdapter(arrayAdpYellow);
+            if (saredRef.loadPrinter() != "") {
+                sp_transfer_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
+                sp_transfer_printer.setEnabled(false);
+            }
         }
 
         List<String> arr;
@@ -126,7 +161,7 @@ public class TransferFragment extends Fragment {
         arr.add("RFID");//0 R
         arr.add("Barcode");//1 B
         arr.add("Itemcode");//2 I
-        arr.add("Pallet / Box");//3 P
+        //arr.add("Pallet / Box");//3 P
         if(objGlobal.getUserName().toUpperCase().equals("RIJU")) arr.add("ROBO Direct");//4 D
         if (objGlobal.getWarehouse().equals("JAFZA")) {
             arr.add("ROBO Direct");//4 D
@@ -140,8 +175,6 @@ public class TransferFragment extends Fragment {
         lv_transfer_items.setAdapter(objTransferScannedItemsAdp);
 
         tv_transfer_total.setText(String.valueOf(objTransferGlobal.getTotalScan()));
-        allowChangeShop = true;
-        saredRef = new TransferSharedRef(getContext());
 
         if (saredRef.loadShopName() != "") {
             if (saredRef.loadScanType().equals("R")) sp_transfer_type.setSelection(0);
@@ -150,7 +183,6 @@ public class TransferFragment extends Fragment {
             if (saredRef.loadScanType().equals("P")) sp_transfer_type.setSelection(3);
             if (saredRef.loadScanType().equals("D")) sp_transfer_type.setSelection(4);
             sp_transfer_type.setEnabled(false);
-            sp_transfer_printer.setEnabled(false);
             tv_transfer_shopname.setText(saredRef.loadShopName());
             et_transfer_pallet_box_no.setText(saredRef.loadPallet());
             tv_transfer_shopname.setEnabled(false);
@@ -184,6 +216,11 @@ public class TransferFragment extends Fragment {
             public void onClick(View v) {
                 String boxPallet = et_transfer_pallet_box_no.getText().toString();
                 String shop = tv_transfer_shopname.getText().toString();
+                String printer = sp_transfer_printer.getSelectedItem().toString();
+                if(printer.isEmpty()){
+                    objGlobal.setErrorMessage("Please select printer");
+                    b_Result=false;
+                }
                 if (sp_transfer_type.getSelectedItemId() == 2) {
                     b_Result = scanItemcode(shop);
                 } else if (sp_transfer_type.getSelectedItemId() == 3) {
@@ -311,6 +348,12 @@ public class TransferFragment extends Fragment {
                 openPopupDelete();
             }
         });
+
+        searchflags = false;
+        objSample_Print = new BarcodePrinting();
+        bluetoothPort = BluetoothPort.getInstance();
+        bluetoothPort.SetMacFilter(false);
+        Init_BluetoothSet();
 
         return view;
     }
@@ -603,13 +646,12 @@ public class TransferFragment extends Fragment {
             tv_transfer_popup_barcode_rfid.requestFocus();
         myDialog.show();
     }
+
     boolean scanRoboDc(String shop) {
         sp_transfer_printer.setEnabled(false);
         sp_transfer_type.setEnabled(false);
         tv_transfer_shopname.setEnabled(false);
         et_transfer_pallet_box_no.setEnabled(false);
-        saredRef.saveScanType("D");
-        saredRef.saveShopName(shop);
         listTransferScannedItems.clear();
         listTransferScannedItems = objTransferControl.loadScannedItems();
         objTransferScannedItemsAdp = new TransferFragment.TransferScannedItemsAdp(listTransferScannedItems);
@@ -617,6 +659,7 @@ public class TransferFragment extends Fragment {
         tv_transfer_total.setText(String.valueOf(objTransferGlobal.getTotalScan()));
         return true;
     }
+
     boolean scanItemcode(String shop) {
         if (shop.isEmpty()) {
             okMessage("Transfer Box/Pallet", "Please Select Shop");
@@ -627,8 +670,6 @@ public class TransferFragment extends Fragment {
         sp_transfer_type.setEnabled(false);
         tv_transfer_shopname.setEnabled(false);
         et_transfer_pallet_box_no.setEnabled(false);
-        saredRef.saveScanType("I");
-        saredRef.saveShopName(shop);
         listTransferScannedItems.clear();
         listTransferScannedItems = objTransferControl.loadScannedItems();
         objTransferScannedItemsAdp = new TransferFragment.TransferScannedItemsAdp(listTransferScannedItems);
@@ -636,6 +677,7 @@ public class TransferFragment extends Fragment {
         tv_transfer_total.setText(String.valueOf(objTransferGlobal.getTotalScan()));
         return true;
     }
+
     boolean scanBoxPallet(String boxPallet, String shop) {
         if (boxPallet.isEmpty()) {
             okMessage("Transfer Box/Pallet", "Please Enter Box/Pallet");
@@ -657,9 +699,6 @@ public class TransferFragment extends Fragment {
         sp_transfer_type.setEnabled(false);
         tv_transfer_shopname.setEnabled(false);
         et_transfer_pallet_box_no.setEnabled(false);
-        saredRef.saveScanType("P");
-        saredRef.savePallet(boxPallet);
-        saredRef.saveShopName(shop);
         listTransferScannedItems.clear();
         listTransferScannedItems = objTransferControl.loadScannedItems();
         objTransferScannedItemsAdp = new TransferFragment.TransferScannedItemsAdp(listTransferScannedItems);
@@ -667,6 +706,7 @@ public class TransferFragment extends Fragment {
         tv_transfer_total.setText(String.valueOf(objTransferGlobal.getTotalScan()));
         return true;
     }
+
     boolean scanRfidBarcode(String rfid) {
         tv_transfer_popup_barcode_rfid_last_scan.setText("");
         tv_transfer_popup_barcode_rfid_last_scan_barcode.setText("");
@@ -674,18 +714,19 @@ public class TransferFragment extends Fragment {
         String scan = objControls.replaceString(rfid.toUpperCase());
         String shop = tv_transfer_shopname.getText().toString();
         String contno = tv_transfer_popup_robo_dc_palletno.getText().toString();
-        String scanType="";
-        if (sp_transfer_type.getSelectedItemId()==0) scanType="R";
-        if (sp_transfer_type.getSelectedItemId()==1) scanType="B";
-        if (sp_transfer_type.getSelectedItemId()==2) scanType="I";
-        if (sp_transfer_type.getSelectedItemId()==3) scanType="P";
-        if (sp_transfer_type.getSelectedItemId()==4) scanType="D";
-
+        String scanType = "";
+        if (sp_transfer_type.getSelectedItemId() == 0) scanType = "R";
+        if (sp_transfer_type.getSelectedItemId() == 1) scanType = "B";
+        if (sp_transfer_type.getSelectedItemId() == 2) scanType = "I";
+        if (sp_transfer_type.getSelectedItemId() == 3) scanType = "P";
+        if (sp_transfer_type.getSelectedItemId() == 4) scanType = "D";
+        saredRef.savePrinter(sp_transfer_printer.getSelectedItem().toString());
+        saredRef.saveShopName(shop);
         int qty = 1;
         if (scan.isEmpty()) {
             scan = "";
         }
-        if(scanType.equals("D")) {
+        if (scanType.equals("D")) {
             if (contno.isEmpty()) {
                 tv_transfer_popup_barcode_rfid_last_result.setText("Please scan ROBO Direct checking container / pallet number");
                 tv_transfer_popup_barcode_rfid_last_result.setTextColor(getActivity().getResources().getColor(R.color.coloRed));
@@ -709,14 +750,15 @@ public class TransferFragment extends Fragment {
             return false;
         }
         tv_transfer_popup_barcode_rfid_last_scan.setText(scan);
-        if(scanType.equals("R")) b_Result = objTransferControl.validateRfid(false, scan, qty, shop);
-        if(scanType.equals("B")) b_Result = objTransferControl.validateBarcode(false, scan, qty, shop);
-        if(scanType.equals("I")) b_Result = objTransferControl.validateItemcode(false, scan, qty, shop);
+        if (scanType.equals("R"))
+            b_Result = objTransferControl.validateRfid(false, scan, qty, shop);
+        if (scanType.equals("B"))
+            b_Result = objTransferControl.validateBarcode(false, scan, qty, shop);
+        if (scanType.equals("I"))
+            b_Result = objTransferControl.validateItemcode(false, scan, qty, shop);
         //if(scanType.equals("P")) b_Result = objTransferControl.validateItemcode(false, scan, qty, shop);
-        if(scanType.equals("D")) {
-
-            b_Result = objTransferControl.validateRoboDirectCheckingResult(false,contno, scan, qty, shop);
-        }
+        if (scanType.equals("D"))
+            b_Result = objTransferControl.validateRoboDirectCheckingResult(false, contno, scan, qty, shop);
         if (!b_Result) {
             if (objGlobal.getErrorMessage().contains("TransferControl")) {
                 okMessage("Transfer", objGlobal.getErrorMessage());
@@ -853,6 +895,182 @@ public class TransferFragment extends Fragment {
             tv_transfer_ticket_qty.setText(String.valueOf(s.qty));
 
             return myView;
+        }
+    }
+
+    private void clearBtDevData() {
+        remoteDevices = new Vector<BluetoothDevice>();
+    }
+
+    public void Init_BluetoothSet() {
+        bluetoothSetup();
+        connectDevice = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                    //"BlueTooth Connect"
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    try {
+                        if (bluetoothPort.isConnected())
+                            bluetoothPort.disconnect();
+                    } catch (IOException e) {
+                        okMessage("IOException",e.toString());
+                    } catch (InterruptedException e) {
+                        okMessage("InterruptedException",e.toString());
+                    }
+                    if ((btThread != null) && (btThread.isAlive())) {
+                        btThread.interrupt();
+                        btThread = null;
+                    }
+                }
+            }
+        };
+
+        discoveryResult = new BroadcastReceiver() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String key;
+                boolean bFlag = true;
+                BluetoothDevice btDev;
+                BluetoothDevice remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (remoteDevice != null) {
+                    if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "]";
+                    } else {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "] [Paired]";
+                    }
+                    if (bluetoothPort.isValidAddress(remoteDevice.getAddress())) {
+                        for (int i = 0; i < remoteDevices.size(); i++) {
+                            btDev = remoteDevices.elementAt(i);
+                            if (remoteDevice.getAddress().equals(btDev.getAddress())) {
+                                bFlag = false;
+                                break;
+                            }
+                        }
+                        if (bFlag) {
+                            remoteDevices.add(remoteDevice);
+                            adapter.add(key);
+                        }
+                    }
+                }
+            }
+        };
+        getActivity().registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        searchStart = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            }
+        };
+        getActivity().registerReceiver(searchStart, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+        searchFinish = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                searchflags = true;
+            }
+        };
+        getActivity().registerReceiver(searchFinish, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+    }
+
+    private void bluetoothSetup() {
+        clearBtDevData();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            return;
+        }
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+
+    private void btConn(final BluetoothDevice btDev) throws IOException {
+        new TransferFragment.connBT().execute(btDev);
+    }
+
+    class connBT extends AsyncTask<BluetoothDevice, Void, Integer> {
+        private final ProgressDialog dialog = new ProgressDialog(getActivity());
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getActivity());
+        String str_temp = "";
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Connecting Device...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(BluetoothDevice... params) {
+            Integer retVal = null;
+            try {
+                bluetoothPort.connect(params[0]);
+                str_temp = params[0].getAddress();
+                retVal = Integer.valueOf(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+                retVal = Integer.valueOf(-1);
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (dialog.isShowing())
+                dialog.dismiss();
+            if (result.intValue() == 0) {
+                RequestHandler rh = new RequestHandler();
+                btThread = new Thread(rh);
+                btThread.start();
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED));
+                printBarCode();
+            } else {
+                alert
+                        .setTitle("Error 4")
+                        .setMessage("Failed to connect Bluetooth device.")
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+            super.onPostExecute(result);
+        }
+    }
+
+    private boolean printSticker(String device) {
+        if (!bluetoothPort.isConnected()) {
+            try {
+               btConn(mBluetoothAdapter.getRemoteDevice(device));
+            } catch (Exception e) {
+                okMessage("Error 2", e.toString());
+                return false;
+            }
+        }
+        printBarCode();
+        return true;
+    }
+
+    private boolean printBarCode() {
+        try {
+            //testPrint=true;
+            byte[] printData = null;
+            if (testPrint) {
+                printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
+            } else {
+                printData = objSample_Print.getTransferPrint("","","","","","","","","");
+            }
+            return objSample_Print.PrintBarcodeByte(printData);
+        } catch (Exception e) {
+            okMessage("Error 3", e.toString());
+            return false;
         }
     }
 

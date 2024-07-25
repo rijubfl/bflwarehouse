@@ -22,7 +22,7 @@ public class PalletBuildingControl {
     public PalletBuildingControl() {
         objGlobal.setDbName("BFLDATA");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("PalletBuildingControl : Connection error");
         }
     }
@@ -30,9 +30,9 @@ public class PalletBuildingControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("BFLDATA");
-        if (dbConnection.checkConnectionClosed() == false) {
+        if (!dbConnection.checkConnectionClosed()) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("PalletBuildingControl.checkConnection : Connection error");
                 return false;
             }

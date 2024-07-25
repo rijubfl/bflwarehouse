@@ -51,8 +51,9 @@ public class UsaBoxBuildingFragment extends Fragment {
     private Spinner sp_usa_box_task;
     private Spinner sp_usa_box_done;
     private TextView tv_usa_box_building_category;
-    private RadioButton rb_usa_box_usa_category;
-    private RadioButton rb_usa_box_tcm_category;
+    private Spinner sp_transfer_printer;
+    private Spinner sp_transfer_type;
+    private CheckBox ch_transfer_printer;
     private CheckBox ch_usa_box_euro;
     private Button bt_usa_box_add_items;
     private Button bt_usa_box_clear;
@@ -98,8 +99,9 @@ public class UsaBoxBuildingFragment extends Fragment {
         et_usa_box_remarks = (EditText) view.findViewById(R.id.et_usa_box_remarks);
         tv_usa_box_last_box = (TextView) view.findViewById(R.id.tv_usa_box_last_box);
         tv_usa_box_building_category = (TextView) view.findViewById(R.id.tv_usa_box_building_category);
-        rb_usa_box_usa_category  = (RadioButton) view.findViewById(R.id.rb_usa_box_usa_category);
-        rb_usa_box_tcm_category = (RadioButton) view.findViewById(R.id.rb_usa_box_tcm_category);
+        sp_transfer_printer=(Spinner) view.findViewById(R.id.sp_transfer_printer);
+        sp_transfer_type=(Spinner) view.findViewById(R.id.sp_transfer_type);
+        ch_transfer_printer=(CheckBox) view.findViewById(R.id.ch_transfer_printer);
         ch_usa_box_euro = (CheckBox) view.findViewById(R.id.ch_usa_box_euro);
 
         flagEdit=false;
@@ -129,21 +131,17 @@ public class UsaBoxBuildingFragment extends Fragment {
                     sp_usa_box_gender.setEnabled(false);
                     sp_usa_box_task.setEnabled(false);
                     sp_usa_box_done.setEnabled(false);
-                    rb_usa_box_usa_category.setEnabled(false);
-                    rb_usa_box_tcm_category.setEnabled(false);
+                    sp_transfer_printer.setEnabled(false);
+                    sp_transfer_type.setEnabled(false);
                     ch_usa_box_euro.setEnabled(false);
+                    ch_transfer_printer.setEnabled(false);
 
                     saredRef.savePltType(sp_usa_box_pallettype.getSelectedItem().toString());
                     saredRef.saveSize(sp_usa_box_size.getSelectedItem().toString());
                     saredRef.saveGender(sp_usa_box_gender.getSelectedItem().toString());
                     saredRef.saveTask(sp_usa_box_task.getSelectedItem().toString());
                     saredRef.saveDone(sp_usa_box_done.getSelectedItem().toString());
-                    if(rb_usa_box_usa_category.isChecked()) {
-                        saredRef.saveBuildType("USA");
-                    }
-                    if(rb_usa_box_tcm_category.isChecked()) {
-                        saredRef.saveBuildType("TCM");
-                    }
+                    saredRef.saveBuildType(sp_transfer_type.getSelectedItem().toString());
                     saredRef.saveEuro("N");
                     if(ch_usa_box_euro.isChecked()) {
                         saredRef.saveEuro("Y");
@@ -195,8 +193,7 @@ public class UsaBoxBuildingFragment extends Fragment {
                 String toteID = et_usa_box_toteid.getText().toString().toUpperCase().trim();
                 String buildType="", euro="";
                 String finalBuildType, finalEuro;
-                if(rb_usa_box_usa_category.isChecked()) buildType = "USA";
-                if(rb_usa_box_tcm_category.isChecked()) buildType = "TCM";
+                buildType = sp_transfer_type.getSelectedItem().toString();
                 if(ch_usa_box_euro.isChecked()) euro="Y";
                 finalBuildType = buildType;
                 finalEuro = euro;
@@ -334,8 +331,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         String allowMix = tv_usa_box_pallettype_allowmix.getText().toString();
         String gender = sp_usa_box_gender.getSelectedItem().toString().trim();
         String buildType="";
-        if(rb_usa_box_usa_category.isChecked()) buildType = "USA";
-        if(rb_usa_box_tcm_category.isChecked()) buildType = "TCM";
+        buildType = sp_transfer_type.getSelectedItem().toString();
         tv_build_usabox_popup_last_scan.setText(itemcode);
         b_Result = objUsaBoxBuildingControl.validateItemcode(flagEdit, itemcode, "", "", palletType, gender, qty, allowMix, buildType);
         if (!b_Result) {
@@ -480,8 +476,8 @@ public class UsaBoxBuildingFragment extends Fragment {
         sp_usa_box_gender.setEnabled(true);
         sp_usa_box_task.setEnabled(true);
         sp_usa_box_done.setEnabled(true);
-        rb_usa_box_usa_category.setEnabled(true);
-        rb_usa_box_tcm_category.setEnabled(true);
+        sp_transfer_printer.setEnabled(true);
+        sp_transfer_type.setEnabled(true);
         ch_usa_box_euro.setEnabled(true);
 
         List<String> arr1 = objUsaBoxBuildingControl.loadSpinner("PT");
@@ -544,17 +540,6 @@ public class UsaBoxBuildingFragment extends Fragment {
         if (saredRef.loadEuro().equals("N")) {
             ch_usa_box_euro.setChecked(false);
             ch_usa_box_euro.setEnabled(false);
-        }
-
-        if(saredRef.loadBuildType().equals("TCM")) {
-            rb_usa_box_tcm_category.setChecked(true);
-            rb_usa_box_usa_category.setEnabled(false);
-            rb_usa_box_tcm_category.setEnabled(false);
-        }
-        if(saredRef.loadBuildType().equals("USA")) {
-            rb_usa_box_usa_category.setChecked(true);
-            rb_usa_box_usa_category.setEnabled(false);
-            rb_usa_box_tcm_category.setEnabled(false);
         }
 
         ArrayList<UsaBoxBuildingScanItemTicket> listUsaBoxBuildingScaItems = objUsaBoxBuildingControl.loadScanItems();

@@ -41,8 +41,8 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-        <TextView
-            android:id="@+id/tv_bin_put_away_multiple_warehouse"
+        <Spinner
+            android:id="@+id/sp_bin_put_away_multiple_warehouse"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginStart="5dp"

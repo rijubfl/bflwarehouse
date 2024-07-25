@@ -33,7 +33,7 @@ import java.util.List;
 public class BinPutAwayMultipleToteFragment extends Fragment {
 
     private Spinner sp_bin_put_away_multiple_inout;
-    private Spinner tv_bin_put_away_multiple_warehouse;
+    private Spinner sp_bin_put_away_multiple_warehouse;
     private EditText et_bin_put_away_multiple_binlocation;
     private EditText et_bin_put_away_multiple_toteid;
     private ListView lv_bin_put_away_multiple_history;
@@ -64,7 +64,7 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_bin_put_away_multiple_tote, container, false);
 
         sp_bin_put_away_multiple_inout = (Spinner) view.findViewById(R.id.sp_bin_put_away_multiple_inout);
-        tv_bin_put_away_multiple_warehouse = (Spinner) view.findViewById(R.id.sp_bin_put_away_multiple_warehouse);
+        sp_bin_put_away_multiple_warehouse = (Spinner) view.findViewById(R.id.sp_bin_put_away_multiple_warehouse);
         et_bin_put_away_multiple_binlocation = (EditText) view.findViewById(R.id.et_bin_put_away_multiple_binlocation);
         et_bin_put_away_multiple_toteid = (EditText) view.findViewById(R.id.et_bin_put_away_multiple_toteid);
         lv_bin_put_away_multiple_history = (ListView) view.findViewById(R.id.lv_bin_put_away_multiple_history);
@@ -97,7 +97,7 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
                 location.add("RUKOON");
             }
             ArrayAdapter<String> array = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, location);
-            tv_bin_put_away_multiple_warehouse.setAdapter(array);
+            sp_bin_put_away_multiple_warehouse.setAdapter(array);
         } catch(Exception e){
             okMessage("",e.toString());
         }
@@ -153,7 +153,7 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
                     String toteId = et_bin_put_away_multiple_toteid.getText().toString().trim().toUpperCase();
                     String location = et_bin_put_away_multiple_binlocation.getText().toString();
                     toteId = objControls.replaceString(toteId);
-                    b_Result = objBinPutAwayMultipleToteControl.validateToteid(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(), sp_bin_put_away_multiple_inout.getSelectedItem().toString(), toteId, location);
+                    b_Result = objBinPutAwayMultipleToteControl.validateToteid(sp_bin_put_away_multiple_warehouse.getSelectedItem().toString(), sp_bin_put_away_multiple_inout.getSelectedItem().toString(), toteId, location);
                     if (!b_Result) {
                         okMessage("BinPutAwayMultipleToteFragment:et_bin_put_away_multiple_toteid", objGlobal.getErrorMessage());
                         vibrate(250);
@@ -175,7 +175,7 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
                     String location = et_bin_put_away_multiple_binlocation.getText().toString().trim().toUpperCase();
                     location = objControls.replaceString(location);
-                    b_Result = objBinPutAwayMultipleToteControl.validateLocation(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(), location, sp_bin_put_away_multiple_inout.getSelectedItem().toString());
+                    b_Result = objBinPutAwayMultipleToteControl.validateLocation(sp_bin_put_away_multiple_warehouse.getSelectedItem().toString(), location, sp_bin_put_away_multiple_inout.getSelectedItem().toString());
                     if (!b_Result) {
                         okMessage("BinPutAwayMultipleToteFragment:et_bin_put_away_multiple_binlocation", objGlobal.getErrorMessage());
                         vibrate(250);
@@ -233,7 +233,7 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                b_Result = objBinPutAwayMultipleToteControl.saveBinInOutMultiple(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(), sp_bin_put_away_multiple_inout.getSelectedItem().toString(), et_bin_put_away_multiple_binlocation.getText().toString(),"");
+                                b_Result = objBinPutAwayMultipleToteControl.saveBinInOutMultiple(sp_bin_put_away_multiple_warehouse.getSelectedItem().toString(), sp_bin_put_away_multiple_inout.getSelectedItem().toString(), et_bin_put_away_multiple_binlocation.getText().toString(),"");
                                 if (b_Result) {
                                     b_Result = clearAll();
                                     if (!b_Result) {
