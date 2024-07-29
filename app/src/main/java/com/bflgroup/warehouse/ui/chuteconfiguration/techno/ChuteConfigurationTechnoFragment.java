@@ -80,13 +80,7 @@ public class ChuteConfigurationTechnoFragment extends Fragment {
         bt_chute_status_techno_config_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                okMessage("getRoboServerIP",  objGlobal.getRoboServerIP());
-                okMessage("getRoboChuteStatusAPI",  objGlobal.getRoboChuteStatusAPI());
-                okMessage("getRoboChuteMapingAPI",  objGlobal.getRoboChuteMapingAPI());
-                okMessage("getRoboSortTaskAPI",  objGlobal.getRoboSortTaskAPI());
-                okMessage("getRoboLabelInfoAPI",  objGlobal.getRoboLabelInfoAPI());
-                okMessage("getRoboChuteStatusAPIToken",  objGlobal.getRoboChuteStatusAPIToken());
-                okMessage("getRoboChuteMapingAPIToken",  objGlobal.getRoboChuteMapingAPIToken());
+
             }
         });
 

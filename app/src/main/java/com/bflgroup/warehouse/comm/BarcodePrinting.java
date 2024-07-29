@@ -7,14 +7,17 @@ import com.sewoo.jpos.printer.CPCLPrinter;
 import java.io.UnsupportedEncodingException;
 
 public class BarcodePrinting {
+    String mainHead="BRANDS FOR LESS";
+
     private CPCLPrinter cpclPrinter;
 
     private Global objGlobal = Global.getInstance();
 
     public BarcodePrinting() {
-        //cpclPrinter = new CPCLPrinter();    //Default = English.
+        cpclPrinter = new CPCLPrinter();    //Default = English.
         //cpclPrinter = new CPCLPrinter("EUC-KR"); // Korean.
-        cpclPrinter = new CPCLPrinter("GB2312"); //Chinese.
+        //cpclPrinter = new CPCLPrinter("GB2312"); //Chinese.
+        //WPC1256
     }
 
     public boolean PrintBarcodeImage(int count, int paper_type, Bitmap label) throws UnsupportedEncodingException {
@@ -40,23 +43,96 @@ public class BarcodePrinting {
         }
     }
 
-    public byte[] getLabelWasNowHoneyWell(String mainHead,String subHead, String itemCode, String itemName, String barcode,String trfno, String was, String now,String mark,String usid,String pQty) {
-        String mainHead1 = "1911A1000800020" + mainHead + "\r\n";
-        String trfNo1 = "1911A0600420122" + subHead + " - " + trfno + "\r\n";
-        String itemName1 = "1911A0600730007" + itemName + "\r\n";
-        String itemCode1 = "1911A0600410006" + itemCode + "\r\n";
-        String was1 = "1911A1000100007" + was + "\r\n";
-        String now1 = "1911A1200060092" + now + "\r\n";
-        String barcode1 = "1e2101900520006C" + barcode + "\r\n";
-        String barcode2 = "1W1j2101900520006" + barcode + "\r\n";
-        String mark1 = "1911A0600260172" + mark + "\r\n";
-        String usid1 = "1911A0600140172" + usid + "\r\n";
-        String pQty1="Q000" + pQty + "\r\n";
+    public byte[] getTransferPrint(String shop,String trfno,String boxno, String qty,String deldate, String trfdate,String toteid,String remarks,String preparedby) {
+        String str1 = "1911A1802590011Tote        : SG00001" + "\r\n";
+        String str2 = "1911A2403470043BRANDS FOR LESS" + "\r\n";
+        String str3 = "1e6308200480107BFT00158952" + "\r\n";
+        String str4 = "1911A1802950011Shop.     : BFLIBN" + "\r\n";
+        String str5 = "1911A1802270011Tnf. No.  : FT00158952" + "\r\n";
+        String str6 = "1911A1801580011Date.     : 10/01/2024" + "\r\n";
+        String str7 = "1911A1801900011Quanity.  : 25" + "\r\n";
+        String str8 = "Q0001" + "\r\n";
+        String str9 = "E" + "\r\n";
 
         byte[] printData = new byte[]{0};
         printData = addToDataVault(printData, "\u0002n\r\n".getBytes());
-        printData = addToDataVault(printData, "\u0002M0500\r\n".getBytes());
-        printData = addToDataVault(printData, "\u0002KcLW0200;\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002M1000\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002KcLW0400;\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002O0220\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002d\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002L\r\n".getBytes());
+        printData = addToDataVault(printData, "D11\r\n".getBytes());
+        printData = addToDataVault(printData, "ySPM\r\n".getBytes());
+        printData = addToDataVault(printData, "A2\r\n".getBytes());
+
+        printData = addToDataVault(printData, str1.getBytes());
+        printData = addToDataVault(printData, str2.getBytes());
+        //printData = addToDataVault(printData, "FB+\r\n".getBytes());
+        printData = addToDataVault(printData, str3.getBytes());
+        printData = addToDataVault(printData, str4.getBytes());
+        printData = addToDataVault(printData, str5.getBytes());
+        printData = addToDataVault(printData, str6.getBytes());
+        //printData = addToDataVault(printData, "FB-\r\n".getBytes());
+        printData = addToDataVault(printData, str7.getBytes());
+        printData = addToDataVault(printData, str8.getBytes());
+        printData = addToDataVault(printData, str9.getBytes());
+        return printData;
+    }
+
+    public byte[] getUsaBox(String shop,String trfno,String boxno, String qty,String deldate, String trfdate,String toteid,String remarks,String preparedby) {
+        String str1 = "1911A1802590011Tote        : SG00001" + "\r\n";
+        String str2 = "1911A2403470043BRANDS FOR LESS" + "\r\n";
+        String str3 = "1e6308200480107BFT00158952" + "\r\n";
+        String str4 = "1911A1802950011Shop.     : BFLIBN" + "\r\n";
+        String str5 = "1911A1802270011Tnf. No.  : FT00158952" + "\r\n";
+        String str6 = "1911A1801580011Date.     : 10/01/2024" + "\r\n";
+        String str7 = "1911A1801900011Quanity.  : 25" + "\r\n";
+        String str8 = "Q0001" + "\r\n";
+        String str9 = "E" + "\r\n";
+
+        byte[] printData = new byte[]{0};
+        printData = addToDataVault(printData, "\u0002n\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002M1000\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002KcLW0400;\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002O0220\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002d\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002L\r\n".getBytes());
+        printData = addToDataVault(printData, "D11\r\n".getBytes());
+        printData = addToDataVault(printData, "ySPM\r\n".getBytes());
+        printData = addToDataVault(printData, "A2\r\n".getBytes());
+
+        printData = addToDataVault(printData, str1.getBytes());
+        printData = addToDataVault(printData, str2.getBytes());
+        //printData = addToDataVault(printData, "FB+\r\n".getBytes());
+        printData = addToDataVault(printData, str3.getBytes());
+        printData = addToDataVault(printData, str4.getBytes());
+        printData = addToDataVault(printData, str5.getBytes());
+        printData = addToDataVault(printData, str6.getBytes());
+        //printData = addToDataVault(printData, "FB-\r\n".getBytes());
+        printData = addToDataVault(printData, str7.getBytes());
+        printData = addToDataVault(printData, str8.getBytes());
+        printData = addToDataVault(printData, str9.getBytes());
+        return printData;
+    }
+
+    public byte[] getUsaPallet(String palletno,String boxcnt,String remarks,String pallettype,String groupname,String preparedby,String trndate,String trntime) {
+        String str1 = "1911A2403390037" + mainHead + "\r\n";
+        String str2 = "1911A1400530012" + preparedby + "\r\n";
+        String str3 = "1911A1400230012" + trndate + "\r\n";
+        String str4 = "1911A1400230150" + trntime + "\r\n";
+        String str5 = "1911A1401900012" + boxcnt + "\r\n";
+        String str6 = "1911A2401450012" + palletno + "\r\n";
+        String str7 = "1e8409402320022A" + palletno + "\r\n";
+        String str8 = "1911A1401110012" + palletno + "\r\n";
+        String str9 = "1911A1401110012" + pallettype + "\r\n";
+        String str10 = "1911A1400830012" + remarks + "\r\n";
+        String str11="Q0001\r\n";
+        String str12="E\r\n";
+
+        byte[] printData = new byte[]{0};
+        printData = addToDataVault(printData, "\u0002n\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002M0986\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002KcLW0384;\r\n".getBytes());
         printData = addToDataVault(printData, "\u0002V0\r\n".getBytes());
         printData = addToDataVault(printData, "\u0002SG\r\n".getBytes());
         printData = addToDataVault(printData, "\u0002d\r\n".getBytes());
@@ -67,23 +143,38 @@ public class BarcodePrinting {
         printData = addToDataVault(printData, "SG\r\n".getBytes());
         printData = addToDataVault(printData, "ySPM\r\n".getBytes());
         printData = addToDataVault(printData, "A2\r\n".getBytes());
-        printData = addToDataVault(printData, mainHead1.getBytes());
-        printData = addToDataVault(printData, itemName1.getBytes());
-        printData = addToDataVault(printData, was1.getBytes());
-        printData = addToDataVault(printData, "1911A0800240024WAS\r\n".getBytes());
-        printData = addToDataVault(printData, "FB+\r\n".getBytes());
-        printData = addToDataVault(printData, "1911A1000220110NOW\r\n".getBytes());
-        printData = addToDataVault(printData, now1.getBytes());
-        printData = addToDataVault(printData, "FB-\r\n".getBytes());
-        printData = addToDataVault(printData, barcode2.getBytes());
-        printData = addToDataVault(printData, itemCode1.getBytes());
-        printData = addToDataVault(printData, "FB+\r\n".getBytes());
-        printData = addToDataVault(printData, "1X1100100210071P0010001002100710012000600120006\r\n".getBytes());
-        printData = addToDataVault(printData, trfNo1.getBytes());
-        printData = addToDataVault(printData, "FB-\r\n".getBytes());
-        printData = addToDataVault(printData, mark1.getBytes());
-        printData = addToDataVault(printData, usid1.getBytes());
-        printData = addToDataVault(printData, pQty1.getBytes());
+        printData = addToDataVault(printData, str1.getBytes());
+        printData = addToDataVault(printData, str2.getBytes());
+        printData = addToDataVault(printData, str3.getBytes());
+        printData = addToDataVault(printData, str4.getBytes());
+        printData = addToDataVault(printData, str5.getBytes());
+        printData = addToDataVault(printData, str6.getBytes());
+        printData = addToDataVault(printData, str7.getBytes());
+        printData = addToDataVault(printData, str8.getBytes());
+        printData = addToDataVault(printData, str9.getBytes());
+        printData = addToDataVault(printData, str10.getBytes());
+        printData = addToDataVault(printData, str11.getBytes());
+        printData = addToDataVault(printData, str12.getBytes());
+        //printData = addToDataVault(printData, "FB+\r\n".getBytes());
+        //printData = addToDataVault(printData, "FB-\r\n".getBytes());
+        return printData;
+    }
+
+    public byte[] getLabelWasNowHoneyWellTestPrint() {
+        byte[] printData = new byte[]{0};
+        printData = addToDataVault(printData, "\u0002n\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002n\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002M0500\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002KcLW0200\r\n;".getBytes());
+        printData = addToDataVault(printData, "\u0002O0220\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002d\r\n".getBytes());
+        printData = addToDataVault(printData, "\u0002L\r\n".getBytes());
+        printData = addToDataVault(printData, "D11\r\n".getBytes());
+        printData = addToDataVault(printData, "ySPM\r\n".getBytes());
+        printData = addToDataVault(printData, "A2\r\n".getBytes());
+        printData = addToDataVault(printData, "1911A1400560045TEST PRINT\r\n".getBytes());
+        printData = addToDataVault(printData, "1e6303400190039C12340678\r\n".getBytes());
+        printData = addToDataVault(printData, "Q0001\r\n".getBytes());
         printData = addToDataVault(printData, "E\r\n".getBytes());
         return printData;
     }
@@ -100,4 +191,9 @@ public class BarcodePrinting {
         }
         return now;
     }
+
+
+
+
+
 }
