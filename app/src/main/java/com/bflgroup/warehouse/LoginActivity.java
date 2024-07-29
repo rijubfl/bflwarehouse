@@ -230,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
                             return false;
                         }
                     }else{
-                        objGlobal.setErrorMessage("Pls check the version. The latest version is - " + getApplicationContext().getString(R.string.app_version));
+                        objGlobal.setErrorMessage("Pls check the version. The latest version is - " + rs1.getString("version"));
                         return false;
                     }
 
