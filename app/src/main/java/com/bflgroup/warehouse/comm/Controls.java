@@ -47,6 +47,9 @@ public class Controls {
             if (objGlobal.getWorkLocation().equals("KSA")) {
                 objGlobal.setCountryWiseBoxPrefix("S");
             }
+            if (objGlobal.getWorkLocation().equals("BAHRAIN")) {
+                objGlobal.setCountryWiseBoxPrefix("B");
+            }
             rs = objDBConnection.getResultSet("select BFLDATA.dbo.getClientlocdetails('Warehouse')", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setWarehouse(rs.getString(1));
