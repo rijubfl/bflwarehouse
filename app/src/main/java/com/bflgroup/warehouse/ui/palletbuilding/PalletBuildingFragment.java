@@ -231,6 +231,7 @@ public class PalletBuildingFragment extends Fragment {
                                     if (!b_Result) {
                                         okMessage("bt_bin_batch_in_save", objGlobal.getErrorMessage());
                                     } else {
+                                        
                                         b_Result = clearAll();
                                         if (!b_Result) {
                                             okMessage("bt_bin_batch_in_save:clearAll", objGlobal.getErrorMessage());
