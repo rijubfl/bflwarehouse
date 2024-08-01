@@ -1,11 +1,18 @@
 package com.bflgroup.warehouse.ui.chutestatusinout.jafza;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -32,18 +39,27 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.comm.BarcodePrinting;
+import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Global;
+import com.bflgroup.warehouse.ui.transfer.TransferFragment;
+import com.bflgroup.warehouse.ui.transfer.TransferGlobal;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.sewoo.port.android.BluetoothPort;
+import com.sewoo.request.android.RequestHandler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
@@ -54,6 +70,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
     private Global objGlobal = Global.getInstance();
     private InOutJafzaGlobal objInOutJafzaGlobal = InOutJafzaGlobal.getInstance();
     private ChuteCheckInCheckOutJafzaControl objChuteCheckInCheckOutJafzaControl = new ChuteCheckInCheckOutJafzaControl();
+    private TransferGlobal objTransferGlobal = TransferGlobal.getInstance();
     ChuteCheckInCheckOutJafzaFragment.MyChuteCheckInCheckOutTrfItemsAdp objMyChuteCheckInCheckOutTrfItemsAdp;
 
     ArrayList<ChuteCheckInCheckOutItemJafzaTicket> listChuteCheckInCheckOutItemTicket = new ArrayList<ChuteCheckInCheckOutItemJafzaTicket>();
@@ -79,11 +96,28 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
     private Button bt_transfer_popup_reprint_print;
     private Button bt_transfer_popup_reprint_close;
     private CheckBox ch_chute_status_inout_reprint_transfer;
+    private Spinner sp_chute_status_inout_chuteid_printer;
 
     private boolean b_Result;
     private String s_Result;
     Boolean strflg = false;
     private ProgressDialog mWaitDialog;
+
+    private BarcodePrinting objSample_Print;
+    private BluetoothDevices objBluetoothDevices = new BluetoothDevices();
+    private BluetoothPort bluetoothPort;
+    private BroadcastReceiver connectDevice;
+    private Thread btThread;
+    private boolean testPrint = false;
+    private BluetoothAdapter mBluetoothAdapter;
+    private BroadcastReceiver discoveryResult;
+    private BroadcastReceiver searchStart;
+    private BroadcastReceiver searchFinish;
+    private Vector<BluetoothDevice> remoteDevices;
+    private ArrayAdapter<String> adapter;
+    private boolean searchflags;
+    private static final int REQUEST_ENABLE_BT = 2;
+
 
     public ChuteCheckInCheckOutJafzaFragment() {
         // Required empty public constructor
@@ -110,9 +144,24 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
         tv_chute_checkinout_time = (TextView) view.findViewById(R.id.tv_chute_checkinout_time);
         tv_chute_checkinout_shop_tote_type = (TextView) view.findViewById(R.id.tv_chute_checkinout_shop_tote_type);
         ch_chute_status_inout_reprint_transfer = (CheckBox) view.findViewById(R.id.ch_chute_status_inout_reprint_transfer);
+        sp_chute_status_inout_chuteid_printer = (Spinner) view.findViewById(R.id.sp_chute_status_inout_chuteid_printer);
 
         clearAll();
         et_chute_status_inout_chuteid.requestFocus();
+
+        b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
+        if (!b_Result) {
+            okMessage("Transfer", objGlobal.getErrorMessage());
+        } else {
+            ArrayAdapter<String> arrayAdpYellow;
+            arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
+            sp_chute_status_inout_chuteid_printer.setAdapter(arrayAdpYellow);
+            if (saredRef.loadPrinter() != "") {
+                sp_chute_status_inout_chuteid_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
+                sp_chute_status_inout_chuteid_printer.setEnabled(false);
+            }
+        }
+
         et_chute_status_inout_chuteid.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -322,56 +371,12 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             }
         });
 
+        searchflags = false;
+        objSample_Print = new BarcodePrinting();
+        bluetoothPort = BluetoothPort.getInstance();
+        bluetoothPort.SetMacFilter(false);
+        Init_BluetoothSet();
         return view;
-    }
-
-    private void saveCheckInOld(String chuteId, String totId, String shopId, String shopName) {
-        try {
-            mWaitDialog = ProgressDialog.show(getContext(), null, "Please wait...");
-            mWaitDialog.setCancelable(false);
-            final AsyncHttpClient client = new AsyncHttpClient();
-            JSONObject json = new JSONObject();
-            json.put("ChuteId", chuteId);
-            json.put("Status", "0");
-            StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
-            entity.setContentType("application/json");
-            client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
-                    new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            try {
-                                if (objChuteCheckInCheckOutJafzaControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
-                                    clearAll();
-                                    closeWaitDialog();
-                                } else {
-                                    vibrate(500);
-                                    closeWaitDialog();
-                                    okMessage("Chute Status IN", objGlobal.getErrorMessage());
-                                }
-                                et_chute_status_inout_chuteid.requestFocus();
-                            } catch (Exception e) {
-                                clearAll();
-                                vibrate(500);
-                                closeWaitDialog();
-                                okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:try: " + e.toString());
-                                et_chute_status_inout_chuteid.requestFocus();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            clearAll();
-                            closeWaitDialog();
-                            okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure-1: " + error.toString());
-                            et_chute_status_inout_chuteid.requestFocus();
-                        }
-                    });
-        } catch (Exception e) {
-            clearAll();
-            closeWaitDialog();
-            okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure-2: " + e.toString());
-            et_chute_status_inout_chuteid.requestFocus();
-        }
     }
 
     private void saveCheckInNew(String chuteId, String totId, String shopId, String shopName) {
@@ -532,10 +537,10 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
         bt_transfer_popup_reprint_print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(reprintTransfer()){
-                    okMessage("Transfer","Done");
+                if (reprintTransfer()) {
+                    okMessage("Transfer", "Done");
                 } else {
-                    okMessage("Transfer",objGlobal.getErrorMessage());
+                    okMessage("Transfer", objGlobal.getErrorMessage());
                 }
             }
         });
@@ -624,40 +629,6 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
         if (mWaitDialog != null) {
             mWaitDialog.dismiss();
             mWaitDialog = null;
-        }
-    }
-
-    private void labelInfo(String shopId, String totId, String labelInfo) {
-        try {
-            final AsyncHttpClient client = new AsyncHttpClient();
-            JSONObject json = new JSONObject();
-            json.put("toteid", totId);
-            json.put("labelInfo", labelInfo);
-            json.put("spare1", "");
-            json.put("spare2", "");
-            json.put("createtime", objGlobal.getServerDate());
-            StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
-            entity.setContentType("application/json");
-            client.post(getContext(), "http://192.168.8.14:18153/Conveyor/WCS153/", entity, "application/json", new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    objChuteCheckInCheckOutJafzaControl.updateChuteApi("LabelInfokApi", shopId, objInOutJafzaGlobal.getTrfRecNo(), objInOutJafzaGlobal.getChuteNo(), objInOutJafzaGlobal.getLabelInfo());
-                    closeWaitDialog();
-                    clearAll();
-                    et_chute_status_inout_chuteid.requestFocus();
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    clearAll();
-                    okMessage("Chute status", "labelInfo:onFailure: " + error.toString());
-                    closeWaitDialog();
-                }
-            });
-        } catch (Exception e) {
-            clearAll();
-            okMessage("Chute status", "labelInfo:Exception: " + e.toString());
-            closeWaitDialog();
         }
     }
 
@@ -765,9 +736,10 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             return false;
         }
     }
+
     private boolean reprintTransfer() {
         String scan = et_transfer_popup_reprint_trfno.getText().toString().toUpperCase();
-        String shopname=tv_transfer_popup_reprint_shopname.getText().toString().toUpperCase();
+        String shopname = tv_transfer_popup_reprint_shopname.getText().toString().toUpperCase();
         if (shopname.isEmpty()) {
             okMessage("Chute Status", "Please select Shopname");
             tv_transfer_popup_reprint_shopname.requestFocus();
@@ -780,7 +752,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             vibrate(100);
             return false;
         }
-        b_Result = objChuteCheckInCheckOutJafzaControl.reprintTransfer(scan,shopname);
+        b_Result = objChuteCheckInCheckOutJafzaControl.reprintTransfer(scan, shopname);
         if (!b_Result) {
             okMessage("Chute Status", objGlobal.getErrorMessage());
             return false;
@@ -789,6 +761,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
         et_transfer_popup_reprint_trfno.requestFocus();
         return true;
     }
+
     void clearAll() {
         et_chute_status_inout_chuteid.setText("");
         et_chute_status_inout_totid.setText("");
@@ -867,4 +840,185 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             return myView;
         }
     }
+
+
+    private void clearBtDevData() {
+        remoteDevices = new Vector<BluetoothDevice>();
+    }
+
+    public void Init_BluetoothSet() {
+        bluetoothSetup();
+        connectDevice = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                    //"BlueTooth Connect"
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    try {
+                        if (bluetoothPort.isConnected())
+                            bluetoothPort.disconnect();
+                    } catch (IOException e) {
+                        okMessage("IOException", e.toString());
+                    } catch (InterruptedException e) {
+                        okMessage("InterruptedException", e.toString());
+                    }
+                    if ((btThread != null) && (btThread.isAlive())) {
+                        btThread.interrupt();
+                        btThread = null;
+                    }
+                }
+            }
+        };
+
+        discoveryResult = new BroadcastReceiver() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String key;
+                boolean bFlag = true;
+                BluetoothDevice btDev;
+                BluetoothDevice remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (remoteDevice != null) {
+                    if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "]";
+                    } else {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "] [Paired]";
+                    }
+                    if (bluetoothPort.isValidAddress(remoteDevice.getAddress())) {
+                        for (int i = 0; i < remoteDevices.size(); i++) {
+                            btDev = remoteDevices.elementAt(i);
+                            if (remoteDevice.getAddress().equals(btDev.getAddress())) {
+                                bFlag = false;
+                                break;
+                            }
+                        }
+                        if (bFlag) {
+                            remoteDevices.add(remoteDevice);
+                            adapter.add(key);
+                        }
+                    }
+                }
+            }
+        };
+        getActivity().registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        searchStart = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            }
+        };
+        getActivity().registerReceiver(searchStart, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+        searchFinish = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                searchflags = true;
+            }
+        };
+        getActivity().registerReceiver(searchFinish, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+    }
+
+    private void bluetoothSetup() {
+        clearBtDevData();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            return;
+        }
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+
+    private void btConn(final BluetoothDevice btDev) throws IOException {
+        new ChuteCheckInCheckOutJafzaFragment.connBT().execute(btDev);
+    }
+
+    class connBT extends AsyncTask<BluetoothDevice, Void, Integer> {
+        private final ProgressDialog dialog = new ProgressDialog(getActivity());
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getActivity());
+        String str_temp = "";
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Connecting Device...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(BluetoothDevice... params) {
+            Integer retVal = null;
+            try {
+                bluetoothPort.connect(params[0]);
+                str_temp = params[0].getAddress();
+                retVal = Integer.valueOf(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+                retVal = Integer.valueOf(-1);
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (dialog.isShowing())
+                dialog.dismiss();
+            if (result.intValue() == 0) {
+                RequestHandler rh = new RequestHandler();
+                btThread = new Thread(rh);
+                btThread.start();
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED));
+                printBarCode();
+            } else {
+                alert
+                        .setTitle("Error 4")
+                        .setMessage("Failed to connect Bluetooth device.")
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+            super.onPostExecute(result);
+        }
+    }
+
+    private boolean printSticker(String device) {
+        if (!bluetoothPort.isConnected()) {
+            try {
+                btConn(mBluetoothAdapter.getRemoteDevice(device));
+            } catch (Exception e) {
+                okMessage("Error 2", e.toString());
+                return false;
+            }
+        }
+        printBarCode();
+        return true;
+    }
+
+    private boolean printBarCode() {
+        try {
+            //testPrint=true;
+            byte[] printData = null;
+            if (testPrint) {
+                printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
+            } else {
+                printData = objSample_Print.getTransferPrint(
+                        objTransferGlobal.getPshopname(), objTransferGlobal.getPtrfno(), objTransferGlobal.getPboxno(),
+                        objTransferGlobal.getPqty(), objTransferGlobal.getPdeldate(), objTransferGlobal.getPtrfdate(),
+                        objTransferGlobal.getPtoteid(), objTransferGlobal.getPremarks(), objTransferGlobal.getPpreparedby());
+            }
+            return objSample_Print.PrintBarcodeByte(printData);
+        } catch (Exception e) {
+            okMessage("Error 3", e.toString());
+            return false;
+        }
+    }
+
 }

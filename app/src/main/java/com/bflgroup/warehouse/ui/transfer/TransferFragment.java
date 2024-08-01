@@ -400,7 +400,7 @@ public class TransferFragment extends Fragment {
             }
             tv_transfer_last_transfer.setText("Trf.No.: " + objTransferGlobal.getTrfRecNo() + ", Shop Name.: " + shopname);
         }
-        b_Result = objTransferReceipt.forPrint(shopname, objTransferGlobal.getTrfRecNo());
+        b_Result = objTransferControl.forPrint(shopname, objTransferGlobal.getTrfRecNo());
         if (!b_Result) {
             okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
             return false;
@@ -425,6 +425,7 @@ public class TransferFragment extends Fragment {
         bt_transfer_popup_reprint_print = (Button) myDialog.findViewById(R.id.bt_transfer_popup_reprint_print);
         bt_transfer_popup_reprint_close = (Button) myDialog.findViewById(R.id.bt_transfer_popup_reprint_close);
         tv_transfer_popup_reprint_shopname.requestFocus();
+
         et_transfer_popup_reprint_trfno.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
@@ -441,16 +442,17 @@ public class TransferFragment extends Fragment {
                 return false;
             }
         });
+
         bt_transfer_popup_reprint_print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(reprintTransfer()){
-                    okMessage("Transfer","Done");
-                } else {
-                    okMessage("Transfer",objGlobal.getErrorMessage());
+                if (reprintTransfer()) {
+                    ch_transfer_printer.setChecked(false);
+                    myDialog.dismiss();
                 }
             }
         });
+
         bt_transfer_popup_reprint_fetch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -823,7 +825,7 @@ public class TransferFragment extends Fragment {
 
     private boolean reprintTransfer() {
         String scan = et_transfer_popup_reprint_trfno.getText().toString().toUpperCase();
-        String shopname=tv_transfer_popup_reprint_shopname.getText().toString().toUpperCase();
+        String shopname = tv_transfer_popup_reprint_shopname.getText().toString().toUpperCase();
         if (shopname.isEmpty()) {
             okMessage("Transfer", "Please select Shopname");
             tv_transfer_popup_reprint_shopname.requestFocus();
@@ -836,13 +838,20 @@ public class TransferFragment extends Fragment {
             vibrate(100);
             return false;
         }
-        b_Result = objTransferControl.reprintTransfer(scan,shopname);
+        b_Result = objTransferControl.forPrint(shopname, scan);
+        if (!b_Result) {
+            okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+            return false;
+        }
+        if (!printSticker(sp_transfer_printer.getSelectedItem().toString())) {
+            okMessage("Transfer", "Printer Error, Pleasse reprint..");
+            return false;
+        }
+        /* b_Result = objTransferControl.reprintTransfer(scan,shopname);
         if (!b_Result) {
             okMessage("Transfer", objGlobal.getErrorMessage());
             return false;
-        }
-        et_transfer_popup_reprint_trfno.setText("");
-        et_transfer_popup_reprint_trfno.requestFocus();
+        }*/
         return true;
     }
 
@@ -1074,7 +1083,10 @@ public class TransferFragment extends Fragment {
             if (testPrint) {
                 printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
             } else {
-                printData = objSample_Print.getTransferPrint(objTransferGlobal.getPtrfno(),objTransferGlobal.getPboxno(),objTransferGlobal.getPshopname(),objTransferGlobal.getPqty(),objTransferGlobal.getPdeldate(),objTransferGlobal.getPtrfdate(),objTransferGlobal.getPtoteid(),objTransferGlobal.getPremarks(),objTransferGlobal.getPpreparedby());
+                printData = objSample_Print.getTransferPrint(
+                        objTransferGlobal.getPshopname(),objTransferGlobal.getPtrfno(), objTransferGlobal.getPboxno(),
+                        objTransferGlobal.getPqty(), objTransferGlobal.getPdeldate(),objTransferGlobal.getPtrfdate(),
+                        objTransferGlobal.getPtoteid(),objTransferGlobal.getPremarks(),objTransferGlobal.getPpreparedby());
             }
             return objSample_Print.PrintBarcodeByte(printData);
         } catch (Exception e) {

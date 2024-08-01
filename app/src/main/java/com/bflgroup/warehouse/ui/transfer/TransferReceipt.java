@@ -168,7 +168,7 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:017");
                 return false;
             }
-            //insert for tmpPrintTransferRfidNew************************************
+            //insert for CheckingTotesSummary************************************
             if(objGlobal.getWorkLocation().equals("KSA")){
                 if (!dbConnection.insertUpdate("insert into bflksa.dbo.CheckingTotesSummary(SNo,TrnDate,DataName,ToteID,ShopName,Qty,TrfReceiptNo,TrfIssueNo,TrfReceiptDateTime,BoxNoF,UserID) values " +
                         "((select max(SNo)+1 from bflksa.dbo.CheckingTotesSummary),'" + objGlobal.getServerDate() + "','" + dataName + "','','" + shopName + "'," + totalQty + ",'" + trfRecNo + "',''," +
@@ -271,46 +271,6 @@ public class TransferReceipt {
                 return false;
             }
             objGlobal.setErrorMessage(":transferReceipt:exception:3: " + exception);
-            return false;
-        }
-    }
-
-    public boolean forPrint(String shopName,String trfno) {
-        String dataname = "";
-        Connection conRob = null;
-        objTransferGlobal.setPtrfno("");
-        objTransferGlobal.setPboxno("");
-        objTransferGlobal.setPshopname("");
-        objTransferGlobal.setPqty("");
-        objTransferGlobal.setPdeldate("");
-        objTransferGlobal.setPtrfdate("");
-        objTransferGlobal.setPtoteid("");
-        objTransferGlobal.setPremarks("");
-        objTransferGlobal.setPpreparedby("");
-        conRob = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(), "BFLDATA");
-        if (conRob == null) {
-            objGlobal.setErrorMessage("Connection error");
-            return false;
-        }
-        try {
-            rs = dbConnection.getResultSet("select dataname from bfldata.dbo.datasettings where shopname='" + shopName + "'", conRob);
-            if (rs.next()) dataname = rs.getString("dataname");
-            rs = dbConnection.getResultSet("select TrfNo,Cartonno,Shipno,TrfDate,StoreIssue,Narration,PreparedBy,qty=(select SUM(Quantity) from " + dataname + ".dbo.TransferDetail " +
-                    "where TrfNo=a.trfno) from " + dataname + ".dbo.transferheader where trfno='" + trfno + "'", conRob);
-            if (rs.next()) {
-                objTransferGlobal.setPtrfno(rs.getString("TrfNo"));
-                objTransferGlobal.setPboxno(rs.getString("Cartonno"));
-                objTransferGlobal.setPshopname(shopName);
-                objTransferGlobal.setPqty(rs.getString("qty"));
-                objTransferGlobal.setPdeldate(rs.getString("Shipno"));
-                objTransferGlobal.setPtrfdate(rs.getString("TrfDate"));
-                objTransferGlobal.setPtoteid(rs.getString("StoreIssue"));
-                objTransferGlobal.setPremarks(rs.getString("Narration"));
-                objTransferGlobal.setPpreparedby(rs.getString("PreparedBy"));
-            }
-            return true;
-        } catch (Exception ex) {
-            objGlobal.setErrorMessage("TransferReceipt:getCartonNo:" + ex);
             return false;
         }
     }

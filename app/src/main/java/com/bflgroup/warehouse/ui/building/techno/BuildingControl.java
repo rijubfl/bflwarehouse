@@ -182,7 +182,7 @@ public class BuildingControl {
 
     public boolean saveChuteBuilding(String chuteId, String toteId, String shopId, String shopName) {
         int totalBuildQty = 0;
-        String shopInShop = "", palletTyp = "", div = "";
+        String shopInShop = "", palletTyp = "", div = "", buildtype="";
         if (!checkConnection()) {
             return false;
         }
@@ -225,8 +225,10 @@ public class BuildingControl {
                 objGlobal.setErrorNo("saveChuteBuilding:004");
                 return false;
             }
+            if(div.equals("TCM")) buildtype="TCM";
+            if(objGlobal.getWarehouse().equals("KSA")) buildtype="USA";
             objBuildingGlobal.setBoxNo("");
-            objBuildingGlobal.setBoxNo(getBoxNumber(div));
+            objBuildingGlobal.setBoxNo(getBoxNumber(buildtype));
             if (TextUtils.isEmpty(objBuildingGlobal.getBoxNo())) {
                 objGlobal.setErrorMessage("Box number error");
                 objGlobal.setErrorNo("saveChuteBuilding:005");
@@ -234,7 +236,7 @@ public class BuildingControl {
             }
             conRobo.setAutoCommit(false);
             objGlobal.getConnection().setAutoCommit(false);
-            if (div.equals("TCM")) {
+            if (buildtype.equals("TCM")) {
                 if (!dbConnection.insertUpdate("insert into bfldata.dbo.TcmboxesHeader (Boxno,TrnDate,Time1,UserId,TotId,Whouse) values ('" + objBuildingGlobal.getBoxNo() + "','" + objGlobal.getServerDate() + "'," +
                         "'" + objGlobal.getServerTime() + "'," + objGlobal.getUserId() + ",'" + toteId + "','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
                     conRobo.rollback();
@@ -334,7 +336,7 @@ public class BuildingControl {
         }
     }
 
-    private String getBoxNumber(String div) {
+    private String getBoxNumber(String buildtype) {
         try {
             int autoSn = 0;
             String suff = "";
@@ -342,7 +344,7 @@ public class BuildingControl {
             SimpleDateFormat df = new SimpleDateFormat("yyyy");
             String year = df.format(d);
             String yr = String.valueOf(year.substring(2, 4));
-            if (div.equals("TCM")) {
+            if (buildtype.equals("TCM")) {
                 suff = "T" + yr + "/";
                 rs = dbConnection.getResultSet("select en=isnull(max(substring(boxno,5,6)),0)+1 from bfldata.dbo.TcmboxesHeader where left(boxno,4)='" + suff + "'", objGlobal.getConnection());
                 if (rs.next()) {

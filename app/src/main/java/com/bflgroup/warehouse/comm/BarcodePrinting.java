@@ -44,13 +44,13 @@ public class BarcodePrinting {
     }
 
     public byte[] getTransferPrint(String shop,String trfno,String boxno, String qty,String deldate, String trfdate,String toteid,String remarks,String preparedby) {
-        String str1 = "1911A1802590011Tote        : SG00001" + "\r\n";
+        String str1 = "1911A1802590011Tote        : " + toteid + "\r\n";
         String str2 = "1911A2403470043BRANDS FOR LESS" + "\r\n";
-        String str3 = "1e6308200480107BFT00158952" + "\r\n";
-        String str4 = "1911A1802950011Shop.     : BFLIBN" + "\r\n";
-        String str5 = "1911A1802270011Tnf. No.  : FT00158952" + "\r\n";
-        String str6 = "1911A1801580011Date.     : 10/01/2024" + "\r\n";
-        String str7 = "1911A1801900011Quanity.  : 25" + "\r\n";
+        String str3 = "1e6308200480107B"+ trfno + "\r\n";
+        String str4 = "1911A1802950011Shop.     : " + shop + "\r\n";
+        String str5 = "1911A1802270011Tnf. No.  : " + trfno + "\r\n";
+        String str6 = "1911A1801580011Date.     : " + trfdate + "\r\n";
+        String str7 = "1911A1801900011Quanity.  : " + qty + "\r\n";
         String str8 = "Q0001" + "\r\n";
         String str9 = "E" + "\r\n";
 
