@@ -7,6 +7,16 @@ public class PalletBuildingGlobal {
     private static int totQty;
     private static int totCnt;
 
+    private static String pPalletno;
+    private static String pBoxcnt;
+    private static String pRemarks;
+    private static String pPallettype;
+    private static String pTypename;
+    private static String pGroupname;
+    private static String pPreparedby;
+    private static String pDate;
+    private static String pTime;
+
     public String getPalletNo() {
         return palletNo;
     }
@@ -37,6 +47,78 @@ public class PalletBuildingGlobal {
 
     public static void setTotCnt(int totCnt) {
         PalletBuildingGlobal.totCnt = totCnt;
+    }
+
+    public static String getpPalletno() {
+        return pPalletno;
+    }
+
+    public static void setpPalletno(String pPalletno) {
+        PalletBuildingGlobal.pPalletno = pPalletno;
+    }
+
+    public static String getpBoxcnt() {
+        return pBoxcnt;
+    }
+
+    public static void setpBoxcnt(String pBoxcnt) {
+        PalletBuildingGlobal.pBoxcnt = pBoxcnt;
+    }
+
+    public static String getpRemarks() {
+        return pRemarks;
+    }
+
+    public static void setpRemarks(String pRemarks) {
+        PalletBuildingGlobal.pRemarks = pRemarks;
+    }
+
+    public static String getpPallettype() {
+        return pPallettype;
+    }
+
+    public static void setpPallettype(String pPallettype) {
+        PalletBuildingGlobal.pPallettype = pPallettype;
+    }
+
+    public static String getpTypename() {
+        return pTypename;
+    }
+
+    public static void setpTypename(String pTypename) {
+        PalletBuildingGlobal.pTypename = pTypename;
+    }
+
+    public static String getpGroupname() {
+        return pGroupname;
+    }
+
+    public static void setpGroupname(String pGroupname) {
+        PalletBuildingGlobal.pGroupname = pGroupname;
+    }
+
+    public static String getpPreparedby() {
+        return pPreparedby;
+    }
+
+    public static void setpPreparedby(String pPreparedby) {
+        PalletBuildingGlobal.pPreparedby = pPreparedby;
+    }
+
+    public static String getpDate() {
+        return pDate;
+    }
+
+    public static void setpDate(String pDate) {
+        PalletBuildingGlobal.pDate = pDate;
+    }
+
+    public static String getpTime() {
+        return pTime;
+    }
+
+    public static void setpTime(String pTime) {
+        PalletBuildingGlobal.pTime = pTime;
     }
 
     public static synchronized PalletBuildingGlobal getInstance() {

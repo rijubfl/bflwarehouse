@@ -336,22 +336,6 @@ public class ChuteCheckInCheckOutJafzaControl {
         }
     }
 
-    public String reprintTransferShopName(String toteid) {
-        String shop="";
-        try {
-            if (!checkConnection()) {
-                return null;
-            }
-            rs = dbConnection.getResultSet("select top 1 ShopName from SortTask where ToteId='" + toteid + "' order by trndate desc", conRobo);
-            if (rs.next()) {
-                shop=rs.getString("shopname");
-            }
-            return shop;
-        } catch (Exception e) {
-            objGlobal.setErrorMessage("ChuteCheckInCheckOutJafzaControl.reprintTransferShopName : " + e);
-            return "";
-        }
-    }
     public boolean reprintTransfer(String scan,String shopName) {
         String trfRecNo = "", toteid = "";
         int totalQty = 0;

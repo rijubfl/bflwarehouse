@@ -1,6 +1,7 @@
 package com.bflgroup.warehouse.ui.palletbuilding;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,6 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,16 +21,20 @@ import androidx.fragment.app.Fragment;
 
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -70,6 +77,9 @@ public class PalletBuildingFragment extends Fragment {
     private Spinner sp_pallet_building_category;
     private Spinner sp_pallet_building_printer;
     private CheckBox ch_pallet_building_printer;
+    private EditText et_buildpallet_popup_reprint_palletno;
+    private Button bt_buildpallet_popup_reprint_print;
+    private Button bt_buildpallet_popup_reprint_close;
 
     private boolean b_Result;
     private String s_Result;
@@ -136,6 +146,15 @@ public class PalletBuildingFragment extends Fragment {
             }*/
         }
 
+        ch_pallet_building_printer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isChecked()) {
+                    openPopupReprint();
+                }
+            }
+        });
+
         et_pallet_building_box_toteid.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -182,12 +201,7 @@ public class PalletBuildingFragment extends Fragment {
         bt_pallet_building_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!printSticker(sp_pallet_building_printer.getSelectedItem().toString())) {
-                    okMessage("PRINT ERROR","");
-                    vibrate(100);
-                }
-
-               /* String toteId = et_pallet_building_box_toteid.getText().toString().trim().toUpperCase();
+                String toteId = et_pallet_building_box_toteid.getText().toString().trim().toUpperCase();
                 toteId = objControls.replaceString(toteId);
                 if (sp_pallet_building_category.getSelectedItem().toString().equals("TCM")) { }
                 if (sp_pallet_building_category.getSelectedItem().toString().equals("USA")) {
@@ -206,7 +220,7 @@ public class PalletBuildingFragment extends Fragment {
                     tv_pallet_building_tot_qty.setText(String.valueOf(objPalletBuildingGlobal.getTotQty()));
                     et_pallet_building_box_toteid.setText("");
                     et_pallet_building_box_toteid.requestFocus();
-                }*/
+                }
             }
         });
 
@@ -229,13 +243,21 @@ public class PalletBuildingFragment extends Fragment {
                                         b_Result = objPalletBuildingControl.savePalletUsa(et_pallet_building_remarks.getText().toString().trim().toUpperCase());
                                     }
                                     if (!b_Result) {
-                                        okMessage("bt_bin_batch_in_save", objGlobal.getErrorMessage());
+                                        okMessage("Pallet", objGlobal.getErrorMessage());
                                     } else {
-                                        
                                         b_Result = clearAll();
                                         if (!b_Result) {
-                                            okMessage("bt_bin_batch_in_save:clearAll", objGlobal.getErrorMessage());
+                                            okMessage("Pallet:clearAll", objGlobal.getErrorMessage());
                                         } else {
+                                            b_Result = objPalletBuildingControl.forPrint(objPalletBuildingGlobal.getPalletNo());
+                                            if (!b_Result) {
+                                                okMessage("Pallet", "transferReceipt: " + objGlobal.getErrorMessage());
+                                            } else {
+                                                if (!printSticker(sp_pallet_building_printer.getSelectedItem().toString())) {
+                                                    okMessage("Pallet", "Printer Error, Pleasse reprint..");
+                                                    vibrate(100);
+                                                }
+                                            }
                                             tv_pallet_building_lastsave.setText(objPalletBuildingGlobal.getPalletNo());
                                             et_pallet_building_box_toteid.requestFocus();
                                         }
@@ -288,6 +310,57 @@ public class PalletBuildingFragment extends Fragment {
         Init_BluetoothSet();
 
         return view;
+    }
+
+    private void openPopupReprint() {
+        Dialog myDialog;
+        myDialog = new Dialog(getContext());
+        myDialog.setCancelable(false);
+        myDialog.setContentView(R.layout.popup_pallet_reprint);
+
+        et_buildpallet_popup_reprint_palletno = (EditText) myDialog.findViewById(R.id.et_buildpallet_popup_reprint_palletno);
+        bt_buildpallet_popup_reprint_print = (Button) myDialog.findViewById(R.id.bt_buildpallet_popup_reprint_print);
+        bt_buildpallet_popup_reprint_close = (Button) myDialog.findViewById(R.id.bt_buildpallet_popup_reprint_close);
+        et_buildpallet_popup_reprint_palletno.requestFocus();
+
+        bt_buildpallet_popup_reprint_print.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (reprintPallert()) {
+                    ch_pallet_building_printer.setChecked(false);
+                    myDialog.dismiss();
+                }
+            }
+        });
+
+        bt_buildpallet_popup_reprint_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ch_pallet_building_printer.setChecked(false);
+                myDialog.dismiss();
+            }
+        });
+        myDialog.show();
+    }
+
+    private boolean reprintPallert() {
+        String scan = et_buildpallet_popup_reprint_palletno.getText().toString().toUpperCase();
+        if (scan.isEmpty()) {
+            okMessage("Pallet", "Please Enter Pallet number");
+            et_buildpallet_popup_reprint_palletno.requestFocus();
+            vibrate(100);
+            return false;
+        }
+        b_Result = objPalletBuildingControl.forPrint(scan);
+        if (!b_Result) {
+            okMessage("Pallet", objGlobal.getErrorMessage());
+            return false;
+        }
+        if (!printSticker(sp_pallet_building_printer.toString())) {
+            okMessage("Transfer", "Printer Error, Pleasse reprint..");
+            return false;
+        }
+        return true;
     }
 
     boolean clearAll() {
@@ -526,7 +599,11 @@ public class PalletBuildingFragment extends Fragment {
             if (testPrint) {
                 printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
             } else {
-                printData = objSample_Print.getUsaPallet("USA796567","12","KS SXD4 DEV/Box Building in A-PDA/4273","R1","VX2","RIJU","24/07/2024","15:20:00");
+                printData = objSample_Print.getUsaPalletPrint(objPalletBuildingGlobal.getpPalletno(),
+                        objPalletBuildingGlobal.getpBoxcnt(), objPalletBuildingGlobal.getpRemarks(),
+                        objPalletBuildingGlobal.getpPallettype(),objPalletBuildingGlobal.getpTypename(),
+                        objPalletBuildingGlobal.getpGroupname(),objPalletBuildingGlobal.getpPreparedby(),
+                        objPalletBuildingGlobal.getpDate(),objPalletBuildingGlobal.getpTime());
             }
             return objSample_Print.PrintBarcodeByte(printData);
         } catch (Exception e) {

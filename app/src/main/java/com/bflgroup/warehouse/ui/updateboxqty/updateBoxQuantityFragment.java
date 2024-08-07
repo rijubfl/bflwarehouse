@@ -1,7 +1,15 @@
 package com.bflgroup.warehouse.ui.updateboxqty;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -9,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,10 +30,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.comm.BarcodePrinting;
+import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Global;
+import com.bflgroup.warehouse.ui.palletbuilding.PalletBuildingFragment;
+import com.sewoo.port.android.BluetoothPort;
+import com.sewoo.request.android.RequestHandler;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class updateBoxQuantityFragment extends Fragment {
 
@@ -50,6 +66,21 @@ public class updateBoxQuantityFragment extends Fragment {
     ArrayList<UpdateBoxItem> objUpdateboxItem = new ArrayList<UpdateBoxItem>();
     private UpdateBoxQuantityControl objUpdateBoxQuantityControl = new UpdateBoxQuantityControl();
     MyUpdateBoxQuantity objMyUpdateBoxQuantity = null;
+
+    private BarcodePrinting objSample_Print;
+    private BluetoothDevices objBluetoothDevices = new BluetoothDevices();
+    private BluetoothPort bluetoothPort;
+    private BroadcastReceiver connectDevice;
+    private Thread btThread;
+    private boolean testPrint=false;
+    private BluetoothAdapter mBluetoothAdapter;
+    private BroadcastReceiver discoveryResult;
+    private BroadcastReceiver searchStart;
+    private BroadcastReceiver searchFinish;
+    private Vector<BluetoothDevice> remoteDevices;
+    private ArrayAdapter<String> adapter;
+    private boolean searchflags;
+    private static final int REQUEST_ENABLE_BT = 2;
 
     public updateBoxQuantityFragment() {
         // Required empty public constructor
@@ -225,6 +256,12 @@ public class updateBoxQuantityFragment extends Fragment {
 
             }
         });
+        searchflags = false;
+        objSample_Print = new BarcodePrinting();
+        bluetoothPort = BluetoothPort.getInstance();
+        bluetoothPort.SetMacFilter(false);
+        Init_BluetoothSet();
+
         return view;
     }
 
@@ -339,6 +376,186 @@ public class updateBoxQuantityFragment extends Fragment {
                 new_qty.setText(Html.fromHtml(newqty), TextView.BufferType.SPANNABLE);
             }
             return myView;
+        }
+    }
+
+    private void clearBtDevData() {
+        remoteDevices = new Vector<BluetoothDevice>();
+    }
+
+    public void Init_BluetoothSet() {
+        bluetoothSetup();
+        connectDevice = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                    //"BlueTooth Connect"
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    try {
+                        if (bluetoothPort.isConnected())
+                            bluetoothPort.disconnect();
+                    } catch (IOException e) {
+                        okMessage("IOException",e.toString(),getContext());
+                    } catch (InterruptedException e) {
+                        okMessage("InterruptedException",e.toString(),getContext());
+                    }
+                    if ((btThread != null) && (btThread.isAlive())) {
+                        btThread.interrupt();
+                        btThread = null;
+                    }
+                }
+            }
+        };
+
+        discoveryResult = new BroadcastReceiver() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String key;
+                boolean bFlag = true;
+                BluetoothDevice btDev;
+                BluetoothDevice remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (remoteDevice != null) {
+                    if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "]";
+                    } else {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "] [Paired]";
+                    }
+                    if (bluetoothPort.isValidAddress(remoteDevice.getAddress())) {
+                        for (int i = 0; i < remoteDevices.size(); i++) {
+                            btDev = remoteDevices.elementAt(i);
+                            if (remoteDevice.getAddress().equals(btDev.getAddress())) {
+                                bFlag = false;
+                                break;
+                            }
+                        }
+                        if (bFlag) {
+                            remoteDevices.add(remoteDevice);
+                            adapter.add(key);
+                        }
+                    }
+                }
+            }
+        };
+        getActivity().registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        searchStart = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            }
+        };
+        getActivity().registerReceiver(searchStart, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+        searchFinish = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                searchflags = true;
+            }
+        };
+        getActivity().registerReceiver(searchFinish, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+    }
+
+    private void bluetoothSetup() {
+        clearBtDevData();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            return;
+        }
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+
+    private void btConn(final BluetoothDevice btDev) throws IOException {
+        new updateBoxQuantityFragment.connBT().execute(btDev);
+    }
+
+    class connBT extends AsyncTask<BluetoothDevice, Void, Integer> {
+        private final ProgressDialog dialog = new ProgressDialog(getActivity());
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getActivity());
+        String str_temp = "";
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Connecting Device...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(BluetoothDevice... params) {
+            Integer retVal = null;
+            try {
+                bluetoothPort.connect(params[0]);
+                str_temp = params[0].getAddress();
+                retVal = Integer.valueOf(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+                retVal = Integer.valueOf(-1);
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (dialog.isShowing())
+                dialog.dismiss();
+            if (result.intValue() == 0) {
+                RequestHandler rh = new RequestHandler();
+                btThread = new Thread(rh);
+                btThread.start();
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED));
+                printBarCode();
+            } else {
+                alert
+                        .setTitle("Error 4")
+                        .setMessage("Failed to connect Bluetooth device.")
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+            super.onPostExecute(result);
+        }
+    }
+
+    private boolean printSticker(String device) {
+        if (!bluetoothPort.isConnected()) {
+            try {
+                btConn(mBluetoothAdapter.getRemoteDevice(device));
+            } catch (Exception e) {
+                okMessage("Error 2", e.toString(),getContext());
+                return false;
+            }
+        }
+        printBarCode();
+        return true;
+    }
+
+    private boolean printBarCode() {
+        try {
+            //testPrint=true;
+            byte[] printData = null;
+            if (testPrint) {
+                printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
+            } else {
+                /*printData = objSample_Print.getUsaBoxPrint(.getpPalletno(),
+                        objPalletBuildingGlobal.getpBoxcnt(), objPalletBuildingGlobal.getpRemarks(),
+                        objPalletBuildingGlobal.getpPallettype(),objPalletBuildingGlobal.getpTypename(),
+                        objPalletBuildingGlobal.getpGroupname(),objPalletBuildingGlobal.getpPreparedby(),
+                        objPalletBuildingGlobal.getpDate(),objPalletBuildingGlobal.getpTime());*/
+            }
+            return objSample_Print.PrintBarcodeByte(printData);
+        } catch (Exception e) {
+            okMessage("Error 3", e.toString(),getContext());
+            return false;
         }
     }
 

@@ -46,6 +46,7 @@ import com.bflgroup.warehouse.R;
 import com.bflgroup.warehouse.comm.BarcodePrinting;
 import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Global;
+import com.bflgroup.warehouse.ui.transfer.TransferControl;
 import com.bflgroup.warehouse.ui.transfer.TransferFragment;
 import com.bflgroup.warehouse.ui.transfer.TransferGlobal;
 import com.loopj.android.http.AsyncHttpClient;
@@ -71,6 +72,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
     private InOutJafzaGlobal objInOutJafzaGlobal = InOutJafzaGlobal.getInstance();
     private ChuteCheckInCheckOutJafzaControl objChuteCheckInCheckOutJafzaControl = new ChuteCheckInCheckOutJafzaControl();
     private TransferGlobal objTransferGlobal = TransferGlobal.getInstance();
+    private TransferControl objTransferControl = new TransferControl();
     ChuteCheckInCheckOutJafzaFragment.MyChuteCheckInCheckOutTrfItemsAdp objMyChuteCheckInCheckOutTrfItemsAdp;
 
     ArrayList<ChuteCheckInCheckOutItemJafzaTicket> listChuteCheckInCheckOutItemTicket = new ArrayList<ChuteCheckInCheckOutItemJafzaTicket>();
@@ -156,10 +158,10 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             ArrayAdapter<String> arrayAdpYellow;
             arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
             sp_chute_status_inout_chuteid_printer.setAdapter(arrayAdpYellow);
-            if (saredRef.loadPrinter() != "") {
+            /*if (saredRef.loadPrinter() != "") {
                 sp_chute_status_inout_chuteid_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
                 sp_chute_status_inout_chuteid_printer.setEnabled(false);
-            }
+            }*/
         }
 
         et_chute_status_inout_chuteid.setOnTouchListener(new View.OnTouchListener() {
@@ -467,6 +469,14 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                                     boolean status = jso.getBoolean("status");
                                     String msg = jso.getString("message");
                                     if (status) {
+                                        b_Result = objTransferControl.forPrint(shopName, objTransferGlobal.getTrfRecNo());
+                                        if (!b_Result) {
+                                            okMessage("Chute Status OUT", "transferReceipt: " + objGlobal.getErrorMessage());
+                                        }
+                                        if (!printSticker(sp_chute_status_inout_chuteid_printer.getSelectedItem().toString())) {
+                                            okMessage("Chute Status OUT", "Printer Error, Pleasse reprint..");
+                                            vibrate(100);
+                                        }
                                         if (sortTask(chuteId, totId, shopId, shopName)) {
                                             closeWaitDialog();
                                             clearAll();
@@ -528,7 +538,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                         et_transfer_popup_reprint_trfno.requestFocus();
                         vibrate(100);
                     } else {
-                        tv_transfer_popup_reprint_shopname.setText(objChuteCheckInCheckOutJafzaControl.reprintTransferShopName(scan));
+                        tv_transfer_popup_reprint_shopname.setText(objTransferControl.reprintTransferShopName(scan));
                     }
                 }
                 return false;
@@ -538,9 +548,8 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (reprintTransfer()) {
-                    okMessage("Transfer", "Done");
-                } else {
-                    okMessage("Transfer", objGlobal.getErrorMessage());
+                    ch_chute_status_inout_reprint_transfer.setChecked(false);
+                    myDialog.dismiss();
                 }
             }
         });
@@ -553,7 +562,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                     et_transfer_popup_reprint_trfno.requestFocus();
                     vibrate(100);
                 }
-                tv_transfer_popup_reprint_shopname.setText(objChuteCheckInCheckOutJafzaControl.reprintTransferShopName(scan));
+                tv_transfer_popup_reprint_shopname.setText(objTransferControl.reprintTransferShopName(scan));
             }
         });
         bt_transfer_popup_reprint_close.setOnClickListener(new View.OnClickListener() {
@@ -752,11 +761,20 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             vibrate(100);
             return false;
         }
-        b_Result = objChuteCheckInCheckOutJafzaControl.reprintTransfer(scan, shopname);
+        b_Result = objTransferControl.forPrint(shopname, scan);
+        if (!b_Result) {
+            okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+            return false;
+        }
+        if (!printSticker(sp_chute_status_inout_chuteid_printer.getSelectedItem().toString())) {
+            okMessage("Transfer", "Printer Error, Pleasse reprint..");
+            return false;
+        }
+      /*  b_Result = objChuteCheckInCheckOutJafzaControl.reprintTransfer(scan, shopname);
         if (!b_Result) {
             okMessage("Chute Status", objGlobal.getErrorMessage());
             return false;
-        }
+        }*/
         et_transfer_popup_reprint_trfno.setText("");
         et_transfer_popup_reprint_trfno.requestFocus();
         return true;
