@@ -80,7 +80,7 @@ public class UpdateBoxQuantityControl {
                         }
                         UpdateBoxSharedRef.saveToteid(Toteid);
                     } else {
-                        okMessage("Alert", "Toteid not found", context);
+                        okMessage("Alert", "Toteid not found - "+Toteid, context);
                         return null;
                     }
                 }

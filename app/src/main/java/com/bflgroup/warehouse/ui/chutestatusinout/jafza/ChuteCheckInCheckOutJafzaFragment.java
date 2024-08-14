@@ -254,8 +254,8 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
                     if (!TextUtils.isEmpty(et_chute_status_inout_totid.getText())) {
-                        if (et_chute_status_inout_totid.getText().length() > 7)
-                            et_chute_status_inout_totid.setText(et_chute_status_inout_totid.getText().toString().substring(0, 7));
+                        if (et_chute_status_inout_totid.getText().length() > 9)
+                            et_chute_status_inout_totid.setText(et_chute_status_inout_totid.getText().toString().substring(0, 9));
                     }
                     b_Result = validateToteId(et_chute_status_inout_totid.getText().toString(), tv_chute_checkinout_shop_tote_type.getText().toString());
                     if (!b_Result) {
@@ -469,14 +469,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                                     boolean status = jso.getBoolean("status");
                                     String msg = jso.getString("message");
                                     if (status) {
-                                        b_Result = objTransferControl.forPrint(shopName, objTransferGlobal.getTrfRecNo());
-                                        if (!b_Result) {
-                                            okMessage("Chute Status OUT", "transferReceipt: " + objGlobal.getErrorMessage());
-                                        }
-                                        if (!printSticker(sp_chute_status_inout_chuteid_printer.getSelectedItem().toString())) {
-                                            okMessage("Chute Status OUT", "Printer Error, Pleasse reprint..");
-                                            vibrate(100);
-                                        }
+
                                         if (sortTask(chuteId, totId, shopId, shopName)) {
                                             closeWaitDialog();
                                             clearAll();
@@ -484,7 +477,15 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                                         } else {
                                             vibrate(500);
                                             closeWaitDialog();
-                                            okMessage("Chute Status OUT", objGlobal.getErrorMessage());
+                                            okMessage("Chute Status OUT - Insert", objGlobal.getErrorMessage());
+                                        }
+                                        b_Result = objTransferControl.forPrint(shopName, objTransferGlobal.getTrfRecNo());
+                                        if (!b_Result) {
+                                            okMessage("Chute Status OUT - For Print", "transferReceipt: " + objGlobal.getErrorMessage());
+                                        }
+                                        if (!printSticker(sp_chute_status_inout_chuteid_printer.getSelectedItem().toString())) {
+                                            okMessage("Chute Status OUT - Printer", "Printer Error, Pleasse reprint..");
+                                            vibrate(100);
                                         }
                                         et_chute_status_inout_chuteid.requestFocus();
                                     } else {

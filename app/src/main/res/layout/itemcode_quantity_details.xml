@@ -9,7 +9,7 @@
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:background="@drawable/et_custom_total"
-        android:gravity="right"
+        android:gravity="left"
         android:hint=""
         android:padding="6dp"
         android:text=""

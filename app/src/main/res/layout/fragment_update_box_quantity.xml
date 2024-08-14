@@ -62,26 +62,28 @@
             android:id="@+id/radioGroup"
             app:layout_constraintTop_toBottomOf="@+id/bt_tote_process"
             app:layout_constraintBottom_toTopOf="@+id/et_item_code"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+
             android:orientation="horizontal" >
 
             <RadioButton
                 android:id="@+id/remove"
-                android:layout_width="160dp"
+                android:layout_width="180dp"
                 android:layout_height="40dp"
                 android:text="Remove Item Qty"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 android:checked="true"
                 android:background="@drawable/et_custom"
                 android:textSize="14sp" />
 
             <RadioButton
                 android:id="@+id/add"
-                android:layout_width="130dp"
+                android:layout_width="180dp"
                 android:layout_height="40dp"
                 android:text="Add Item Qty"
                 android:background="@drawable/et_custom"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:checked="false"
                 android:textSize="14sp" />
         </RadioGroup>
