@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -335,7 +336,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                                                     new AsyncHttpResponseHandler() {
                                                         @Override
                                                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                                            sortTask(chuteId, totId, shopId, shopName);
+                                                            labelInfo(shopId,totId,objInOutGlobal.getLabelInfo(),chuteId,shopName,chuteId);
                                                         }
 
                                                         @Override
@@ -368,18 +369,21 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
         return view;
     }
 
-    private void sortTask(String chuteId, String totId, String shopId, String shopName) {
-        b_Result = objChuteCheckInCheckOutControl.saveChuteOut(chuteId, totId, shopId, shopName); //transfer receipt
-        if (b_Result) {
-            tv_chute_status_inout_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objInOutGlobal.getTrfRecNo() + "  ;  " + String.valueOf(objInOutGlobal.getTrfTotQty()));
-            tv_chute_status_inout_tot_qty.setText(String.valueOf(objInOutGlobal.getTrfTotQty()));
+    private void sortTask(String totId, String shopId,String shopName,String chuteid) {
+        if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start", "")) {
+            clearAll();
+            vibrate(500);
+            okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApiLog:" + objGlobal.getErrorMessage());
+        } else {
             try {
                 final AsyncHttpClient client = new AsyncHttpClient();
                 JSONObject json = new JSONObject();
                 json.put("toteid", totId);
                 json.put("chuteno", objInOutGlobal.getChuteNo());
                 json.put("transferno", objInOutGlobal.getTrfRecNo());
-                if(objGlobal.getWorkLocation().equals("KSA")) json.put("messageId", objInOutGlobal.getTrfRecNo());
+                if (objGlobal.getWorkLocation().equals("KSA"))
+                    json.put("messageId", objInOutGlobal.getTrfRecNo());
                 json.put("batchCode", objInOutGlobal.getBatchCode());
                 json.put("spare1", "");
                 json.put("spare2", "");
@@ -394,65 +398,134 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                             if (jsonArray.length() > 0) {
                                 JSONObject obj = jsonArray.getJSONObject(0);
                                 if (obj.getString("Result").equals("1")) {
-                                    objChuteCheckInCheckOutControl.updateChuteApi("SortTaskApi", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(), "");
-                                    labelInfo(shopId, totId, objInOutGlobal.getLabelInfo());
+                                    if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                                            objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), "onSuccess-" + obj.getString("Result"))) {
+                                        clearAll();
+                                        vibrate(500);
+                                        okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApiLog:onSuccess:" + objGlobal.getErrorMessage());
+                                    } else {
+                                        if (!objChuteCheckInCheckOutControl.updateChuteApi("SortTaskApi", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo())) {
+                                            clearAll();
+                                            vibrate(500);
+                                            okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApi:onSuccess:" + objGlobal.getErrorMessage());
+                                        } else {
+                                            clearAll();
+                                            et_chute_status_inout_chuteid.requestFocus();
+                                        }
+                                    }
                                 } else {
-                                    closeWaitDialog();
-                                    okMessage("Chute Status", "sortTask:else " + obj.getString("errorMsg"));
+                                    if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                                            objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), "onSuccess-" + obj.getString("Result"))) {
+                                        clearAll();
+                                        vibrate(500);
+                                        okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApiLog:onSuccess:" + objGlobal.getErrorMessage());
+                                    } else {
+                                        clearAll();
+                                        okMessage("Chute Status", "sortTask:else " + obj.getString("errorMsg"));
+                                        et_chute_status_inout_chuteid.requestFocus();
+                                    }
                                 }
                             }
                         } catch (Exception e) {
-                            closeWaitDialog();
+                            clearAll();
                             okMessage("Chute Status", "sortTask:try: " + e);
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        closeWaitDialog();
-                        okMessage("Chute status", "sortTask:onFailure: " + error.toString());
+                        if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                                objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), error.getMessage())) {
+                            okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApiLog:onFailure:" + objGlobal.getErrorMessage());
+                        } else {
+                            okMessage("Chute status", "sortTask:onFailure: " + error.getMessage());
+                        }
+                        clearAll();
+                        vibrate(500);
                     }
                 });
             } catch (Exception e) {
-                closeWaitDialog();
-                okMessage("Chute status", "sortTask:Exception: " + e);
+                if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                        objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Exception", String.valueOf(e.getMessage()))) {
+                    okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.updateChuteApiLog:Exception:" + objGlobal.getErrorMessage());
+                } else {
+                    okMessage("Chute status", "sortTask:Exception: " + e.getMessage());
+                }
+                clearAll();
+                vibrate(500);
             }
-        } else {
-            closeWaitDialog();
-            vibrate(500);
-            okMessage("Chute Status IN", "ERR NO: " + objGlobal.getErrorNo() + ", " + objGlobal.getErrorMessage());
         }
     }
 
-    private void labelInfo(String shopId, String totId, String labelInfo) {
-        try {
-            final AsyncHttpClient client = new AsyncHttpClient();
-            JSONObject json = new JSONObject();
-            json.put("toteid", totId);
-            if(objGlobal.getWorkLocation().equals("KSA")) json.put("messageId", objInOutGlobal.getTrfRecNo());
-            json.put("labelInfo", labelInfo);
-            json.put("spare1", "");
-            json.put("spare2", "");
-            json.put("createtime", objGlobal.getServerDate());
-            StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
-            entity.setContentType("application/json");
-            client.post(getContext(), objGlobal.getRoboLabelInfoAPI(), entity, "application/json", new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    objChuteCheckInCheckOutControl.updateChuteApi("LabelInfokApi", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(), objInOutGlobal.getLabelInfo());
-                    clearAll();
-                    et_chute_status_inout_chuteid.requestFocus();
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    clearAll();
-                    okMessage("Chute status", "labelInfo:onFailure: " + error.toString());
-                }
-            });
-        } catch (Exception e) {
+    private void labelInfo(String shopId, String totId, String labelInfo,String chuteid,String shopName,String chuteId) {
+        b_Result = objChuteCheckInCheckOutControl.saveChuteOut(chuteId, totId, shopId, shopName); //transfer receipt
+        if (!b_Result) {
             clearAll();
-            okMessage("Chute status", "labelInfo:Exception: " + e.toString());
+            vibrate(500);
+            okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.saveChuteOut:" + objGlobal.getErrorMessage());
+        } else {
+            tv_chute_status_inout_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objInOutGlobal.getTrfRecNo() + "  ;  " + objInOutGlobal.getTrfTotQty());
+            tv_chute_status_inout_tot_qty.setText(String.valueOf(objInOutGlobal.getTrfTotQty()));
+            if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                    objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start", "")) {
+                clearAll();
+                vibrate(500);
+                okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.updateChuteApiLog:" + objGlobal.getErrorMessage());
+            } else {
+                try {
+                    final AsyncHttpClient client = new AsyncHttpClient();
+                    JSONObject json = new JSONObject();
+                    json.put("toteid", totId);
+                    if (objGlobal.getWorkLocation().equals("KSA"))
+                        json.put("messageId", objInOutGlobal.getTrfRecNo());
+                    json.put("labelInfo", labelInfo);
+                    json.put("spare1", "");
+                    json.put("spare2", "");
+                    json.put("createtime", objGlobal.getServerDate());
+                    StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
+                    entity.setContentType("application/json");
+                    client.post(getContext(), objGlobal.getRoboLabelInfoAPI(), entity, "application/json", new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                                    objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), "onSuccess")) {
+                                clearAll();
+                                vibrate(500);
+                                okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.updateChuteApiLog:onSuccess:" + objGlobal.getErrorMessage());
+                            } else {
+                                if (!objChuteCheckInCheckOutControl.updateChuteApi("LabelInfokApi", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo())) {
+                                    clearAll();
+                                    vibrate(500);
+                                    okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.updateChuteApi:onSuccess:" + objGlobal.getErrorMessage());
+                                } else {
+                                    sortTask(totId, shopId, shopName, chuteid);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                                    objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), error.getMessage())) {
+                                okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.updateChuteApiLog:onFailure:" + objGlobal.getErrorMessage());
+                            } else {
+                                okMessage("Chute status", "labelInfo:onFailure: " + error.getMessage());
+                            }
+                            clearAll();
+                            vibrate(500);
+                        }
+                    });
+                } catch (Exception e) {
+                    if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                            objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Exception", String.valueOf(e.getMessage()))) {
+                        okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.updateChuteApiLog:Exception:" + objGlobal.getErrorMessage());
+                    } else {
+                        okMessage("Chute status", "labelInfo:Exception: " + e.getMessage());
+                    }
+                    clearAll();
+                    vibrate(500);
+                }
+            }
         }
     }
 

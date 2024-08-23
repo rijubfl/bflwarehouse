@@ -286,9 +286,17 @@ public class ChuteCheckInCheckOutControl {
         }
     }
 
-    public boolean updateChuteApi(String updtField, String ShopId, String TrfNo, String ChuteNo, String labelInfo) {
-        return (!dbConnection.insertUpdate("update SortTask set " + updtField + "='Y',LabelInfo='" + labelInfo + "' where ShopId='" + ShopId + "' and " +
+    public boolean updateChuteApi(String updtField, String ShopId, String TrfNo, String ChuteNo) {
+        b_Result = (dbConnection.insertUpdate("update SortTask set " + updtField + "='Y' ShopId='" + ShopId + "' and " +
                 "TrfNo='" + TrfNo + "' and ChuteNo='" + ChuteNo + "'", conRobo));
+        return b_Result;
+    }
+
+    public boolean updateChuteApiLog(String prcess, String ShopId, String TrfNo, String ChuteNo, String labelInfo, String toteid, String shopname,String chuteid, String status,String msg) {
+        b_Result = (dbConnection.insertUpdate("insert into ROBOTICS.dbo.SortTaskLog(Process,TrnDate,TrnTime,ToteId,TrfNo,ShopName,UserName,ChuteId,ChuteNo,LabelInfo,Status,Msg) values " +
+                "('" + prcess + "',convert(varchar,getdate(),103),convert(varchar,getdate(),8),'"+toteid+"','" + TrfNo + "','" + shopname + "','" + objGlobal.getUserName() + "'," +
+                "'" + chuteid + "','" + ChuteNo + "','" + labelInfo + "','" + status + "','" + msg + "')", conRobo));
+        return b_Result;
     }
 
     public ArrayList<ChuteCheckInCheckOutItemTicket> itemsForPL(String chuteId, String shopId) {
