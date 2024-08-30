@@ -212,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
                 query = "select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'";
                 rs1 = dbConnection.getResultSet(query, objGlobal.getCloudCon());
                 if(rs1.next()){
-                    if(rs1.getString("version").equals(getApplicationContext().getString(R.string.app_version))) {
+                    if(getApplicationContext().getString(R.string.app_version).contains(rs1.getString("version"))) {
                         query = "select userid,username,SealPrint,FcCode,PrntName,allB=isnull(UserAllowMixCategoryBuild,'N'),empCode=(select RecStartingNo from fabsmain.dbo.[user] where userid=a.mainuserid) from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
                         rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                         if (rs.next()) {

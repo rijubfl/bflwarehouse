@@ -243,7 +243,7 @@ public class BuildingDeliveryPalletControl {
                 if (rs1.next()) {
                     String Shopname = rs1.getString("ShopName").toString();
                     if (Shopname == "0" || rs1.getString("ShopName").toString() == null || rs1.getString("ShopName").toString() == "") {
-                        okMessage("", "This Trf No / Toteid is not in the same Route", context);
+                        okMessage("", "This Trf No / Toteid is not in the same Route - "+transferno, context);
 
                     } else {
 
@@ -256,7 +256,7 @@ public class BuildingDeliveryPalletControl {
                     while (result.next()) {
                         arr.add(new PalletScanDeliveryItem(result.getString("TrfNo"), result.getString("ToteId"), result.getString("ShopName"), result.getString("Qty")));
                     }
-                    okMessage("", "This Trf No / Toteid is not in the same Route", context);
+                    okMessage("", "This Trf No / Toteid is not in the same Route - "+transferno, context);
                 }
 
             }
@@ -276,24 +276,24 @@ public class BuildingDeliveryPalletControl {
         ArrayList<PalletScanDeliveryItem> arrayList = new ArrayList<>();
         String query = "select * from BFLdata..tmpPalletScan where (TrfNo='" + TrfNo + "' or ToteId = '" + TrfNo + "') and shopname = '"+ShopName+"' and DeviceName = '" + objGlobal.getDeviceName() + "'";
         String query2 = "select * from BFLDATA..vGoodsIssuePlt  with(NOLOCK) where TrfNo='" + TrfNo + "' and ShopIssue='" + ShopName + "'";
-        String query3 = "select * from BFLDATA..GoodsIssueDet with(NOLOCK) where TrfNo='" + TrfNo + "' and shopName='" + ShopName + "'";
+        String query3 = "select * from BFLDATA..vGoodsIssue with(NOLOCK) where TrfNo='" + TrfNo + "' and Actualshop='" + ShopName + "'";
 
         Log.e("Query", query);
         Log.e("Query", query2);
-        Log.e("Query", query3);
+       // Log.e("Query", query3);
         ResultSet rs1 = dbConnection.getResultSet(query2, objGlobal.getConnection());
         ResultSet rs2= dbConnection.getResultSet(query3, objGlobal.getConnection());
         rs = dbConnection.getResultSet(query, objGlobal.getConnection());
         if (rs.next()) {
-            okMessage("", "Duplicate Trf No/Toteid", context);
+            okMessage("", "Duplicate Trf No/Toteid - "+TrfNo, context);
         }
         else {
             if (rs2.next()) {
-                okMessage("", "Pallet Already Built for Trf No/Toteid", context);
+                okMessage("", "Pallet Already Built for Trf No/Toteid - " +TrfNo + " , Pallet - " +rs2.getString("palletno"), context);
             }
             else {
                 if (rs1.next()) {
-                    okMessage("", "Gin Already Built for Trf No/Toteid", context);
+                    okMessage("", "Gin Already Built for Trf No/Toteid - " +TrfNo + " , Ginno - " +rs1.getString("srno"), context);
                 }
                 else {
                     query = "insert into BFLDATA..tmpPalletScan values ('" + objGlobal.getDeviceName() + "','" + TrfNo + "'" +
