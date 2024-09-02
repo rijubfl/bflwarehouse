@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
 
     Global objGlobal = Global.getInstance();
     DBConnection dbConnection = new DBConnection();
-   // DBConnection dbConnection = new DBConnection();
+    // DBConnection dbConnection = new DBConnection();
     Controls objControls = new Controls();
     SaredRef saredRef;
     private String query;
@@ -88,21 +88,21 @@ public class LoginActivity extends AppCompatActivity {
                     if (result) {
                         result = dbConnection.connectCloudDb();
                         if (result) {
-                        result = objControls.getControlMain();//assign global values
-                        if (result) {
-                            result = validateUser();//check the user details
+                            result = objControls.getControlMain();//assign global values
                             if (result) {
-                                result = objControls.getControl();//assign global values
+                                result = validateUser();//check the user details
                                 if (result) {
-                                    Intent intent;
-                                    objGlobal.setDelDate(getDelDate());
-                                    intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    closeWaitDialog();
-                                    finish();
+                                    result = objControls.getControl();//assign global values
+                                    if (result) {
+                                        Intent intent;
+                                        objGlobal.setDelDate(getDelDate());
+                                        intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        closeWaitDialog();
+                                        finish();
+                                    }
                                 }
                             }
-                        }
                         }
                     }
                 }
@@ -212,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
                 query = "select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'";
                 rs1 = dbConnection.getResultSet(query, objGlobal.getCloudCon());
                 if(rs1.next()){
-                    if(rs1.getString("version").equals(getApplicationContext().getString(R.string.app_version))) {
+                    if(getApplicationContext().getString(R.string.app_version).contains(rs1.getString("version"))) {
                         query = "select userid,username,SealPrint,FcCode,PrntName,allB=isnull(UserAllowMixCategoryBuild,'N'),empCode=(select RecStartingNo from fabsmain.dbo.[user] where userid=a.mainuserid) from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
                         rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                         if (rs.next()) {
@@ -234,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
                         return false;
                     }
 
-            }
+                }
             }
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");

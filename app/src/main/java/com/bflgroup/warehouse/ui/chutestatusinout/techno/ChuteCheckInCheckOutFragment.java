@@ -390,6 +390,8 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                 json.put("createtime", objGlobal.getServerDate());
                 StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                 entity.setContentType("application/json");
+                objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                        objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start-1",json.toString());
                 client.post(getContext(), objGlobal.getRoboSortTaskAPI(), entity, "application/json", new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -484,6 +486,8 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                     json.put("createtime", objGlobal.getServerDate());
                     StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                     entity.setContentType("application/json");
+                    objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                            objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start-1",json.toString());
                     client.post(getContext(), objGlobal.getRoboLabelInfoAPI(), entity, "application/json", new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -544,7 +548,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
             showMessage("Chute Status", "Invalid Tote ID, " + toteId);
             return false;
         }
-        if (!toteId.substring(0, 2).equals(shopToteType)) {
+        if (!toteId.substring(0, 1).equals(shopToteType)) {
             vibrate(300);
             showMessage("Chute Status", "Tote type is not matching, Tote: " + toteId + ", Shop Tote Type is: " + shopToteType);
             return false;
