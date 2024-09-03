@@ -469,14 +469,14 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                                     boolean status = jso.getBoolean("status");
                                     String msg = jso.getString("message");
                                     if (status) {
-                                        b_Result = objTransferControl.forPrint(shopName, objTransferGlobal.getTrfRecNo());
-                                        if (!b_Result) {
-                                            okMessage("Chute Status OUT", "transferReceipt: " + objGlobal.getErrorMessage());
-                                        }
-                                        if (!printSticker(sp_chute_status_inout_chuteid_printer.getSelectedItem().toString())) {
-                                            okMessage("Chute Status OUT", "Printer Error, Pleasse reprint..");
-                                            vibrate(100);
-                                        }
+//                                        b_Result = objTransferControl.forPrint(shopName, objTransferGlobal.getTrfRecNo());
+//                                        if (!b_Result) {
+//                                            okMessage("Chute Status OUT", "transferReceipt: " + objGlobal.getErrorMessage());
+//                                        }
+//                                        if (!printSticker(sp_chute_status_inout_chuteid_printer.getSelectedItem().toString())) {
+//                                            okMessage("Chute Status OUT", "Printer Error, Pleasse reprint..");
+//                                            vibrate(100);
+//                                        }
                                         if (sortTask(chuteId, totId, shopId, shopName)) {
                                             closeWaitDialog();
                                             clearAll();
