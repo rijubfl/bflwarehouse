@@ -71,7 +71,14 @@ public class DivisionSeperationControl {
                 objGlobal.setErrorMessage("Invalid Transfer");
                 return false;
             }
-            rs = dbConnection.getResultSet("select itemcode,trf=sum(trfqty),scan=sum(qty) from BFLDATA.dbo.tmpDivSepItems where " +
+
+            rs = dbConnection.getResultSet("select * from DATA2004..ExportPost where ShipNo  in (select cast(srno as varchar(20)) from bfldata..vGoodsIssuePlt where ShopIssue = '"+ shopName +"' and TrfNo = '"+trfno+"' )", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Cannot Delete the transfer - "+trfno+" Shopname - "+shopName+", GIN already Posted!");
+                return false;
+            }
+
+                    rs = dbConnection.getResultSet("select itemcode,trf=sum(trfqty),scan=sum(qty) from BFLDATA.dbo.tmpDivSepItems where " +
                     "Deviceid='" + objGlobal.getDeviceName() + "' group by itemcode having sum(qty)>sum(TrfQty)", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Scan quantity is more than transfer quantity, itemcode:" + rs.getString("itemcode").toString() + ", " +

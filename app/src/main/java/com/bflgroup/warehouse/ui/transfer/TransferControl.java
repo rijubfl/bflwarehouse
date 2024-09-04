@@ -212,8 +212,16 @@ public class TransferControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select top 1 TrfNo from ROBOTICS.dbo.SortTask where ShopName='" + shopName + "' and ToteId='" + scan + "' order by TrnDate desc", conRob);
-            if (rs.next()) trfno = rs.getString("TrfNo");
+            rs = dbConnection.getResultSet("select top 1 TrfNo from ROBOTICS.dbo.SortTask where ShopName='" + shopName + "' and (ToteId='" + scan + "' or trfno='" + scan + "') order by TrnDate desc", conRob);
+            if (!rs.next()){
+                rs = dbConnection.getResultSet("select top 1 TrfNo from bfldata.dbo.tmpPrintTransferRfidNew where ShopName='" + shopName + "' and (ToteId='" + scan + "' or trfno='" + scan + "') order by TrnDate desc", conRob);
+                if(rs.next()){
+                    trfno = rs.getString("TrfNo");
+                }
+            }else{
+                trfno = rs.getString("TrfNo");
+            }
+
             rs = dbConnection.getResultSet("select dataname from bfldata.dbo.datasettings where shopname='" + shopName + "'", conRob);
             if (rs.next()) dataname = rs.getString("dataname");
             rs = dbConnection.getResultSet("select TrfNo,Cartonno,Shipno,TrfDate,StoreIssue,Narration,PreparedBy,qty=(select SUM(Quantity) from " + dataname + ".dbo.TransferDetail " +
@@ -225,13 +233,18 @@ public class TransferControl {
                 objTransferGlobal.setPqty(rs.getString("qty"));
                 objTransferGlobal.setPdeldate(rs.getString("Shipno"));
                 objTransferGlobal.setPtrfdate(rs.getString("TrfDate"));
-                objTransferGlobal.setPtoteid(rs.getString("StoreIssue"));
+                if(rs.getString("StoreIssue").equals("")){
+                    objTransferGlobal.setPtoteid(rs.getString("PreparedBy"));
+                }else{
+                    objTransferGlobal.setPtoteid(rs.getString("StoreIssue"));
+                }
                 objTransferGlobal.setPremarks(rs.getString("Narration"));
                 objTransferGlobal.setPpreparedby(rs.getString("PreparedBy"));
             } else {
                 objGlobal.setErrorMessage("Invalid transfer number or toteid ("+ trfno +")");
                 return false;
             }
+
             return true;
         } catch (Exception ex) {
             objGlobal.setErrorMessage("TransferControl:forPrint:" + ex);

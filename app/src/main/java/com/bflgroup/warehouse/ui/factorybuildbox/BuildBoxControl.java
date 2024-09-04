@@ -20,9 +20,6 @@ public class BuildBoxControl {
     private boolean b_Result;
     BuildBoxShared ObjBuildBoxShared;
 
-
-
-
     public BuildBoxControl(Context context) {
         objGlobal.setDbName("BFLDATA");
         b_Result = dbConnection.connectDb();

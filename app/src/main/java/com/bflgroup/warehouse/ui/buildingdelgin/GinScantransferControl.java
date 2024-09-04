@@ -83,7 +83,40 @@ public class GinScantransferControl {
             return null;
         }
     }
-
+    public Integer loadKsaRoute(String shopName) {
+        int arr = 0;
+        if (!checkConnection()) {
+            return null;
+        }
+        try {
+            rs = dbConnection.getResultSet("select distinct RouteId from bfldata.dbo.DataSettings where ShopName = '"+shopName+"'", objGlobal.getConnection());
+            while (rs.next()) {
+                arr = rs.getInt("RouteId");
+            }
+            return arr;
+        } catch (Exception e) {
+            objGlobal.setErrorMessage("" + e.toString());
+            return null;
+        }
+    }
+    public List<String> loadKsaShops() {
+        List<String> arr;
+        if (!checkConnection()) {
+            return null;
+        }
+        try {
+            arr = new ArrayList<String>();
+            arr.add("0");
+            rs = dbConnection.getResultSet("select distinct ShopName,RouteId from bfldata.dbo.DataSettings where CountryCode = 'KSA'", objGlobal.getConnection());
+            while (rs.next()) {
+                arr.add(rs.getString("ShopName")+" ( "+rs.getInt("RouteId")+" )");
+            }
+            return arr;
+        } catch (Exception e) {
+            objGlobal.setErrorMessage("" + e.toString());
+            return null;
+        }
+    }
 
     public String LoadShops(int route_id) {
         String shops = "";

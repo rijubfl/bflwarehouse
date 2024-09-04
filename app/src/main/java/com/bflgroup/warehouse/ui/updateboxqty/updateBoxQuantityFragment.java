@@ -62,6 +62,8 @@ public class updateBoxQuantityFragment extends Fragment {
     private RadioGroup radioGroup;
 
     private String Radioselect = "";
+    private RadioButton rbAdd;
+    private RadioButton rbRemove;
 
     ArrayList<UpdateBoxItem> objUpdateboxItem = new ArrayList<UpdateBoxItem>();
     private UpdateBoxQuantityControl objUpdateBoxQuantityControl = new UpdateBoxQuantityControl();
@@ -94,6 +96,8 @@ public class updateBoxQuantityFragment extends Fragment {
         et_itemcode = view.findViewById(R.id.et_item_code);
         bt_tote_process = view.findViewById(R.id.bt_tote_process);
         bt_remove_itemcode = view.findViewById(R.id.bt_remove_itemcode);
+        rbAdd = view.findViewById(R.id.add);
+        rbRemove = view.findViewById(R.id.remove);
         bt_status_Save = view.findViewById(R.id.bt_status_Save);
         bt_clear_field = view.findViewById(R.id.bt_clear_field);
         lv_div_seperate_details = view.findViewById(R.id.lv_div_det);
@@ -303,8 +307,10 @@ public class updateBoxQuantityFragment extends Fragment {
             okMessage("Alert", "Please Scan ItemCode", getContext());
             return false;
         } else {
-            if (Radioselect == "") {
+            if (rbRemove.isChecked()) {
                 Radioselect = "Remove";
+            }else {
+                Radioselect = "Add";
             }
             objUpdateboxItem = objUpdateBoxQuantityControl.ScanItemCode(getContext(), toteid, itemcode, Radioselect);
             objMyUpdateBoxQuantity = new MyUpdateBoxQuantity(objUpdateboxItem);
