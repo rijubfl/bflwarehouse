@@ -492,15 +492,15 @@ public class GinScantransferControl {
                 String cDate = cDateF.format(rs1.getDate("Trfdate"));
                 Log.e("dateTime", cDate + "");
 
-                String querynew = "insert into bfldata.dbo.GoodsIssueDet  values (" + palletSN + ",'" + rs1.getString("TrfNo") + "'" +
-                        ",'" + cDate + "'," + boxno + "," + rs1.getInt("Qty") + ", '" + rs1.getString("PreparedBy") + "','" + rs1.getString("Narration") + "', '" + rs1.getString("shopname") + "')";
-                Log.e("Insert goodsIssuedet", querynew);
-                if (!dbConnection.insertUpdate(querynew, objGlobal.getConnection())) {
-                    Log.e("Error Query", querynew);
-                    objGlobal.getConnection().rollback();
-                    objGlobal.getConnection().setAutoCommit(true);
-                    return false;
-                }
+//                String querynew = "insert into bfldata.dbo.GoodsIssueDet  values (" + palletSN + ",'" + rs1.getString("TrfNo") + "'" +
+//                        ",'" + cDate + "'," + boxno + "," + rs1.getInt("Qty") + ", '" + rs1.getString("PreparedBy") + "','" + rs1.getString("Narration") + "', '" + rs1.getString("shopname") + "')";
+//                Log.e("Insert goodsIssuedet", querynew);
+//                if (!dbConnection.insertUpdate(querynew, objGlobal.getConnection())) {
+//                    Log.e("Error Query", querynew);
+//                    objGlobal.getConnection().rollback();
+//                    objGlobal.getConnection().setAutoCommit(true);
+//                    return false;
+//                }
 
 
             }
@@ -510,14 +510,14 @@ public class GinScantransferControl {
 
             try {
 
-                String query2 = "Insert into bfldata.dbo.GoodsIssueHead(Sn,DelDate,ShopName,EntryDate,Remarks,InCharge,UserId,PalletNo,PalletType,Issued, IssuedOn) Values(" + palletSN + ",'" + DelDate + "', '" + Shopname + "', '" + objGlobal.getServerDate() + "','" + remark + "', 'ANDRGIN - "+Routeid+"', " + objGlobal.getUserId() + ", '" + pallet + "', 'MIX', 'N', '" + objGlobal.getServerDate() + "')";
-                Log.e("Insert GoodsIssueHead", query2);
-                if (!dbConnection.insertUpdate(query2, objGlobal.getConnection())) {
-                    Log.e("Error Query", query2);
-                    objGlobal.getConnection().rollback();
-                    objGlobal.getConnection().setAutoCommit(true);
-                    return false;
-                } else {
+//                String query2 = "Insert into bfldata.dbo.GoodsIssueHead(Sn,DelDate,ShopName,EntryDate,Remarks,InCharge,UserId,PalletNo,PalletType,Issued, IssuedOn) Values(" + palletSN + ",'" + DelDate + "', '" + Shopname + "', '" + objGlobal.getServerDate() + "','" + remark + "', 'ANDRGIN - "+Routeid+"', " + objGlobal.getUserId() + ", '" + pallet + "', 'MIX', 'N', '" + objGlobal.getServerDate() + "')";
+//                Log.e("Insert GoodsIssueHead", query2);
+//                if (!dbConnection.insertUpdate(query2, objGlobal.getConnection())) {
+//                    Log.e("Error Query", query2);
+//                    objGlobal.getConnection().rollback();
+//                    objGlobal.getConnection().setAutoCommit(true);
+//                    return false;
+//                } else {
                     try {
                         String query4 = "Insert Into bfldata.dbo.PltIssueDet values(" + getGinno + ", '" + pallet + "', '" + objGlobal.getServerDate() + "', '" + Shopname + "', 'MIX')";
                         Log.e("Insert PltIssueDet", query4);
@@ -531,7 +531,7 @@ public class GinScantransferControl {
                     } catch (Exception e) {
                         Log.e("", "");
                     }
-                }
+//                }
             } catch (Exception e) {
                 Log.e("Get exception", e.toString());
                 objGlobal.setErrorMessage(e.toString());

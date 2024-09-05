@@ -256,8 +256,9 @@ public class UsaBoxBuildingControl {
             objUsaBoxBuildingGlobal.setScanBuildingCategory("");
             objUsaBoxBuildingGlobal.setScanDepartment("");
             objUsaBoxBuildingGlobal.setScanDivision("");
-            rs = dbConnection.getResultSet("select buildingcategory,department,division,season=(case when season='W' then 'WINTER' else 'SUMMER' end) from bfldata.dbo.tmpScanItemsBox " +
-                    "where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select buildingcategory=isnull(buildingcategory,''),department=isnull(department,''),division=isnull(division,'')," +
+                    "season=(case when season='W' then 'WINTER' else 'SUMMER' end) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                    "Itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objUsaBoxBuildingGlobal.setScanBuildingCategory(rs.getString("buildingcategory") + " - " + rs.getString("season"));
                 objUsaBoxBuildingGlobal.setScanDepartment(rs.getString("department"));

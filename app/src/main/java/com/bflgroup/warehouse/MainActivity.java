@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().findItem(R.id.nav_pallet_box_count).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_rack_query).setVisible(true);
         navigationView.getMenu().findItem(R.id.nav_show_pallets).setVisible(false);
-       // navigationView.getMenu().findItem(R.id.nav_validate_toteid).setVisible(false);
+        // navigationView.getMenu().findItem(R.id.nav_validate_toteid).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_build_box_barcode).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_warehouse_grn).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_shuttle_task_create).setVisible(false);

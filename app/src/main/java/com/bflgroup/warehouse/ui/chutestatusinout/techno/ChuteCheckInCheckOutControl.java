@@ -287,7 +287,7 @@ public class ChuteCheckInCheckOutControl {
     }
 
     public boolean updateChuteApi(String updtField, String ShopId, String TrfNo, String ChuteNo) {
-        b_Result = (dbConnection.insertUpdate("update SortTask set " + updtField + "='Y' ShopId='" + ShopId + "' and " +
+        b_Result = (dbConnection.insertUpdate("update SortTask set " + updtField + "='Y' where ShopId='" + ShopId + "' and " +
                 "TrfNo='" + TrfNo + "' and ChuteNo='" + ChuteNo + "'", conRobo));
         return b_Result;
     }
