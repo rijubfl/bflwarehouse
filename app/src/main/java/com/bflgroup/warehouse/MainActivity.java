@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_divsion_seperate, R.id.nav_pallet_status, R.id.nav_r1_wh_grn, R.id.nav_shop_return, R.id.nav_3pl_wh_grn, R.id.nav_rack_in_out,
                 R.id.nav_gin_verification, R.id.nav_blue_tote_transfer, R.id.nav_auto_building_jafza, R.id.nav_logoff, R.id.nav_bin_storage_put_away_multiple_tote,
                 R.id.nav_build_del_gin, R.id.nav_transfer, R.id.nav_update_box_quantity, R.id.nav_blue_to_euro_box, R.id.nav_stock_taking, R.id.nav_generate_barcode,
-                R.id.nav_shuttle_git, R.id.nav_shuttle_git, R.id.nav_stocktake, R.id.nav_pallet_box_count, R.id.nav_show_pallets, R.id.nav_warehouse_grn,
+                R.id.nav_shuttle_git, R.id.nav_shuttle_git, R.id.nav_stocktake, R.id.nav_pallet_box_count, R.id.nav_rack_query, R.id.nav_show_pallets, R.id.nav_warehouse_grn,
                 R.id.nav_shuttle_task_create, R.id.nav_pallets_verification,R.id.nav_jafza_racks,R.id.nav_update_box_from_pallet,R.id.nav_gin_verify_local)
                 .setDrawerLayout(drawer)
                 .build();
@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().findItem(R.id.nav_shuttle_git).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_stocktake).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_pallet_box_count).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_rack_query).setVisible(true);
         navigationView.getMenu().findItem(R.id.nav_show_pallets).setVisible(false);
         // navigationView.getMenu().findItem(R.id.nav_validate_toteid).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_build_box_barcode).setVisible(false);
@@ -197,6 +198,10 @@ public class MainActivity extends AppCompatActivity {
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_pallet_box_count")) {
                 navigationView.getMenu().findItem(R.id.nav_pallet_box_count).setVisible(true);
             }
+            if (objGlobal.getActiveMenuByUser().get(i).equals("nav_rack_query")) {
+                navigationView.getMenu().findItem(R.id.nav_rack_query).setVisible(true);
+            }
+
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_show_pallets")) {
                 navigationView.getMenu().findItem(R.id.nav_show_pallets).setVisible(true);
             }

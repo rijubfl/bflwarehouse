@@ -122,16 +122,31 @@ public class UpdateBoxQuantityControl {
                 }
             }
         } else {
-            String query2 = "Select * from usa..vupcboxdet where itemcode  = '" + Itemcode + "' and (boxno='" + Toteid + "' or toteid='" + Toteid + "')";
-            rs1 = dbConnection.getResultSet(query2, objGlobal.getConnection());
-            if (rs1.next()) {
-                String que = "insert into BFLdata..tmpUpdateBoxQty select '" + Toteid + "', '" + Itemcode + "', Boxno , 0, 1, '" + objGlobal.getDeviceName() + "', 1, 1 from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "') and Closed = 'N'";
-                Log.e("queryinsert", que);
-                if (!dbConnection.insertUpdate(que, objGlobal.getConnection())) {
-                    objGlobal.getConnection().rollback();
+            if (addminus.equals("Add")) {
+                String query2 = "Select * from Hodata..viTemMaster where itemcode  = '" + Itemcode + "'";
+                rs1 = dbConnection.getResultSet(query2, objGlobal.getConnection());
+                if (rs1.next()) {
+                    String que = "insert into BFLdata..tmpUpdateBoxQty select '" + Toteid + "', '" + Itemcode + "', Boxno , 0, 1, '" + objGlobal.getDeviceName() + "', 1, 1 from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "') and Closed = 'N'";
+                    Log.e("queryinsert", que);
+                    if (!dbConnection.insertUpdate(que, objGlobal.getConnection())) {
+                        objGlobal.getConnection().rollback();
+                    }
+                } else {
+                    okMessage("Alert", "Invalid Itemcode", context);
                 }
-            } else {
-                okMessage("Alert", "Invalid Itemcode", context);
+            }else {
+
+                String query2 = "Select * from usa..vupcboxdet where itemcode  = '" + Itemcode + "' and (boxno='" + Toteid + "' or toteid='" + Toteid + "')";
+                rs1 = dbConnection.getResultSet(query2, objGlobal.getConnection());
+                if (rs1.next()) {
+                    String que = "insert into BFLdata..tmpUpdateBoxQty select '" + Toteid + "', '" + Itemcode + "', Boxno , 0, 1, '" + objGlobal.getDeviceName() + "', 1, 1 from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "') and Closed = 'N'";
+                    Log.e("queryinsert", que);
+                    if (!dbConnection.insertUpdate(que, objGlobal.getConnection())) {
+                        objGlobal.getConnection().rollback();
+                    }
+                } else {
+                    okMessage("Alert", "Invalid Itemcode", context);
+                }
             }
         }
         String query2 = "select * from BFLdata..tmpUpdateBoxQty where Toteid='" + Toteid + "' and DeviceName = '" + objGlobal.getDeviceName() + "' ";

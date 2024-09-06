@@ -106,6 +106,10 @@
                     android:id="@+id/nav_pallet_box_count"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_BoxReconcilation" />
+                <item
+                    android:id="@+id/nav_rack_query"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_rack_query" />
             </menu>
         </item>
 

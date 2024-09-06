@@ -77,6 +77,13 @@
         android:label="@string/menu_BoxReconcilation"
         tools:layout="@layout/fragment_pallet_box_count" />
 
+
+    <fragment
+        android:id="@+id/nav_rack_query"
+        android:name="com.bflgroup.warehouse.ui.rackquery.RackQueryFragment"
+        android:label="@string/menu_rack_query"
+        tools:layout="@layout/fragment_rack_query" />
+
     <fragment
         android:id="@+id/nav_show_pallets"
         android:name="com.bflgroup.warehouse.ui.checkpallets.CheckPalletsFragment"

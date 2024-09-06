@@ -148,23 +148,25 @@ public class ReceiveShopReturnsControl {
                     objGlobal.setErrorMessage("Can't save, Some items found with empty actions, please check");
                     return false;
                 }
-                if(autoBuild) {
-                    if (toteid.isEmpty()) {
-                        objGlobal.setErrorMessage("Please enter toteid");
-                        return false;
-                    }
-                    if (objGlobal.getWarehouse().equals("KSA"))
-                        rs = dbConnection.getResultSet("select * from BFLKSA.dbo.ToteIDMaster where ToteID='" + toteid + "'", objGlobal.getConnection());
-                    else
-                        rs = dbConnection.getResultSet("select * from BFLDATA.dbo.BlueToteIDMaster where ToteID='" + toteid + "'", objGlobal.getConnection());
-                    if (!rs.next()) {
-                        objGlobal.setErrorMessage("Toteid is not valid - " + toteid);
-                        return false;
-                    }
-                    rs = dbConnection.getResultSet("select top 1 boxno from usa.dbo.UPCBoxHead where ToteID='" + toteid + "' and Closed='N'", objGlobal.getConnection());
-                    if (rs.next()) {
-                        objGlobal.setErrorMessage("Toteid is already used to another box (" + rs.getString("boxno") + ") - " + toteid);
-                        return false;
+                if (objGlobal.getWarehouse().equals("KSA")) {
+                    if (autoBuild) {
+                        if (toteid.isEmpty()) {
+                            objGlobal.setErrorMessage("Please enter toteid");
+                            return false;
+                        }
+                        if (objGlobal.getWarehouse().equals("KSA"))
+                            rs = dbConnection.getResultSet("select * from BFLKSA.dbo.ToteIDMaster where ToteID='" + toteid + "'", objGlobal.getConnection());
+                        else
+                            rs = dbConnection.getResultSet("select * from BFLDATA.dbo.BlueToteIDMaster where ToteID='" + toteid + "'", objGlobal.getConnection());
+                        if (!rs.next()) {
+                            objGlobal.setErrorMessage("Toteid is not valid - " + toteid);
+                            return false;
+                        }
+                        rs = dbConnection.getResultSet("select top 1 boxno from usa.dbo.UPCBoxHead where ToteID='" + toteid + "' and Closed='N'", objGlobal.getConnection());
+                        if (rs.next()) {
+                            objGlobal.setErrorMessage("Toteid is already used to another box (" + rs.getString("boxno") + ") - " + toteid);
+                            return false;
+                        }
                     }
                 }
             }
