@@ -58,7 +58,7 @@
     <string name="menu_rack_in_out">Rack In / Out</string>
     <string name="menu_jafza_racks">Rack In / Out (JAFZA) </string>
     <string name="menu_stocktake">Warehouse Stock Take</string>
-    <string name="menu_BoxReconcilation">Box Count Stock Take</string>
+    <string name="menu_BoxReconcilation">Box Reconcilation</string>
     <string name="menu_rack_query">Rack Query</string>
     <string name="menu_show_pallets">Show Pallets Details</string>
     <string name="menu_rack_in_out_history">Rack In / Out History</string>

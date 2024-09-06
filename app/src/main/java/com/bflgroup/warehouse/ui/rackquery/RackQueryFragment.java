@@ -1,5 +1,7 @@
 package com.bflgroup.warehouse.ui.rackquery;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -15,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +36,7 @@ public class RackQueryFragment extends Fragment implements View.OnClickListener 
 
     private View rootView;
     private EditText etRackLocation;
+    private TextView noOfBoxes;
     private Button btScan;
 
     private RackQueryControl rackQueryControl;
@@ -61,7 +65,9 @@ public class RackQueryFragment extends Fragment implements View.OnClickListener 
         btScan = rootView.findViewById(R.id.bt_scan);
         btClear = rootView.findViewById(R.id.bt_clear);
         lvRackDetails = rootView.findViewById(R.id.lv_rack_details);
+        noOfBoxes = rootView.findViewById(R.id.noOfBoxes);
         rackQueryControl = new RackQueryControl();
+        rackDetailsList = new ArrayList<>();
         etRackLocation.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
@@ -93,6 +99,9 @@ public class RackQueryFragment extends Fragment implements View.OnClickListener 
             etRackLocation.setText(rackDetailsList.get(0).location);
             rackQueryAdapter = new RackQueryAdapter(rackDetailsList);
             lvRackDetails.setAdapter(rackQueryAdapter);
+            etRackLocation.setText("");
+            etRackLocation.requestFocus();
+            noOfBoxes.setText("Box count: " + rackDetailsList.size());
         }
     }
 
@@ -110,7 +119,7 @@ public class RackQueryFragment extends Fragment implements View.OnClickListener 
         }
     }
 
-    void okMessage(String title, String message,int flag) {
+    void okMessage(String title, String message, int flag) {
         AlertDialog.Builder alert = new AlertDialog.Builder(requireActivity());
         alert.setMessage(message);
         alert.setTitle(title);
@@ -119,7 +128,12 @@ public class RackQueryFragment extends Fragment implements View.OnClickListener 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Your action here
-                clearFields();
+                if (flag == 0)
+                    clearFields();
+                else {
+                    etRackLocation.setText("");
+                    etRackLocation.requestFocus();
+                }
             }
         });
         alert.setCancelable(true);
@@ -143,37 +157,57 @@ public class RackQueryFragment extends Fragment implements View.OnClickListener 
             rackDetailsList.clear();
             rackQueryAdapter = new RackQueryAdapter(new ArrayList<>());
             lvRackDetails.setAdapter(rackQueryAdapter);
+            etRackLocation.setText("");
+            etRackLocation.requestFocus();
+            noOfBoxes.setText("Box count: 0");
         } else {
-            okMessage("Error","Something went wrong. please try later",0);
+            okMessage("Error", "Something went wrong. please try later", 0);
             vibrate(500);
         }
 
     }
 
     private void fetchRackDetailsFromTable() {
-        rackDetailsList = rackQueryControl.rackDetails(etRackLocation.getText().toString());
-        if (!rackDetailsList.isEmpty()){
-            if (rackDetailsList.size() == 1){
-                if (rackDetailsList.get(0).warehouse.equals("")&&
-                        rackDetailsList.get(0).toteId.equals("")&&
-                        rackDetailsList.get(0).boxNo.equals("")){
-                    okMessage("Error","Something went wrong, please try again",1);
+        List<RackDetailsData> rackDetailsList1 = rackQueryControl.rackDetails(etRackLocation.getText().toString());
+        rackDetailsList.addAll(rackDetailsList1);
+        if (!rackDetailsList1.isEmpty()) {
+            if (rackDetailsList.size() == 1) {
+                if (rackDetailsList.get(0).warehouse.equals("") &&
+                        rackDetailsList.get(0).toteId.equals("") &&
+                        rackDetailsList.get(0).boxNo.equals("")) {
+                    okMessage("Error", "Something went wrong, please try again", 1);
                     vibrate(500);
-                }
-                else{
+                } else {
                     rackQueryAdapter = new RackQueryAdapter(rackDetailsList);
                     lvRackDetails.setAdapter(rackQueryAdapter);
+                    noOfBoxes.setText("Box count: " + rackDetailsList.size());
+                    etRackLocation.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            etRackLocation.setText("");
+                            etRackLocation.requestFocus();
+                        }
+                    });
                 }
-            }
-            else{
+            } else {
                 rackQueryAdapter = new RackQueryAdapter(rackDetailsList);
                 lvRackDetails.setAdapter(rackQueryAdapter);
+                noOfBoxes.setText("Box count: " + rackDetailsList.size());
+
+                etRackLocation.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        etRackLocation.setText("");
+                        etRackLocation.requestFocus();
+                    }
+                });
+
+
             }
 
-        }
-        else {
-            okMessage("Error","There is no boxes in this "+etRackLocation.getText().toString() +" location / " +
-                    "location is invalid",1);
+        } else {
+            okMessage("Error", "There is no boxes in this " + etRackLocation.getText().toString() + " location / " +
+                    "location is invalid", 1);
             vibrate(500);
         }
 

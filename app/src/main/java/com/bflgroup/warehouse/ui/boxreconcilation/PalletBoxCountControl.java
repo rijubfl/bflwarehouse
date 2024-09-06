@@ -195,7 +195,7 @@ public class PalletBoxCountControl {
         return false;
     }
 
-    ArrayList<BoxItemList> UpdateLoadBoxes(String Boxno, String Palletno, String Warehouse) {
+    ArrayList<BoxItemList> UpdateLoadBoxes(String Boxno, String Palletno, String Warehouse, Context context) {
         int srno = 0;
         String box = "";
         ArrayList<BoxItemList> boxItemLists = new ArrayList<>();
@@ -203,10 +203,17 @@ public class PalletBoxCountControl {
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");
             }
-            String query1 = "update tmpScannedBoxes set BoxScanned = '" + PalletBoxCountGlobal.getBoxNo() + "', updateTime= '" + objGlobal.getServerTime() + "' where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and BoxOriginal = '" + PalletBoxCountGlobal.getBoxNo() + "' and warehouse = '" + Warehouse + "'";
-            if (!dbConnection.insertUpdate(query1, objGlobal.getConnection())) {
-
+            String query1 = "select * from tmpScannedBoxes where BoxScanned = '" + PalletBoxCountGlobal.getBoxNo() + "' and DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and BoxOriginal = '" + PalletBoxCountGlobal.getBoxNo() + "' and warehouse = '" + Warehouse + "'";
+            rs = dbConnection.getResultSet(query1, objGlobal.getConnection());
+            if (rs.next()) {
+                        okMessage("Alert", "Box already scanned - " + PalletBoxCountGlobal.getBoxNo(),context);
                 //  return false;
+            }else {
+
+                String query3 = "update tmpScannedBoxes set BoxScanned = '" + PalletBoxCountGlobal.getBoxNo() + "', updateTime= '" + objGlobal.getServerTime() + "' where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and BoxOriginal = '" + PalletBoxCountGlobal.getBoxNo() + "' and warehouse = '" + Warehouse + "'";
+                if (!dbConnection.insertUpdate(query3, objGlobal.getConnection())) {
+                    //  return false;
+                }
             }
             String query2 = "select BoxOriginal,toteid=isnull(toteid,''),BoxScanned from tmpScannedBoxes where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' order by Date,updatetime desc";
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
