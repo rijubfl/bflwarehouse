@@ -57,7 +57,7 @@ public class BarcodePrinting {
         String str11 = "1911A2403470043" + mainHead + "\r\n";
         String str12 = "1e6308200480107B"+ trfno + "\r\n";
         String str13 = "1911A1802950011Shop.     : " + shop + "\r\n";
-        String str14 = "1911A1802270011Tnf. No.  : " + trfno + "\r\n";
+        String str14 = "1911A1802270011Trf. No.  : " + trfno + "\r\n";
         String str15 = "1911A1801580011Date.     : " + trfdate + "\r\n";
         String str16 = "1911A1801900011Quanity.  : " + qty + "\r\n";
         String str17 = "Q0001" + "\r\n";
