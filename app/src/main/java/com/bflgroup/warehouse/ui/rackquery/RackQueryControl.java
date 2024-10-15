@@ -91,6 +91,13 @@ public class RackQueryControl {
 
     }
 
+//    private int CountBox(String rackLocation) {
+//       int countBox = 0;
+//        String insertQuery = "SELECT * FROM RACKS..BinRack WHERE Location = '"+rackLocation+"'";
+//
+//
+//    }
+
     boolean tempDataClear(){
         String query = "delete from TEMPDATA..rackdetailsksa where UserId ='"+objGlobal.getUserId()+"' and DeviceId = '"+objGlobal.getDeviceName()+"'";
         return dbConnection.insertUpdate(query, objGlobal.getConnection());

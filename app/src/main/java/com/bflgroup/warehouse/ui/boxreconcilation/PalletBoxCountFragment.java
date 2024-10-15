@@ -309,7 +309,7 @@ public class PalletBoxCountFragment extends Fragment {
 
             try {
                 if(objPalletBoxCountControl.BoxesInPallets(et_rack_in_out_BoxCount.getText().toString().trim(),et_rack_in_out_pallettop.getText().toString(),tv_rack_in_out_warehouse.getText().toString())){
-                    listBinScanToteId = objPalletBoxCountControl.UpdateLoadBoxes(et_rack_in_out_BoxCount.getText().toString().trim(),et_rack_in_out_pallettop.getText().toString(),tv_rack_in_out_warehouse.getText().toString());
+                    listBinScanToteId = objPalletBoxCountControl.UpdateLoadBoxes(et_rack_in_out_BoxCount.getText().toString().trim(),et_rack_in_out_pallettop.getText().toString(),tv_rack_in_out_warehouse.getText().toString(), getContext());
                     objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
                     lv_details.setAdapter(objMyListBoxAdapter);
                     int Count = objPalletBoxCountControl.getCountBoxesScanned(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString());
