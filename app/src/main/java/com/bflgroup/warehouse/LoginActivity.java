@@ -68,8 +68,9 @@ public class LoginActivity extends AppCompatActivity {
         arr.add("KUWAIT");
         arr.add("QATAR");
         arr.add("KSA");
-        arr.add("3PL");
         arr.add("BAHRAIN");
+        arr.add("BAHRAIN");
+        arr.add("MALAYSIA");
         ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, arr);
         signInWarehouse.setAdapter(arrayAdp);
         if (saredRef.loadWorkLocation() != "") {
@@ -143,6 +144,9 @@ public class LoginActivity extends AppCompatActivity {
             }
             if (tps.equals("BAHRAIN")) {
                 objGlobal.setServerIP("10.60.240.51");
+            }
+            if (tps.equals("MALAYSIA")) {
+                objGlobal.setServerIP("10.90.240.51");
             }
             if (tps.equals("3PL")) {
                 objGlobal.setServerIP("bfl-db-prod.cxavfbgorqyp.me-south-1.rds.amazonaws.com");

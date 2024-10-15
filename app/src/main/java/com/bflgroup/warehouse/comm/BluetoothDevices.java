@@ -18,6 +18,7 @@ public class BluetoothDevices {
     public boolean loadBluetoothDevicesArray() {
         List<String> arr;
         arr=new ArrayList<String>();
+        if(!objGlobal.getUserPrinterName().isEmpty())arr.add(objGlobal.getUserPrinterName());
         final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter.isEnabled()) {
             if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {

@@ -95,10 +95,10 @@ public class BinStorageWavePickFragment extends Fragment {
         ArrayAdapter<String> arrayAdpToteType = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arrTypeType);
         sp_bin_storage_wave_pick_tote_type.setAdapter(arrayAdpToteType);
 
-        /*String rack= sp_bin_storage_wave_pick_rack.getSelectedItem().toString().trim();
-        ArrayList<BinStorageWavePickTicket> listBinStorageWavePickTicket = objBinStorageWavePickControl.loadBinStorageWaveDetails(rack);
+        String rack= sp_bin_storage_wave_pick_rack.getSelectedItem().toString().trim();
+        ArrayList<BinStorageWavePickTicket> listBinStorageWavePickTicket = objBinStorageWavePickControl.loadBinStorageWaveDetails(rack, "", "");
         objMyBinStorageWavePickFragmentAdp = new BinStorageWavePickFragment.MyBinStorageWavePickFragmentAdp(listBinStorageWavePickTicket);
-        lv_bin_storage_wave_pick_details.setAdapter(objMyBinStorageWavePickFragmentAdp);*/
+        lv_bin_storage_wave_pick_details.setAdapter(objMyBinStorageWavePickFragmentAdp);
 
         bt_bin_storage_wave_pick_load.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -399,9 +399,9 @@ public class BinStorageWavePickFragment extends Fragment {
         objMyBinStorageWavePickFragmentAdp = new BinStorageWavePickFragment.MyBinStorageWavePickFragmentAdp(listBinStorageWavePickTicket);
         lv_bin_storage_wave_pick_details.setAdapter(objMyBinStorageWavePickFragmentAdp);
 
-        /*List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack();
+        List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack();
         ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
-        sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);*/
+        sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);
         return true;
     }
 

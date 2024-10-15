@@ -17,7 +17,7 @@ public class TransferReceipt {
 
     public boolean transferReceipt(String shopName,String palletBoxNo) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
-        String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", trfType = "R", trfPalletNo = "", cartonNo = "1", empName = "", storeIssue = "", firstScanTime = "";
+        String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", trfType = "R", trfPalletNo = "", cartonNo = "1", empName = "", storeIssue = palletBoxNo, firstScanTime = "";
         if(objGlobal.getWorkLocation().equals("KSA")) preparedBy= objGlobal.getUserName();
         int totalQty = 0;
         float totalAmt = 0, fcRate = 1;
@@ -183,17 +183,7 @@ public class TransferReceipt {
             }
             if (!palletBoxNo.isEmpty()) {
                 if (!dbConnection.insertUpdate("Insert into usa.dbo.ExportTransfer(Dep,DataName,PalletNo,TrfNo,TrfDate,TrfTime,PurInvNo,PurRetNo,PreparedBy,UserId,BoxNo,ShopName,CostCode) " +
-                        "select 'USA (A-PDA)','" + dataName + "',PalletNo,'" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','','','" + objGlobal.getUserName() + "'," +
-                        "" + objGlobal.getUserId() + ",PalletNo,'" + shopName + "','" + costCodeTo + "' from bfldata.dbo.USAPallets where PalletNo='" + palletBoxNo + "'", conLoc)) {
-                    conRob.rollback();
-                    conLoc.rollback();
-                    conRob.setAutoCommit(true);
-                    conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:018");
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("Insert into usa.dbo.ExportTransfer(Dep,DataName,PalletNo,TrfNo,TrfDate,TrfTime,PurInvNo,PurRetNo,PreparedBy,UserId,BoxNo,ShopName,CostCode) " +
-                        "select 'USA (A-PDA)','" + dataName + "',BoxNo,'" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','','','" + objGlobal.getUserName() + "'," +
+                        "select 'USA','" + dataName + "',BoxNo,'" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','','','" + objGlobal.getUserName() + "'," +
                         "" + objGlobal.getUserId() + ",BoxNo,'" + shopName + "','" + costCodeTo + "' from usa.dbo.UPCBoxHead where BoxNo='" + palletBoxNo + "'", conLoc)) {
                     conRob.rollback();
                     conLoc.rollback();
@@ -202,27 +192,8 @@ public class TransferReceipt {
                     objGlobal.setErrorNo("transferReceipt:019");
                     return false;
                 }
-                if (!dbConnection.insertUpdate("Insert into usa.dbo.ExportTransfer(Dep,DataName,PalletNo,TrfNo,TrfDate,TrfTime,PurInvNo,PurRetNo,PreparedBy,UserId,BoxNo,ShopName,CostCode) " +
-                        "select distinct 'USA (A-PDA)','" + dataName + "',palletno,'" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','','','" + objGlobal.getUserName() + "'," +
-                        "" + objGlobal.getUserId() + ",BoxNo,'" + shopName + "','" + costCodeTo + "'  from usa.dbo.vUPCBoxDet where PalletNo='" + palletBoxNo + "' and boxno<>'" + palletBoxNo + "'", conLoc)) {
-                    conRob.rollback();
-                    conLoc.rollback();
-                    conRob.setAutoCommit(true);
-                    conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:020");
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.CloseR1pallet select 'USA',Palletno,'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + objGlobal.getUserId() + "'," +
-                        "'" + objGlobal.getUserName() + "','','',0,0,0,'Auto Closed Transfer PDA ('" + trfRecNo + "')' from bfldata.dbo.USAPallets where PalletNo='" + palletBoxNo + "'", conLoc)) {
-                    conRob.rollback();
-                    conLoc.rollback();
-                    conRob.setAutoCommit(true);
-                    conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:021");
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.CloseR1pallet select 'USABOX',Palletno,'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + objGlobal.getUserId() + "'," +
-                        "'" + objGlobal.getUserName() + "','','',0,0,0,'Auto Closed Transfer PDA ('" + trfRecNo + "')' from usa.dbo.UPCBoxHead where BoxNo='" + palletBoxNo + "'", conLoc)) {
+                if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.CloseR1pallet select 'USABOX',boxno,'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + objGlobal.getUserId() + "'," +
+                        "'" + objGlobal.getUserName() + "','','',0,0,0,'Auto Closed Transfer PDA (" + trfRecNo + ")' from usa.dbo.UPCBoxHead where BoxNo='" + palletBoxNo + "'", conLoc)) {
                     conRob.rollback();
                     conLoc.rollback();
                     conRob.setAutoCommit(true);
@@ -230,24 +201,7 @@ public class TransferReceipt {
                     objGlobal.setErrorNo("transferReceipt:022");
                     return false;
                 }
-                if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.CloseR1pallet select distinct 'USABOX',BoxNo,'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + objGlobal.getUserId() + "'," +
-                        "'" + objGlobal.getUserName() + "','','',0,0,0,'Auto Closed Transfer PDA ('" + trfRecNo + "')' from usa.dbo.vUPCBoxDet where PalletNo='" + palletBoxNo + "' and BoxNo<>'" + palletBoxNo + "'", conLoc)) {
-                    conRob.rollback();
-                    conLoc.rollback();
-                    conRob.setAutoCommit(true);
-                    conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:023");
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("update bfldata.dbo.USAPallets set Closed='Y' where PalletNo='" + palletBoxNo + "'", conLoc)) {
-                    conRob.rollback();
-                    conLoc.rollback();
-                    conRob.setAutoCommit(true);
-                    conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:024");
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("update usa.dbo.UPCBoxHead set Closed='Y' where boxno in(select distinct BoxNo from usa.dbo.vUPCBoxDet where PalletNo='" + palletBoxNo + "' and BoxNo<>'" + palletBoxNo + "')", conLoc)) {
+                if (!dbConnection.insertUpdate("update usa.dbo.UPCBoxHead set Closed='Y' where boxno='" + palletBoxNo + "'", conLoc)) {
                     conRob.rollback();
                     conLoc.rollback();
                     conRob.setAutoCommit(true);

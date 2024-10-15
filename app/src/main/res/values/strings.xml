@@ -16,7 +16,7 @@
     <string name="menu_chute_status_jafza">Chute Status (Jafza)</string>
     <string name="menu_building_auto">Building (Auto)</string>
     <string name="menu_building">Building</string>
-    <string name="menu_transfer">Transfer (RFID / Barcode / Pallet)</string>
+    <string name="menu_transfer">Transfer</string>
     <string name="menu_building_delivery">Delivery</string>
     <string name="menu_black_box">Black Box</string>
     <string name="menu_rerturns_repair">Returns / Repairs</string>

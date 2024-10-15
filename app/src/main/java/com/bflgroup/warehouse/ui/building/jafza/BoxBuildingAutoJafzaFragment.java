@@ -183,8 +183,8 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
                     if (!TextUtils.isEmpty(et_chute_building_totid.getText())) {
-                        if (et_chute_building_totid.getText().length() > 9)
-                            et_chute_building_totid.setText(et_chute_building_totid.getText().toString().substring(0, 9));
+                        if (et_chute_building_totid.getText().length() > 8)
+                            et_chute_building_totid.setText(et_chute_building_totid.getText().toString().substring(0, 8));
                     }
                     b_Result = validateToteId(et_chute_building_totid.getText().toString());
                     if (!b_Result) {
@@ -244,9 +244,10 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
                                         final AsyncHttpClient client = new AsyncHttpClient();
                                         JSONObject json = new JSONObject();
                                         json.put("ChuteId", chuteId);
-                                        json.put("Status", "0");
+                                        json.put("status", true);
                                         StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                                         entity.setContentType("application/json");
+                                        if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
                                         client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
                                                 new AsyncHttpResponseHandler() {
                                                     @Override
@@ -324,9 +325,10 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
                                         final AsyncHttpClient client = new AsyncHttpClient();
                                         JSONObject json = new JSONObject();
                                         json.put("ChuteId", et_building_chuteid.getText().toString());
-                                        json.put("Status", "2");
+                                        json.put("status", false);
                                         StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                                         entity.setContentType("application/json");
+                                        if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
                                         client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
                                                 new AsyncHttpResponseHandler() {
                                                     @Override

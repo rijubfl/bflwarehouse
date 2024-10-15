@@ -184,7 +184,8 @@ public class BoxBuildingAutoJafzaControl {
                 objGlobal.setErrorNo("saveChuteBuilding:001");
                 return false;
             }
-            rs = dbConnection.getResultSet("select ContNo,itemcode,qty=sum(qty) from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by ContNo,itemcode", conRobo);
+            rs = dbConnection.getResultSet("select ContNo,itemcode,qty=sum(qty) from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
+                    "ShopId='" + shopId + "' group by ContNo,itemcode", conRobo);
             while (rs.next()) {
                 if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpBoxBuild(itemcode,qty,UserId,DeviceName,Trf) values('" + rs.getString("itemcode") + "'," + rs.getInt("qty") + "," +
                         "" + objGlobal.getUserId() + ",'" + objGlobal.getDeviceName() + "','" + rs.getString("ContNo") + "')", conRobo)) {
@@ -203,13 +204,13 @@ public class BoxBuildingAutoJafzaControl {
                 objGlobal.setErrorNo("saveChuteBuilding:003");
                 return false;
             }
-            rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where ShopName='" + shopName + "'", conRobo);
+            rs = dbConnection.getResultSet("select PalletType,Division from BFLDATA.dbo.ShopinShop where SubShop='" + shopName + "'", conRobo);
             if (rs.next()) {
-                palletTyp = rs.getString("ShopName");
-                div = ""; //rs.getString("Division");
+                palletTyp = rs.getString("PalletType");
+                div = rs.getString("Division");
             } else {
                 objGlobal.setErrorMessage("Invalid Dataname");
-                objGlobal.setErrorNo("saveChuteBuilding:004");
+                objGlobal.setErrorNo("saveChuteBuilding:012");
                 return false;
             }
             if (TextUtils.isEmpty(palletTyp)) {
@@ -218,14 +219,14 @@ public class BoxBuildingAutoJafzaControl {
                 return false;
             }
             objBuildingJafzaGLobal.setBoxNo("");
-            objBuildingJafzaGLobal.setBoxNo(getBoxNumber(div));
+            objBuildingJafzaGLobal.setBoxNo(getBoxNumber("USA"));
             if (TextUtils.isEmpty(objBuildingJafzaGLobal.getBoxNo())) {
                 objGlobal.setErrorMessage(getBoxNumber(div));
                 objGlobal.setErrorNo("saveChuteBuilding:005");
                 return false;
             }
             conRobo.setAutoCommit(false);
-            if (div.equals("TCM")) {
+            /*if (div.equals("TCM")) {
                 if (!dbConnection.insertUpdate("insert into bfldata.dbo.TcmboxesHeader (Boxno,TrnDate,Time1,UserId,TotId,Whouse) values ('" + objBuildingJafzaGLobal.getBoxNo() + "','" + objGlobal.getServerDate() + "'," +
                         "'" + objGlobal.getServerTime() + "'," + objGlobal.getUserId() + ",'" + toteId + "','" + objGlobal.getWarehouse() + "')", conRobo)) {
                     conRobo.rollback();
@@ -239,7 +240,7 @@ public class BoxBuildingAutoJafzaControl {
                     objGlobal.setErrorNo("saveChuteBuilding:009");
                     return false;
                 }
-            } else {
+            } else {*/
                 if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead(BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
                         "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) values ('" + objBuildingJafzaGLobal.getBoxNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +
                         "'','" + objGlobal.getUserName() + "','" + shopName + "'," + objGlobal.getUserId() + ",'" + palletTyp + "','N','','AUTO','','','" + objGlobal.getWarehouse() + "','" + palletTyp + "','" + objGlobal.getUserName() + "','" + palletTyp + "'," +
@@ -254,7 +255,7 @@ public class BoxBuildingAutoJafzaControl {
                     objGlobal.setErrorNo("saveChuteBuilding:009");
                     return false;
                 }
-            }
+            /*}*/
             //insert chute status *****************************************
             if (!dbConnection.insertUpdate("insert into ChuteCheckout values('" + chuteId + "','" + toteId + "','" + shopId + "','" + shopName + "','" + objGlobal.getServerDate() + "'," +
                     "'" + objGlobal.getServerTime() + "','" + objBuildingJafzaGLobal.getBoxNo() + "'," + objGlobal.getUserId() + ")", conRobo)) {

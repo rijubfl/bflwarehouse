@@ -53,14 +53,14 @@ public class BarcodePrinting {
         String str07="D11\r\n";
         String str08="ySPM\r\n";
         String str09="A2\r\n";
-        String str10 = "1911A1802590011Tote        : " + toteid + "\r\n";
+        String str10 = "1911A1802590011Tote/Box  : " + toteid + "\r\n";
         String str11 = "1911A2403470043" + mainHead + "\r\n";
         String str12 = "1e6308200480107B"+ trfno + "\r\n";
         String str13 = "1911A1802950011Shop.     : " + shop + "\r\n";
         String str14 = "1911A1802270011Trf. No.  : " + trfno + "\r\n";
         String str15 = "1911A1801580011Date.     : " + trfdate + "\r\n";
-        String str16 = "1911A1801900011Quanity.  : " + qty + "\r\n";
-        String str17 = "Q0001" + "\r\n";
+        String str16 = "1911A1801900011Qty/User. : " + qty + " / " + preparedby + "\r\n";
+        String str17 = "Q0002" + "\r\n";
         String str18 = "E" + "\r\n";
 
         //printData = addToDataVault(printData, "FB+\r\n".getBytes());

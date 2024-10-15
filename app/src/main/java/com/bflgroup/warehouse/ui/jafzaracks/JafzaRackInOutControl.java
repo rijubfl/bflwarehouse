@@ -22,11 +22,11 @@ public class JafzaRackInOutControl {
     public JafzaRackInOutControl() {
         objGlobal.setServerIP("192.168.5.51");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("RackInOutControl : Local Connection error");
         }
         b_Result = dbConnection.getServerDateTime(objGlobal.getConnection());
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("RackInOutControl : Fetch Time error");
         }
     }
@@ -36,7 +36,7 @@ public class JafzaRackInOutControl {
         objGlobal.setErrorMessage("");
         if (dbConnection.checkConnectionClosed() == false) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("RackInOutControl.checkConnection : Connection error");
                 return false;
             }
@@ -58,30 +58,30 @@ public class JafzaRackInOutControl {
             if (inOutItem.equalsIgnoreCase("in")) {
                 b_Result = dbConnection.insertUpdate("insert into racks.dbo.TechnoRackDet values('" + rackNumber[0] + "','" + rackNumber[1] + "','" + objGlobal.getServerDate() + "'," +
                         "'" + objGlobal.getServerTime() + "','" + palletUp + "','" + palletDown + "')", objGlobal.getConnection());
-                if (b_Result == false) {
+                if (!b_Result) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
                 b_Result = dbConnection.insertUpdate("update racks.dbo.TechnoRacks set " + ColName + "='" + palletUp + "/" + palletDown + "' where rowno='" + rackNumber[0] + "'", objGlobal.getConnection());
-                if (b_Result == false) {
+                if (!b_Result) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
             } else if (inOutItem.equalsIgnoreCase("out")) {
                 b_Result = dbConnection.insertUpdate("update racks.dbo.TechnoRacks set " + ColName + "='' where rowno='" + rackNumber[0] + "'", objGlobal.getConnection());
-                if (b_Result == false) {
+                if (!b_Result) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
                 b_Result = dbConnection.insertUpdate("delete from racks.dbo.TechnoRackDet where rowno='" + rackNumber[0] + "' and cellno='" + rackNumber[1] + "'", objGlobal.getConnection());
-                if (b_Result == false) {
+                if (!b_Result) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
             }
             b_Result = dbConnection.insertUpdate("Insert into racks.dbo.TechnoRacksHistory values  ('" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + palletUp + "'," +
                     "'" + palletDown + "','" + inOutItem.toUpperCase(Locale.ROOT) + "','" + rackNum + "','" + objGlobal.getUserName() + "','')", objGlobal.getConnection());
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.getConnection().rollback();
                 return false;
             }
@@ -123,30 +123,30 @@ public class JafzaRackInOutControl {
             if (inOutItem.equalsIgnoreCase("in")) {
                 b_Result = dbConnection.insertUpdate("insert into racks.dbo.WarehouseRackDet values('" + warehouse + "','" + sRackRowNo + "','" + iRackCellNo +
                         "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + palletUp + "','" + palletDown + "')", objGlobal.getConnection());
-                if (b_Result == false) {
+                if (!b_Result) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
                 b_Result = dbConnection.insertUpdate("update racks.dbo.WarehouseRacks set " + ColName + "='" + palletUp + "/" + palletDown + "' where warehouse='" + warehouse + "' and rowno='" + sRackRowNo + "'", objGlobal.getConnection());
-                if (b_Result == false) {
+                if (!b_Result) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
             } else if (inOutItem.equalsIgnoreCase("out")) {
                 b_Result = dbConnection.insertUpdate("update racks.dbo.WarehouseRacks set " + ColName + "='' where warehouse='" + warehouse + "' and rowno='" + sRackRowNo + "'", objGlobal.getConnection());
-                if (b_Result == false) {
+                if (!b_Result) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
                 b_Result = dbConnection.insertUpdate("delete from racks.dbo.WarehouseRackDet where warehouse='" + warehouse + "' and rowno='" + sRackRowNo + "' and cellno='" + iRackCellNo + "'", objGlobal.getConnection());
-                if (b_Result == false) {
+                if (!b_Result) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
             }
             b_Result = dbConnection.insertUpdate("Insert into racks.dbo.WarehouseRackHistory values ('" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + palletUp +
                     "','" + palletDown + "','" + inOutItem.toUpperCase(Locale.ROOT) + "','" + warehouse + "','" + rackNum + "','" + objGlobal.getUserName() + "','')", objGlobal.getConnection());
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.getConnection().rollback();
                 return false;
             }

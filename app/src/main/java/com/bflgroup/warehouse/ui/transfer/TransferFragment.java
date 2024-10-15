@@ -161,8 +161,8 @@ public class TransferFragment extends Fragment {
         arr.add("RFID");//0 R
         arr.add("Barcode");//1 B
         arr.add("Itemcode");//2 I
-        //arr.add("Pallet / Box");//3 P
-        if(objGlobal.getUserName().toUpperCase().equals("RIJU")) arr.add("ROBO Direct");//4 D
+        arr.add("Box");//3 P
+        if(objGlobal.getUserName().equals("RIJU")) arr.add("ROBO Direct");//4 D
         if (objGlobal.getWarehouse().equals("JAFZA")) {
             arr.add("ROBO Direct");//4 D
         }
@@ -173,7 +173,6 @@ public class TransferFragment extends Fragment {
         objTransferScannedItemsAdp = new TransferFragment.TransferScannedItemsAdp(listTransferScannedItems);
         listTransferScannedItems.clear();
         lv_transfer_items.setAdapter(objTransferScannedItemsAdp);
-
         tv_transfer_total.setText(String.valueOf(objTransferGlobal.getTotalScan()));
 
         if (saredRef.loadShopName() != "") {
@@ -196,7 +195,7 @@ public class TransferFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (position == 3) {
-                    et_transfer_pallet_box_no.setHint("Pallet / Box");
+                    et_transfer_pallet_box_no.setHint("Box");
                     et_transfer_pallet_box_no.setEnabled(true);
                 } else {
                     et_transfer_pallet_box_no.setHint("");
@@ -221,17 +220,16 @@ public class TransferFragment extends Fragment {
                     objGlobal.setErrorMessage("Please select printer");
                     b_Result=false;
                 }
-                if (sp_transfer_type.getSelectedItemId() == 2) {
+                if(sp_transfer_type.getSelectedItemId()==0 || sp_transfer_type.getSelectedItemId()==1){
+                    openPopupScanBarcodeRfid();
+                } else if (sp_transfer_type.getSelectedItemId() == 2) {
                     b_Result = scanItemcode(shop);
+                    if(b_Result) openPopupScanBarcodeRfid();
                 } else if (sp_transfer_type.getSelectedItemId() == 3) {
-                    b_Result = scanBoxPallet(boxPallet, shop);
+                    b_Result = scanBoxPallet(boxPallet);
                 } else if (sp_transfer_type.getSelectedItemId() == 4) {
                     b_Result = scanRoboDc(shop);
-                } else {
-                    b_Result = true;
-                }
-                if (b_Result) {
-                    openPopupScanBarcodeRfid();
+                    if(b_Result) openPopupScanBarcodeRfid();
                 }
             }
         });
@@ -247,6 +245,7 @@ public class TransferFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 clearAll();
+                                sp_transfer_printer.setEnabled(true);
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -689,23 +688,25 @@ public class TransferFragment extends Fragment {
         return true;
     }
 
-    boolean scanBoxPallet(String boxPallet, String shop) {
+    boolean scanBoxPallet(String boxPallet) {
         if (boxPallet.isEmpty()) {
             okMessage("Transfer Box/Pallet", "Please Enter Box/Pallet");
             et_transfer_pallet_box_no.requestFocus();
             return false;
         }
-        if (shop.isEmpty()) {
-            okMessage("Transfer Box/Pallet", "Please Select Shop");
-            tv_transfer_shopname.requestFocus();
-            return false;
-        }
-        b_Result = objTransferControl.validateBoxPallet(boxPallet, shop);
+        b_Result = objTransferControl.loadShopNameFromBox(boxPallet);
         if (!b_Result) {
             okMessage("Transfer Box/Pallet", objGlobal.getErrorMessage());
             et_transfer_pallet_box_no.requestFocus();
             return false;
         }
+        b_Result = objTransferControl.validateBoxPallet(boxPallet, objTransferGlobal.getShopName());
+        if (!b_Result) {
+            okMessage("Transfer Box/Pallet", objGlobal.getErrorMessage());
+            et_transfer_pallet_box_no.requestFocus();
+            return false;
+        }
+        tv_transfer_shopname.setText(objTransferGlobal.getShopName());
         sp_transfer_printer.setEnabled(false);
         sp_transfer_type.setEnabled(false);
         tv_transfer_shopname.setEnabled(false);
@@ -767,7 +768,6 @@ public class TransferFragment extends Fragment {
             b_Result = objTransferControl.validateBarcode(false, scan, qty, shop);
         if (scanType.equals("I"))
             b_Result = objTransferControl.validateItemcode(false, scan, qty, shop);
-        //if(scanType.equals("P")) b_Result = objTransferControl.validateItemcode(false, scan, qty, shop);
         if (scanType.equals("D"))
             b_Result = objTransferControl.validateRoboDirectCheckingResult(false, contno, scan, qty, shop);
         if (!b_Result) {
@@ -813,10 +813,9 @@ public class TransferFragment extends Fragment {
         et_transfer_pallet_box_no.setText("");
         allowChangeShop = true;
         sp_transfer_type.setEnabled(true);
-        sp_transfer_printer.setEnabled(true);
         tv_transfer_shopname.setEnabled(true);
         et_transfer_pallet_box_no.setEnabled(false);
-        if(sp_transfer_type.getSelectedItemId()==4) et_transfer_pallet_box_no.setEnabled(true);
+        if(sp_transfer_type.getSelectedItemId()==3) et_transfer_pallet_box_no.setEnabled(true);
         saredRef.saveScanType("");
         saredRef.saveShopName("");
         saredRef.savePallet("");

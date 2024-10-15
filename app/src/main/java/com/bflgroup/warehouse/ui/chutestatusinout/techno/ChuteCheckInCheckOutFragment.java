@@ -336,7 +336,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                                                     new AsyncHttpResponseHandler() {
                                                         @Override
                                                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                                            labelInfo(shopId,totId,objInOutGlobal.getLabelInfo(),chuteId,shopName,chuteId);
+                                                            labelInfo(shopId, totId, objInOutGlobal.getLabelInfo(), chuteId, shopName, chuteId);
                                                         }
 
                                                         @Override
