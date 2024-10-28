@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.pricecheck.PriceCheckFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/et_price_check_scan"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/et_custom"
+            android:hint="RFID / Barcode / Itemcode"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_price_check_scan"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/bt_price_check_scan"
+            android:layout_width="75dp"
+            android:layout_height="0dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Show"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/et_price_check_scan"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_price_check_scan" />
+
+        <TextView
+            android:id="@+id/tv_price_check_scan"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/et_custom"
+            android:hint="Scan"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_price_check_scan" />
+
+        <TextView
+            android:id="@+id/tv_price_check_itemcode"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/et_custom"
+            android:hint="Itemcode"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_check_scan" />
+
+        <TextView
+            android:id="@+id/tv_price_check_description"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:hint="Description"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_check_message" />
+
+        <TextView
+            android:id="@+id/tv_price_check_message"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:background="@drawable/et_custom"
+            android:hint="Message"
+            android:padding="8dp"
+            android:textColor="@color/coloRed"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_check_itemcode" />
+
+        <TextView
+            android:id="@+id/tv_price_check_group"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:hint="Group"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_check_description" />
+
+        <TextView
+            android:id="@+id/tv_price_check_department"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:hint="Department"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_check_group" />
+
+        <TextView
+            android:id="@+id/tv_price_check_division"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:hint="Division"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_check_department" />
+
+        <TextView
+            android:id="@+id/tv_price_check_itemtype"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:hint="Item Season"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_check_division" />
+
+
+        <TextView
+            android:id="@+id/tv_price_check_current_price"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/et_custom"
+            android:hint="Current Price"
+            android:gravity="right"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_price_check_disc_perc"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_check_itemtype" />
+
+        <TextView
+            android:id="@+id/tv_price_check_disc_perc"
+            android:layout_width="175dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="right"
+            android:hint="Disc %"
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_price_check_current_price" />
+
+        <TextView
+            android:id="@+id/tv_price_check_new_price"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/et_custom"
+            android:gravity="right"
+            android:hint="Current Price"
+            android:padding="8dp"
+            android:textColor="@color/coloRed"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_price_check_stock"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_check_current_price" />
+
+        <TextView
+            android:id="@+id/tv_price_check_stock"
+            android:layout_width="175dp"
+            android:layout_height="40dp"
+            android:gravity="right"
+            android:background="@drawable/et_custom"
+            android:hint="Stock"
+            android:padding="8dp"
+            android:textColor="@color/coloRed"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_price_check_new_price" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

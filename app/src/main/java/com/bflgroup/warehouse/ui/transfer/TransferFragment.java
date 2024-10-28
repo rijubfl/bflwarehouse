@@ -767,7 +767,7 @@ public class TransferFragment extends Fragment {
         if (scanType.equals("B"))
             b_Result = objTransferControl.validateBarcode(false, scan, qty, shop);
         if (scanType.equals("I"))
-            b_Result = objTransferControl.validateItemcode(false, scan, qty, shop);
+            b_Result = objTransferControl.validateItemcode(false, scan, qty, shop,scanType);
         if (scanType.equals("D"))
             b_Result = objTransferControl.validateRoboDirectCheckingResult(false, contno, scan, qty, shop);
         if (!b_Result) {

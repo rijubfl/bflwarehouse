@@ -56,7 +56,10 @@ public class BinPutAwayMultipleToteControl {
             return false;
         }
 
-
+        b_Result = validateLocation(warehouse, location, direction);
+        if (!b_Result) {
+            return false;
+        }
 
 
         try {
