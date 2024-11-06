@@ -404,21 +404,14 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                                     if (status) {
                                         try {
                                             if (objChuteCheckInCheckOutJafzaControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
-                                                b_Result = objTransferControl.forPrint(shopName, totId);
-                                                if (!b_Result) {
-                                                    okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
-                                                } else {
-                                                    if (!printSticker(sp_chute_status_inout_chuteid_printer.getSelectedItem().toString())) {
-                                                        okMessage("Transfer", "Printer Error, Pleasse reprint..");
-                                                    } else {
-                                                        clearAll();
-                                                        closeWaitDialog();
-                                                    }
-                                                }
+                                                clearAll();
+                                                closeWaitDialog();
+                                                et_chute_status_inout_chuteid.requestFocus();
                                             } else {
                                                 vibrate(500);
                                                 closeWaitDialog();
                                                 okMessage("Chute Status IN", objGlobal.getErrorMessage());
+                                                et_chute_status_inout_chuteid.requestFocus();
                                             }
                                             et_chute_status_inout_chuteid.requestFocus();
                                         } catch (Exception e) {
@@ -432,12 +425,14 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                                         vibrate(500);
                                         closeWaitDialog();
                                         okMessage("Chute status (1)", msg);
+                                        et_chute_status_inout_chuteid.requestFocus();
                                     }
                                 }
                             } catch (Exception e) {
                                 vibrate(500);
                                 closeWaitDialog();
                                 okMessage("Chute status (2)", e.toString());
+                                et_chute_status_inout_chuteid.requestFocus();
                             }
                         }
 

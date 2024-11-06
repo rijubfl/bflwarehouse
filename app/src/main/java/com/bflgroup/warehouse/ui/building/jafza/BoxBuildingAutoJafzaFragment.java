@@ -247,40 +247,52 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
                                         json.put("status", true);
                                         StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                                         entity.setContentType("application/json");
-                                        if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
+                                        client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
                                         client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
                                                 new AsyncHttpResponseHandler() {
                                                     @Override
                                                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                                                         try {
-                                                            if (objBoxBuildingAutoJafzaControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
-                                                                clearAll();
-                                                                closeWaitDialog();
-                                                            } else {
-                                                                vibrate(500);
-                                                                closeWaitDialog();
-                                                                okMessage("Chute Status IN", objGlobal.getErrorMessage());
+                                                            if(statusCode==200){
+                                                                JSONObject jso = new JSONObject(new String(responseBody));
+                                                                boolean status = jso.getBoolean("status");
+                                                                String msg = jso.getString("message");
+                                                                if (status) {
+                                                                    if (objBoxBuildingAutoJafzaControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
+                                                                        clearAll();
+                                                                        closeWaitDialog();
+                                                                        et_building_chuteid.requestFocus();
+                                                                    } else {
+                                                                        vibrate(500);
+                                                                        closeWaitDialog();
+                                                                        okMessage("Chute status", "bt_chute_status_inout_in: " + objGlobal.getErrorMessage());
+                                                                        et_building_chuteid.requestFocus();
+                                                                    }
+                                                                } else {
+                                                                    vibrate(500);
+                                                                    closeWaitDialog();
+                                                                    okMessage("Chute status (1)", msg);
+                                                                    et_building_chuteid.requestFocus();
+                                                                }
                                                             }
-                                                            et_building_chuteid.requestFocus();
                                                         } catch (Exception e) {
-                                                            clearAll();
                                                             vibrate(500);
                                                             closeWaitDialog();
-                                                            okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:try: " + e.toString());
+                                                            okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:try: " + e);
                                                             et_building_chuteid.requestFocus();
                                                         }
                                                     }
 
                                                     @Override
                                                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                                        clearAll();
+                                                        vibrate(500);
                                                         closeWaitDialog();
                                                         okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure: " + error.toString());
                                                         et_building_chuteid.requestFocus();
                                                     }
                                                 });
                                     } catch (Exception e) {
-                                        clearAll();
+                                        vibrate(500);
                                         closeWaitDialog();
                                         okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure: " + e.toString());
                                         et_building_chuteid.requestFocus();

@@ -387,26 +387,27 @@ public class TransferFragment extends Fragment {
                 okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
                 return false;
             }
-            if (objTransferGlobal.getRobooDcBuild().equals("Y"))
-                tv_transfer_last_transfer.setText("Box.No.: " + objBuildingJafzaGLobal.getBoxNo() + ", Shop Name.: " + shopname);
-            else
-                tv_transfer_last_transfer.setText("Trf.No.: " + objTransferGlobal.getTrfRecNo() + ", Shop Name.: " + shopname);
         } else {
             b_Result = objTransferReceipt.transferReceipt(shopname, pallet);
             if (!b_Result) {
                 okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
                 return false;
             }
+        }
+        if (!objBuildingJafzaGLobal.getBoxNo().isEmpty()) {
+            tv_transfer_last_transfer.setText("Box.No.: " + objBuildingJafzaGLobal.getBoxNo() + ", Shop Name.: " + shopname);
+        }
+        if (!objTransferGlobal.getTrfRecNo().isEmpty()) {
             tv_transfer_last_transfer.setText("Trf.No.: " + objTransferGlobal.getTrfRecNo() + ", Shop Name.: " + shopname);
-        }
-        b_Result = objTransferControl.forPrint(shopname, objTransferGlobal.getTrfRecNo());
-        if (!b_Result) {
-            okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
-            return false;
-        }
-        if (!printSticker(sp_transfer_printer.getSelectedItem().toString())) {
-            okMessage("Transfer", "Printer Error, Pleasse reprint..");
-            vibrate(100);
+            b_Result = objTransferControl.forPrint(shopname, objTransferGlobal.getTrfRecNo());
+            if (!b_Result) {
+                okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+                return false;
+            }
+            if (!printSticker(sp_transfer_printer.getSelectedItem().toString())) {
+                okMessage("Transfer", "Printer Error, Pleasse reprint..");
+                vibrate(100);
+            }
         }
         clearAll();
         return true;

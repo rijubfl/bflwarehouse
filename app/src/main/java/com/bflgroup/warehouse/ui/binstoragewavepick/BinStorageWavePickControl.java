@@ -43,7 +43,7 @@ public class BinStorageWavePickControl {
         List<String> arr;
         arr = new ArrayList<String>();
         try {
-            if (!dbConnection.insertUpdate("create table #zones(zoneid varchar(25))", objGlobal.getConnection())) {
+            /*if (!dbConnection.insertUpdate("create table #zones(zoneid varchar(25))", objGlobal.getConnection())) {
                 return null;
             }
             if (!dbConnection.insertUpdate("insert into #zones select distinct d.Zones from tempdata.dbo.SIMProdReadyPalletsList a,usa.dbo.UPCBoxHead b,racks.dbo.BinRack c,racks.dbo.BinRackMaster d " +
@@ -64,9 +64,16 @@ public class BinStorageWavePickControl {
             }
             if (!dbConnection.insertUpdate("drop table #zones", objGlobal.getConnection())) {
                 return null;
+            }*/
+
+            //01/11/2024
+            rs = dbConnection.getResultSet("select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList" +
+                    " where Rack<>'') and Zones<>'' order by Zones", objGlobal.getConnection());
+            while (rs.next()) {
+                arr.add(rs.getString("Zones"));
             }
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("BinStorageWavePickRackTicket:loadBinStorageWavePickRack:" + ex.toString());
+            objGlobal.setErrorMessage("BinStorageWavePickRackTicket:loadBinStorageWavePickRack:" + ex);
             return null;
         }
         return arr;
@@ -127,7 +134,7 @@ public class BinStorageWavePickControl {
             if (!dbConnection.insertUpdate("delete from #simBoxPick where Location=''", objGlobal.getConnection())) {
                 return null;
             }
-            if(pickType.equals("ALL WINTER")){
+            if(pickType.equals("ALL WINTER")) {
                 if (!dbConnection.insertUpdate("delete from #simBoxPick where ToteId not like 'B%'", objGlobal.getConnection())) {
                     return null;
                 }
@@ -136,24 +143,29 @@ public class BinStorageWavePickControl {
                     return null;
                 }
             }
+            if (!dbConnection.insertUpdate("delete from #simBoxPick where isnull(Zones,'')=''", objGlobal.getConnection())) {
+                return null;
+            }
             order = "Vertical,Horizontal,PickOrder,DoubleDeep";
             if (objGlobal.getWorkLocation().equals("KSA")) order = "Location";
-
-            rs = dbConnection.getResultSet("select ToteId,BoxNo,BoxPerc,Location,Text,Color,PickOrder,Zones,DoubleDeep,CheckingType,rowNo=(ROW_NUMBER() OVER(ORDER BY " + order + ")) " +
+            int rowno=0;
+            rs = dbConnection.getResultSet("select distinct ToteId,BoxNo,BoxPerc,Location,Text,Color,PickOrder,Zones,DoubleDeep,CheckingType,Vertical,Horizontal " +
                     "from #simBoxPick where Zones='" + zoneId + "' " + validTy + " order by " + order, objGlobal.getConnection());
             while (rs.next()) {
+                rowno++;
                 listBinStorageWavePickTicket.add(new BinStorageWavePickTicket(rs.getString("ToteId").toString().toUpperCase(),
                         rs.getString("BoxNo").toString(), rs.getString("BoxPerc").toString(),
                         rs.getString("Text").toString(), rs.getString("Color").toString(),
                         rs.getString("PickOrder").toString(), rs.getString("Zones").toString(),
-                        rs.getString("DoubleDeep").toString(), rs.getString("rowNo").toString(),
+                        rs.getString("DoubleDeep").toString(), String.valueOf(rowno),
                         rs.getString("CheckingType").toString(), rs.getString("Location").toString()));
             }
             if (!dbConnection.insertUpdate("drop table #simBoxPick", objGlobal.getConnection())) {
                 return null;
             }
+
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("BinStorageWavePickControl:loadBinStorageWaveDetails:" + ex.toString());
+            objGlobal.setErrorMessage("BinStorageWavePickControl:loadBinStorageWaveDetails:" + ex);
             return null;
         }
         return listBinStorageWavePickTicket;

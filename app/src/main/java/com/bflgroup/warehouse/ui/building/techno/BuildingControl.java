@@ -351,8 +351,8 @@ public class BuildingControl {
                     autoSn = Integer.parseInt(rs.getString("en").toString());
                 }
             } else {
-                //suff = "U" + yr + "/";
-                suff = "S" + yr + "/";
+                suff = "U" + yr + "/";
+                if(objGlobal.getCountryCode().equals("KSA")) suff = "S" + yr + "/";
                 rs = dbConnection.getResultSet("select en=isnull(max(substring(boxno,5,6)),0)+1 from usa.dbo.UPCBoxHead where left(boxno,4)='" + suff + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     autoSn = Integer.parseInt(rs.getString("en").toString());
