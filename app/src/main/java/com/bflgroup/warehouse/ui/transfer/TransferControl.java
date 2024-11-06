@@ -96,7 +96,7 @@ public class TransferControl {
                     if (!validateRfid(true, rs.getString("rfid"), rs.getInt("qty"), selShop))
                         return false;
                 if (scanType.equals("I"))
-                    if (!validateItemcode(true, rs.getString("itemcode"), rs.getInt("qty"), selShop))
+                    if (!validateItemcode(true, rs.getString("itemcode"), rs.getInt("qty"), selShop, scanType))
                         return false;
                 if (scanType.equals("D")) //add validation if needed
                     return true;
@@ -271,7 +271,7 @@ public class TransferControl {
     }
 
     public boolean validateRfid(boolean valid, String rfid, int qty, String selShop) {
-        String description = "", shopName = "", itemCode = "", trfNo = "", trfDate = "", barcode = "";
+        String description = "", shopName = "", itemCode = "", trfNo = "", trfDate = "", barcode = "", size = "";
         if (!checkConnection()) {
             return false;
         }
@@ -288,16 +288,19 @@ public class TransferControl {
                     return false;
                 }
             }
-            rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                    "rfid='" + rfid + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
-            if (rs.next()) {
-                shopName = rs.getString("shopname");
-                itemCode = rs.getString("ItemCode");
-                barcode = rs.getString("Barcode");
-                trfNo = rs.getString("TrfNo");
-                trfDate = rs.getString("entrydate");
-                description = rs.getString("descr");
-            }
+
+                rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
+                        "rfid='" + rfid + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
+                if (rs.next()) {
+                    shopName = rs.getString("shopname");
+                    itemCode = rs.getString("ItemCode");
+                    barcode = rs.getString("Barcode");
+                    trfNo = rs.getString("TrfNo");
+                    trfDate = rs.getString("entrydate");
+                    description = rs.getString("descr");
+                }
+
+
             if (shopName.isEmpty() || itemCode.isEmpty() || barcode.isEmpty() || trfDate.isEmpty() || description.isEmpty()) {
                 objGlobal.setErrorMessage("Pair information is not found, rfid:" + rfid);
                 return false;
@@ -543,11 +546,26 @@ public class TransferControl {
         }
     }
 
-    public boolean validateItemcode(boolean valid, String itemcode, int qty, String selShop) {
-        String description = "", shopName = "", itemCode = "", trfNo = "", trfDate = "", rfid = "", barcode = "";
+    public boolean validateItemcode(boolean valid, String itemcode, int qty, String selShop, String scanType) {
+        String description = "", shopName = "", itemCode = "", trfNo = "", trfDate = "", rfid = "", barcode = "", size = "";
         if (!checkConnection()) {
             return false;
         }
+
+         String[] parts;    String part1;
+         int i;
+         if(itemcode.contains("/")) {
+             parts = itemcode.split("/");
+             part1=parts[0];
+         } else {
+             part1=itemcode;
+         }
+         for (i = 0; i < part1.length() - 1; i++) {
+             if (part1.charAt(i) != '0') {
+                 break;
+             }
+         }
+         itemcode = part1.substring(i);
         try {
             rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and ShopName<>'" + selShop + "'", objGlobal.getConnection());
             if (rs.next()) {
@@ -556,33 +574,59 @@ public class TransferControl {
                     return false;
                 }
             }
-            rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFIDPBarcodeLog a where " +
-                    "itemcode='" + itemcode + "' and shopname='" + selShop + "' order by TrnDate desc,trntime desc", objGlobal.getConnection());
-            if (rs.next()) {
-                shopName = rs.getString("shopname");
-                itemCode = rs.getString("ItemCode");
-                trfNo = rs.getString("TrfNo");
-                barcode = rs.getString("Barcode");
-                trfDate = rs.getString("TrnDate");
-                description = rs.getString("descr");
-            }
-            if (shopName.isEmpty() || itemCode.isEmpty() || trfDate.isEmpty() || description.isEmpty() || barcode.isEmpty()) {
-                objGlobal.setErrorMessage("Itemcode information is not found (I), Itemcode:" + itemcode);
-                return false;
-            }
-            if (!selShop.equals(shopName) && !selShop.isEmpty()) {
-                objGlobal.setErrorMessage("Selected shop is (" + selShop + ") not match with paired shop (" + shopName + ")");
-                return false;
-            }
-            if (!valid) {
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Description,Qty,ScanTime) values('" + objGlobal.getDeviceName() + "'," +
-                        "'" + shopName + "','" + rfid + "','" + barcode + "','" + itemCode + "','" + description + "'," + qty + ",convert(varchar,getdate(),8))", objGlobal.getConnection())) {
-                    return false;
+                if(scanType.equals("I")) {
+                    rs = dbConnection.getResultSet("select top 1 *,size = isnull((select top 1 isnull(size1,'') from usa..UPCBarCodes where a.itemcode = itemcode and size1 in ('S','XS','XXS','XXXS')),'') from HODATA.dbo.itemMaster a where " +
+                            "itemcode='" + itemcode + "' ", objGlobal.getConnection());
+                    if (rs.next()) {
+                        shopName = selShop;
+                        itemCode = rs.getString("ItemCode");
+                        // trfNo = rs.getString("TrfNo");
+                        barcode = rs.getString("ItemCode");
+                        //trfDate = rs.getString("TrnDate");
+                        description = rs.getString("Description");
+                        size = rs.getString("size");
+                    }
+                    if(itemcode.isEmpty() || description.isEmpty() ){
+                        rs = dbConnection.getResultSet("select top 1 *,size = isnull((select top 1 isnull(size1,'') from usa..UPCBarCodes where a.itemcode = itemcode and size1 in ('S','XS','XXS','XXXS')),'') from usa..UPCBarCodes a, HODATA..ItemMaster b where " +
+                                " (upc='" + itemcode + "' or a.itemcode = '"+ itemcode +"') and a.itemcode = b.itemcode ", objGlobal.getConnection());
+                        if (rs.next()) {
+                            shopName = selShop;
+                            itemCode = rs.getString("ItemCode");
+                            // trfNo = rs.getString("TrfNo");
+                            barcode = rs.getString("ItemCode");
+                            //trfDate = rs.getString("TrnDate");
+                            description = rs.getString("Description");
+                            size = rs.getString("size");
+                        }
+                    }
+                    if (selShop.equals("P2KSA")) {
+                        if (size.toUpperCase().equals("S") || size.toUpperCase().equals("XS") || size.toUpperCase().equals("XXS") || size.toUpperCase().equals("XXXS")) {
+                            objGlobal.setErrorMessage("Size of item should not be S/XS/XXS/XXXS for '" + selShop + "' , Itemcode :" + itemcode + " Kindly Build for P2MYS");
+                            return false;
+                        }
+                    }
+                    if (shopName.isEmpty() || itemCode.isEmpty() || description.isEmpty() || barcode.isEmpty()) {
+
+
+
+                        objGlobal.setErrorMessage("Itemcode information is not found (I), Itemcode:" + itemcode);
+                        return false;
+                    }
+                    if (!selShop.equals(shopName) && !selShop.isEmpty()) {
+                        objGlobal.setErrorMessage("Selected shop is (" + selShop + ") not match with paired shop (" + shopName + ")");
+                        return false;
+                    }
+                    if (!valid) {
+                        if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Description,Qty,ScanTime) values('" + objGlobal.getDeviceName() + "'," +
+                                "'" + shopName + "','" + rfid + "','" + barcode + "','" + itemCode + "','" + description + "'," + qty + ",convert(varchar,getdate(),8))", objGlobal.getConnection())) {
+                            return false;
+                        }
+                        objTransferGlobal.setScanBarcode(barcode);
+                    }
                 }
-                objTransferGlobal.setScanBarcode(barcode);
-            }
-            objTransferGlobal.setShopName(shopName);
-            return true;
+                objTransferGlobal.setShopName(shopName);
+                return true;
+
         } catch (Exception e) {
             objGlobal.setErrorMessage("TransferControl.validateBarcode : " + e);
             return false;

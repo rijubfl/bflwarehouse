@@ -237,6 +237,10 @@
                     android:id="@+id/nav_stock_taking"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_stock_taking" />
+                <item
+                    android:id="@+id/nav_item_pullout"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_price_check" />
             </menu>
         </item>
 

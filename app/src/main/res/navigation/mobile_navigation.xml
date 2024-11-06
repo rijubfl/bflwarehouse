@@ -261,6 +261,12 @@
         tools:layout="@layout/fragment_shuttle_task" />
 
     <fragment
+        android:id="@+id/nav_item_pullout"
+        android:name="com.bflgroup.warehouse.ui.pricecheck.PriceCheckFragment"
+        android:label="@string/menu_price_check"
+        tools:layout="@layout/fragment_price_check" />
+
+    <fragment
         android:id="@+id/nav_settings"
         android:name="com.bflgroup.warehouse.ui.settings.SettinFragment"
         android:label="@string/menu_settings"
