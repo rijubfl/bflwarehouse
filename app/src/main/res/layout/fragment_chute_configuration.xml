@@ -5,29 +5,60 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backColor"
-    tools:context=".ui.chuteconfiguration.techno.ChuteConfigurationTechnoFragment">
+    tools:context=".ui.chuteconfiguration.ChuteConfigurationFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp">
+        android:padding="8dp">
 
         <TextView
-            android:id="@+id/TextView1"
+            android:id="@+id/textView17"
             android:layout_width="100dp"
             android:layout_height="40dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint=""
             android:padding="10dp"
+            android:text="Warehouse"
             android:textColor="@color/coloBlack"
-            android:text="Chute ID"
             android:textSize="14dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_chute_status_techno_config_chuteid"
+            android:id="@+id/tv_chute_status_config_warehouse"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView17"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/TextView1"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Chute ID"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+        <EditText
+            android:id="@+id/et_chute_status_config_chuteid"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
@@ -59,21 +90,18 @@
             app:layout_constraintTop_toBottomOf="@+id/TextView1" />
 
         <TextView
-            android:id="@+id/tv_chute_status_techno_config_shopname"
+            android:id="@+id/tv_chute_status_config_shopname"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
             android:hint=""
-            android:padding="10dp"
-            android:text=""
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            android:textStyle="bold"
+            android:padding="8dp"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView8"
-            app:layout_constraintTop_toTopOf="@+id/textView8" />
+            app:layout_constraintTop_toTopOf="@+id/textView8"/>
 
         <TextView
             android:id="@+id/TextView2"
@@ -91,7 +119,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
         <Spinner
-            android:id="@+id/sp_chute_status_techno_config_status"
+            android:id="@+id/sp_chute_status_config_status"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
@@ -121,7 +149,7 @@
             app:layout_constraintTop_toBottomOf="@+id/TextView2" />
 
         <EditText
-            android:id="@+id/et_chute_status_techno_config_totid"
+            android:id="@+id/et_chute_status_config_totid"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginStart="5dp"
@@ -189,7 +217,4 @@
             tools:ignore="SpeakableTextPresentCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 </FrameLayout>

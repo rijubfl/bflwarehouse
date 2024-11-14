@@ -73,33 +73,36 @@ public class BinStorageWavePickFragment extends Fragment {
         bt_bin_storage_wave_pick_load = (Button) view.findViewById(R.id.bt_bin_storage_wave_pick_load);
         lv_bin_storage_wave_pick_details = (ListView) view.findViewById(R.id.lv_bin_storage_wave_pick_details);
 
-        List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack();
-        ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
-        sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);
+        try {
+            List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack();
+            ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
+            sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);
 
-        List<String> arr1 = objBinStorageWavePickControl.loadPickType();
-        ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
-        sp_bin_storage_wave_pick_type.setAdapter(arrayAdp1);
+            List<String> arr1 = objBinStorageWavePickControl.loadPickType();
+            ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
+            sp_bin_storage_wave_pick_type.setAdapter(arrayAdp1);
 
-        List<String> arr2 = objBinStorageWavePickControl.loadPickDivision();
-        ArrayAdapter<String> arrayAdp2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr2);
-        sp_bin_storage_wave_pick_div.setAdapter(arrayAdp2);
+            List<String> arr2 = objBinStorageWavePickControl.loadPickDivision();
+            ArrayAdapter<String> arrayAdp2 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr2);
+            sp_bin_storage_wave_pick_div.setAdapter(arrayAdp2);
 
-        List<String> arrTypeType;
-        arrTypeType = new ArrayList<String>();
-        arrTypeType.add("ALL");
-        if(objGlobal.getWorkLocation().equals("UAE")) {
-            arrTypeType.add("B");
-            arrTypeType.add("E,J");
+            List<String> arrTypeType;
+            arrTypeType = new ArrayList<String>();
+            arrTypeType.add("ALL");
+            if (objGlobal.getWorkLocation().equals("UAE")) {
+                arrTypeType.add("B");
+                arrTypeType.add("E,J");
+            }
+            ArrayAdapter<String> arrayAdpToteType = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arrTypeType);
+            sp_bin_storage_wave_pick_tote_type.setAdapter(arrayAdpToteType);
+
+            String rack = sp_bin_storage_wave_pick_rack.getSelectedItem().toString().trim();
+            ArrayList<BinStorageWavePickTicket> listBinStorageWavePickTicket = objBinStorageWavePickControl.loadBinStorageWaveDetails(rack, "", "");
+            objMyBinStorageWavePickFragmentAdp = new BinStorageWavePickFragment.MyBinStorageWavePickFragmentAdp(listBinStorageWavePickTicket);
+            lv_bin_storage_wave_pick_details.setAdapter(objMyBinStorageWavePickFragmentAdp);
+        } catch (Exception e){
+            okMessage("BinStorageWavePick", e.getMessage());
         }
-        ArrayAdapter<String> arrayAdpToteType = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arrTypeType);
-        sp_bin_storage_wave_pick_tote_type.setAdapter(arrayAdpToteType);
-
-        String rack= sp_bin_storage_wave_pick_rack.getSelectedItem().toString().trim();
-        ArrayList<BinStorageWavePickTicket> listBinStorageWavePickTicket = objBinStorageWavePickControl.loadBinStorageWaveDetails(rack, "", "");
-        objMyBinStorageWavePickFragmentAdp = new BinStorageWavePickFragment.MyBinStorageWavePickFragmentAdp(listBinStorageWavePickTicket);
-        lv_bin_storage_wave_pick_details.setAdapter(objMyBinStorageWavePickFragmentAdp);
-
         bt_bin_storage_wave_pick_load.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

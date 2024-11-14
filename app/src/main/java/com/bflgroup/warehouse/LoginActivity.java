@@ -184,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         }
         try {
-            if(objGlobal.getWorkLocation().equals("3PL")){
+            if (objGlobal.getWorkLocation().equals("3PL")) {
                 query = "select userid,username,SealPrint,FcCode,PrntName,empCode=username,Shop from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                 if (rs.next()) {
@@ -199,7 +199,7 @@ public class LoginActivity extends AppCompatActivity {
                         objGlobal.setCountryCode(rs.getString("countrycode"));
                         objGlobal.setExportCountryCode(rs.getString("ExportCountryCode"));
                     } else {
-                        objGlobal.setErrorMessage("DataSettings (Shop name not found("+ objGlobal.getShopName() +"))");
+                        objGlobal.setErrorMessage("DataSettings (Shop name not found(" + objGlobal.getShopName() + "))");
                         return false;
                     }
                     dbConnection.insertUpdate("insert into bfldata.dbo.tmpLoginPda values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "')", objGlobal.getConnection());
@@ -207,43 +207,41 @@ public class LoginActivity extends AppCompatActivity {
                     objGlobal.setErrorMessage("Invalid username or password");
                     return false;
                 }
-                if(objGlobal.getFcCode().isEmpty() || objGlobal.getBranchLetter().isEmpty() || objGlobal.getDbName().isEmpty() || objGlobal.getCountryCode().isEmpty() || objGlobal.getExportCountryCode().isEmpty()){
-                    objGlobal.setErrorMessage("Empty values, getFcCode="+objGlobal.getFcCode()+", getBranchLetter=" +objGlobal.getBranchLetter()+ ", getDbName="+objGlobal.getDbName()+", " +
-                            "getCountryCode="+objGlobal.getCountryCode()+", getExportCountryCode="+objGlobal.getExportCountryCode());
+                if (objGlobal.getFcCode().isEmpty() || objGlobal.getBranchLetter().isEmpty() || objGlobal.getDbName().isEmpty() || objGlobal.getCountryCode().isEmpty() || objGlobal.getExportCountryCode().isEmpty()) {
+                    objGlobal.setErrorMessage("Empty values, getFcCode=" + objGlobal.getFcCode() + ", getBranchLetter=" + objGlobal.getBranchLetter() + ", getDbName=" + objGlobal.getDbName() + ", " +
+                            "getCountryCode=" + objGlobal.getCountryCode() + ", getExportCountryCode=" + objGlobal.getExportCountryCode());
                     return false;
                 }
             } else {
-                query = "select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'";
+                /*query = "select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'";
                 rs1 = dbConnection.getResultSet(query, objGlobal.getCloudCon());
-                if(rs1.next()){
-                    if(getApplicationContext().getString(R.string.app_version).contains(rs1.getString("version"))) {
-                        query = "select userid,username,SealPrint,FcCode,PrntName,allB=isnull(UserAllowMixCategoryBuild,'N'),empCode=(select RecStartingNo from fabsmain.dbo.[user] where userid=a.mainuserid) from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
-                        rs = dbConnection.getResultSet(query, objGlobal.getConnection());
-                        if (rs.next()) {
-                            objGlobal.setUserId(rs.getInt("userid"));
-                            objGlobal.setUserName(rs.getString("username"));
-                            objGlobal.setSealPrinterName(rs.getString("SealPrint"));
-                            objGlobal.setFcCode(rs.getString("FcCode"));
-                            objGlobal.setEmpCode(rs.getString("empCode"));
-                            objGlobal.setUserPrinterName(rs.getString("PrntName"));
-                            objGlobal.setUserAllowMixCategoryBuild(rs.getString("allB"));
-                            objGlobal.setEmpName(dbConnection.stringReturn(objGlobal.getConnection(), "payroll.dbo.employee", "empname", "empcode", rs.getString("empCode")));
-                            dbConnection.insertUpdate("insert into bfldata.dbo.tmpLoginPda values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "')", objGlobal.getConnection());
-                        } else {
-                            objGlobal.setErrorMessage("Invalid username or password");
-                            return false;
-                        }
-                    }else{
+                if(rs1.next()){*/
+                    /*if(!getApplicationContext().getString(R.string.app_version).contains(rs1.getString("version"))) {
                         objGlobal.setErrorMessage("Pls check the version. The latest version is - " + rs1.getString("version"));
                         return false;
-                    }
-
+                    }*/
+                query = "select userid,username,SealPrint,FcCode,PrntName,allB=isnull(UserAllowMixCategoryBuild,'N'),empCode=(select RecStartingNo from fabsmain.dbo.[user] where userid=a.mainuserid) from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
+                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
+                if (rs.next()) {
+                    objGlobal.setUserId(rs.getInt("userid"));
+                    objGlobal.setUserName(rs.getString("username"));
+                    objGlobal.setSealPrinterName(rs.getString("SealPrint"));
+                    objGlobal.setFcCode(rs.getString("FcCode"));
+                    objGlobal.setEmpCode(rs.getString("empCode"));
+                    objGlobal.setUserPrinterName(rs.getString("PrntName"));
+                    objGlobal.setUserAllowMixCategoryBuild(rs.getString("allB"));
+                    objGlobal.setEmpName(dbConnection.stringReturn(objGlobal.getConnection(), "payroll.dbo.employee", "empname", "empcode", rs.getString("empCode")));
+                    dbConnection.insertUpdate("insert into bfldata.dbo.tmpLoginPda values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "')", objGlobal.getConnection());
+                } else {
+                    objGlobal.setErrorMessage("Invalid username or password");
+                    return false;
                 }
+                //}
             }
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");
             }
-            dbConnection.insertUpdate("insert into bfldata..WHPdaUserVersion (userid,username,DeviceVersion,loginDate,Logintime,warehouse)values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + getResources().getString(R.string.app_version) + "', '"+objGlobal.getServerDate()+"','"+objGlobal.getServerTime()+"','"+objGlobal.getWarehouse()+"')", objGlobal.getConnection());
+            dbConnection.insertUpdate("insert into bfldata..WHPdaUserVersion (userid,username,DeviceVersion,loginDate,Logintime,warehouse)values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + getResources().getString(R.string.app_version) + "', '" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection());
 
             return true;
         } catch (Exception ex) {

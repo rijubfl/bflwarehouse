@@ -191,7 +191,7 @@ public class TransferReceipt {
             labelInfo="{\"Shop\":\"" + shopName + "\",\"TrfNo\":\"" + trfRecNo + "\",\"TrfDate\":\"" + objGlobal.getServerDate() + "\",\"DeliveryDate\":\"" +
                     objGlobal.getDelDate() + "\",\"Remarks\":\"" + toteId + "\",\"PreparedBy\":\"" + objGlobal.getUserName() + "\",\"BoxNo\":\"" + cartonNo + "\",\"Quantity\":\"" + totalQty + "\"}";
             if (!dbConnection.insertUpdate("insert into SortTask values('" + objGlobal.getServerDate() + "','" + toteId + "','" + objInOutGlobal.getChuteNo() + "'," +
-                    "'" + shopId + "','" + shopName + "','" + trfRecNo + "'," + objGlobal.getUserId() + ",'" + chuteId + "','N','N','" + labelInfo + "')", con)) {
+                    "'" + shopId + "','" + shopName + "','" + trfRecNo + "'," + objGlobal.getUserId() + ",'" + chuteId + "','N','N','" + objInOutGlobal.getLabelInfo() + "')", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:029");
                 return false;

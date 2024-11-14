@@ -67,8 +67,9 @@ public class BinStorageWavePickControl {
             }*/
 
             //01/11/2024
-            rs = dbConnection.getResultSet("select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList" +
-                    " where Rack<>'') and Zones<>'' order by Zones", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
+                    "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'' and BoxNo not in(select ToteId from racks.dbo.SkipWavePick where Fix='N' union all " +
+                    "select ToteId=BoxNo from racks.dbo.SkipWavePick where Fix='N')) and ISNULL(Zones,'')<>''", objGlobal.getConnection());
             while (rs.next()) {
                 arr.add(rs.getString("Zones"));
             }
@@ -95,7 +96,7 @@ public class BinStorageWavePickControl {
                     "Zones varchar(20),DoubleDeep int,CheckingType varchar(20),Vertical varchar(5),Horizontal varchar(5),iDepartment varchar(150))", objGlobal.getConnection())) {
                 return null;
             }
-            if(pickType.equals("ALL WINTER")){
+            if (pickType.equals("ALL WINTER")) {
                 if (!dbConnection.insertUpdate("insert into #simBoxPick(BoxNo,BoxPerc,CheckingType,iDepartment) select distinct BoxNo,BoxPerc=0,CheckingType='ALL WINTER',iDepartment='' from racks.dbo.BinRack where " +
                         "ToteId in(select ToteID from usa.dbo.UPCBoxHead where Closed='N' and PalletType in('RW') and isnull(ToteID,'')<>'')", objGlobal.getConnection())) {
                     return null;
@@ -127,6 +128,9 @@ public class BinStorageWavePickControl {
             if (!dbConnection.insertUpdate("update #simBoxPick set Location=b.Location from #simBoxPick a,RACKS.dbo.BinRack b where a.ToteId=b.ToteId", objGlobal.getConnection())) {
                 return null;
             }
+            if (!dbConnection.insertUpdate("update #simBoxPick set Location=b.Location from #simBoxPick a,RACKS.dbo.BinRack b where a.BoxNo=b.ToteId", objGlobal.getConnection())) {
+                return null;
+            }
             if (!dbConnection.insertUpdate("update #simBoxPick set Text=b.Text,Color=B.Color,PickOrder=B.PickOrder,Zones=B.Zones,DoubleDeep=B.DoubleDeep,Vertical=B.Vertical,Horizontal=B.Horizontal from " +
                     "#simBoxPick a,racks.dbo.BinRackMaster b where a.Location=b.Barcode", objGlobal.getConnection())) {
                 return null;
@@ -134,12 +138,15 @@ public class BinStorageWavePickControl {
             if (!dbConnection.insertUpdate("delete from #simBoxPick where Location=''", objGlobal.getConnection())) {
                 return null;
             }
-            if(pickType.equals("ALL WINTER")) {
+            if (pickType.equals("ALL WINTER")) {
                 if (!dbConnection.insertUpdate("delete from #simBoxPick where ToteId not like 'B%'", objGlobal.getConnection())) {
                     return null;
                 }
             } else {
-                if (!dbConnection.insertUpdate("delete from #simBoxPick where Location in(select Rack from SkipWavePick where fix='N')", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("delete from #simBoxPick where ToteId in(select ToteId from SkipWavePick where fix='N')", objGlobal.getConnection())) {
+                    return null;
+                }
+                if (!dbConnection.insertUpdate("delete from #simBoxPick where BoxNo in(select BoxNo from SkipWavePick where fix='N')", objGlobal.getConnection())) {
                     return null;
                 }
             }
@@ -148,7 +155,7 @@ public class BinStorageWavePickControl {
             }
             order = "Vertical,Horizontal,PickOrder,DoubleDeep";
             if (objGlobal.getWorkLocation().equals("KSA")) order = "Location";
-            int rowno=0;
+            int rowno = 0;
             rs = dbConnection.getResultSet("select distinct ToteId,BoxNo,BoxPerc,Location,Text,Color,PickOrder,Zones,DoubleDeep,CheckingType,Vertical,Horizontal " +
                     "from #simBoxPick where Zones='" + zoneId + "' " + validTy + " order by " + order, objGlobal.getConnection());
             while (rs.next()) {

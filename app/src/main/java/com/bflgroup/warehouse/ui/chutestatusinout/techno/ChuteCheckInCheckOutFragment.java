@@ -336,7 +336,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                                                     new AsyncHttpResponseHandler() {
                                                         @Override
                                                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                                            labelInfo(shopId, totId, objInOutGlobal.getLabelInfo(), chuteId, shopName, chuteId);
+                                                            labelInfo(shopId, totId, chuteId, shopName, chuteId);
                                                         }
 
                                                         @Override
@@ -370,8 +370,8 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
     }
 
     private void sortTask(String totId, String shopId,String shopName,String chuteid) {
-        if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
-                objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start", "")) {
+        if (!objChuteCheckInCheckOutControl.updateChuteApiLog("6 - Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start-01", "")) {
             clearAll();
             vibrate(500);
             okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApiLog:" + objGlobal.getErrorMessage());
@@ -390,8 +390,8 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                 json.put("createtime", objGlobal.getServerDate());
                 StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                 entity.setContentType("application/json");
-                objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
-                        objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start-1",json.toString());
+                objChuteCheckInCheckOutControl.updateChuteApiLog("7 - Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                        objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start-02",json.toString());
                 client.post(getContext(), objGlobal.getRoboSortTaskAPI(), entity, "application/json", new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -400,7 +400,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                             if (jsonArray.length() > 0) {
                                 JSONObject obj = jsonArray.getJSONObject(0);
                                 if (obj.getString("Result").equals("1")) {
-                                    if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                                    if (!objChuteCheckInCheckOutControl.updateChuteApiLog("8 - Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
                                             objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), "onSuccess-" + obj.getString("Result"))) {
                                         clearAll();
                                         vibrate(500);
@@ -416,7 +416,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                                         }
                                     }
                                 } else {
-                                    if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                                    if (!objChuteCheckInCheckOutControl.updateChuteApiLog("9 - Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
                                             objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), "onSuccess-" + obj.getString("Result"))) {
                                         clearAll();
                                         vibrate(500);
@@ -436,7 +436,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                        if (!objChuteCheckInCheckOutControl.updateChuteApiLog("10 - Sort-Task", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
                                 objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), error.getMessage())) {
                             okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApiLog:onFailure:" + objGlobal.getErrorMessage());
                         } else {
@@ -447,7 +447,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                     }
                 });
             } catch (Exception e) {
-                if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                if (!objChuteCheckInCheckOutControl.updateChuteApiLog("11 - Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
                         objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Exception", String.valueOf(e.getMessage()))) {
                     okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.updateChuteApiLog:Exception:" + objGlobal.getErrorMessage());
                 } else {
@@ -459,7 +459,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
         }
     }
 
-    private void labelInfo(String shopId, String totId, String labelInfo,String chuteid,String shopName,String chuteId) {
+    private void labelInfo(String shopId, String totId,String chuteid,String shopName,String chuteId) {
         b_Result = objChuteCheckInCheckOutControl.saveChuteOut(chuteId, totId, shopId, shopName); //transfer receipt
         if (!b_Result) {
             clearAll();
@@ -468,7 +468,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
         } else {
             tv_chute_status_inout_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objInOutGlobal.getTrfRecNo() + "  ;  " + objInOutGlobal.getTrfTotQty());
             tv_chute_status_inout_tot_qty.setText(String.valueOf(objInOutGlobal.getTrfTotQty()));
-            if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+            if (!objChuteCheckInCheckOutControl.updateChuteApiLog("1 - Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
                     objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start", "")) {
                 clearAll();
                 vibrate(500);
@@ -480,18 +480,18 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                     json.put("toteid", totId);
                     if (objGlobal.getWorkLocation().equals("KSA"))
                         json.put("messageId", objInOutGlobal.getTrfRecNo());
-                    json.put("labelInfo", labelInfo);
+                    json.put("labelInfo", objInOutGlobal.getLabelInfo());
                     json.put("spare1", "");
                     json.put("spare2", "");
                     json.put("createtime", objGlobal.getServerDate());
                     StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
                     entity.setContentType("application/json");
-                    objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
-                            objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start-1",json.toString());
+                    objChuteCheckInCheckOutControl.updateChuteApiLog("2 - Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                            objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Start-1", json.toString());
                     client.post(getContext(), objGlobal.getRoboLabelInfoAPI(), entity, "application/json", new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                            if (!objChuteCheckInCheckOutControl.updateChuteApiLog("3 - Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
                                     objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), "onSuccess")) {
                                 clearAll();
                                 vibrate(500);
@@ -509,7 +509,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                            if (!objChuteCheckInCheckOutControl.updateChuteApiLog("4 - Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
                                     objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, String.valueOf(statusCode), error.getMessage())) {
                                 okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.updateChuteApiLog:onFailure:" + objGlobal.getErrorMessage());
                             } else {
@@ -520,7 +520,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                         }
                     });
                 } catch (Exception e) {
-                    if (!objChuteCheckInCheckOutControl.updateChuteApiLog("Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
+                    if (!objChuteCheckInCheckOutControl.updateChuteApiLog("5 - Label-Info", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo(),
                             objInOutGlobal.getLabelInfo(), totId, shopName, chuteid, "Exception", String.valueOf(e.getMessage()))) {
                         okMessage("Chute status", "labelInfo:objChuteCheckInCheckOutControl.updateChuteApiLog:Exception:" + objGlobal.getErrorMessage());
                     } else {
