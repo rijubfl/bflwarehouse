@@ -239,14 +239,14 @@ public class UsaBoxBuildingControl {
                     }
                 }
             }
-            if (selPalletype.equals("RW") || selPalletype.equals("YH") || selPalletype.equals("BX")) {
+            if (selPalletype.equals("RW") || selPalletype.equals("YH") || selPalletype.equals("BX") || selPalletype.equals("BZ")) {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and season<>'W'", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("Some items found Season Summer, itemcode: " + itemcode);
                     valid = false;
                 }
             }
-            if (selPalletype.equals("R1") || selPalletype.equals("YG") || selPalletype.equals("AX")) {
+            if (selPalletype.equals("R1") || selPalletype.equals("YG") || selPalletype.equals("AX") || selPalletype.equals("BZ")) {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and season='W'", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("Some items found Season Winter, itemcode: " + itemcode);
@@ -314,12 +314,12 @@ public class UsaBoxBuildingControl {
     public boolean getPalletTypeDetails(String palletType) {
         try {
             objUsaBoxBuildingGlobal.setBuildCategoryMixAllow("N");
-            rs = dbConnection.getResultSet("select BuildCategoryMixAllow=isnull(BuildCategoryMixAllow,'') from bfldata.dbo.PalletType where PalletType='" + palletType + "'", objGlobal.getConnection());
+            objUsaBoxBuildingGlobal.setBuildingSeason("");
+            rs = dbConnection.getResultSet("select BuildCategoryMixAllow=isnull(BuildCategoryMixAllow,''),season=isnull(season,'') from bfldata.dbo.PalletType where PalletType='" + palletType + "'", objGlobal.getConnection());
             if (rs.next()) {
+                objUsaBoxBuildingGlobal.setBuildingSeason(rs.getString("season"));
                 if (rs.getString("BuildCategoryMixAllow").equals("Y"))
                     objUsaBoxBuildingGlobal.setBuildCategoryMixAllow("Y");
-//                if (objGlobal.getUserAllowMixCategoryBuild().equals("Y"))
-//                    objUsaBoxBuildingGlobal.setBuildCategoryMixAllow("Y");
             }
             return true;
         } catch (Exception ex) {
@@ -330,7 +330,7 @@ public class UsaBoxBuildingControl {
 
     public boolean saveBox(String palletType, String groupCode, String catCode, String remarks, String taskType, String doneBy, String fSize, String gender, String toteID, String buildTyp, String euro) {
         try {
-            String boxPType = "", pltPType = "";
+            String boxPType = "";
             String pltRemarks = "Euro Pallet Building in A-PDA/" + objGlobal.getUserName();
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) return false;
             b_Result = getBoxNumber(buildTyp);
@@ -342,6 +342,7 @@ public class UsaBoxBuildingControl {
             objGlobal.getConnection().setAutoCommit(false);
             if (buildTyp.equals("TCM")) {
                 if (euro.equals("Y")) {
+                    boxPType = "TP";
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.R1PalletHead(SN,PalletNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,UserId,PalletType,Closed,GrNo,PltNo,WHouse,FWType,FPreparedBy,FPalletType) " +
                             "values(" + objUsaBoxBuildingGlobal.getPalletSno() + ",'" + objUsaBoxBuildingGlobal.getPalletNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "',''," +
                             "'" + objGlobal.getUserName() + "','" + pltRemarks + "'," + objGlobal.getUserId() + ",'" + palletType + "','N',0,0,'" + objGlobal.getWarehouse() + "','','','" + palletType + "')", objGlobal.getConnection())) {
@@ -353,8 +354,8 @@ public class UsaBoxBuildingControl {
                         objGlobal.getConnection().rollback();
                         return false;
                     }
-                    pltPType = "TP";
                 } else {
+                    boxPType = "TB";
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.tcmboxesheader(Boxno,TrnDate,Time1,UserId,TotId,Whouse) values ('" + objUsaBoxBuildingGlobal.getBoxNo() + "','" + objGlobal.getServerDate() + "'," +
                             "'" + objGlobal.getServerTime() + "'," + objGlobal.getUserId() + ",'" + toteID + "','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
                         objGlobal.getConnection().rollback();
@@ -366,9 +367,9 @@ public class UsaBoxBuildingControl {
                         objGlobal.getConnection().rollback();
                         return false;
                     }
-                    boxPType = "TB";
                 }
             } else {
+                boxPType = "UB";
                 if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead (BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
                         "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) values ('" + objUsaBoxBuildingGlobal.getBoxNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','','" + objGlobal.getUserName() + "'," +
                         "'" + remarks + "','" + objGlobal.getUserId() + "','" + palletType + "','N','" + groupCode + "','" + catCode + "','" + objGlobal.getUserId() + "','" + objGlobal.getUserId() + "','" + objGlobal.getWarehouse() + "'," +
@@ -381,8 +382,8 @@ public class UsaBoxBuildingControl {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
-                boxPType = "UB";
                 if (euro.equals("Y")) {
+                    boxPType = "UP";
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.usapallets(Sn,TrnDate,PalletNo,UserId,Remarks,Closed,ContNo,WHouse) values (" + objUsaBoxBuildingGlobal.getPalletSno() + "," +
                             "'" + objGlobal.getServerDate() + "','" + objUsaBoxBuildingGlobal.getPalletNo() + "'," + objGlobal.getUserId() + ",'" + pltRemarks + "','N','','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
                         return false;
@@ -394,7 +395,6 @@ public class UsaBoxBuildingControl {
                     if (!dbConnection.insertUpdate("insert into usa.dbo.BoXPallet(Boxno,Palletno) values ('" + objUsaBoxBuildingGlobal.getBoxNo() + "','" + objUsaBoxBuildingGlobal.getPalletNo() + "')", objGlobal.getConnection())) {
                         return false;
                     }
-                    pltPType = "UP";
                 }
             }
             if (!boxPType.isEmpty()) {

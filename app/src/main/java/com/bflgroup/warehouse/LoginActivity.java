@@ -168,6 +168,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean validateUser() {
+        String pdaVerActive = "", pdaVerDb = "";
         if (TextUtils.isEmpty(signInUserId.getText())) {
             objGlobal.setErrorMessage("Please enter username");
             signInUserId.requestFocus();
@@ -184,6 +185,17 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         }
         try {
+            rs = dbConnection.getResultSet("select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'", objGlobal.getCloudCon());
+            if (rs.next()) {
+                pdaVerActive = rs.getString("active");
+                pdaVerDb = rs.getString("version");
+            }
+            if (pdaVerActive.equals("Y")) {
+                if (!pdaVerDb.equals(getApplicationContext().getString(R.string.app_version))) {
+                    objGlobal.setErrorMessage("Pls check the version. The latest version is - " + pdaVerDb);
+                    return false;
+                }
+            }
             if (objGlobal.getWorkLocation().equals("3PL")) {
                 query = "select userid,username,SealPrint,FcCode,PrntName,empCode=username,Shop from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
@@ -213,13 +225,6 @@ public class LoginActivity extends AppCompatActivity {
                     return false;
                 }
             } else {
-                /*query = "select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'";
-                rs1 = dbConnection.getResultSet(query, objGlobal.getCloudCon());
-                if(rs1.next()){*/
-                    /*if(!getApplicationContext().getString(R.string.app_version).contains(rs1.getString("version"))) {
-                        objGlobal.setErrorMessage("Pls check the version. The latest version is - " + rs1.getString("version"));
-                        return false;
-                    }*/
                 query = "select userid,username,SealPrint,FcCode,PrntName,allB=isnull(UserAllowMixCategoryBuild,'N'),empCode=(select RecStartingNo from fabsmain.dbo.[user] where userid=a.mainuserid) from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                 if (rs.next()) {
@@ -236,7 +241,6 @@ public class LoginActivity extends AppCompatActivity {
                     objGlobal.setErrorMessage("Invalid username or password");
                     return false;
                 }
-                //}
             }
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");

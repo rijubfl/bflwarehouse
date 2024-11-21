@@ -514,7 +514,7 @@ public class BuildingControl {
             } else
                 return false;
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("BuildingControl:validateTotIsUsed:" + ex.toString());
+            objGlobal.setErrorMessage("BuildingControl:validateTotIsUsed:" + ex);
             return false;
         }
     }

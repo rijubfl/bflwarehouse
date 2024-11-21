@@ -7,6 +7,7 @@ public class UsaBoxBuildingGlobal {
     private String palletSno;
     private String buildCategoryMixAllow;
     private String buildingCategory;
+    private String buildingSeason;
     private double scanTotalQty;
     private String scanDepartment;
     private String scanBuildingCategory;
@@ -84,5 +85,13 @@ public class UsaBoxBuildingGlobal {
 
     public void setScanBuildingCategory(String scanBuildingCategory) {
         this.scanBuildingCategory = scanBuildingCategory;
+    }
+
+    public String getBuildingSeason() {
+        return buildingSeason;
+    }
+
+    public void setBuildingSeason(String buildingSeason) {
+        this.buildingSeason = buildingSeason;
     }
 }

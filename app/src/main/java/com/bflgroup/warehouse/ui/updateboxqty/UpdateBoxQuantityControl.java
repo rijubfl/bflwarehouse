@@ -51,11 +51,13 @@ public class UpdateBoxQuantityControl {
             return null;
         }
         try {
+            String condition="BoxNo like 'U%' or BoxNo like 'R%'";
+            if(objGlobal.getWarehouse().equals("BFLKSA")) condition="BoxNo like 'S%'";
             arr = new ArrayList<UpdateBoxItem>();
             String query1 = "select * from BFLdata..tmpUpdateBoxQty where Toteid='" + Toteid + "' and DeviceName = '" + objGlobal.getDeviceName() + "'";
             rs = dbConnection.getResultSet(query1, objGlobal.getConnection());
             if (!rs.next()) {
-                String que1 = "select count(*) count from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "' ) and (BoxNo like 'U%' or BoxNo like 'R%') and closed = 'N'";
+                String que1 = "select count(*) count from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "' ) and (" + condition + ") and closed = 'N'";
                 Log.e("Alter", que1);
                 ResultSet resultSet = dbConnection.getResultSet(que1, objGlobal.getConnection());
                 int Count = 0;
@@ -67,12 +69,11 @@ public class UpdateBoxQuantityControl {
                     okMessage("Alert", "Multiple Boxno found for this tote", context);
                 }
                 else {
-                    //String query = "select * from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "' ) and (BoxNo like 'U%' or BoxNo like 'R%') and closed = 'N'";
-                    String query = "select * from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "' ) and ((BoxNo like 'U%' or BoxNo like 'R%') or boxno in (select BoxNo from usa.dbo.BoxAllowForEdit)) and closed = 'N'";
+                    String query = "select * from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "' ) and ((" + condition + ") or boxno in (select BoxNo from usa.dbo.BoxAllowForEdit)) and closed = 'N'";
                     ResultSet rs2 = dbConnection.getResultSet(query, objGlobal.getConnection());
                     Log.e("Query select", query);
                     if (rs2.next()) {
-                        String query3 = "select * from usa..upcboxdet where BoxNo = '" + rs2.getString("BoxNo") + "' and ((BoxNo like 'U%' or BoxNo like 'R%') or boxno in (select BoxNo from usa.dbo.BoxAllowForEdit))";
+                        String query3 = "select * from usa..upcboxdet where BoxNo = '" + rs2.getString("BoxNo") + "' and ((" + condition + ") or boxno in (select BoxNo from usa.dbo.BoxAllowForEdit))";
                         Log.e("Query select 3", query3);
                         rs1 = dbConnection.getResultSet(query3, objGlobal.getConnection());
                         while (rs1.next()) {

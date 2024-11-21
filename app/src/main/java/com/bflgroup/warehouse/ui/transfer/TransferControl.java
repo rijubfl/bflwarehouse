@@ -64,11 +64,11 @@ public class TransferControl {
         try {
             arr = new ArrayList<String>();
             if (shopType.equals("E"))
-                rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Production<>'N' and Dataname<>'' and ExportActive='Y' order by ShopName", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Dataname<>'' and ExportActive='Y' order by ShopName", objGlobal.getConnection());
             else if (shopType.equals("D")) {
                 rs = dbConnection.getResultSet("select ShopName=Result from bfldata.dbo.robodcresult order by ShopName", objGlobal.getConnection());
             } else
-                rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Production<>'N' and Dataname<>'' order by ShopName", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Dataname<>'' order by ShopName", objGlobal.getConnection());
 
             while (rs.next()) {
                 arr.add(rs.getString("ShopName"));
