@@ -51,6 +51,7 @@ public class UpdateBoxQuantityControl {
             return null;
         }
         try {
+            objGlobal.setWarehouse("BFLKSA");
             String condition="BoxNo like 'U%' or BoxNo like 'R%'";
             if(objGlobal.getWarehouse().equals("BFLKSA")) condition="BoxNo like 'S%'";
             arr = new ArrayList<UpdateBoxItem>();

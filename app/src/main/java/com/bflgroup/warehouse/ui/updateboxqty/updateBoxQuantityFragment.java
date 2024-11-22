@@ -182,6 +182,7 @@ public class updateBoxQuantityFragment extends Fragment {
                 } else {
                     et_tote_id.requestFocus();
                     et_tote_id.setFocusable(true);
+                    okMessage("Update Box Qty",objGlobal.getErrorMessage(),getContext());
                 }
             }
         });
@@ -276,25 +277,29 @@ public class updateBoxQuantityFragment extends Fragment {
             okMessage("Alert", "Please Scan Trf no/Toteid", getContext());
             return false;
         } else {
-
-            objUpdateboxItem = objUpdateBoxQuantityControl.ScanToteId(getContext(), toteid);
-            et_tote_id.requestFocus();
-
-            if (objUpdateboxItem == null) {
+            try {
+                objUpdateboxItem = objUpdateBoxQuantityControl.ScanToteId(getContext(), toteid);
                 et_tote_id.requestFocus();
-                et_tote_id.setEnabled(true);
-                et_tote_id.setText("");
-                return false;
-            } else {
-                objMyUpdateBoxQuantity = new MyUpdateBoxQuantity(objUpdateboxItem);
-                lv_div_seperate_details.setAdapter(objMyUpdateBoxQuantity);
-                et_tote_id.setEnabled(false);
-                et_itemcode.requestFocus();
-                totalBoxQty.setText(objUpdateBoxQuantityControl.GetTotalQty(toteid) + "");
-                reducedQty.setText(objUpdateBoxQuantityControl.ReducedQty(toteid) + "");
-                NewBoxTotal.setText(objUpdateBoxQuantityControl.NewBoxQty(toteid) + "");
-                return true;
 
+                if (objUpdateboxItem == null) {
+                    et_tote_id.requestFocus();
+                    et_tote_id.setEnabled(true);
+                    et_tote_id.setText("");
+                    return false;
+                } else {
+                    objMyUpdateBoxQuantity = new MyUpdateBoxQuantity(objUpdateboxItem);
+                    lv_div_seperate_details.setAdapter(objMyUpdateBoxQuantity);
+                    et_tote_id.setEnabled(false);
+                    et_itemcode.requestFocus();
+                    totalBoxQty.setText(objUpdateBoxQuantityControl.GetTotalQty(toteid) + "");
+                    reducedQty.setText(objUpdateBoxQuantityControl.ReducedQty(toteid) + "");
+                    NewBoxTotal.setText(objUpdateBoxQuantityControl.NewBoxQty(toteid) + "");
+                    return true;
+
+                }
+            } catch (Exception ex) {
+                objGlobal.setErrorMessage(ex.toString());
+                return false;
             }
         }
     }
