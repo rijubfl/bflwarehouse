@@ -18,19 +18,21 @@ public class BluetoothDevices {
     public boolean loadBluetoothDevicesArray() {
         List<String> arr;
         arr=new ArrayList<String>();
+        arr.add("--Select--");
+        objGlobal.setBluetoothDevicesAvailable("Y");
         if(!objGlobal.getUserPrinterName().isEmpty())arr.add(objGlobal.getUserPrinterName());
         final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter.isEnabled()) {
             if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
                 Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
                 if (pairedDevices.size() > 0) {
-                    arr.add("--Select--");
                     for (BluetoothDevice device : pairedDevices) {
                         arr.add(device.getAddress());
                     }
+                    objGlobal.setBluetoothDevicesAvailable("Y");
                 } else {
-                    objGlobal.setErrorMessage("No device paired");
-                    return false;
+                    arr.add(objGlobal.getUserPrinterName());
+                    objGlobal.setBluetoothDevicesAvailable("N");
                 }
             } else {
                 objGlobal.setErrorMessage("BluetoothAdapter.STATE_ON");

@@ -410,18 +410,18 @@ public class BuildingFragment extends Fragment {
             showMessage("Chute Status", objGlobal.getErrorMessage());
             return false;
         }
-        if(objGlobal.getWorkLocation().equals("KSA")) {
-            if (!toteId.substring(0, 2).equals(shopToteType)) {
-                vibrate(300);
-                showMessage("Chute Status", "Tote type is not matching, Tote: " + toteId + ", Shop Tote Type is: " + shopToteType);
-                return false;
+        String[] strTotetype = shopToteType.split(",");
+        boolean blnTotetype=false;
+        for (String part : strTotetype) {
+            if (toteId.substring(0, part.length()).equals(part)) {
+                blnTotetype=true;
+                break;
             }
-        } else {
-            if (!toteId.substring(0, 1).equals(shopToteType)) {
-                vibrate(300);
-                showMessage("Chute Status", "Tote type is not matching, Tote: " + toteId + ", Shop Tote Type is: " + shopToteType);
-                return false;
-            }
+        }
+        if (!blnTotetype) {
+            vibrate(300);
+            showMessage("Chute Status", "Tote type is not matching, Tote: " + toteId + ", Shop Tote Type is: " + shopToteType);
+            return false;
         }
         return true;
     }

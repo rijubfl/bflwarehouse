@@ -437,9 +437,22 @@ public class BuildingControl {
     public String getToteIdFromChuteId(String chuteId) {
         return dbConnection.stringReturn(conRobo, "ChuteConfiguration", "TotId", "ChuteId", chuteId);
     }
+
     public String getShopToteidType(String shopname) {
-        return dbConnection.stringReturn(conRobo, "BFLDATA.dbo.DataSettings", "ToteType", "ShopName", shopname);
+        StringBuilder totetype = new StringBuilder();
+        try {
+            rs = dbConnection.getResultSet("select * from BFLDATA.dbo.ToteTypes where shopname='" + shopname + "'", conRobo);
+            while (rs.next()) {
+                if (totetype.length() > 0) totetype.append(",");
+                totetype.append(rs.getString("ToteType"));
+            }
+            return totetype.toString();
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("BuildingControl:validateTotidUsed:" + ex.toString());
+            return "";
+        }
     }
+
     public String getStatusFromChuteId(String chuteId) {
         return dbConnection.stringReturn(conRobo, "ChuteIdMaster", "Status", "ChuteId", chuteId);
     }

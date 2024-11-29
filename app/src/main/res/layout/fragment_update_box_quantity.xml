@@ -35,6 +35,7 @@
             android:background="@drawable/et_custom"
             android:padding="10dp"
             android:text=""
+            android:inputType="text"
             android:textStyle="bold"
             android:textColor="@color/coloBlack"
             android:textSize="16sp"

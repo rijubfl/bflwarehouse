@@ -53,6 +53,7 @@ public class Global {
     private static String countryWiseBoxPrefix;
     private static String transferPrefix;
     private List<String> bluetoothDevices;
+    private static String bluetoothDevicesAvailable;
 
     private static String userAllowMixCategoryBuild;
 
@@ -105,6 +106,14 @@ public class Global {
 
     public static void setExportCountryCode(String exportCountryCode) {
         Global.exportCountryCode = exportCountryCode;
+    }
+
+    public static String getBluetoothDevicesAvailable() {
+        return bluetoothDevicesAvailable;
+    }
+
+    public static void setBluetoothDevicesAvailable(String bluetoothDevicesAvailable) {
+        Global.bluetoothDevicesAvailable = bluetoothDevicesAvailable;
     }
 
     public String getDelDate() {

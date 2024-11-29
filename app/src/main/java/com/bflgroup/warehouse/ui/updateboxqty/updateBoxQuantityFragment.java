@@ -182,7 +182,6 @@ public class updateBoxQuantityFragment extends Fragment {
                 } else {
                     et_tote_id.requestFocus();
                     et_tote_id.setFocusable(true);
-                    okMessage("Update Box Qty",objGlobal.getErrorMessage(),getContext());
                 }
             }
         });

@@ -93,7 +93,7 @@
 
         <TextView
             android:id="@+id/tv_building_time"
-            android:layout_width="130dp"
+            android:layout_width="120dp"
             android:layout_height="40dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
@@ -108,10 +108,10 @@
 
         <TextView
             android:id="@+id/tv_chute_building_shop_tote_type"
-            android:layout_width="50dp"
+            android:layout_width="75dp"
             android:layout_height="40dp"
             android:background="@drawable/et_custom"
-            android:gravity="left"
+            android:gravity="center"
             android:hint=""
             android:padding="10dp"
             android:text=""

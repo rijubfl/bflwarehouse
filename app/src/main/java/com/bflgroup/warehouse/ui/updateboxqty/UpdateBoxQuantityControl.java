@@ -51,9 +51,9 @@ public class UpdateBoxQuantityControl {
             return null;
         }
         try {
-            objGlobal.setWarehouse("BFLKSA");
             String condition="BoxNo like 'U%' or BoxNo like 'R%'";
-            if(objGlobal.getWarehouse().equals("BFLKSA")) condition="BoxNo like 'S%'";
+            if(objGlobal.getWarehouse().equals("RUKOON") || objGlobal.getWarehouse().equals("BFLKSA")) condition="BoxNo like 'S%'";
+            if(objGlobal.getWarehouse().equals("BFLKUWAIT")) condition="BoxNo like 'K%'";
             arr = new ArrayList<UpdateBoxItem>();
             String query1 = "select * from BFLdata..tmpUpdateBoxQty where Toteid='" + Toteid + "' and DeviceName = '" + objGlobal.getDeviceName() + "'";
             rs = dbConnection.getResultSet(query1, objGlobal.getConnection());
@@ -70,7 +70,8 @@ public class UpdateBoxQuantityControl {
                     okMessage("Alert", "Multiple Boxno found for this tote", context);
                 }
                 else {
-                    String query = "select * from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "' ) and ((" + condition + ") or boxno in (select BoxNo from usa.dbo.BoxAllowForEdit)) and closed = 'N'";
+                    String query = "select * from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "' ) and ((" + condition + ") or " +
+                            "boxno in (select BoxNo from usa.dbo.BoxAllowForEdit)) and closed = 'N'";
                     ResultSet rs2 = dbConnection.getResultSet(query, objGlobal.getConnection());
                     Log.e("Query select", query);
                     if (rs2.next()) {

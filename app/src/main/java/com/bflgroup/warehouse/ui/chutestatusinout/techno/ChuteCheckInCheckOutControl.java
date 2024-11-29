@@ -233,7 +233,18 @@ public class ChuteCheckInCheckOutControl {
     }
 
     public String getShopToteidType(String shopname) {
-        return dbConnection.stringReturn(conRobo, "BFLDATA.dbo.DataSettings", "ToteType", "ShopName", shopname);
+        String totetype = "";
+        try {
+            rs = dbConnection.getResultSet("select * from BFLDATA.dbo.ToteTypes where shopname='" + shopname + "'", conRobo);
+            while (rs.next()) {
+                if (!totetype.equals("")) totetype = totetype + ", ";
+                totetype = rs.getString("ToteType");
+            }
+            return totetype;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("BuildingControl:validateTotidUsed:" + ex);
+            return "";
+        }
     }
 
     public String getToteIdFromChuteId(String chuteId) {

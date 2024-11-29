@@ -216,20 +216,20 @@ public class TransferFragment extends Fragment {
                 String boxPallet = et_transfer_pallet_box_no.getText().toString();
                 String shop = tv_transfer_shopname.getText().toString();
                 String printer = sp_transfer_printer.getSelectedItem().toString();
-                if(printer.isEmpty()){
-                    objGlobal.setErrorMessage("Please select printer");
-                    b_Result=false;
-                }
-                if(sp_transfer_type.getSelectedItemId()==0 || sp_transfer_type.getSelectedItemId()==1){
-                    openPopupScanBarcodeRfid();
-                } else if (sp_transfer_type.getSelectedItemId() == 2) {
-                    b_Result = scanItemcode(shop);
-                    if(b_Result) openPopupScanBarcodeRfid();
-                } else if (sp_transfer_type.getSelectedItemId() == 3) {
-                    b_Result = scanBoxPallet(boxPallet);
-                } else if (sp_transfer_type.getSelectedItemId() == 4) {
-                    b_Result = scanRoboDc(shop);
-                    if(b_Result) openPopupScanBarcodeRfid();
+                if(printer.isEmpty() || printer.toUpperCase().contains("SELECT")){
+                    okMessage ("Transfer","Please select printer");
+                } else {
+                    if (sp_transfer_type.getSelectedItemId() == 0 || sp_transfer_type.getSelectedItemId() == 1) {
+                        openPopupScanBarcodeRfid();
+                    } else if (sp_transfer_type.getSelectedItemId() == 2) {
+                        b_Result = scanItemcode(shop);
+                        if (b_Result) openPopupScanBarcodeRfid();
+                    } else if (sp_transfer_type.getSelectedItemId() == 3) {
+                        b_Result = scanBoxPallet(boxPallet);
+                    } else if (sp_transfer_type.getSelectedItemId() == 4) {
+                        b_Result = scanRoboDc(shop);
+                        if (b_Result) openPopupScanBarcodeRfid();
+                    }
                 }
             }
         });
@@ -360,57 +360,73 @@ public class TransferFragment extends Fragment {
     private boolean transfer() {
         String shopname = tv_transfer_shopname.getText().toString();
         String pallet = et_transfer_pallet_box_no.getText().toString();
+        String printer = sp_transfer_printer.getSelectedItem().toString();
         String toteid = "";
         String selType = "";
-        if (sp_transfer_type.getSelectedItemId() == 0) selType = "R";
-        if (sp_transfer_type.getSelectedItemId() == 1) selType = "B";
-        if (sp_transfer_type.getSelectedItemId() == 2) selType = "I";
-        if (sp_transfer_type.getSelectedItemId() == 3) selType = "P";
-        if (sp_transfer_type.getSelectedItemId() == 4) selType = "D";
-        if (shopname.isEmpty()) {
-            okMessage("Transfer", "Shop Name is empty");
+        objBuildingJafzaGLobal.setBoxNo("");
+        objTransferGlobal.setTrfRecNo("");
+        try {
+            if (sp_transfer_type.getSelectedItemId() == 0) selType = "R";
+            if (sp_transfer_type.getSelectedItemId() == 1) selType = "B";
+            if (sp_transfer_type.getSelectedItemId() == 2) selType = "I";
+            if (sp_transfer_type.getSelectedItemId() == 3) selType = "P";
+            if (sp_transfer_type.getSelectedItemId() == 4) selType = "D";
+            if (shopname.isEmpty()) {
+                okMessage("Transfer", "Shop Name is empty");
+                return false;
+            }
+            if(printer.isEmpty() || printer.toUpperCase().contains("SELECT")){
+                objGlobal.setErrorMessage("Please select printer");
+                b_Result=false;
+            }
+            b_Result = objTransferControl.validateTransfer(selType, shopname);
+            if (!b_Result) {
+                okMessage("Transfer", "validateTransfer: " + objGlobal.getErrorMessage());
+                return false;
+            }
+            if (selType.equals("D")) {
+                b_Result = objTransferControl.transferCreatePairingSorting();
+                if (!b_Result) {
+                    okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+                    return false;
+                }
+                b_Result = objTransferControl.createTransfer(shopname, toteid);
+                if (!b_Result) {
+                    okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+                    return false;
+                }
+            } else {
+                b_Result = objTransferReceipt.transferReceipt(shopname, pallet);
+                if (!b_Result) {
+                    okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+                    return false;
+                }
+            }
+            if (!objBuildingJafzaGLobal.getBoxNo().isEmpty()) {
+                tv_transfer_last_transfer.setText("Box.No.: " + objBuildingJafzaGLobal.getBoxNo() + ", Shop Name.: " + shopname);
+            }
+            if (!objTransferGlobal.getTrfRecNo().isEmpty()) {
+                tv_transfer_last_transfer.setText("Trf.No.: " + objTransferGlobal.getTrfRecNo() + ", Shop Name.: " + shopname);
+                b_Result = objTransferControl.forPrint(shopname, objTransferGlobal.getTrfRecNo());
+                if (!b_Result) {
+                    okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+                    return false;
+                }
+                if(objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
+                    if (!printSticker(printer)) {
+                        okMessage("Transfer", "Printer Error, Pleasse reprint..");
+                        vibrate(100);
+                    }
+                } else {
+
+                }
+            }
+            clearAll();
+            return true;
+        } catch (Exception e) {
+            okMessage("Transfer",e.toString());
             return false;
         }
-        b_Result = objTransferControl.validateTransfer(selType, shopname);
-        if (!b_Result) {
-            okMessage("Transfer", "validateTransfer: " + objGlobal.getErrorMessage());
-            return false;
-        }
-        if (selType.equals("D")) {
-            b_Result = objTransferControl.transferCreatePairingSorting();
-            if (!b_Result) {
-                okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
-                return false;
-            }
-            b_Result = objTransferControl.createTransfer(shopname, toteid);
-            if (!b_Result) {
-                okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
-                return false;
-            }
-        } else {
-            b_Result = objTransferReceipt.transferReceipt(shopname, pallet);
-            if (!b_Result) {
-                okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
-                return false;
-            }
-        }
-        if (!objBuildingJafzaGLobal.getBoxNo().isEmpty()) {
-            tv_transfer_last_transfer.setText("Box.No.: " + objBuildingJafzaGLobal.getBoxNo() + ", Shop Name.: " + shopname);
-        }
-        if (!objTransferGlobal.getTrfRecNo().isEmpty()) {
-            tv_transfer_last_transfer.setText("Trf.No.: " + objTransferGlobal.getTrfRecNo() + ", Shop Name.: " + shopname);
-            b_Result = objTransferControl.forPrint(shopname, objTransferGlobal.getTrfRecNo());
-            if (!b_Result) {
-                okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
-                return false;
-            }
-            if (!printSticker(sp_transfer_printer.getSelectedItem().toString())) {
-                okMessage("Transfer", "Printer Error, Pleasse reprint..");
-                vibrate(100);
-            }
-        }
-        clearAll();
-        return true;
     }
 
     private void openPopupReprint() {
@@ -843,15 +859,12 @@ public class TransferFragment extends Fragment {
             okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
             return false;
         }
-        if (!printSticker(sp_transfer_printer.getSelectedItem().toString())) {
-            okMessage("Transfer", "Printer Error, Pleasse reprint..");
-            return false;
+        if(objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
+            if (!printSticker(sp_transfer_printer.getSelectedItem().toString())) {
+                okMessage("Transfer", "Printer Error, Pleasse reprint..");
+                return false;
+            }
         }
-        /* b_Result = objTransferControl.reprintTransfer(scan,shopname);
-        if (!b_Result) {
-            okMessage("Transfer", objGlobal.getErrorMessage());
-            return false;
-        }*/
         return true;
     }
 
