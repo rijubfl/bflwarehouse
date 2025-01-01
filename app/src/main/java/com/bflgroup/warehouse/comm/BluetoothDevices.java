@@ -17,10 +17,9 @@ public class BluetoothDevices {
 
     public boolean loadBluetoothDevicesArray() {
         List<String> arr;
-        arr=new ArrayList<String>();
+        arr = new ArrayList<String>();
         arr.add("--Select--");
         objGlobal.setBluetoothDevicesAvailable("Y");
-        if(!objGlobal.getUserPrinterName().isEmpty())arr.add(objGlobal.getUserPrinterName());
         final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter.isEnabled()) {
             if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
@@ -31,7 +30,7 @@ public class BluetoothDevices {
                     }
                     objGlobal.setBluetoothDevicesAvailable("Y");
                 } else {
-                    arr.add(objGlobal.getUserPrinterName());
+                    if (!objGlobal.getUserPrinterName().isEmpty()) arr.add(objGlobal.getUserPrinterName());
                     objGlobal.setBluetoothDevicesAvailable("N");
                 }
             } else {

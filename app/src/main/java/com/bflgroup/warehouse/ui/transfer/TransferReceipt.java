@@ -15,10 +15,10 @@ public class TransferReceipt {
     private TransferGlobal objTransferGlobal = TransferGlobal.getInstance();
     private ResultSet rs;
 
-    public boolean transferReceipt(String shopName,String palletBoxNo) {
+    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", trfType = "R", trfPalletNo = "", cartonNo = "1", empName = "", storeIssue = palletBoxNo, firstScanTime = "";
-        if(objGlobal.getWorkLocation().equals("KSA")) preparedBy= objGlobal.getUserName();
+        if (objGlobal.getWorkLocation().equals("KSA")) preparedBy = objGlobal.getUserName();
         int totalQty = 0;
         float totalAmt = 0, fcRate = 1;
         objTransferGlobal.setTrfRecNo("");
@@ -158,18 +158,29 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:016");
                 return false;
             }
-            //insert for tmpPrintTransferRfidNew************************************
-            if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpPrintTransferRfidNew(ShopName,ToteId,TrfNo,Quantity,TrnDate,PrDateTime,pr,PrSystem,Whouse) values ('" + shopName + "','" + objGlobal.getUserName() + "'," +
-                    "'" + trfRecNo + "'," + totalQty + ",'" + objGlobal.getServerDate() + "',null,'N','" + objGlobal.getUserPrinterName() + "','" + objGlobal.getWarehouse() + "')", conRob)) {
+            if (!dbConnection.insertUpdate("insert into robotics.dbo.SortTask values('" + objGlobal.getServerDate() + "','" + toteid + "','','','" + shopName + "'," +
+                    "'" + trfRecNo + "'," + objGlobal.getUserId() + ",'','N','N','')", conRob)) {
                 conRob.rollback();
                 conLoc.rollback();
                 conRob.setAutoCommit(true);
                 conLoc.setAutoCommit(true);
-                objGlobal.setErrorNo("transferReceipt:017");
+                objGlobal.setErrorNo("transferReceipt:009");
                 return false;
             }
+            //insert for tmpPrintTransferRfidNew************************************
+            if (objGlobal.getBluetoothDevicesAvailable().equals("N")) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpPrintTransferRfidNew(ShopName,ToteId,TrfNo,Quantity,TrnDate,PrDateTime,pr,PrSystem,Whouse) values ('" + shopName + "','" + objGlobal.getUserName() + "'," +
+                        "'" + trfRecNo + "'," + totalQty + ",'" + objGlobal.getServerDate() + "',null,'N','" + objGlobal.getUserPrinterName() + "','" + objGlobal.getWarehouse() + "')", conRob)) {
+                    conRob.rollback();
+                    conLoc.rollback();
+                    conRob.setAutoCommit(true);
+                    conLoc.setAutoCommit(true);
+                    objGlobal.setErrorNo("transferReceipt:017");
+                    return false;
+                }
+            }
             //insert for CheckingTotesSummary************************************
-            if(objGlobal.getWorkLocation().equals("KSA")){
+            if (objGlobal.getWorkLocation().equals("KSA")) {
                 if (!dbConnection.insertUpdate("insert into bflksa.dbo.CheckingTotesSummary(SNo,TrnDate,DataName,ToteID,ShopName,Qty,TrfReceiptNo,TrfIssueNo,TrfReceiptDateTime,BoxNoF,UserID) values " +
                         "((select max(SNo)+1 from bflksa.dbo.CheckingTotesSummary),'" + objGlobal.getServerDate() + "','" + dataName + "','','" + shopName + "'," + totalQty + ",'" + trfRecNo + "',''," +
                         "cast(getdate() as smalldatetime),''," + objGlobal.getUserId() + ")", conLoc)) {
@@ -246,13 +257,19 @@ public class TransferReceipt {
 
     private String getLatestTrfNo(Connection conRob, String dataName) {
         int autoSn = 0;
+        String trfPrefix = "";
         try {
+            trfPrefix = objGlobal.getTransferPrefixPda();
+            rs = dbConnection.getResultSet("select TransferPrefixPda from BFLDATA.dbo.TransferPrefix where warehouse='" + objGlobal.getWarehouse() + "' and dataname='" + dataName + "'", conRob);
+            if (rs.next()) {
+                trfPrefix = rs.getString("TransferPrefixPda");
+            }
             rs = dbConnection.getResultSet("select en=isnull(max(cast(right(trfno,7) as int)),0)+1 from " + dataName + ".dbo.transferheader where " +
-                    "left(trfno,2)='" + objGlobal.getTransferPrefix() + "' and (trftype='R') and substring(trfno,3,1)<>'D'", conRob);
+                    "left(trfno,2)='" + trfPrefix + "' and (trftype='R') and substring(trfno,3,1)<>'D'", conRob);
             if (rs.next()) {
                 autoSn = Integer.parseInt(rs.getString("en"));
             }
-            return objGlobal.getTransferPrefix() + String.format("%07d", autoSn);
+            return trfPrefix + String.format("%07d", autoSn);
         } catch (Exception ex) {
             objGlobal.setErrorMessage("TransferReceipt:getLatestTrfNo:" + ex);
             return "";

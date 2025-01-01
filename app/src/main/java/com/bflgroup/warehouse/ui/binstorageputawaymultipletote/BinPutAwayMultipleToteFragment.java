@@ -92,6 +92,7 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
 
             if (objGlobal.getWarehouse().equals("TECHNO")) {
                 location.add("TECHNO-E");
+                location.add("JAFZA");
             }
             if(objGlobal.getWarehouse().equals("BFLKSA")){
                 location.add("RUKOON");

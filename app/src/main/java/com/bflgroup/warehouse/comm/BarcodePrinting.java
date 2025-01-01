@@ -43,7 +43,7 @@ public class BarcodePrinting {
         }
     }
 
-    public byte[] getTransferPrint(String shop,String trfno,String boxno, String qty,String deldate, String trfdate,String toteid,String remarks,String preparedby) {
+    public byte[] getTransferPrint(String shop,String trfno,String boxno, String qty,String deldate, String trfdate,String toteid,String remarks,String preparedby, String copy) {
         String str01="\u0002n\r\n";
         String str02="\u0002M1000\r\n";
         String str03="\u0002KcLW0400;\r\n";
@@ -60,7 +60,7 @@ public class BarcodePrinting {
         String str14 = "1911A1802270011Trf. No.  : " + trfno + "\r\n";
         String str15 = "1911A1801580011Date.     : " + trfdate + "\r\n";
         String str16 = "1911A1801900011Qty/User. : " + qty + " / " + preparedby + "\r\n";
-        String str17 = "Q0002" + "\r\n";
+        String str17 = "Q000" + copy + "\r\n";
         String str18 = "E" + "\r\n";
 
         //printData = addToDataVault(printData, "FB+\r\n".getBytes());
@@ -147,7 +147,7 @@ public class BarcodePrinting {
         return printData;
     }
 
-    public byte[] getUsaPalletPrint(String palletno,String boxcnt,String remarks,String pallettype, String typename,String groupname,String preparedby,String trndate,String trntime) {
+    public byte[] getUsaPalletPrint(String palletno,String boxcnt,String remarks,String pallettype, String typename,String groupname,String preparedby,String trndate,String trntime, String copy) {
         String str01 = "\u0002n\r\n";
         String str02 = "\u0002M0986\r\n";
         String str03 = "\u0002KcLW0384;\r\n";
@@ -171,7 +171,7 @@ public class BarcodePrinting {
         String str21 = "1911A1401110012Pallet Type : " + typename + "\r\n";
         String str22 = "1911A1400830012Remarks : " + remarks + "\r\n";
         String str23 = "1911A2400110300***\r\n";
-        String str24 = "Q0004\r\n";
+        String str24 = "Q000" + copy + "\r\n";
         String str25 = "E\r\n";
 
         //printData = addToDataVault(printData, "FB+\r\n".getBytes());

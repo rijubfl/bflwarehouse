@@ -18,6 +18,12 @@ public class TransferGlobal {
     private static String premarks;
     private static String ppreparedby;
 
+    private static String reprintTrfno;
+    private static String reprintShop;
+    private static String reprintToteid;
+
+    private static String boxTrfBoxNo;
+
     public static String getScanBarcode() {
         return scanBarcode;
     }
@@ -114,6 +120,14 @@ public class TransferGlobal {
         TransferGlobal.ptoteid = ptoteid;
     }
 
+    public static String getBoxTrfBoxNo() {
+        return boxTrfBoxNo;
+    }
+
+    public static void setBoxTrfBoxNo(String boxTrfBoxNo) {
+        TransferGlobal.boxTrfBoxNo = boxTrfBoxNo;
+    }
+
     public static String getPremarks() {
         return premarks;
     }
@@ -128,6 +142,30 @@ public class TransferGlobal {
 
     public static void setPpreparedby(String ppreparedby) {
         TransferGlobal.ppreparedby = ppreparedby;
+    }
+
+    public static String getReprintTrfno() {
+        return reprintTrfno;
+    }
+
+    public static void setReprintTrfno(String reprintTrfno) {
+        TransferGlobal.reprintTrfno = reprintTrfno;
+    }
+
+    public static String getReprintShop() {
+        return reprintShop;
+    }
+
+    public static void setReprintShop(String reprintShop) {
+        TransferGlobal.reprintShop = reprintShop;
+    }
+
+    public static String getReprintToteid() {
+        return reprintToteid;
+    }
+
+    public static void setReprintToteid(String reprintToteid) {
+        TransferGlobal.reprintToteid = reprintToteid;
     }
 
     public static TransferGlobal instance;

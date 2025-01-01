@@ -23,20 +23,19 @@
             android:hint=""
             android:padding="8dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/ch_transfer_printer"
+            app:layout_constraintEnd_toStartOf="@+id/sp_transfer_print_copies"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_transfer_shopname"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <CheckBox
             android:id="@+id/ch_transfer_printer"
-            android:layout_width="90dp"
+            android:layout_width="100dp"
             android:layout_height="40dp"
-            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:text="Reprint"
-            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
-            app:layout_constraintTop_toTopOf="@+id/sp_transfer_printer" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_transfer_shopname" />
 
         <Spinner
             android:id="@+id/sp_transfer_type"
@@ -51,6 +50,20 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
+        <Spinner
+            android:id="@+id/sp_transfer_print_copies"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
+            app:layout_constraintTop_toTopOf="@+id/sp_transfer_printer"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
         <EditText
             android:id="@+id/et_transfer_pallet_box_no"
             android:layout_width="0dp"
@@ -59,7 +72,7 @@
             android:background="@drawable/et_custom"
             android:enabled="false"
             android:gravity="left"
-            android:hint="Please Scan Box Number"
+            android:hint="Box / Tote"
             android:inputType="textPersonName"
             android:padding="10dp"
             android:text=""
@@ -74,8 +87,8 @@
             android:id="@+id/tv_transfer_shopname"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint="Shop"
@@ -84,13 +97,13 @@
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
+            app:layout_constraintEnd_toStartOf="@+id/ch_transfer_printer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sp_transfer_type" />
 
         <Button
             android:id="@+id/bt_transfer_scan"
-            android:layout_width="90dp"
+            android:layout_width="100dp"
             android:layout_height="0dp"
             android:background="@drawable/btn_custom1"
             android:text="Scan"
@@ -98,7 +111,7 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/sp_transfer_printer"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_transfer_shopname" />
+            app:layout_constraintTop_toTopOf="@+id/sp_transfer_printer" />
 
         <TextView
             android:id="@+id/TextView2"

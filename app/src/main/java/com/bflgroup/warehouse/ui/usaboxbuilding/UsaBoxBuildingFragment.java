@@ -46,6 +46,7 @@ public class UsaBoxBuildingFragment extends Fragment {
     private Spinner sp_usa_box_pallettype;
     private TextView tv_usa_box_pallettype;
     private TextView tv_usa_box_pallettype_allowmix;
+    private TextView tv_usa_box_pallettype_build_sec;
     private Spinner sp_usa_box_size;
     private Spinner sp_usa_box_gender;
     private Spinner sp_usa_box_task;
@@ -86,6 +87,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         sp_usa_box_pallettype = (Spinner) view.findViewById(R.id.sp_usa_box_pallettype);
         tv_usa_box_pallettype = (TextView) view.findViewById(R.id.tv_usa_box_pallettype);
         tv_usa_box_pallettype_allowmix = (TextView) view.findViewById(R.id.tv_usa_box_pallettype_allowmix);
+        tv_usa_box_pallettype_build_sec = (TextView) view.findViewById(R.id.tv_usa_box_pallettype_build_sec);
         sp_usa_box_size = (Spinner) view.findViewById(R.id.sp_usa_box_size);
         sp_usa_box_gender = (Spinner) view.findViewById(R.id.sp_usa_box_gender);
         sp_usa_box_task = (Spinner) view.findViewById(R.id.sp_usa_box_task);
@@ -185,6 +187,7 @@ public class UsaBoxBuildingFragment extends Fragment {
             public void onClick(View v) {
                 String palletType = tv_usa_box_pallettype.getText().toString();
                 String allowMix = tv_usa_box_pallettype_allowmix.getText().toString();
+                String spcitems = tv_usa_box_pallettype_build_sec.getText().toString();
                 String remarks = et_usa_box_remarks.getText().toString();
                 remarks = remarks + "/A-PDA";
                 String nRemarks = remarks;
@@ -200,7 +203,7 @@ public class UsaBoxBuildingFragment extends Fragment {
                 if(ch_usa_box_euro.isChecked()) euro="Y";
                 finalBuildType = buildType;
                 finalEuro = euro;
-                b_Result = objUsaBoxBuildingControl.validateMain(palletType, "", "", nRemarks, taskType, doneBy, fSize, gender, toteID, allowMix, buildType, euro);
+                b_Result = objUsaBoxBuildingControl.validateMain(palletType, "", "", nRemarks, taskType, doneBy, fSize, gender, toteID, allowMix, buildType, euro, spcitems);
                 if (!b_Result) {
                     okMessage("USABox Build", "bt_usa_box_save:" + objGlobal.getErrorMessage());
                 } else {
@@ -243,6 +246,7 @@ public class UsaBoxBuildingFragment extends Fragment {
                     b_Result=objUsaBoxBuildingControl.getPalletTypeDetails(tv_usa_box_pallettype.getText().toString());
                     if(b_Result){
                         tv_usa_box_pallettype_allowmix.setText(objUsaBoxBuildingGlobal.getBuildCategoryMixAllow());
+                        tv_usa_box_pallettype_build_sec.setText(objUsaBoxBuildingGlobal.getBuildSpecialPtype());
                     } else {
                         okMessage("USABox Build", objGlobal.getErrorMessage());
                     }
@@ -332,12 +336,13 @@ public class UsaBoxBuildingFragment extends Fragment {
         int qty = Integer.parseInt(et_build_usabox_popup_qty.getText().toString());
         String palletType = tv_usa_box_pallettype.getText().toString();
         String allowMix = tv_usa_box_pallettype_allowmix.getText().toString();
+        String selitems = tv_usa_box_pallettype_build_sec.getText().toString();
         String gender = sp_usa_box_gender.getSelectedItem().toString().trim();
         String buildType="";
         if(rb_usa_box_usa_category.isChecked()) buildType = "USA";
         if(rb_usa_box_tcm_category.isChecked()) buildType = "TCM";
         tv_build_usabox_popup_last_scan.setText(itemcode);
-        b_Result = objUsaBoxBuildingControl.validateItemcode(flagEdit, itemcode, "", "", palletType, gender, qty, allowMix, buildType);
+        b_Result = objUsaBoxBuildingControl.validateItemcode(flagEdit, itemcode, "", "", palletType, gender, qty, allowMix, buildType, selitems);
         if (!b_Result) {
             tv_build_usabox_popup_last_scan.setText(objGlobal.getErrorMessage());
             vibrate(500);
@@ -457,6 +462,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         }
         tv_usa_box_pallettype.setText("");
         tv_usa_box_pallettype_allowmix.setText("");
+        tv_usa_box_pallettype_build_sec.setText("");
         et_usa_box_toteid.setText("");
         et_usa_box_remarks.setText("");
         tv_usa_box_building_category.setText("");
@@ -493,6 +499,7 @@ public class UsaBoxBuildingFragment extends Fragment {
             b_Result=objUsaBoxBuildingControl.getPalletTypeDetails(tv_usa_box_pallettype.getText().toString());
             if(b_Result){
                 tv_usa_box_pallettype_allowmix.setText(objUsaBoxBuildingGlobal.getBuildCategoryMixAllow());
+                tv_usa_box_pallettype_build_sec.setText(objUsaBoxBuildingGlobal.getBuildSpecialPtype());
             } else {
                 okMessage("USABox Build", objGlobal.getErrorMessage());
             }

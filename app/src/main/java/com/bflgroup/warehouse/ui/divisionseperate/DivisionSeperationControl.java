@@ -1,13 +1,16 @@
 package com.bflgroup.warehouse.ui.divisionseperate;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DivisionSeperationControl {
@@ -60,11 +63,6 @@ public class DivisionSeperationControl {
                 objGlobal.setErrorMessage("Invalid shop");
                 return false;
             }
-            /*rs = dbConnection.getResultSet("select * from RemoveItemsFromTransfer where trfno='" + trfno + "' and shopname='" + shopName + "'", objGlobal.getConnection());
-            if (rs.next()) {
-                objGlobal.setErrorMessage("Transfer already save");
-                return false;
-            }*/
             rs = dbConnection.getResultSet("select * from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.Transferheader where " +
                     "TrfNo='" + trfno + "' and CostCodeTo='" + objDivisionSeperationGlobal.getCostcode() + "'", objGlobal.getConnection());
             if (!rs.next()) {
@@ -72,13 +70,18 @@ public class DivisionSeperationControl {
                 return false;
             }
 
-            rs = dbConnection.getResultSet("select * from DATA2004..ExportPost where ShipNo  in (select cast(srno as varchar(20)) from bfldata..vGoodsIssuePlt where ShopIssue = '"+ shopName +"' and TrfNo = '"+trfno+"' )", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from DATA2004..ExportPost where ShipNo  in (select cast(srno as varchar(20)) from bfldata..vGoodsIssuePlt where ShopIssue = '" + shopName + "' and TrfNo = '" + trfno + "' )", objGlobal.getConnection());
             if (rs.next()) {
-                objGlobal.setErrorMessage("Cannot Delete the transfer - "+trfno+" Shopname - "+shopName+", GIN already Posted!");
+                objGlobal.setErrorMessage("Cannot Delete the transfer - " + trfno + " Shopname - " + shopName + ", GIN already Posted!");
+                return false;
+            }
+            rs = dbConnection.getResultSet("select * from bfldata..ExportPostNew where GinNo in (select cast(srno as varchar(20)) from bfldata..vGoodsIssuePlt where ShopIssue = '" + shopName + "' and TrfNo = '" + trfno + "' )", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Cannot Delete the transfer - " + trfno + " Shopname - " + shopName + ", GIN already Posted!");
                 return false;
             }
 
-                    rs = dbConnection.getResultSet("select itemcode,trf=sum(trfqty),scan=sum(qty) from BFLDATA.dbo.tmpDivSepItems where " +
+            rs = dbConnection.getResultSet("select itemcode,trf=sum(trfqty),scan=sum(qty) from BFLDATA.dbo.tmpDivSepItems where " +
                     "Deviceid='" + objGlobal.getDeviceName() + "' group by itemcode having sum(qty)>sum(TrfQty)", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Scan quantity is more than transfer quantity, itemcode:" + rs.getString("itemcode").toString() + ", " +
@@ -104,6 +107,7 @@ public class DivisionSeperationControl {
             objGlobal.setErrorMessage("Database is blank");
             return false;
         }
+        int Qty = 0;
         if (!checkConnection()) {
             return false;
         }
@@ -114,6 +118,15 @@ public class DivisionSeperationControl {
                 objGlobal.setErrorMessage("Invalid Transfer or item not found in transfer");
                 return false;
             }
+
+            rs = dbConnection.getResultSet("select a.itemcode,trf=sum(trfqty),scan=sum(qty) from BFLDATA.dbo.tmpDivSepItems  a, BFLOMAN.dbo.vTransferDetail b where " +
+                    "a.TrfNo = b.TrfNo and a.Itemcode = b.ItemCode and a.TrfNo='" + trfno + "' and a.itemcode='" + itemcode + "' and " +
+                    "Deviceid='" + objGlobal.getDeviceName() + "' group by a.itemcode having sum(qty)>=sum(TrfQty)", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Scan Qty should not be more than the transfer Quantity");
+                return false;
+            }
+
             if (!dbConnection.insertUpdate("insert into tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopname + "',ItemCode,(select distinct division from " +
                     "deptstock where Department in(select Department from usa.dbo.USAPriority where groupcode=a.groupcode))," + scanQty + ",0 from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a " +
                     "where TrfNo='" + trfno + "' and ItemCode='" + itemcode + "'", objGlobal.getConnection())) {
@@ -121,7 +134,7 @@ public class DivisionSeperationControl {
             }
             return true;
         } catch (Exception e) {
-            objGlobal.setErrorMessage("DivisionSeperationControl:validateTransfer; " + e.toString());
+            objGlobal.setErrorMessage("DivisionSeperationControl:validateTransfer; " + e);
             return false;
         }
     }
@@ -138,65 +151,76 @@ public class DivisionSeperationControl {
                 slno = rs.getInt("sn");
             }
             objGlobal.getConnection().setAutoCommit(false);
-            if (!dbConnection.insertUpdate("insert into RemoveItemsFromTransfer select trfno,shopname,itemcode,sum(TrfQty),'" + objGlobal.getUserId() + "',getdate(),'',sum(qty)," + slno + " from " +
-                    "tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' group by trfno,shopname,itemcode", objGlobal.getConnection())) {
-                return false;
-            }
-            if (!dbConnection.insertUpdate("insert into " + objDivisionSeperationGlobal.getDatabase() + ".dbo.DelTransferHeader(TrfNo,TrfDate,CostCodeFrom,LocCodeFrom,CostCodeTo,LocCodeTo,ACCode,Narration," +
-                    "NetAmount,UserId,TrfType,FCCode,FCRate,ApprovedBy,PreparedBy,ConsumeReturn,JobNo,EntryMode,StoreIssue,StoreReceipt,Shipno,Cartonno,Palletno,Starttime) select TrfNo,TrfDate,CostCodeFrom," +
-                    "LocCodeFrom,CostCodeTo,LocCodeTo,ACCode,Narration+'-" + String.valueOf(slno) + "',NetAmount,UserId,TrfType,FCCode,FCRate,ApprovedBy,PreparedBy,ConsumeReturn,JobNo,EntryMode,StoreIssue,StoreReceipt,Shipno,Cartonno," +
-                    "Palletno,Starttime from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferHeader where TrfNo='" + trfno + "'", objGlobal.getConnection())) {
-                return false;
-            }
-            if (!dbConnection.insertUpdate("insert into " + objDivisionSeperationGlobal.getDatabase() + ".dbo.DelTransferDetail (TrfNo,ItemCode,UnitCode,Quantity,Rate,BatchNo,BasicQty,BasicRate,SrNo," +
-                    "UPC,ItemType) select TrfNo,ItemCode,UnitCode,Quantity,Rate," + String.valueOf(slno) + ",BasicQty,BasicRate,SrNo,UPC,ItemType from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail where " +
-                    "TrfNo='" + trfno + "'", objGlobal.getConnection())) {
-                return false;
-            }
-            if (!dbConnection.insertUpdate("select trfno,shopname,itemcode,trf=sum(TrfQty),sc=sum(qty) into #removescqty from tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' and " +
-                    "TrfNo='" + trfno + "' and qty>0 group by trfno,shopname,itemcode", objGlobal.getConnection())) {
-                return false;
-            }
-            if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail set Quantity=b.Quantity-a.sc from #removescqty a," +
-                    "" + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail b where a.Itemcode=b.ItemCode and b.TrfNo='" + trfno + "'", objGlobal.getConnection())) {
-                return false;
-            }
-            if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.LocStock set quantity=b.quantity-a.sc from #removescqty a," + objDivisionSeperationGlobal.getDatabase() + ".dbo." +
-                    "LocStock b where a.Itemcode=b.Itemcode and b.costcode='" + objDivisionSeperationGlobal.getCostcode() + "' and b.loccode='" + objDivisionSeperationGlobal.getLoccode() + "'", objGlobal.getConnection())) {
-                return false;
-            }
-            if (!dbConnection.insertUpdate("delete from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail where TrfNo='" + trfno + "' and Quantity<=0", objGlobal.getConnection())) {
-                return false;
-            }
-            if (!dbConnection.insertUpdate("drop table #removescqty", objGlobal.getConnection())) {
-                return false;
-            }
-            rs = dbConnection.getResultSet("select amt=sum(quantity*rate) from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail where TrfNo='" + trfno + "'", objGlobal.getConnection());
-            if (rs.next()) {
-                trfAmt = rs.getDouble("amt");
-            }
-            if (trfAmt == 0) {
-                if (!dbConnection.insertUpdate("delete from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferHeader where TrfNo='" + trfno + "'", objGlobal.getConnection())) {
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("delete from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.AccTrnHeader where RefNo='" + trfno + "'", objGlobal.getConnection())) {
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("delete from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.AccTrnDetail where RefNo='" + trfno + "'", objGlobal.getConnection())) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date date1 = sdf.parse(objGlobal.getServerDate());
+            Date date2 = sdf.parse("01/01/2025");
+
+            if (date1.compareTo(date2) >= 0) {
+                if (!dbConnection.insertUpdate("insert into RemoveItemsFromTransfer select trfno,shopname,itemcode,sum(TrfQty),'" + objGlobal.getUserId() + "',getdate(),'',sum(qty)," + slno + " from " +
+                        "tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' group by trfno,shopname,itemcode having sum(qty)>0", objGlobal.getConnection())) {
                     return false;
                 }
             } else {
-                if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferHeader set NetAmount=" + trfAmt + " where " +
+                if (!dbConnection.insertUpdate("insert into RemoveItemsFromTransfer select trfno,shopname,itemcode,sum(TrfQty),'" + objGlobal.getUserId() + "',getdate(),'',sum(qty)," + slno + " from " +
+                        "tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' group by trfno,shopname,itemcode having sum(qty)>0", objGlobal.getConnection())) {
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("insert into " + objDivisionSeperationGlobal.getDatabase() + ".dbo.DelTransferHeader(TrfNo,TrfDate,CostCodeFrom,LocCodeFrom,CostCodeTo,LocCodeTo,ACCode,Narration," +
+                        "NetAmount,UserId,TrfType,FCCode,FCRate,ApprovedBy,PreparedBy,ConsumeReturn,JobNo,EntryMode,StoreIssue,StoreReceipt,Shipno,Cartonno,Palletno,Starttime) select TrfNo,TrfDate,CostCodeFrom," +
+                        "LocCodeFrom,CostCodeTo,LocCodeTo,ACCode,Narration+'-" + slno + "',NetAmount,UserId,TrfType,FCCode,FCRate,ApprovedBy,PreparedBy,ConsumeReturn,JobNo,EntryMode,StoreIssue,StoreReceipt,Shipno,Cartonno," +
+                        "Palletno,Starttime from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferHeader where TrfNo='" + trfno + "'", objGlobal.getConnection())) {
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("insert into " + objDivisionSeperationGlobal.getDatabase() + ".dbo.DelTransferDetail (TrfNo,ItemCode,UnitCode,Quantity,Rate,BatchNo,BasicQty,BasicRate,SrNo," +
+                        "UPC,ItemType) select TrfNo,ItemCode,UnitCode,Quantity,Rate," + String.valueOf(slno) + ",BasicQty,BasicRate,SrNo,UPC,ItemType from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail where " +
                         "TrfNo='" + trfno + "'", objGlobal.getConnection())) {
                     return false;
                 }
-                if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.AccTrnHeader set TotalAmount=" + trfAmt + ",FCTotalAmount=" + trfAmt + " where " +
-                        "RefNo='" + trfno + "'", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("select trfno,shopname,itemcode,trf=sum(TrfQty),sc=sum(qty) into #removescqty from tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' and " +
+                        "TrfNo='" + trfno + "' and qty>0 group by trfno,shopname,itemcode", objGlobal.getConnection())) {
                     return false;
                 }
-                if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.AccTrnDetail set Amount=" + trfAmt + ",FCAmount=" + trfAmt + " where " +
-                        "RefNo='" + trfno + "'", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail set Quantity=b.Quantity-a.sc from #removescqty a," +
+                        "" + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail b where a.Itemcode=b.ItemCode and b.TrfNo='" + trfno + "'", objGlobal.getConnection())) {
                     return false;
+                }
+                if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.LocStock set quantity=b.quantity-a.sc from #removescqty a," + objDivisionSeperationGlobal.getDatabase() + ".dbo." +
+                        "LocStock b where a.Itemcode=b.Itemcode and b.costcode='" + objDivisionSeperationGlobal.getCostcode() + "' and b.loccode='" + objDivisionSeperationGlobal.getLoccode() + "'", objGlobal.getConnection())) {
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("delete from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail where TrfNo='" + trfno + "' and Quantity<=0", objGlobal.getConnection())) {
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("drop table #removescqty", objGlobal.getConnection())) {
+                    return false;
+                }
+                rs = dbConnection.getResultSet("select amt=sum(quantity*rate) from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferDetail where TrfNo='" + trfno + "'", objGlobal.getConnection());
+                if (rs.next()) {
+                    trfAmt = rs.getDouble("amt");
+                }
+                if (trfAmt == 0) {
+                    if (!dbConnection.insertUpdate("delete from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferHeader where TrfNo='" + trfno + "'", objGlobal.getConnection())) {
+                        return false;
+                    }
+                    if (!dbConnection.insertUpdate("delete from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.AccTrnHeader where RefNo='" + trfno + "'", objGlobal.getConnection())) {
+                        return false;
+                    }
+                    if (!dbConnection.insertUpdate("delete from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.AccTrnDetail where RefNo='" + trfno + "'", objGlobal.getConnection())) {
+                        return false;
+                    }
+                } else {
+                    if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.TransferHeader set NetAmount=" + trfAmt + " where " +
+                            "TrfNo='" + trfno + "'", objGlobal.getConnection())) {
+                        return false;
+                    }
+                    if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.AccTrnHeader set TotalAmount=" + trfAmt + ",FCTotalAmount=" + trfAmt + " where " +
+                            "RefNo='" + trfno + "'", objGlobal.getConnection())) {
+                        return false;
+                    }
+                    if (!dbConnection.insertUpdate("update " + objDivisionSeperationGlobal.getDatabase() + ".dbo.AccTrnDetail set Amount=" + trfAmt + ",FCAmount=" + trfAmt + " where " +
+                            "RefNo='" + trfno + "'", objGlobal.getConnection())) {
+                        return false;
+                    }
                 }
             }
             objGlobal.getConnection().commit();
@@ -204,10 +228,10 @@ public class DivisionSeperationControl {
             return true;
         } catch (Exception ex) {
             try {
-                objGlobal.setErrorMessage("DivisionSeperationControl:Save:ex:" + ex.toString());
+                objGlobal.setErrorMessage("DivisionSeperationControl:Save:ex:" + ex);
                 objGlobal.getConnection().rollback();
             } catch (SQLException e) {
-                objGlobal.setErrorMessage("DivisionSeperationControl:Save:e:" + e.toString());
+                objGlobal.setErrorMessage("DivisionSeperationControl:Save:e:" + e);
                 return false;
             }
             return false;
@@ -223,7 +247,7 @@ public class DivisionSeperationControl {
                 return false;
             }
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("BinBatchInControl:boxValid:" + ex.toString());
+            objGlobal.setErrorMessage("BinBatchInControl:boxValid:" + ex);
             return false;
         }
         return true;

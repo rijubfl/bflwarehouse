@@ -6,6 +6,7 @@ public class UsaBoxBuildingGlobal {
     private String palletNo;
     private String palletSno;
     private String buildCategoryMixAllow;
+    private String buildSpecialPtype;
     private String buildingCategory;
     private String buildingSeason;
     private double scanTotalQty;
@@ -21,6 +22,14 @@ public class UsaBoxBuildingGlobal {
             instance = new UsaBoxBuildingGlobal();
         }
         return instance;
+    }
+
+    public String getBuildSpecialPtype() {
+        return buildSpecialPtype;
+    }
+
+    public void setBuildSpecialPtype(String buildSpecialPtype) {
+        this.buildSpecialPtype = buildSpecialPtype;
     }
 
     public String getBuildCategoryMixAllow() {

@@ -71,8 +71,6 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
     private Global objGlobal = Global.getInstance();
     private InOutJafzaGlobal objInOutJafzaGlobal = InOutJafzaGlobal.getInstance();
     private ChuteCheckInCheckOutJafzaControl objChuteCheckInCheckOutJafzaControl = new ChuteCheckInCheckOutJafzaControl();
-    private TransferGlobal objTransferGlobal = TransferGlobal.getInstance();
-    private TransferControl objTransferControl = new TransferControl();
     ChuteCheckInCheckOutJafzaFragment.MyChuteCheckInCheckOutTrfItemsAdp objMyChuteCheckInCheckOutTrfItemsAdp;
 
     ArrayList<ChuteCheckInCheckOutItemJafzaTicket> listChuteCheckInCheckOutItemTicket = new ArrayList<ChuteCheckInCheckOutItemJafzaTicket>();
@@ -88,13 +86,13 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
     private Button bt_chute_status_inout_in;
     private Button bt_chute_status_inout_out;
     private Button bt_chute_status_inout_clear;
-    private ProgressBar pr_chute_status_inout;
     private TextView tv_chute_checkinout_totid;
     private TextView tv_chute_checkinout_time;
     private TextView tv_chute_checkinout_shop_tote_type;
-    private EditText et_transfer_popup_reprint_trfno;
+    private EditText et_transfer_popup_reprint_scan;
     private Button bt_transfer_popup_reprint_fetch;
     private TextView tv_transfer_popup_reprint_shopname;
+    private TextView tv_transfer_popup_reprint_trfno;
     private Button bt_transfer_popup_reprint_print;
     private Button bt_transfer_popup_reprint_close;
     private CheckBox ch_chute_status_inout_reprint_transfer;
@@ -120,7 +118,6 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
     private boolean searchflags;
     private static final int REQUEST_ENABLE_BT = 2;
 
-
     public ChuteCheckInCheckOutJafzaFragment() {
         // Required empty public constructor
     }
@@ -141,7 +138,6 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
         bt_chute_status_inout_in = (Button) view.findViewById(R.id.bt_chute_status_inout_in);
         bt_chute_status_inout_out = (Button) view.findViewById(R.id.bt_chute_status_inout_out);
         bt_chute_status_inout_clear = (Button) view.findViewById(R.id.bt_chute_status_inout_clear);
-        pr_chute_status_inout = (ProgressBar) view.findViewById(R.id.pr_chute_status_inout);
         tv_chute_checkinout_totid = (TextView) view.findViewById(R.id.tv_chute_checkinout_totid);
         tv_chute_checkinout_time = (TextView) view.findViewById(R.id.tv_chute_checkinout_time);
         tv_chute_checkinout_shop_tote_type = (TextView) view.findViewById(R.id.tv_chute_checkinout_shop_tote_type);
@@ -362,7 +358,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (buttonView.isChecked()) {
-                    openPopupInvoiceReprint();
+                    openPopupReprint();
                 } else {
                     // not checked
                 }
@@ -508,34 +504,20 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
         }
     }
 
-    private void openPopupInvoiceReprint() {
+    private void openPopupReprint() {
         Dialog myDialog;
         myDialog = new Dialog(getContext());
         myDialog.setCancelable(false);
         myDialog.setContentView(R.layout.popup_transfer_reprint);
 
         tv_transfer_popup_reprint_shopname = (TextView) myDialog.findViewById(R.id.tv_transfer_popup_reprint_shopname);
-        et_transfer_popup_reprint_trfno = (EditText) myDialog.findViewById(R.id.et_transfer_popup_reprint_trfno);
+        tv_transfer_popup_reprint_trfno = (TextView) myDialog.findViewById(R.id.tv_transfer_popup_reprint_trfno);
+        et_transfer_popup_reprint_scan = (EditText) myDialog.findViewById(R.id.et_transfer_popup_reprint_scan);
         bt_transfer_popup_reprint_fetch = (Button) myDialog.findViewById(R.id.bt_transfer_popup_reprint_fetch);
         bt_transfer_popup_reprint_print = (Button) myDialog.findViewById(R.id.bt_transfer_popup_reprint_print);
         bt_transfer_popup_reprint_close = (Button) myDialog.findViewById(R.id.bt_transfer_popup_reprint_close);
-        tv_transfer_popup_reprint_shopname.requestFocus();
-        et_transfer_popup_reprint_trfno.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                    String scan = et_transfer_popup_reprint_trfno.getText().toString().toUpperCase();
-                    if (scan.isEmpty()) {
-                        okMessage("Transfer", "Please Enter Toteid / Transfer number");
-                        et_transfer_popup_reprint_trfno.requestFocus();
-                        vibrate(100);
-                    } else {
-                        tv_transfer_popup_reprint_shopname.setText(objTransferControl.reprintTransferShopName(scan));
-                    }
-                }
-                return false;
-            }
-        });
+        et_transfer_popup_reprint_scan.requestFocus();
+
         bt_transfer_popup_reprint_print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -545,18 +527,28 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                 }
             }
         });
+
         bt_transfer_popup_reprint_fetch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String scan = et_transfer_popup_reprint_trfno.getText().toString().toUpperCase();
+                String scan = et_transfer_popup_reprint_scan.getText().toString().toUpperCase();
+                String shopname = tv_transfer_popup_reprint_shopname.getText().toString().toUpperCase();
                 if (scan.isEmpty()) {
                     okMessage("Transfer", "Please Enter Toteid / Transfer number");
-                    et_transfer_popup_reprint_trfno.requestFocus();
+                    et_transfer_popup_reprint_scan.requestFocus();
                     vibrate(100);
                 }
-                tv_transfer_popup_reprint_shopname.setText(objTransferControl.reprintTransferShopName(scan));
+                b_Result = objChuteCheckInCheckOutJafzaControl.reprintTransferShopName(scan, shopname);
+                tv_transfer_popup_reprint_shopname.setText(objInOutJafzaGlobal.getReprintShop());
+                tv_transfer_popup_reprint_trfno.setText(objInOutJafzaGlobal.getReprintTrfno());
+                if (!b_Result) {
+                    okMessage("Transfer Re-print", objGlobal.getErrorMessage());
+                    et_transfer_popup_reprint_scan.requestFocus();
+                    vibrate(100);
+                }
             }
         });
+
         bt_transfer_popup_reprint_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -601,6 +593,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         tv_transfer_popup_reprint_shopname.setText(adapter.getItem(position));
+                        tv_transfer_popup_reprint_trfno.setText("");
                         dialog.dismiss();
                     }
                 });
@@ -616,9 +609,9 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             okMessage("Chute Status IN", "ERR NO: " + objGlobal.getErrorNo() + ", " + objGlobal.getErrorMessage());
             return false;
         }
-        tv_chute_status_inout_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objInOutJafzaGlobal.getTrfRecNo() + "  ;  " + String.valueOf(objInOutJafzaGlobal.getTrfTotQty()));
+        tv_chute_status_inout_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objInOutJafzaGlobal.getTrfRecNo() + "  ;  " + objInOutJafzaGlobal.getTrfTotQty());
         tv_chute_status_inout_tot_qty.setText(String.valueOf(objInOutJafzaGlobal.getTrfTotQty()));
-        b_Result = objTransferControl.forPrint(shopName, objInOutJafzaGlobal.getTrfRecNo());
+        b_Result = objChuteCheckInCheckOutJafzaControl.forPrint(shopName, objInOutJafzaGlobal.getTrfRecNo());
         if (!b_Result) {
             okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
             return false;
@@ -751,31 +744,38 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
     }
 
     private boolean reprintTransfer() {
-        String scan = et_transfer_popup_reprint_trfno.getText().toString().toUpperCase();
+        String scan = et_transfer_popup_reprint_scan.getText().toString().toUpperCase();
         String shopname = tv_transfer_popup_reprint_shopname.getText().toString().toUpperCase();
+        String trfno = tv_transfer_popup_reprint_trfno.getText().toString().toUpperCase();
+        if (trfno.isEmpty()) {
+            okMessage("Transfer", "Please Enter Transfer number");
+            tv_transfer_popup_reprint_trfno.requestFocus();
+            vibrate(100);
+            return false;
+        }
         if (shopname.isEmpty()) {
-            okMessage("Chute Status", "Please select Shopname");
+            okMessage("Transfer", "Please select Shopname");
             tv_transfer_popup_reprint_shopname.requestFocus();
             vibrate(100);
             return false;
         }
         if (scan.isEmpty()) {
-            okMessage("Chute Status", "Please Enter Toteid / Transfer number");
-            et_transfer_popup_reprint_trfno.requestFocus();
+            okMessage("Transfer", "Please Enter Toteid / Transfer number");
+            et_transfer_popup_reprint_scan.requestFocus();
             vibrate(100);
             return false;
         }
-        b_Result = objTransferControl.forPrint(shopname, scan);
+        b_Result = objChuteCheckInCheckOutJafzaControl.forPrint(shopname, trfno);
         if (!b_Result) {
             okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
             return false;
         }
-        if (!printSticker(sp_chute_status_inout_chuteid_printer.getSelectedItem().toString())) {
-            okMessage("Transfer", "Printer Error, Pleasse reprint..");
-            return false;
+        if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
+            if (!printSticker(sp_chute_status_inout_chuteid_printer.getSelectedItem().toString())) {
+                okMessage("Transfer", "Printer Error, Pleasse reprint..");
+                return false;
+            }
         }
-        et_transfer_popup_reprint_trfno.setText("");
-        et_transfer_popup_reprint_trfno.requestFocus();
         return true;
     }
 
@@ -1027,9 +1027,9 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                 printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
             } else {
                 printData = objSample_Print.getTransferPrint(
-                        objTransferGlobal.getPshopname(), objTransferGlobal.getPtrfno(), objTransferGlobal.getPboxno(),
-                        objTransferGlobal.getPqty(), objTransferGlobal.getPdeldate(), objTransferGlobal.getPtrfdate(),
-                        objTransferGlobal.getPtoteid(), objTransferGlobal.getPremarks(), objTransferGlobal.getPpreparedby());
+                        objInOutJafzaGlobal.getPshopname(), objInOutJafzaGlobal.getPtrfno(), objInOutJafzaGlobal.getPboxno(),
+                        objInOutJafzaGlobal.getPqty(), objInOutJafzaGlobal.getPdeldate(), objInOutJafzaGlobal.getPtrfdate(),
+                        objInOutJafzaGlobal.getPtoteid(), objInOutJafzaGlobal.getPremarks(), objInOutJafzaGlobal.getPpreparedby(),"2");
             }
             return objSample_Print.PrintBarcodeByte(printData);
         } catch (Exception e) {
@@ -1037,5 +1037,4 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
             return false;
         }
     }
-
 }

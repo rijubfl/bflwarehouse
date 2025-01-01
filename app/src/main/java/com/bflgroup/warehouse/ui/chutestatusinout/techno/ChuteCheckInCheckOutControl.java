@@ -265,7 +265,7 @@ public class ChuteCheckInCheckOutControl {
             } else
                 return false;
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:getLastChuteInOut:" + ex.toString());
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:getLastChuteInOut:" + ex);
             return false;
         }
     }
@@ -298,8 +298,7 @@ public class ChuteCheckInCheckOutControl {
     }
 
     public boolean updateChuteApi(String updtField, String ShopId, String TrfNo, String ChuteNo) {
-        b_Result = (dbConnection.insertUpdate("update SortTask set " + updtField + "='Y' where ShopId='" + ShopId + "' and " +
-                "TrfNo='" + TrfNo + "' and ChuteNo='" + ChuteNo + "'", conRobo));
+        b_Result = (dbConnection.insertUpdate("update SortTask set " + updtField + "='Y' where ShopId='" + ShopId + "' and TrfNo='" + TrfNo + "' and ChuteNo='" + ChuteNo + "'", conRobo));
         return b_Result;
     }
 
@@ -323,7 +322,7 @@ public class ChuteCheckInCheckOutControl {
             }
             objInOutGlobal.setTrfTotQty(totQty);
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:loadTransferItemsAll:" + ex.toString());
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:loadTransferItemsAll:" + ex);
             return listChuteCheckInCheckOutItemTicket;
         }
         return listChuteCheckInCheckOutItemTicket;

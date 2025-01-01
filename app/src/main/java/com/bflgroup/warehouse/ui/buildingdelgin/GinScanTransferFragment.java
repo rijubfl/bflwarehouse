@@ -4,7 +4,6 @@ import static com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferGlobal.get
 import static com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferGlobal.getPalletCount;
 import static com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferGlobal.setCount;
 import static com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferGlobal.setPalletCount;
-import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.getPltCount;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -156,78 +155,9 @@ public class GinScanTransferFragment extends Fragment {
 
         objGinScanTransferControl = new GinScantransferControl(getContext());
         GinScanTransferShared=new GinScanTransferShared(getContext());
-        if ( objGlobal.getCountryCode().equals("KSA")){
-            List<String> arr1 = objGinScanTransferControl.loadKsaShops();
-            ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
-            sp_gin_route_id.setAdapter(arrayAdp1);
-            if (GinScanTransferShared.loadRouteid() != "") {
-                sp_gin_route_id.setSelection(arrayAdp1.getPosition(GinScanTransferShared.loadRouteid().toString()));
-                sp_gin_route_id.setEnabled(false);
-                try {
-                    GinScanItemStatus = objGinScanTransferControl.LoadGinData();
-                    count = Integer.valueOf(objGinScanTransferControl.LoadGinDataCount().toString());
-                    count = getPltCount();
-                    tv_count.setText(count+"");
-                    objTransferStatusAdp = new MyTransferStatusAdp(GinScanItemStatus);
-                    lv_div_seperate_details.setAdapter(objTransferStatusAdp);
-                    Log.e("item","reached");
-                } catch (SQLException e) {
-                    Log.e("Log",e.toString());
-                }
-                Log.e("palletcount", palletcount+"");
-                if(GinScanTransferShared.loadPalletno() != ""){
-
-                    et_g_pallet.setText(GinScanTransferShared.loadPalletno());
-
-                    tvscancount.setText(palletcount +"/"+ GinScanTransferShared.loadPalletCount()+"");
-                    et_g_pallet.setEnabled(false);
-                }
-
-                et_shop_transferno.requestFocus();
-                et_shop_transferno.setFocusable(true);
-                get_route_id = Integer.parseInt(GinScanTransferShared.loadRouteid());
-
-            }
-        }
-        else {
-
-            List<Integer> arr1 = objGinScanTransferControl.loadRoute();
-            ArrayAdapter<Integer> arrayAdp1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
-            sp_gin_route_id.setAdapter(arrayAdp1);
-            if (GinScanTransferShared.loadRouteid() != "") {
-
-                sp_gin_route_id.setSelection(arrayAdp1.getPosition(Integer.parseInt(GinScanTransferShared.loadRouteid().toString())));
-                sp_gin_route_id.setEnabled(false);
-                palletno = GinScanTransferShared.loadPalletno();
-                try {
-                    GinScanItemStatus = objGinScanTransferControl.LoadGinData();
-                    count = Integer.valueOf(objGinScanTransferControl.LoadGinDataCount().toString());
-                    palletcount = Integer.valueOf(objGinScanTransferControl.LoadPalletDataCount(palletno).toString());
-                    count = getCount();
-
-                    tv_count.setText(count + "");
-
-                    objTransferStatusAdp = new MyTransferStatusAdp(GinScanItemStatus);
-                    lv_div_seperate_details.setAdapter(objTransferStatusAdp);
-                    Log.e("Gin item", "reached");
-                } catch (SQLException e) {
-                    Log.e("Log", e.toString());
-                }
-                Log.e("palletcount", palletcount + "");
-                if (GinScanTransferShared.loadPalletno() != "") {
-
-                    et_g_pallet.setText(GinScanTransferShared.loadPalletno());
-
-                    tvscancount.setText(palletcount + "/" + GinScanTransferShared.loadPalletCount() + "");
-                    et_g_pallet.setEnabled(false);
-                }
-
-                et_shop_transferno.requestFocus();
-                et_shop_transferno.setFocusable(true);
-                get_route_id = Integer.parseInt(GinScanTransferShared.loadRouteid());
-
-            }
-        }
+        List<Integer> arr1 = objGinScanTransferControl.loadRoute();
+        ArrayAdapter<Integer> arrayAdp1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
+        sp_gin_route_id.setAdapter(arrayAdp1);
 
 
 
@@ -277,6 +207,41 @@ public class GinScanTransferFragment extends Fragment {
             }
         });
 
+
+
+        if (GinScanTransferShared.loadRouteid() != "") {
+
+            sp_gin_route_id.setSelection(arrayAdp1.getPosition(Integer.parseInt(GinScanTransferShared.loadRouteid().toString())));
+            sp_gin_route_id.setEnabled(false);
+            palletno = GinScanTransferShared.loadPalletno();
+            try {
+                GinScanItemStatus = objGinScanTransferControl.LoadGinData();
+                count = Integer.valueOf(objGinScanTransferControl.LoadGinDataCount().toString());
+                palletcount = Integer.valueOf(objGinScanTransferControl.LoadPalletDataCount(palletno).toString());
+                count = getCount();
+
+                tv_count.setText(count+"");
+
+                objTransferStatusAdp = new MyTransferStatusAdp(GinScanItemStatus);
+                lv_div_seperate_details.setAdapter(objTransferStatusAdp);
+                Log.e("Gin item","reached");
+            } catch (SQLException e) {
+                Log.e("Log",e.toString());
+            }
+            Log.e("palletcount", palletcount+"");
+            if(GinScanTransferShared.loadPalletno() != ""){
+
+                et_g_pallet.setText(GinScanTransferShared.loadPalletno());
+
+                tvscancount.setText(palletcount +"/"+ GinScanTransferShared.loadPalletCount()+"");
+                et_g_pallet.setEnabled(false);
+            }
+
+            et_shop_transferno.requestFocus();
+            et_shop_transferno.setFocusable(true);
+            get_route_id = Integer.parseInt(GinScanTransferShared.loadRouteid());
+
+        }
 
 //        bt_status_pallet_next.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -332,23 +297,10 @@ public class GinScanTransferFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // your code here
-                if (objGlobal.getCountryCode().equals("KSA")){
-                    get_route_id = objGinScanTransferControl.loadKsaRoute(sp_gin_route_id.getSelectedItem().toString().split("\\(")[0]);
-                    String get_shop_names = objGinScanTransferControl.LoadShops(get_route_id);
-                    tv_shopnames_col.setText(get_shop_names);
-                }
-                else
-                {
-                    get_route_id = Integer.parseInt(sp_gin_route_id.getSelectedItem().toString());
-                    String get_shop_names = objGinScanTransferControl.LoadShops(get_route_id);
-                    tv_shopnames_col.setText(get_shop_names);
-                }
+                get_route_id = Integer.parseInt(sp_gin_route_id.getSelectedItem().toString());
 
-
-//                get_route_id = Integer.parseInt(sp_gin_route_id.getSelectedItem().toString());
-//
-//                String get_shop_names = objGinScanTransferControl.LoadShops(get_route_id);
-//                tv_shopnames_col.setText(get_shop_names);
+                String get_shop_names = objGinScanTransferControl.LoadShops(get_route_id);
+                tv_shopnames_col.setText(get_shop_names);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -480,7 +432,6 @@ public class GinScanTransferFragment extends Fragment {
                                         car_no = et_car_no.getText().toString();
                                         ship_no = et_Ship_no.getText().toString();
                                         etDate = et_date.getText().toString();
-
                                         if (GinScanItemStatus.size() >= 1) {
 
                                             try {
@@ -807,9 +758,9 @@ public class GinScanTransferFragment extends Fragment {
     void vibrate(int duration, Context context) {
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         Uri notification = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.errorsound2);
-       // Ringtone r = RingtoneManager.getRingtone(context, notification);
-        //audioManager.setStreamVolume(AudioManager.STREAM_RING,audioManager.getStreamMaxVolume(AudioManager.STREAM_RING),0);
-       // r.play();
+        Ringtone r = RingtoneManager.getRingtone(context, notification);
+        audioManager.setStreamVolume(AudioManager.STREAM_RING,audioManager.getStreamMaxVolume(AudioManager.STREAM_RING),0);
+        r.play();
 
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         assert v != null;

@@ -236,13 +236,19 @@ public class TransferReceipt {
 
     private String getLatestTrfNo(String dataName) {
         int autoSn = 0;
+        String trfPrefix="";
         try {
-            rs = dbConnection.getResultSet("select en=isnull(max(cast(right(trfno,7) as int)),0)+1 from " + dataName + ".dbo.transferheader where left(trfno,2)='" + objGlobal.getTransferPrefix() + "' and (trftype='R') " +
+            trfPrefix = objGlobal.getTransferPrefixRobo();
+            rs = dbConnection.getResultSet("select TransferPrefixRobo from BFLDATA.dbo.TransferPrefix where warehouse='" + objGlobal.getWarehouse() + "' and dataname='" + dataName + "'", con);
+            if(rs.next()){
+                trfPrefix = rs.getString("TransferPrefixRobo");
+            }
+            rs = dbConnection.getResultSet("select en=isnull(max(cast(right(trfno,7) as int)),0)+1 from " + dataName + ".dbo.transferheader where left(trfno,2)='" + trfPrefix + "' and (trftype='R') " +
                     "and substring(trfno,3,1)<>'D'", con);
             if (rs.next()) {
                 autoSn = Integer.parseInt(rs.getString("en").toString());
             }
-            return objGlobal.getTransferPrefix() + String.format("%07d", autoSn);
+            return trfPrefix + String.format("%07d", autoSn);
         } catch (Exception ex) {
             objGlobal.setErrorMessage("TransferReceipt:getLatestTrfNo:" + ex);
             return "";

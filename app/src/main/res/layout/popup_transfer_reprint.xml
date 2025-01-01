@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="275dp"
-    android:padding="6dp"
+    android:padding="4dp"
     android:background="@color/colorBackPopup"
     android:layout_gravity="center"
-    android:layout_height="145dp">
+    android:layout_height="185dp">
 
     <TextView
         android:id="@+id/tv_transfer_popup_reprint_shopname"
@@ -23,15 +23,15 @@
         android:textSize="14dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_transfer_popup_reprint_trfno" />
+        app:layout_constraintTop_toBottomOf="@+id/et_transfer_popup_reprint_scan" />
 
     <EditText
-        android:id="@+id/et_transfer_popup_reprint_trfno"
+        android:id="@+id/et_transfer_popup_reprint_scan"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginRight="5dp"
         android:background="@drawable/et_custom"
-        android:hint="Trf.No./ Toteid"
+        android:hint="Scan Tote / Trf.No."
         android:inputType="textPersonName"
         android:padding="10dp"
         android:textColor="@color/coloBlack"
@@ -39,6 +39,21 @@
         app:layout_constraintEnd_toStartOf="@+id/bt_transfer_popup_reprint_fetch"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_transfer_popup_reprint_trfno"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/et_custom"
+        android:hint="Transfer Number"
+        android:inputType="textPersonName"
+        android:padding="10dp"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_transfer_popup_reprint_shopname" />
 
     <Button
         android:id="@+id/bt_transfer_popup_reprint_fetch"
@@ -49,7 +64,7 @@
         android:textAllCaps="false"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/et_transfer_popup_reprint_trfno" />
+        app:layout_constraintTop_toTopOf="@+id/et_transfer_popup_reprint_scan" />
 
     <Button
         android:id="@+id/bt_transfer_popup_reprint_print"

@@ -61,4 +61,15 @@ public class TransferSharedRef {
         return sharedRef.getString("Printer", "");
     }
 
+    public void savePrintCopies(String PrintCopies){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("PrintCopies",PrintCopies);
+        editor.commit();
+    }
+
+    public String loadPrintCopies() {
+        return sharedRef.getString("PrintCopies", "");
+    }
+
+
 }

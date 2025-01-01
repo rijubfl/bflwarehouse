@@ -23,17 +23,17 @@ public class ChuteCheckInCheckOutJafzaControl {
 
     public ChuteCheckInCheckOutJafzaControl() {
         objGlobal.setErrorMessage("");
-        conRobo = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(),"ROBOTICS");
+        conRobo = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(), "ROBOTICS");
         if (!b_Result) {
-            objGlobal.setErrorMessage("ChuteCheckInCheckOutJafzaControl:tmpConnectDb : "+ objGlobal.getRoboServerIP());
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutJafzaControl:tmpConnectDb : " + objGlobal.getRoboServerIP());
         }
     }
 
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
-        conRobo = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(),"ROBOTICS");
+        conRobo = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(), "ROBOTICS");
         if (!b_Result) {
-            objGlobal.setErrorMessage("ChuteCheckInCheckOutJafzaControl:tmpConnectDb : "+ objGlobal.getRoboServerIP());
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutJafzaControl:tmpConnectDb : " + objGlobal.getRoboServerIP());
         }
         return true;
     }
@@ -270,7 +270,7 @@ public class ChuteCheckInCheckOutJafzaControl {
     public boolean getLastChuteInOut(String chuteId) {
         try {
             rs = dbConnection.getResultSet("select top 1 direction=direction+' - '+left(cast(TrnTime as varchar),8) from vChuteInOut " +
-                    "where ChuteId='"+chuteId+"' order by TrnDate desc,TrnTime desc", conRobo);
+                    "where ChuteId='" + chuteId + "' order by TrnDate desc,TrnTime desc", conRobo);
             if (rs.next()) {
                 objInOutJafzaGlobal.setChuteLastInOut(rs.getString("direction").toString());
             }
@@ -294,6 +294,7 @@ public class ChuteCheckInCheckOutJafzaControl {
         }
         return "";
     }
+
     public boolean transferPendingInChuteId(String chuteId, String shopId) {
         try {
             rs = dbConnection.getResultSet("select * from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "'", conRobo);
@@ -306,10 +307,12 @@ public class ChuteCheckInCheckOutJafzaControl {
             return false;
         }
     }
+
     public boolean updateChuteApi(String updtField, String ShopId, String TrfNo, String ChuteNo, String labelInfo) {
         return (!dbConnection.insertUpdate("update SortTask set " + updtField + "='Y',LabelInfo='" + labelInfo + "' where ShopId='" + ShopId + "' and " +
                 "TrfNo='" + TrfNo + "' and ChuteNo='" + ChuteNo + "'", conRobo));
     }
+
     public ArrayList<ChuteCheckInCheckOutItemJafzaTicket> itemsForPL(String chuteId, String shopId) {
         ArrayList<ChuteCheckInCheckOutItemJafzaTicket> listChuteCheckInCheckOutItemTicket = new ArrayList<ChuteCheckInCheckOutItemJafzaTicket>();
         int totQty = 0;
@@ -347,40 +350,79 @@ public class ChuteCheckInCheckOutJafzaControl {
         }
     }
 
-    public boolean reprintTransfer(String scan,String shopName) {
-        String trfRecNo = "", toteid = "";
-        int totalQty = 0;
+    public boolean reprintTransferShopName(String scan,String shopname) {
+        Connection conRob = null;
         try {
-            if (objGlobal.getUserPrinterName().isEmpty()) {
-                objGlobal.setErrorMessage("Printer not configured");
+            objInOutJafzaGlobal.setReprintTrfno("");
+            objInOutJafzaGlobal.setReprintShop("");
+            objInOutJafzaGlobal.setReprintToteid("");
+            conRob = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(), "BFLDATA");
+            if (conRob == null) {
+                objGlobal.setErrorMessage("Connection error");
                 return false;
             }
-            if (!checkConnection()) {
-                return false;
-            }
-            rs = dbConnection.getResultSet("select top 1 trfno,ToteId,qty=(select Quantity from BFLDATA.dbo.TransferNoReturn where ShopName=a.shopname and TrfNo=a.TrfNo) from " +
-                    "SortTask a where ShopName='" + shopName + "' and TrfNo='" + scan + "' order by trndate desc", conRobo);
-            if (rs.next()) {
-                trfRecNo = rs.getString("trfno");
-                toteid = rs.getString("ToteId");
-                totalQty = rs.getInt("qty");
+            if(shopname.equals("")) {
+                rs = dbConnection.getResultSet("select top 1 ShopName,TrfNo,ToteId from ROBOTICS.dbo.SortTask where (ToteId='" + scan + "' or TrfNo='" + scan + "') order by trndate desc", conRob);
             } else {
-                rs = dbConnection.getResultSet("select top 1 trfno,ToteId,qty=(select Quantity from BFLDATA.dbo.TransferNoReturn where ShopName=a.shopname and TrfNo=a.TrfNo)  from " +
-                        "SortTask a where ShopName='" + shopName + "' and ToteId='" + scan + "' order by trndate desc", conRobo);
-                if (!rs.next()) {
-                    objGlobal.setErrorMessage("Transfer number or toteid is not valid");
-                    return false;
-                } else {
-                    trfRecNo = rs.getString("trfno");
-                    toteid = rs.getString("ToteId");
-                    totalQty = rs.getInt("qty");
-                }
+                rs = dbConnection.getResultSet("select top 1 ShopName,TrfNo,ToteId from ROBOTICS.dbo.SortTask where ShopName='" + shopname + "' and (ToteId='" + scan + "' or " +
+                        "TrfNo='" + scan + "') order by trndate desc", conRob);
             }
-            return dbConnection.insertUpdate("insert into bfldata.dbo.tmpPrintTransferRfidNew(ShopName,ToteId,TrfNo,Quantity,TrnDate,PrDateTime,pr,PrSystem,Whouse) values ('" + shopName + "'," +
-                    "'" + toteid + " - " + objGlobal.getUserName() + "','" + trfRecNo + "'," + totalQty + ",convert(varchar(15),getdate(),103),null,'N','" + objGlobal.getUserPrinterName() + "'," +
-                    "'" + objGlobal.getWarehouse() + "')", conRobo);
+            if (rs.next()) {
+                objInOutJafzaGlobal.setReprintTrfno(rs.getString("TrfNo"));
+                objInOutJafzaGlobal.setReprintShop(rs.getString("ShopName"));
+                objInOutJafzaGlobal.setReprintToteid(rs.getString("ToteId"));
+            } else {
+                objGlobal.setErrorMessage("Record not found");
+                return false;
+            }
+            return true;
         } catch (Exception e) {
-            objGlobal.setErrorMessage("ChuteCheckInCheckOutJafzaControl.reprintTransfer : " + e);
+            objGlobal.setErrorMessage("TransferControl.validateRfid : " + e);
+            return false;
+        }
+    }
+
+    public boolean forPrint(String shopName, String trfno) {
+        String dataname = "";
+        Connection conRob = null;
+        objInOutJafzaGlobal.setPtrfno("");
+        objInOutJafzaGlobal.setPboxno("");
+        objInOutJafzaGlobal.setPshopname("");
+        objInOutJafzaGlobal.setPqty("");
+        objInOutJafzaGlobal.setPdeldate("");
+        objInOutJafzaGlobal.setPtrfdate("");
+        objInOutJafzaGlobal.setPtoteid("");
+        objInOutJafzaGlobal.setPremarks("");
+        objInOutJafzaGlobal.setPpreparedby("");
+        conRob = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(), "BFLDATA");
+        if (conRob == null) {
+            objGlobal.setErrorMessage("Connection error");
+            return false;
+        }
+        try {
+            rs = dbConnection.getResultSet("select dataname from bfldata.dbo.datasettings where ShopName='" + shopName + "'", conRob);
+            if (rs.next()) {
+                dataname = rs.getString("dataname");
+            }
+            rs = dbConnection.getResultSet("select TrfNo,Cartonno,Shipno,TrfDate=convert(varchar,TrfDate,103),StoreIssue,Narration,PreparedBy,qty=(select FORMAT(SUM(Quantity),'#####') " +
+                    "from " + dataname + ".dbo.TransferDetail where TrfNo=a.trfno) from " + dataname + ".dbo.transferheader a where (trfno='" + trfno + "' or StoreIssue='" + trfno + "' )", conRob);
+            if (rs.next()) {
+                objInOutJafzaGlobal.setPtrfno(rs.getString("TrfNo"));
+                objInOutJafzaGlobal.setPboxno(rs.getString("Cartonno"));
+                objInOutJafzaGlobal.setPshopname(shopName);
+                objInOutJafzaGlobal.setPqty(rs.getString("qty"));
+                objInOutJafzaGlobal.setPdeldate(rs.getString("Shipno"));
+                objInOutJafzaGlobal.setPtrfdate(rs.getString("TrfDate"));
+                objInOutJafzaGlobal.setPtoteid(rs.getString("StoreIssue"));
+                objInOutJafzaGlobal.setPremarks(rs.getString("Narration"));
+                objInOutJafzaGlobal.setPpreparedby(rs.getString("PreparedBy"));
+            } else {
+                objGlobal.setErrorMessage("Invalid transfer number or toteid (" + trfno + ")");
+                return false;
+            }
+            return true;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("TransferControl:forPrint:" + ex);
             return false;
         }
     }

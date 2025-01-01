@@ -94,7 +94,7 @@ public class R1WhGrnControl {
                 objGlobal.setErrorMessage("validateTransfer: Transfer No. / Box No. " + trfNoM + " already closed");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where PalletNo='" + trfNoM + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where (PalletNo='" + trfNoM + "' or BoxNo='" + trfNoM + "')", objGlobal.getConnection());
             if (rs.next()) {
                 objR1WhGrnGlobal.setPalletStatus("PRODUCTION");
                 objR1WhGrnGlobal.setSimProcessId("-" + rs.getString("ProcessNo").toString());

@@ -41,6 +41,10 @@ public class Controls {
             objGlobal.setHideKeyPad(true);
             objGlobal.setMaxTotInBin(1);
             objGlobal.setCountryWiseBoxPrefix("U");
+            objGlobal.setWarehouse("");
+            objGlobal.setCountryCode("");
+            objGlobal.setTransferPrefixPda("");
+            objGlobal.setTransferPrefixRobo("");
             if (objGlobal.getWorkLocation().equals("3PL")) {
                 return true;
             }
@@ -50,24 +54,32 @@ public class Controls {
             if (objGlobal.getWorkLocation().equals("BAHRAIN")) {
                 objGlobal.setCountryWiseBoxPrefix("B");
             }
+
             rs = objDBConnection.getResultSet("select BFLDATA.dbo.getClientlocdetails('Warehouse')", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setWarehouse(rs.getString(1));
             } else {
-                objGlobal.setErrorMessage("LoginActivity:getControlMain1:Invalid Warehouse, Contact IT");
+                objGlobal.setErrorMessage("Invalid Warehouse, Contact IT");
                 return false;
             }
+            if (objGlobal.getWarehouse().equals("")) {
+                objGlobal.setErrorMessage("Warehouse / IP Changed, Contact IT");
+                return false;
+            }
+
             rs = objDBConnection.getResultSet("select BFLDATA.dbo.getClientlocdetails('Country')", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setCountryCode(rs.getString(1));
             } else {
-                objGlobal.setErrorMessage("LoginActivity:getControlMain2:Invalid Country, Contact IT");
+                objGlobal.setErrorMessage("Invalid Country, Contact IT");
                 return false;
             }
-            if (objGlobal.getCountryCode().equals("UAE")) { ///not using
-                objGlobal.setExportCountryCode("U");
-                objGlobal.setCountryDbName("BFLKUWAIT");
-            } else {
+            if (objGlobal.getCountryCode().equals("")) {
+                objGlobal.setErrorMessage("Country Code / IP Changed, Contact IT");
+                return false;
+            }
+
+            if (!objGlobal.getCountryCode().equals("UAE")) {
                 rs = objDBConnection.getResultSet("select ExportCountryCode,Dataname from bfldata.dbo.DataSettings where countrycode='" + objGlobal.getCountryCode() + "' and " +
                         "ExportWH='Y'", objGlobal.getConnection());
                 if (rs.next()) {
@@ -78,6 +90,7 @@ public class Controls {
                     return false;
                 }
             }
+
             rs = objDBConnection.getResultSet("select * from fabsmain.dbo.settings where descr='SKIPBATCHIN'", objGlobal.getConnection());
             if (rs.next()) {
                 if (rs.getString("status").toString().equals("Y")) objGlobal.setSkipBatchIn(true);
@@ -86,13 +99,19 @@ public class Controls {
             if (rs.next()) {
                 objGlobal.setMaxTotInBin(rs.getInt("status"));
             }
-            if (objGlobal.getWorkLocation().equals("KSA")) {
-                objGlobal.setTransferPrefix("SR");
-            } else {
-                objGlobal.setTransferPrefix("FT");
-                if (objGlobal.getWarehouse().equals("TECHNO")) objGlobal.setTransferPrefix("FT");
-                if (objGlobal.getWarehouse().equals("JAFZA")) objGlobal.setTransferPrefix("FO");
+
+            rs = objDBConnection.getResultSet("select distinct Warehouse,TransferPrefix,TransferPrefixPda,TransferPrefixRobo " +
+                    "from BFLDATA.dbo.LocationMapping where Warehouse='" + objGlobal.getWarehouse() + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setTransferPrefixPda(rs.getString("TransferPrefixPda"));
+                objGlobal.setTransferPrefixRobo(rs.getString("TransferPrefixRobo"));
             }
+
+            if (objGlobal.getTransferPrefixPda().equals("") || objGlobal.getTransferPrefixRobo().equals("")) {
+                objGlobal.setErrorMessage("Transfer Prefix not set, Please Contact IT");
+                return false;
+            }
+
             //robo api details
             String roboChuteStatusAPI = "", roboChuteMapingAPI = "", roboSortTaskAPI = "", roboLabelInfoAPI = "", roboServerIP = "";
             String roboChuteStatusAPIToken = "", roboChuteMapingAPIToken = "";

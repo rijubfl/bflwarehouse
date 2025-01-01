@@ -151,7 +151,7 @@ public class PalletBuildingControl {
                     "and a.deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 return false;
             }
-            int nDivCount = 0;
+            /*int nDivCount = 0;
             boolean bMuymuchoDiv = false;
             rs = dbConnection.getResultSet("select division,cnt=count(*) from tmpPltBldItems where division is not null and deviceid='" + objGlobal.getDeviceName() + "' group by division", objGlobal.getConnection());
             while (rs.next()) {
@@ -163,7 +163,7 @@ public class PalletBuildingControl {
             if (nDivCount > 0 && bMuymuchoDiv == true) {
                 objGlobal.setErrorMessage("Mix not allowed for MUYMUCHO items");
                 return false;
-            }
+            }*/
 
             String boxno = "", pallettype = "", season = "", cShopEligible = "", cFShopEligible = "";
             int nLFLBUFFERitem = 0, nNonLFLBUFFERitem = 0;

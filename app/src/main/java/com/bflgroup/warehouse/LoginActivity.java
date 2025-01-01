@@ -236,7 +236,6 @@ public class LoginActivity extends AppCompatActivity {
                     objGlobal.setUserPrinterName(rs.getString("PrntName"));
                     objGlobal.setUserAllowMixCategoryBuild(rs.getString("allB"));
                     objGlobal.setEmpName(dbConnection.stringReturn(objGlobal.getConnection(), "payroll.dbo.employee", "empname", "empcode", rs.getString("empCode")));
-                    dbConnection.insertUpdate("insert into bfldata.dbo.tmpLoginPda values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "')", objGlobal.getConnection());
                 } else {
                     objGlobal.setErrorMessage("Invalid username or password");
                     return false;
@@ -245,11 +244,12 @@ public class LoginActivity extends AppCompatActivity {
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");
             }
-            dbConnection.insertUpdate("insert into bfldata..WHPdaUserVersion (userid,username,DeviceVersion,loginDate,Logintime,warehouse)values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + getResources().getString(R.string.app_version) + "', '" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection());
-
+            dbConnection.insertUpdate("insert into bfldata.dbo.WHPdaUserVersion(userid,username,DeviceVersion,loginDate,Logintime,warehouse)values(" + objGlobal.getUserId() + "," +
+                    "'" + objGlobal.getUserName() + "','" + getResources().getString(R.string.app_version) + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +
+                    "'" + objGlobal.getWarehouse() + "')", objGlobal.getConnection());
             return true;
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("LoginActivity:validateUser:" + ex.toString());
+            objGlobal.setErrorMessage("LoginActivity:validateUser:" + ex);
             return false;
         }
     }
@@ -265,24 +265,6 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception ex) {
             objGlobal.setErrorMessage("GrnTransferControl:getLatestGrnRf:" + ex.toString());
             return "";
-        }
-    }
-
-    public boolean checkAlreadyLogin() {
-        if(objGlobal.getUserName().toUpperCase(Locale.ROOT).equals("RIJU")) return false;
-        query = "select * from bfldata.dbo.tmpLoginPda where PdaName<>'" + objGlobal.getDeviceName() + "' and (userid=" + objGlobal.getUserId() + " or username='" + objGlobal.getUserName() + "')";
-        try {
-            Statement stmt = objGlobal.getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            if (rs.next()) {
-                objGlobal.setErrorMessage("User " + objGlobal.getUserName() + " already login in another device");
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception ex) {
-            objGlobal.setErrorMessage("LoginActivity:checkAlreadyLogin:" + ex.toString());
-            return false;
         }
     }
 

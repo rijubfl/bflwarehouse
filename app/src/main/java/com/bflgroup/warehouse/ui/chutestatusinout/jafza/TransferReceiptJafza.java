@@ -32,6 +32,7 @@ public class TransferReceiptJafza {
         }
         return true;
     }
+
     public boolean transferReceipt(String chuteId, String toteId, String shopId, String shopName) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "",mainShopName="";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", storeIssue = toteId, trfType = "R", palletNo = "", cartonNo = "1", empName = "";
@@ -191,11 +192,13 @@ public class TransferReceiptJafza {
                 objGlobal.setErrorNo("transferReceipt:028");
                 return false;
             }
-            if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpPrintTransferRfidNew(ShopName,ToteId,TrfNo,Quantity,TrnDate,PrDateTime,pr,PrSystem,Whouse) values ('" + shopName + "','" + toteId + "  -  " + objGlobal.getUserName() + "'," +
-                    "'" + trfRecNo + "'," + totalQty + ",'" + objGlobal.getServerDate() + "',null,'N','" + objGlobal.getUserPrinterName() + "','" + objGlobal.getWarehouse() + "')", con)) {
-                con.rollback();
-                objGlobal.setErrorNo("transferReceipt:028:1");
-                return false;
+            if(objGlobal.getBluetoothDevicesAvailable().equals("N")) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpPrintTransferRfidNew(ShopName,ToteId,TrfNo,Quantity,TrnDate,PrDateTime,pr,PrSystem,Whouse) values ('" + shopName + "','" + toteId + "  -  " + objGlobal.getUserName() + "'," +
+                        "'" + trfRecNo + "'," + totalQty + ",'" + objGlobal.getServerDate() + "',null,'N','" + objGlobal.getUserPrinterName() + "','" + objGlobal.getWarehouse() + "')", con)) {
+                    con.rollback();
+                    objGlobal.setErrorNo("transferReceipt:028:1");
+                    return false;
+                }
             }
             con.commit();
             con.setAutoCommit(true);
@@ -239,15 +242,21 @@ public class TransferReceiptJafza {
 
     private String getLatestTrfNo(String dataName) {
         int autoSn = 0;
+        String trfPrefix="";
         try {
-            rs = dbConnection.getResultSet("select en=isnull(max(cast(right(trfno,7) as int)),0)+1 from " + dataName + ".dbo.transferheader where left(trfno,2)='" + objGlobal.getTransferPrefix() + "' and (trftype='R') " +
-                    "and substring(trfno,3,1)<>'D'", con);
+            trfPrefix = objGlobal.getTransferPrefixPda();
+            rs = dbConnection.getResultSet("select TransferPrefixRobo from BFLDATA.dbo.TransferPrefix where warehouse='" + objGlobal.getWarehouse() + "' and dataname='" + dataName + "'", con);
+            if(rs.next()){
+                trfPrefix = rs.getString("TransferPrefixRobo");
+            }
+            rs = dbConnection.getResultSet("select en=isnull(max(cast(right(trfno,7) as int)),0)+1 from " + dataName + ".dbo.transferheader where " +
+                    "left(trfno,2)='" + trfPrefix + "' and (trftype='R') and substring(trfno,3,1)<>'D'", con);
             if (rs.next()) {
                 autoSn = Integer.parseInt(rs.getString("en").toString());
             }
-            return "FO" + String.format("%07d", autoSn);
+            return trfPrefix + String.format("%07d", autoSn);
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("TransferReceipt:getLatestTrfNo:" + ex.toString());
+            objGlobal.setErrorMessage("TransferReceipt:getLatestTrfNo:" + ex);
             return "";
         }
     }

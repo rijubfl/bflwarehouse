@@ -119,8 +119,10 @@ public class BinStorageWavePickControl {
             if (!dbConnection.insertUpdate("update #simBoxPick set ToteId=c.TotId,CheckingType='TCM' from #simBoxPick a,bfldata.dbo.TCMBoxes b,BFLDATA.dbo.TcmboxesHeader c where a.BoxNo=b.BoxNo and a.BoxNo=c.Boxno and b.Closed='N'", objGlobal.getConnection())) {
                 return null;
             }
-            if (!dbConnection.insertUpdate("update #simBoxPick set ToteId=b.StoreIssue from #simBoxPick a," + objGlobal.getCountryDbName() + ".dbo.TransferHeader b where a.BoxNo=b.TrfNo", objGlobal.getConnection())) {
-                return null;
+            if (!objGlobal.getWorkLocation().equals("UAE")) {
+                if (!dbConnection.insertUpdate("update #simBoxPick set ToteId=b.StoreIssue from #simBoxPick a," + objGlobal.getCountryDbName() + ".dbo.TransferHeader b where a.BoxNo=b.TrfNo", objGlobal.getConnection())) {
+                    return null;
+                }
             }
             if (!dbConnection.insertUpdate("update #simBoxPick set ToteId=BoxNo where isnull(ToteId,'')=''", objGlobal.getConnection())) {
                 return null;

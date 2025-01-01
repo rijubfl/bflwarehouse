@@ -51,7 +51,8 @@ public class Global {
     private static String branchLetter;
     private static int maxTotInBin;
     private static String countryWiseBoxPrefix;
-    private static String transferPrefix;
+    private static String transferPrefixRobo;
+    private static String transferPrefixPda;
     private List<String> bluetoothDevices;
     private static String bluetoothDevicesAvailable;
 
@@ -388,12 +389,20 @@ public class Global {
         Global.countryWiseBoxPrefix = countryWiseBoxPrefix;
     }
 
-    public static String getTransferPrefix() {
-        return transferPrefix;
+    public static String getTransferPrefixRobo() {
+        return transferPrefixRobo;
     }
 
-    public static void setTransferPrefix(String transferPrefix) {
-        Global.transferPrefix = transferPrefix;
+    public static void setTransferPrefixRobo(String transferPrefixRobo) {
+        Global.transferPrefixRobo = transferPrefixRobo;
+    }
+
+    public static String getTransferPrefixPda() {
+        return transferPrefixPda;
+    }
+
+    public static void setTransferPrefixPda(String transferPrefixPda) {
+        Global.transferPrefixPda = transferPrefixPda;
     }
 
     public static String getRoboLabelInfoAPI() {

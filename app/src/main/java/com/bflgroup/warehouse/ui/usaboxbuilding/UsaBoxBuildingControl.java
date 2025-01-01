@@ -71,7 +71,7 @@ public class UsaBoxBuildingControl {
         return arr;
     }
 
-    public boolean validateMain(String palletType, String groupCode, String catCode, String remarks, String taskType, String doneBy, String fSize, String gender, String toteID, String allowMix, String buildType, String euro) {
+    public boolean validateMain(String palletType, String groupCode, String catCode, String remarks, String taskType, String doneBy, String fSize, String gender, String toteID, String allowMix, String buildType, String euro, String spcitems) {
         boolean blueBox = false;
         if (TextUtils.isEmpty(objGlobal.getWarehouse())) {
             objGlobal.setErrorNo("savePallet:Warehouse is empty");
@@ -140,9 +140,14 @@ public class UsaBoxBuildingControl {
         }
     }
 
-    public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType) {
+    public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType, String selitems) {
         try {
-            itemcode = objControls.seperateBarcode(objControls.replaceString(itemcode));
+            rs = dbConnection.getResultSet("select top 1 itemcode from usa.dbo.upcbarcodes where upc='" + itemcode + "' order by trndate desc", objGlobal.getConnection());
+            if (rs.next()) {
+                itemcode = rs.getString("itemcode").toString();
+            } else {
+                itemcode = objControls.seperateBarcode(objControls.replaceString(itemcode));
+            }
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 if (edit) {
@@ -220,13 +225,6 @@ public class UsaBoxBuildingControl {
                     valid = false;
                 }
             }
-            if (boxType.equals("USA")) {
-               /* rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Division='TCM'", objGlobal.getConnection());
-                if (rs.next()) {
-                    objGlobal.setErrorMessage("Some items found in TCM Division, itemcode: " + itemcode);
-                    valid = false;
-                }*/
-            }
             if (selPalletype.equals("PS") || selPalletype.equals("PW") || selPalletype.equals("PT") || selPalletype.equals("PV")) {
                 rs = dbConnection.getResultSet("select * from online.dbo.PhotoShoot where upc='" + itemcode + "'", objGlobal.getConnection());
                 if (!rs.next()) {
@@ -253,6 +251,20 @@ public class UsaBoxBuildingControl {
                     valid = false;
                 }
             }
+            if (selitems.equals("Y")) {
+                rs = dbConnection.getResultSet("select PalletTypes from bfldata.dbo.BuildSpecialType where itemcode='" + itemcode + "' and PalletTypes='" + selPalletype + "'", objGlobal.getConnection());
+                if (!rs.next()) {
+                    objGlobal.setErrorMessage("Itemcode (" + itemcode + ") is not allowed to build this pallet type (" + selPalletype + ")");
+                    valid = false;
+                }
+            } else {
+                rs = dbConnection.getResultSet("select PalletTypes from bfldata.dbo.BuildSpecialType where itemcode='" + itemcode + "'", objGlobal.getConnection());
+                if (rs.next()) {
+                    objGlobal.setErrorMessage("Itemcode (" + itemcode + ") is not allowed to build this pallet type (" + selPalletype + ")");
+                    valid = false;
+                }
+            }
+
             objUsaBoxBuildingGlobal.setScanBuildingCategory("");
             objUsaBoxBuildingGlobal.setScanDepartment("");
             objUsaBoxBuildingGlobal.setScanDivision("");
@@ -314,12 +326,15 @@ public class UsaBoxBuildingControl {
     public boolean getPalletTypeDetails(String palletType) {
         try {
             objUsaBoxBuildingGlobal.setBuildCategoryMixAllow("N");
+            objUsaBoxBuildingGlobal.setBuildSpecialPtype("");
             objUsaBoxBuildingGlobal.setBuildingSeason("");
-            rs = dbConnection.getResultSet("select BuildCategoryMixAllow=isnull(BuildCategoryMixAllow,''),season=isnull(season,'') from bfldata.dbo.PalletType where PalletType='" + palletType + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select BuildCategoryMixAllow=isnull(BuildCategoryMixAllow,''),season=isnull(season,''),BuildSelItems=isnull(BuildSelItems,'') from bfldata.dbo.PalletType where PalletType='" + palletType + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objUsaBoxBuildingGlobal.setBuildingSeason(rs.getString("season"));
                 if (rs.getString("BuildCategoryMixAllow").equals("Y"))
                     objUsaBoxBuildingGlobal.setBuildCategoryMixAllow("Y");
+                if (rs.getString("BuildSelItems").equals("Y"))
+                    objUsaBoxBuildingGlobal.setBuildSpecialPtype("Y");
             }
             return true;
         } catch (Exception ex) {
@@ -496,40 +511,4 @@ public class UsaBoxBuildingControl {
         return true;
     }
 
-
-    /*public boolean forPrint(String boxno) {
-        objPalletBuildingGlobal.setpPalletno("");
-        objPalletBuildingGlobal.setpBoxcnt("");
-        objPalletBuildingGlobal.setpRemarks("");
-        objPalletBuildingGlobal.setpPallettype("");
-        objPalletBuildingGlobal.setpTypename("");
-        objPalletBuildingGlobal.setpGroupname("");
-        objPalletBuildingGlobal.setpPreparedby("");
-        objPalletBuildingGlobal.setpDate("");
-        objPalletBuildingGlobal.setpTime("");
-        String sn="";
-        try {
-            rs = dbConnection.getResultSet("select sn,PalletNo,Remarks,BoxCnt=isnull((select count(distinct InvNo) from BFLDATA.dbo.USAPalletsDet where Sn=a.Sn),0),preparedby=(select UserName from " +
-                    "BFLDATA.dbo.PdaUsers where UserId=a.UserId),dt=convert(varchar,getdate(),103),tm=convert(varchar,getdate(),8) from bfldata.dbo.USAPallets a where palletno='" + palletno + "'", objGlobal.getConnection());
-            if (rs.next()) {
-                sn = rs.getString("sn");
-                objPalletBuildingGlobal.setpPalletno(rs.getString("PalletNo"));
-                objPalletBuildingGlobal.setpBoxcnt(rs.getString("BoxCnt"));
-                objPalletBuildingGlobal.setpRemarks(rs.getString("Remarks"));
-                objPalletBuildingGlobal.setpPreparedby(rs.getString("preparedby"));
-                objPalletBuildingGlobal.setpDate(rs.getString("dt"));
-                objPalletBuildingGlobal.setpTime(rs.getString("tm"));
-            }
-            rs = dbConnection.getResultSet("select groupnm=isnull((select Description from HODATA.dbo.ItemGroup where GroupCode=a.GroupCode),''),typename=isnull((select typename from " +
-                    "BFLDATA.dbo.PalletType where PalletType=a.pallettype),'') from USA.dbo.UPCBoxHead a where BoxNo in(select top 1 InvNo from BFLDATA.dbo.USAPalletsDet where Sn=" + sn + ")", objGlobal.getConnection());
-            if (rs.next()) {
-                objPalletBuildingGlobal.setpTypename(rs.getString("typename"));
-                objPalletBuildingGlobal.setpGroupname(rs.getString("groupnm"));
-            }
-            return true;
-        } catch (Exception ex) {
-            objGlobal.setErrorMessage("PalletBuildingControl:forPrint:" + ex);
-            return false;
-        }
-    }*/
 }

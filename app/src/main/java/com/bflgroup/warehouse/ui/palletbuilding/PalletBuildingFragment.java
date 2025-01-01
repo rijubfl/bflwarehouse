@@ -77,6 +77,7 @@ public class PalletBuildingFragment extends Fragment {
     private Spinner sp_pallet_building_category;
     private Spinner sp_pallet_building_printer;
     private CheckBox ch_pallet_building_printer;
+    private Spinner sp_pallet_building_print_copies;
     private EditText et_buildpallet_popup_reprint_palletno;
     private Button bt_buildpallet_popup_reprint_print;
     private Button bt_buildpallet_popup_reprint_close;
@@ -119,6 +120,7 @@ public class PalletBuildingFragment extends Fragment {
         tv_pallet_building_tot_count = (TextView) view.findViewById(R.id.tv_pallet_building_tot_count);
         tv_pallet_building_tot_qty = (TextView) view.findViewById(R.id.tv_pallet_building_tot_qty);
         ch_pallet_building_printer = (CheckBox) view.findViewById(R.id.ch_pallet_building_printer);
+        sp_pallet_building_print_copies = (Spinner) view.findViewById(R.id.sp_pallet_building_print_copies);
 
         ArrayList<PalletBuildingBoxTicket> listPalletBuildingBoxTicket = objPalletBuildingControl.loadPalletBuildBoxDetail();
         objMyPalletBuildingBoxTicketAdp = new PalletBuildingFragment.MyPalletBuildingBoxTicketAdp(listPalletBuildingBoxTicket);
@@ -132,6 +134,14 @@ public class PalletBuildingFragment extends Fragment {
         arr.add("TCM");
         ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
         sp_pallet_building_category.setAdapter(arrayAdp);
+
+        arr = new ArrayList<String>();
+        arr.add("1");
+        arr.add("2");
+        arr.add("3");
+        arr.add("4");
+        arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
+        sp_pallet_building_print_copies.setAdapter(arrayAdp);
 
         b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
         if (!b_Result) {
@@ -595,11 +605,10 @@ public class PalletBuildingFragment extends Fragment {
             if (testPrint) {
                 printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
             } else {
-                printData = objSample_Print.getUsaPalletPrint(objPalletBuildingGlobal.getpPalletno(),
-                        objPalletBuildingGlobal.getpBoxcnt(), objPalletBuildingGlobal.getpRemarks(),
-                        objPalletBuildingGlobal.getpPallettype(),objPalletBuildingGlobal.getpTypename(),
-                        objPalletBuildingGlobal.getpGroupname(),objPalletBuildingGlobal.getpPreparedby(),
-                        objPalletBuildingGlobal.getpDate(),objPalletBuildingGlobal.getpTime());
+                printData = objSample_Print.getUsaPalletPrint(objPalletBuildingGlobal.getpPalletno(), objPalletBuildingGlobal.getpBoxcnt(),
+                        objPalletBuildingGlobal.getpRemarks(), objPalletBuildingGlobal.getpPallettype(),objPalletBuildingGlobal.getpTypename(),
+                        objPalletBuildingGlobal.getpGroupname(),objPalletBuildingGlobal.getpPreparedby(), objPalletBuildingGlobal.getpDate(),
+                        objPalletBuildingGlobal.getpTime(),sp_pallet_building_print_copies.getSelectedItem().toString());
             }
             return objSample_Print.PrintBarcodeByte(printData);
         } catch (Exception e) {
