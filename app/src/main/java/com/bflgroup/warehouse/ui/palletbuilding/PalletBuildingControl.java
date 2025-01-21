@@ -1,6 +1,7 @@
 package com.bflgroup.warehouse.ui.palletbuilding;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
@@ -89,7 +90,24 @@ public class PalletBuildingControl {
                     "deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 return false;
             }
-            if (!dbConnection.insertUpdate("insert into tmpPalletBuild (DeviceId,UserId,ToteId,BoxNo,BoxRemarks,Qty,PalletType,GroupCode,BoxPrepare) values ('" + objGlobal.getDeviceName() + "'," +
+            rs = dbConnection.getResultSet("select * from bfldata..palletType where report like '%online%' and pallettype = '"+palletType+"'", objGlobal.getConnection());
+            if (rs.next()) {
+
+                    rs = dbConnection.getResultSet("select Boxno1 = LEFT(BoxNo, LEN(BoxNo) - CHARINDEX('-', REVERSE(BoxNo))) from bfldata..tmpPalletBuild where  BoxNo like '%AEINT%' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+                    String[] box1 = box.split("-");
+                        Log.e("Box",box1[0]);
+                    if (rs.next()) {
+                        Log.e("tmpBuildBox",rs.getString("Boxno1"));
+                        if (!box1[0].equals(rs.getString("Boxno1"))) {
+                            objGlobal.setErrorMessage("Multiple Container is not allowed  for PB PalletType- " + box);
+                            return false;
+                        }
+                    }
+
+
+            }
+
+        if (!dbConnection.insertUpdate("insert into tmpPalletBuild (DeviceId,UserId,ToteId,BoxNo,BoxRemarks,Qty,PalletType,GroupCode,BoxPrepare) values ('" + objGlobal.getDeviceName() + "'," +
                     "" + objGlobal.getUserId() + ",'" + tote + "','" + box + "','" + remarks + "'," + qty + ",'" + palletType + "','" + groupcode + "','" + boxPrepare + "')", objGlobal.getConnection())) {
                 return false;
             }

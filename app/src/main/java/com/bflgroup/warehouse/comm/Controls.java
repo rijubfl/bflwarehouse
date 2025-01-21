@@ -58,6 +58,7 @@ public class Controls {
             rs = objDBConnection.getResultSet("select BFLDATA.dbo.getClientlocdetails('Warehouse')", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setWarehouse(rs.getString(1));
+               // objGlobal.setWarehouse("JAFZA");
             } else {
                 objGlobal.setErrorMessage("Invalid Warehouse, Contact IT");
                 return false;
@@ -75,7 +76,7 @@ public class Controls {
                 return false;
             }
             if (objGlobal.getCountryCode().equals("")) {
-                objGlobal.setErrorMessage("Country Code / IP Changed, Contact IT");
+                objGlobal.setErrorMessage("Warehouse / Country Code / IP Changed, Contact IT");
                 return false;
             }
 
@@ -116,7 +117,16 @@ public class Controls {
             String roboChuteStatusAPI = "", roboChuteMapingAPI = "", roboSortTaskAPI = "", roboLabelInfoAPI = "", roboServerIP = "";
             String roboChuteStatusAPIToken = "", roboChuteMapingAPIToken = "";
             if (objGlobal.getCountryCode().equals("UAE")) {
-                if (objGlobal.getWarehouse().equals("JAFZA")) {
+                if (objGlobal.getWarehouse().equals("TECHNO")) {
+                    //TECHNO ROBO
+                    roboServerIP = "192.168.11.67";
+                    roboChuteStatusAPI = "http://192.168.8.13:8511/api/wms-send-chute-status-to-wcs/";
+                    roboChuteMapingAPI = "http://192.168.8.13:8511/api/wms-sort-plan/";
+                    roboSortTaskAPI = "http://192.168.8.14:18151/Conveyor/WCS151/";
+                    roboLabelInfoAPI = "http://192.168.8.14:18153/Conveyor/WCS153/";
+                    roboChuteStatusAPIToken = "";
+                    roboChuteMapingAPIToken = "";
+                } else if (objGlobal.getWarehouse().equals("JAFZA")) {
                     //JAFZA ROBO
                     roboServerIP = "10.23.8.251";
                     roboChuteStatusAPI = "http://bfljbl.fortiddns.com:3001/api/v1/wms/chute/";
@@ -125,13 +135,21 @@ public class Controls {
                     roboLabelInfoAPI = "";
                     roboChuteStatusAPIToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDMzMTgyNzEsImlkIjoiaXEiLCJ1c2VybmFtZSI6ImlxIiwidXVpZCI6IjAwM2ZhYWFiLTYxMjYtNGExZi05OTQ0LTZlYmVkZGY4ZjIzNyJ9.SHn1sVspVECVdemXaZ7HK0iAAj_Owax8sOnhfgZBHrE";
                     roboChuteMapingAPIToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMSIsImp0aSI6IjViMDgwZTZkMGIxNzlkZTQyYTdkMzIyMGQ0NGEwOGZmODlmZTViNDlhOWFiMDU5ZjJjYWExYjhhN2EzYTI4Zjk0MTFmYzg1OTU3NmVkOGI1IiwiaWF0IjoxNzA2MDEzNDU1LjA5MzU2MiwibmJmIjoxNzA2MDEzNDU1LjA5MzU2NCwiZXhwIjoxNzY5MTcxODU1LjA4NzUyLCJzdWIiOiIxNDMiLCJzY29wZXMiOltdfQ.ZO7waPZ_wrOXt0uylS3gCFTTtj8A5R4D270iFECLMILDNN6kVQC2GiS87AuYx3367frzKsvmizdnX1sX0mqZRTqLTjyRLSknaFVPq8wpXn1b_KhZf_EnmwWuXr8aWbEa3YXrwHEd8mi2LzmpmsRVsktwkAk6gawyUbWGqSK51fMEN3MJPSpCmB8QreNfYXDugg47XJtJ_SqmUP7wqinCqsGiT_4uCbN5-bZhdv5b8hbwoLo1JEpI69VDL0iolwtlHXDD6AVnxfUjDJpPfHRfrm6-HRIhcG5oo7CTOmj24iOq9F8ZsH0K8R5W1iI2b8LfXR6YxPHSZ39mbKWAI4rQ-YwIoLx4Vlqk8DPzlPcvwJD_G2KIlZjvOa2DRspB_strOYYHoTQ9uj4CY5WcAeezHneGfvywBkciYLlb0Ot5Tmqbj-rIk-u4JFy1mc01S_c5nHtzuPspvzpwvv1Auo3XYvHDYhcNG5jDVL3vid59S5yfMGHaaeC7F3lj79w6Qow2Vc0jaQ5f0_HdaStxtMxDyIX8IjJ59D4C2pheGPFzk_3SzGStAg5-sBZOk5sSUJgLBRzVfkBNfWnAM0BaxfX-O4KkMuM2_AghnTvIZ-BRw7JPsib2tq_DfX9IbXGkpEOOrtfxD29ntqHxsqRjpldhKbB1cOGbPtReoV_ZYtmyC8Y";
-                } else {
-                    //TECHNO ROBO
+                } else if (objGlobal.getWarehouse().equals("YOTO")) {
+                    //YOTO ROBO
                     roboServerIP = "192.168.11.67";
-                    roboChuteStatusAPI = "http://192.168.8.13:8511/api/wms-send-chute-status-to-wcs/";
-                    roboChuteMapingAPI = "http://192.168.8.13:8511/api/wms-sort-plan/";
-                    roboSortTaskAPI = "http://192.168.8.14:18151/Conveyor/WCS151/";
-                    roboLabelInfoAPI = "http://192.168.8.14:18153/Conveyor/WCS153/";
+                    roboChuteStatusAPI = "";
+                    roboChuteMapingAPI = "";
+                    roboSortTaskAPI = "";
+                    roboLabelInfoAPI = "";
+                    roboChuteStatusAPIToken = "";
+                    roboChuteMapingAPIToken = "";
+                } else {
+                    roboServerIP = "";
+                    roboChuteStatusAPI = "";
+                    roboChuteMapingAPI = "";
+                    roboSortTaskAPI = "";
+                    roboLabelInfoAPI = "";
                     roboChuteStatusAPIToken = "";
                     roboChuteMapingAPIToken = "";
                 }

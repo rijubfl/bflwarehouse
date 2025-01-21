@@ -52,7 +52,7 @@ public class GinVerificationControl {
                 objGlobal.setErrorMessage("saveGinVerification:001:");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.GoodsIssue where GinNo=" + ginNo, objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.GoodsIssue where Sn=" + ginNo, objGlobal.getCloudCon());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("GIN Number is invalid");
                 return false;

@@ -41,17 +41,17 @@ public class TransferReceiptJafza {
 
         try {
             objInOutJafzaGlobal.setTrfRecNo("");
-            if (!dbConnection.insertUpdate("delete from tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", con)) {
+            if (!dbConnection.insertUpdate("delete from ROBOTICS.dbo.tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", con)) {
                 objGlobal.setErrorNo("transferReceipt:001");
                 return false;
             }
-            if (!dbConnection.insertUpdate("insert into tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName) " +
+            if (!dbConnection.insertUpdate("insert into ROBOTICS.dbo.tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName) " +
                     "select itemcode,sum(qty),0.01,'','',''," + objGlobal.getUserId() + ",'',0,'','','" + objGlobal.getDeviceName() + "' from SortingConformationDetail where TransferNo='' " +
                     "and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode", con)) {
                 objGlobal.setErrorNo("transferReceipt:002");
                 return false;
             }
-            rs = dbConnection.getResultSet("select amount=round(sum(qty*rate),2),qty=(sum(qty)) from tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", con);
+            rs = dbConnection.getResultSet("select amount=round(sum(qty*rate),2),qty=(sum(qty)) from ROBOTICS.dbo.tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", con);
             if (rs.next()) {
                 totalAmt = rs.getFloat("amount");
                 totalQty = rs.getInt("qty");
@@ -115,7 +115,7 @@ public class TransferReceiptJafza {
             con.setAutoCommit(false);
             //insert transfer detail start *****************************************
             if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferdetail (trfno,itemcode,unitcode,quantity,rate,batchno,basicqty,basicrate,srno,upc," +
-                    "ItemType) select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'' from tmpTransfer " +
+                    "ItemType) select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'' from ROBOTICS.dbo.tmpTransfer " +
                     "where DeviceName='" + objGlobal.getDeviceName() + "'", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:015");

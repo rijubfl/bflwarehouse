@@ -188,6 +188,12 @@ public class TransferControl {
             if (rs.next()) {
                 dataname = rs.getString("dataname");
             }
+            if(dataname.equals("")) {
+                rs = dbConnection.getResultSet("select * from BFLDATA.dbo.DataSettings where ShopName in(select MainShop from BFLDATA.dbo.ShopinShop where SubShop='" + shopName + "')", conRob);
+                if (rs.next()) {
+                    dataname = rs.getString("dataname");
+                }
+            }
             rs = dbConnection.getResultSet("select TrfNo,Cartonno,Shipno,TrfDate=convert(varchar,TrfDate,103),StoreIssue,Narration,PreparedBy,qty=(select FORMAT(SUM(Quantity),'#####') " +
                     "from " + dataname + ".dbo.TransferDetail where TrfNo=a.trfno) from " + dataname + ".dbo.transferheader a where (trfno='" + trfno + "' or StoreIssue='" + trfno + "' )", conRob);
             if (rs.next()) {
@@ -201,7 +207,7 @@ public class TransferControl {
                 objTransferGlobal.setPremarks(rs.getString("Narration"));
                 objTransferGlobal.setPpreparedby(rs.getString("PreparedBy"));
             } else {
-                objGlobal.setErrorMessage("Invalid transfer number or toteid (" + trfno + ")");
+                objGlobal.setErrorMessage("TransferControl : Invalid transfer number or toteid (" + trfno + ")");
                 return false;
             }
             return true;

@@ -2,6 +2,7 @@ package com.bflgroup.warehouse;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -20,9 +21,7 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private TextView tv_user_name;
     private Global objGlobal = Global.getInstance();
-    private boolean b_Result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,5 +254,15 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    void okMessage(String title, String message) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage(message);
+        alert.setTitle(title);
+        alert.setPositiveButton("OK", null);
+        alert.setCancelable(true);
+        alert.create().show();
+    }
+
 
 }

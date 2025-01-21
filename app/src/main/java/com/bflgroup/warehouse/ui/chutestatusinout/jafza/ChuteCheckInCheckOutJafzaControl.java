@@ -55,7 +55,7 @@ public class ChuteCheckInCheckOutJafzaControl {
             return false;
         }
         if (!checkValidChuteId(chuteId)) {
-            objGlobal.setErrorMessage("Invalid Chute ID, " + chuteId);
+            objGlobal.setErrorMessage("Invalid Chute ID, " + chuteId + ", WH(" + objGlobal.getWarehouse() + ")");
             return false;
         }
         if (!checkValidToteId(toteId)) {
@@ -362,10 +362,10 @@ public class ChuteCheckInCheckOutJafzaControl {
                 return false;
             }
             if(shopname.equals("")) {
-                rs = dbConnection.getResultSet("select top 1 ShopName,TrfNo,ToteId from ROBOTICS.dbo.SortTask where (ToteId='" + scan + "' or TrfNo='" + scan + "') order by trndate desc", conRob);
+                rs = dbConnection.getResultSet("select top 1 ShopName,TrfNo,ToteId from ROBOTICS.dbo.SortTask where (ToteId='" + scan + "' or TrfNo='" + scan + "') order by trndate desc,id desc", conRob);
             } else {
                 rs = dbConnection.getResultSet("select top 1 ShopName,TrfNo,ToteId from ROBOTICS.dbo.SortTask where ShopName='" + shopname + "' and (ToteId='" + scan + "' or " +
-                        "TrfNo='" + scan + "') order by trndate desc", conRob);
+                        "TrfNo='" + scan + "') order by trndate desc,id desc", conRob);
             }
             if (rs.next()) {
                 objInOutJafzaGlobal.setReprintTrfno(rs.getString("TrfNo"));
@@ -404,8 +404,14 @@ public class ChuteCheckInCheckOutJafzaControl {
             if (rs.next()) {
                 dataname = rs.getString("dataname");
             }
+            if(dataname.equals("")) {
+                rs = dbConnection.getResultSet("select * from BFLDATA.dbo.DataSettings where ShopName in(select MainShop from BFLDATA.dbo.ShopinShop where SubShop='" + shopName + "')", conRob);
+                if (rs.next()) {
+                    dataname = rs.getString("dataname");
+                }
+            }
             rs = dbConnection.getResultSet("select TrfNo,Cartonno,Shipno,TrfDate=convert(varchar,TrfDate,103),StoreIssue,Narration,PreparedBy,qty=(select FORMAT(SUM(Quantity),'#####') " +
-                    "from " + dataname + ".dbo.TransferDetail where TrfNo=a.trfno) from " + dataname + ".dbo.transferheader a where (trfno='" + trfno + "' or StoreIssue='" + trfno + "' )", conRob);
+                    "from " + dataname + ".dbo.TransferDetail where TrfNo=a.trfno) from " + dataname + ".dbo.transferheader a where (trfno='" + trfno + "' or StoreIssue='" + trfno + "')", conRob);
             if (rs.next()) {
                 objInOutJafzaGlobal.setPtrfno(rs.getString("TrfNo"));
                 objInOutJafzaGlobal.setPboxno(rs.getString("Cartonno"));
@@ -417,7 +423,7 @@ public class ChuteCheckInCheckOutJafzaControl {
                 objInOutJafzaGlobal.setPremarks(rs.getString("Narration"));
                 objInOutJafzaGlobal.setPpreparedby(rs.getString("PreparedBy"));
             } else {
-                objGlobal.setErrorMessage("Invalid transfer number or toteid (" + trfno + ")");
+                objGlobal.setErrorMessage("ChuteCheckoutJafzaControl : Invalid transfer number or toteid (" + trfno + ")");
                 return false;
             }
             return true;

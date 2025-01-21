@@ -171,9 +171,17 @@ public class PalletStatusControl {
                     status = "PRODUCTION - S";
                     checkingType = rs.getString("checkingType");
                 } else {
-                    status = "RACK";
+                    rs = dbConnection.getResultSet("select * from usa..OverrideMaxQtyHeader where boxno='"+boxno+"' and DATEDIFF(DAY, GETDATE(), EntryDate) BETWEEN -2 AND 0 ", objGlobal.getConnection());
+                    if (rs.next()) {
+                        status = "BOX PICKING ";
+                    } else {
+                        status = "RACK ";
+                    }
+                   // status = "RACK";
                 }
             }
+
+
             if (status.equals("RACK")) {
                 String processNo = "", prodDate = "";
                 rs = dbConnection.getResultSet("select top 1 ProcessNo,ProdDate=convert(varchar,getdate(),103) from TEMPDATA.dbo.SIMProdReadyPalletsList order by ProcessNo desc", objGlobal.getConnection());
