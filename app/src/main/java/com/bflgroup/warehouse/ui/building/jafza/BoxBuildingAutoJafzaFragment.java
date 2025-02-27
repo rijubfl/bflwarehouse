@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextUtils;
+import android.text.style.TtsSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -51,6 +52,7 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
     private EditText et_chute_building_totid;
     private TextView tv_building_totid;
     private TextView tv_building_time;
+    private TextView tv_chute_status_building_pallet_type;
     private TextView tv_chute_building_status;
     private TextView tv_chute_status_building_shopid;
     private TextView tv_chute_status_building_shopname;
@@ -80,6 +82,7 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
         et_chute_building_totid = (EditText) view.findViewById(R.id.et_chute_building_totid);
         tv_building_totid = (TextView) view.findViewById(R.id.tv_building_totid);
         tv_building_time = (TextView) view.findViewById(R.id.tv_building_time);
+        tv_chute_status_building_pallet_type= (TextView) view.findViewById(R.id.tv_chute_status_building_pallet_type);
         tv_chute_building_status = (TextView) view.findViewById(R.id.tv_chute_building_status);
         tv_chute_status_building_shopid = (TextView) view.findViewById(R.id.tv_chute_status_building_shopid);
         tv_chute_status_building_shopname = (TextView) view.findViewById(R.id.tv_chute_status_building_shopname);
@@ -463,6 +466,13 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
             return false;
         }
         tv_building_time.setText(objBuildingJafzaGLobal.getChuteLastInOut());
+        s_Result = objBoxBuildingAutoJafzaControl.getShopPalletType(tv_chute_status_building_shopname.getText().toString());
+        if (TextUtils.isEmpty(s_Result)) {
+            vibrate(300);
+            showMessage("Chute Status", "Pallet Type not found, " + chuteId);
+            return false;
+        }
+        tv_chute_status_building_pallet_type.setText(s_Result);
         return true;
     }
 
@@ -485,6 +495,7 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
         et_chute_building_totid.setText("");
         tv_building_totid.setText("");
         tv_building_time.setText("");
+        tv_chute_status_building_pallet_type.setText("");
         tv_chute_building_status.setText("");
         tv_chute_status_building_shopname.setText("");
         tv_chute_status_building_shopid.setText("");

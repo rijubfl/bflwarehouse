@@ -191,7 +191,7 @@ public class WarehouseGRNNewControl {
             }
             return true;
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("WarehouseGRNNewControl:validateGrn:" + ex.toString());
+            objGlobal.setErrorMessage("WarehouseGRNNewControl:validateGrn:" + ex);
             return false;
         }
     }

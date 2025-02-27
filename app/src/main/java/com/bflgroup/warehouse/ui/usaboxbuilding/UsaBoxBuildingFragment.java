@@ -329,7 +329,7 @@ public class UsaBoxBuildingFragment extends Fragment {
     }
 
     private void scanPopupItems(){
-        if (TextUtils.isEmpty(et_build_usabox_popup_qty.getText())) {
+        if (TextUtils.isEmpty(et_build_usabox_popup_qty.getText()) || et_build_usabox_popup_qty.getText().toString().equals("0")) {
             et_build_usabox_popup_qty.setText("1");
         }
         String itemcode = et_build_usabox_popup_itemcode.getText().toString();

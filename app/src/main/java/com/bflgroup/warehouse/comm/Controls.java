@@ -58,7 +58,7 @@ public class Controls {
             rs = objDBConnection.getResultSet("select BFLDATA.dbo.getClientlocdetails('Warehouse')", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setWarehouse(rs.getString(1));
-               // objGlobal.setWarehouse("JAFZA");
+                //objGlobal.setWarehouse("JAFZA");
             } else {
                 objGlobal.setErrorMessage("Invalid Warehouse, Contact IT");
                 return false;

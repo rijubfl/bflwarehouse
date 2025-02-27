@@ -412,6 +412,10 @@ public class BoxBuildingAutoJafzaControl {
         return dbConnection.stringReturn(conRobo, "ChuteConfiguration", "ShopId", "ChuteId", chuteId);
     }
 
+    public String getShopPalletType(String shopname) {
+        return dbConnection.stringReturn(conRobo, "BFLDATA.dbo.ShopinShop", "PalletType", "SubShop", shopname);
+    }
+
     public String getTotIdAlreadyAssignFromChuteId(String totId) {
         return dbConnection.stringReturn(conRobo, "ChuteConfiguration", "ChuteId", "TotId", totId);
     }

@@ -31,6 +31,7 @@
         android:background="@drawable/et_custom"
         android:gravity="right"
         android:hint="Qty"
+        android:inputType="number"
         android:padding="10dp"
         android:textColor="@color/coloBlack"
         android:textSize="14dp"

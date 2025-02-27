@@ -31,13 +31,13 @@ public class DBConnection {
             objGlobal.setConnection(DriverManager.getConnection(connectionString));
             return true;
         } catch (SQLException se) {
-            objGlobal.setErrorMessage("DBConnection.connectDb : error here 1 : " + se);
+            objGlobal.setErrorMessage("DBConnection.connectDb(" + objGlobal.getServerIP() + ") : error here 1 : " + se);
             return false;
         } catch (ClassNotFoundException e) {
-            objGlobal.setErrorMessage("DBConnection.connectDb : error here 2 : " + e);
+            objGlobal.setErrorMessage("DBConnection.connectDb(" + objGlobal.getServerIP() + ") : error here 2 : " + e);
             return false;
         } catch (Exception e) {
-            objGlobal.setErrorMessage("DBConnection.connectDb : error here 3 : " + e);
+            objGlobal.setErrorMessage("DBConnection.connectDb(" + objGlobal.getServerIP() + ") : error here 3 : " + e);
             return false;
         }
     }
@@ -57,13 +57,13 @@ public class DBConnection {
             con = DriverManager.getConnection(connectionString);
             return con;
         } catch (SQLException se) {
-            objGlobal.setErrorMessage("DBConnection.connectDb : error here 1 : " + se.toString());
+            objGlobal.setErrorMessage("DBConnection.connectDb(" + objGlobal.getServerIP() + ") : error here 1 : " + se.toString());
             return con;
         } catch (ClassNotFoundException e) {
-            objGlobal.setErrorMessage("DBConnection.connectDb : error here 2 : " + e.toString());
+            objGlobal.setErrorMessage("DBConnection.connectDb(" + objGlobal.getServerIP() + ") : error here 2 : " + e.toString());
             return con;
         } catch (Exception e) {
-            objGlobal.setErrorMessage("DBConnection.connectDb : error here 3 : " + e.toString());
+            objGlobal.setErrorMessage("DBConnection.connectDb(" + objGlobal.getServerIP() + ") : error here 3 : " + e.toString());
             return con;
         }
     }
@@ -84,13 +84,13 @@ public class DBConnection {
             objGlobal.setCloudCon(DriverManager.getConnection(connectionString));
             return true;
         } catch (SQLException se) {
-            objGlobal.setErrorMessage("DBConnection.connectDb : error here 1 : " + se.toString());
+            objGlobal.setErrorMessage("DBConnection.connectDb(" + objGlobal.getServerIP() + ") : error here 1 : " + se.toString());
             return false;
         } catch (ClassNotFoundException e) {
-            objGlobal.setErrorMessage("DBConnection.connectDb : error here 2 : " + e.toString());
+            objGlobal.setErrorMessage("DBConnection.connectDb(" + objGlobal.getServerIP() + ") : error here 2 : " + e.toString());
             return false;
         } catch (Exception e) {
-            objGlobal.setErrorMessage("DBConnection.connectDb : error here 3 : " + e.toString());
+            objGlobal.setErrorMessage("DBConnection.connectDb(" + objGlobal.getServerIP() + ") : error here 3 : " + e.toString());
             return false;
         }
     }

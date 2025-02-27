@@ -69,18 +69,23 @@ public class DivisionSeperationControl {
                 objGlobal.setErrorMessage("Invalid Transfer");
                 return false;
             }
-
-            rs = dbConnection.getResultSet("select * from DATA2004..ExportPost where ShipNo  in (select cast(srno as varchar(20)) from bfldata..vGoodsIssuePlt where ShopIssue = '" + shopName + "' and TrfNo = '" + trfno + "' )", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from BFLDATA.dbo.RemoveItemsFromTransfer where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Transfer removal already done!");
+                return false;
+            }
+            rs = dbConnection.getResultSet("select * from DATA2004.dbo.ExportPost where ShipNo  in (select cast(srno as varchar(20)) from bfldata.dbo.vGoodsIssuePlt " +
+                    "where ShopIssue = '" + shopName + "' and TrfNo = '" + trfno + "' )", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Cannot Delete the transfer - " + trfno + " Shopname - " + shopName + ", GIN already Posted!");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from bfldata..ExportPostNew where GinNo in (select cast(srno as varchar(20)) from bfldata..vGoodsIssuePlt where ShopIssue = '" + shopName + "' and TrfNo = '" + trfno + "' )", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.ExportPostNew where GinNo in (select cast(srno as varchar(20)) from bfldata.dbo.vGoodsIssuePlt where " +
+                    "ShopIssue = '" + shopName + "' and TrfNo = '" + trfno + "' )", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Cannot Delete the transfer - " + trfno + " Shopname - " + shopName + ", GIN already Posted!");
                 return false;
             }
-
             rs = dbConnection.getResultSet("select itemcode,trf=sum(trfqty),scan=sum(qty) from BFLDATA.dbo.tmpDivSepItems where " +
                     "Deviceid='" + objGlobal.getDeviceName() + "' group by itemcode having sum(qty)>sum(TrfQty)", objGlobal.getConnection());
             if (rs.next()) {
@@ -97,7 +102,7 @@ public class DivisionSeperationControl {
             }
             return true;
         } catch (Exception e) {
-            objGlobal.setErrorMessage("DivisionSeperationControl:validateTransfer; " + e.toString());
+            objGlobal.setErrorMessage("DivisionSeperationControl:validateTransfer; " + e);
             return false;
         }
     }
