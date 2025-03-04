@@ -71,6 +71,7 @@ public class UsaBoxBuildingFragment extends Fragment {
     private ListView lv_build_usabox_popup_scandetail;
     private Button bt_build_usabox_popup_ok;
     private TextView tv_build_usabox_popup_total;
+    private EditText et_usa_contno;
 
     private boolean b_Result;
 
@@ -103,11 +104,23 @@ public class UsaBoxBuildingFragment extends Fragment {
         rb_usa_box_usa_category  = (RadioButton) view.findViewById(R.id.rb_usa_box_usa_category);
         rb_usa_box_tcm_category = (RadioButton) view.findViewById(R.id.rb_usa_box_tcm_category);
         ch_usa_box_euro = (CheckBox) view.findViewById(R.id.ch_usa_box_euro);
+        et_usa_contno = (EditText) view.findViewById(R.id.et_usa_contno);
 
         flagEdit=false;
         saredRef = new UsaBoxBuildingShared(getContext());
         formLoad();
         et_usa_box_toteid.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.onTouchEvent(motionEvent);
+                InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                return objGlobal.getHideKeyPad();
+            }
+        });
+        et_usa_contno.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 view.onTouchEvent(motionEvent);
@@ -329,20 +342,25 @@ public class UsaBoxBuildingFragment extends Fragment {
     }
 
     private void scanPopupItems(){
+
         if (TextUtils.isEmpty(et_build_usabox_popup_qty.getText()) || et_build_usabox_popup_qty.getText().toString().equals("0")) {
             et_build_usabox_popup_qty.setText("1");
         }
+
+
+
         String itemcode = et_build_usabox_popup_itemcode.getText().toString();
         int qty = Integer.parseInt(et_build_usabox_popup_qty.getText().toString());
         String palletType = tv_usa_box_pallettype.getText().toString();
         String allowMix = tv_usa_box_pallettype_allowmix.getText().toString();
         String selitems = tv_usa_box_pallettype_build_sec.getText().toString();
         String gender = sp_usa_box_gender.getSelectedItem().toString().trim();
+        String contno = et_usa_contno.getText().toString().trim();
         String buildType="";
         if(rb_usa_box_usa_category.isChecked()) buildType = "USA";
         if(rb_usa_box_tcm_category.isChecked()) buildType = "TCM";
         tv_build_usabox_popup_last_scan.setText(itemcode);
-        b_Result = objUsaBoxBuildingControl.validateItemcode(flagEdit, itemcode, "", "", palletType, gender, qty, allowMix, buildType, selitems);
+        b_Result = objUsaBoxBuildingControl.validateItemcode(flagEdit, itemcode, "", "", palletType, gender, qty, allowMix, buildType, selitems, contno);
         if (!b_Result) {
             tv_build_usabox_popup_last_scan.setText(objGlobal.getErrorMessage());
             vibrate(500);
@@ -463,6 +481,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         tv_usa_box_pallettype.setText("");
         tv_usa_box_pallettype_allowmix.setText("");
         tv_usa_box_pallettype_build_sec.setText("");
+        et_usa_contno.setText("");
         et_usa_box_toteid.setText("");
         et_usa_box_remarks.setText("");
         tv_usa_box_building_category.setText("");
@@ -476,6 +495,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         saredRef.saveEuro("");
         ch_usa_box_euro.setChecked(false);
         tv_usa_box_last_box.setText(objUsaBoxBuildingGlobal.getBoxNo());
+
         formLoad();
         return true;
     }

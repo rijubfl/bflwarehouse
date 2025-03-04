@@ -26,6 +26,7 @@ import com.bflgroup.warehouse.comm.SaredRef;
 import com.bflgroup.warehouse.db.DBConnection;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -215,6 +216,7 @@ public class LoginActivity extends AppCompatActivity {
                         return false;
                     }
                     dbConnection.insertUpdate("insert into bfldata.dbo.tmpLoginPda values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "')", objGlobal.getConnection());
+
                 } else {
                     objGlobal.setErrorMessage("Invalid username or password");
                     return false;
@@ -243,6 +245,22 @@ public class LoginActivity extends AppCompatActivity {
             }
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");
+            }
+            query = "select * from bfldata..LoginUserPda where Username = '" + objGlobal.getUserName()+"'  and Active = 'Y' and  CONVERT(DATE, trndate) = CONVERT(DATE, getdate()) ";
+            rs1 = dbConnection.getResultSet(query, objGlobal.getConnection());
+                if (rs1.next()) {
+                    query = "select * from bfldata..LoginUserPda where Username = '" + objGlobal.getUserName()+"' and PDADevicename = '"+ objGlobal.getDeviceName() +"' and Active = 'Y'";
+                    rs = dbConnection.getResultSet(query, objGlobal.getConnection());
+                    if (rs.next()) {
+                        dbConnection.insertUpdate("delete from bfldata.dbo.LoginUserPda where Username = '" + objGlobal.getUserName()+"'  and Active = 'Y'", objGlobal.getConnection());
+                        dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection());
+                        return true;
+                    }
+                    objGlobal.setErrorMessage("User Already logged In to another Device on - " + rs1.getString("Trndate"));
+                    return false;
+
+             }else {
+                    dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection());
             }
             dbConnection.insertUpdate("insert into bfldata.dbo.WHPdaUserVersion(userid,username,DeviceVersion,loginDate,Logintime,warehouse)values(" + objGlobal.getUserId() + "," +
                     "'" + objGlobal.getUserName() + "','" + getResources().getString(R.string.app_version) + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +
@@ -287,4 +305,7 @@ public class LoginActivity extends AppCompatActivity {
             v.vibrate(duration);
         }
     }
+
+
+
 }

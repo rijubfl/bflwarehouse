@@ -1,12 +1,25 @@
 package com.bflgroup.warehouse.ui.buildingdelpallet;
 
+import static com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferGlobal.getCount;
 import static com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferGlobal.setCount;
 import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.getPltCount;
+import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.getRouteid;
+import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.setPalletSn;
+import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.setPltCount;
+import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.setRouteid;
 import static com.loopj.android.http.AsyncHttpClient.log;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -19,6 +32,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -29,32 +44,45 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.comm.BarcodePrinting;
+import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
+import com.bflgroup.warehouse.ui.transfer.TransferFragment;
+import com.bflgroup.warehouse.ui.transfer.TransferSharedRef;
+import com.sewoo.port.android.BluetoothPort;
+import com.sewoo.request.android.RequestHandler;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class BuildingDeliveryPalletFragment extends Fragment {
 
     private DBConnection dbConnection = new DBConnection();
     private Global objGlobal = Global.getInstance();
+    private Vector<BluetoothDevice> remoteDevices;
 
+    private BluetoothAdapter mBluetoothAdapter;
     private BuildingDeliveryPalletGlobal objpalletbuilding = BuildingDeliveryPalletGlobal.getInstance();
     private BuildingDeliveryPalletControl objbuildingdelPalletControl = new BuildingDeliveryPalletControl();
-
+    private BluetoothPort bluetoothPort;
     private Spinner sp_plt_route_id;
     private TextView tv_shopnames_col;
     private EditText et_plt_shop_transferno;
     private TextView tv_count;
+    private Spinner sp_transfer_printer;
     private EditText Remarks;
     private Spinner sp_plt_shopname;
     private Button bt_transfer_scan;
     private Button bt_shop_return_scan;
     private Button bt_div_Clear;
     private Button bt_status_build_plt;
+
+    private BroadcastReceiver discoveryResult;
     private ListView lv_div_seperate_details;
     private String transferno = "";
     private  int get_route_id;
@@ -63,12 +91,23 @@ public class BuildingDeliveryPalletFragment extends Fragment {
     Integer count = 0;
     String android_id;
     Boolean strflg = false;
-
+    private static final int REQUEST_ENABLE_BT = 2;
     ArrayList<PalletScanDeliveryItem> PalletScanDeliveryItem = new ArrayList<PalletScanDeliveryItem>();
     MyTransferStatusPltAdp objTransferStatusPltAdp = null;
     PltScanTransferShared PltScanTransferShared;
+    private BluetoothDevices objBluetoothDevices = new BluetoothDevices();
+//    private CheckBox ch_transfer_printer;
+    private Spinner sp_transfer_print_copies;
+    private Thread btThread;
+    private BarcodePrinting objSample_Print;
+    private BroadcastReceiver searchFinish;
+    private BroadcastReceiver connectDevice;
+    private BroadcastReceiver searchStart;
 
+    private ArrayAdapter<String> adapter;
+    private boolean searchflags;
 
+    private boolean testPrint = false;
     public BuildingDeliveryPalletFragment() {
         // Required empty public constructor
     }
@@ -89,8 +128,43 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         lv_div_seperate_details = (ListView) view.findViewById(R.id.lv_div_seperate_det);
         bt_div_Clear = (Button) view.findViewById(R.id.bt_status_clear);
         tv_count = (TextView) view.findViewById(R.id.tv_count);
-
+        sp_transfer_printer = (Spinner) view.findViewById(R.id.sp_transfer_printer);
+//        ch_transfer_printer = (CheckBox) view.findViewById(R.id.ch_transfer_printer);
         PltScanTransferShared=new PltScanTransferShared(getContext());
+        sp_transfer_print_copies = (Spinner) view.findViewById(R.id.sp_transfer_print_copies);
+
+        searchflags = false;
+        objSample_Print = new BarcodePrinting();
+        bluetoothPort = BluetoothPort.getInstance();
+        bluetoothPort.SetMacFilter(false);
+        Init_BluetoothSet();
+
+        b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
+        if (!b_Result) {
+            okMessage("Transfer", objGlobal.getErrorMessage(), getContext());
+        } else {
+            ArrayAdapter<String> arrayAdpYellow;
+            arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
+            sp_transfer_printer.setAdapter(arrayAdpYellow);
+            if (PltScanTransferShared.loadPrinter() != "") {
+                sp_transfer_printer.setSelection(arrayAdpYellow.getPosition(PltScanTransferShared.loadPrinter()));
+            }
+        }
+        List<String> arr;
+        arr = new ArrayList<String>();
+        arr.add("1");
+        arr.add("2");
+        arr.add("3");
+        arr.add("4");
+
+        ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
+        sp_transfer_print_copies.setAdapter(arrayAdp);
+        if (PltScanTransferShared.loadPrintCopies().equals("")) {
+            PltScanTransferShared.savePrintCopies("1");
+        }
+        sp_transfer_print_copies.setSelection(arrayAdp.getPosition(PltScanTransferShared.loadPrintCopies().toString()));
+
+
 
         if ( objGlobal.getCountryCode().equals("KSA")){
             List<String> arr1 = objbuildingdelPalletControl.loadKsaShops();
@@ -135,7 +209,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                     PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
 
                     count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
-                    count = getPltCount();
+                    count = Integer.valueOf(getPltCount());
                     tv_count.setText(count+"");
 
                     objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
@@ -148,6 +222,16 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             }
         }
 
+//        ch_transfer_printer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (buttonView.isChecked()) {
+//                    //openPopupReprint();
+//                } else {
+//                    // not checked
+//                }
+//            }
+//        });
 
         sp_plt_route_id.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -298,29 +382,44 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
+                    String printer = sp_transfer_printer.getSelectedItem().toString();
                     remark = Remarks.getText().toString();
                     if(sp_plt_shopname.getSelectedItemPosition() == 0){
                         okMessage("Alert", "Pls Select Shopname First", getContext());
                     }else {
-                        if (PalletScanDeliveryItem.size() >= 1) {
+                        if (printer.isEmpty() || printer.toUpperCase().contains("SELECT")) {
+                            objGlobal.setErrorMessage("Please select printer");
+                            b_Result = false;
+                        }else {
+                            PltScanTransferShared.savePrintCopies(sp_transfer_print_copies.getSelectedItem().toString());
+                            PltScanTransferShared.savePrinter(sp_transfer_printer.getSelectedItem().toString());
+                            if (PalletScanDeliveryItem.size() >= 1) {
 
-                            try {
-                                if (objbuildingdelPalletControl.InsertPalletDetails(remark, sp_plt_route_id.getSelectedItem().toString())) {
-                                    Log.e("return", "Build");
-                                    okMessage("SUCCESS", "Build Pallet Successfully Pallet Number is - " + BuildingDeliveryPalletGlobal.getPalletNo(), getContext());
-                                    //AlertDialog(getContext(), "Build Pallet and Gin Successfully Gin Number is - "+ Math.round(Float.parseFloat(String.valueOf(GinScanTransferGlobal.getGinno()))));
-                                    clear();
-                                    lv_div_seperate_details.setAdapter(null);
-                                    // Toast.makeText(getContext(), "Value 0325    Inserted", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    okMessage("Alert", objGlobal.getErrorMessage(), getContext());
+                                try {
+                                    if (objbuildingdelPalletControl.InsertPalletDetails(remark, sp_plt_route_id.getSelectedItem().toString())) {
+                                        Log.e("return", "Build");
+                                        okMessage("SUCCESS", "Build Pallet Successfully Pallet Number is - " + BuildingDeliveryPalletGlobal.getPalletNo(), getContext());
+                                        if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
+                                            if (!printSticker(printer)) {
+                                                okMessage("Pallet Delivery", "Printer Error, Please reprint..", getContext());
+
+                                            }
+                                        }
+
+                                        clear();
+
+                                        lv_div_seperate_details.setAdapter(null);
+                                        // Toast.makeText(getContext(), "Value 0325    Inserted", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        okMessage("Alert", objGlobal.getErrorMessage(), getContext());
+                                    }
+                                } catch (ParseException e) {
+                                    log.e("Error message", e.toString());
                                 }
-                            } catch (ParseException e) {
-                                log.e("Error message", e.toString());
+                            } else {
+                                Log.e("return", "Not Build");
+                                okMessage("Alert", "Please Scan Trf No/Tote id before building Pallet", getContext());
                             }
-                        } else {
-                            Log.e("return", "Not Build");
-                            okMessage("Alert", "Please Scan Trf No/Tote id before building Pallet", getContext());
                         }
                     }
                 } catch (SQLException e) {
@@ -364,8 +463,185 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         return view;
     }
 
+    private void clearBtDevData() {
+        remoteDevices = new Vector<BluetoothDevice>();
+    }
+    private void bluetoothSetup() {
+        clearBtDevData();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            return;
+        }
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+
+    public void Init_BluetoothSet() {
+        bluetoothSetup();
+        connectDevice = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                    //"BlueTooth Connect"
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    try {
+                        if (bluetoothPort.isConnected())
+                            bluetoothPort.disconnect();
+                    } catch (IOException e) {
+                        okMessage("IOException", e.toString(), context);
+                    } catch (InterruptedException e) {
+                        okMessage("InterruptedException", e.toString(), context);
+                    }
+                    if ((btThread != null) && (btThread.isAlive())) {
+                        btThread.interrupt();
+                        btThread = null;
+                    }
+                }
+            }
+        };
+
+        discoveryResult = new BroadcastReceiver() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String key;
+                boolean bFlag = true;
+                BluetoothDevice btDev;
+                BluetoothDevice remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (remoteDevice != null) {
+                    if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "]";
+                    } else {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "] [Paired]";
+                    }
+                    if (bluetoothPort.isValidAddress(remoteDevice.getAddress())) {
+                        for (int i = 0; i < remoteDevices.size(); i++) {
+                            btDev = remoteDevices.elementAt(i);
+                            if (remoteDevice.getAddress().equals(btDev.getAddress())) {
+                                bFlag = false;
+                                break;
+                            }
+                        }
+                        if (bFlag) {
+                            remoteDevices.add(remoteDevice);
+                            adapter.add(key);
+                        }
+                    }
+                }
+            }
+        };
+        getActivity().registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        searchStart = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            }
+        };
+        getActivity().registerReceiver(searchStart, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+        searchFinish = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                searchflags = true;
+            }
+        };
+        getActivity().registerReceiver(searchFinish, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+    }
+
+    private boolean printSticker(String device) {
+        if (!bluetoothPort.isConnected()) {
+            try {
+                btConn(mBluetoothAdapter.getRemoteDevice(device));
+            } catch (Exception e) {
+                okMessage("Error 2", e.toString(), getContext());
+                return false;
+            }
+        }
+        printBarCode();
+       // clear();
+        return true;
+    }
+
+    private void btConn(final BluetoothDevice btDev) throws IOException {
+        new BuildingDeliveryPalletFragment.connBT().execute(btDev);
+    }
 
 
+    class connBT extends AsyncTask<BluetoothDevice, Void, Integer> {
+        private final ProgressDialog dialog = new ProgressDialog(getActivity());
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getActivity());
+        String str_temp = "";
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Connecting Device...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(BluetoothDevice... params) {
+            Integer retVal = null;
+            try {
+                bluetoothPort.connect(params[0]);
+                str_temp = params[0].getAddress();
+                retVal = Integer.valueOf(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+                retVal = Integer.valueOf(-1);
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (dialog.isShowing())
+                dialog.dismiss();
+            if (result.intValue() == 0) {
+                RequestHandler rh = new RequestHandler();
+                btThread = new Thread(rh);
+                btThread.start();
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED));
+                printBarCode();
+                //clear();
+            } else {
+                alert
+                        .setTitle("Error 4")
+                        .setMessage("Failed to connect Bluetooth device.")
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+            super.onPostExecute(result);
+        }
+    }
+
+    private boolean printBarCode() {
+        try {
+            //testPrint=true;
+            byte[] printData = null;
+            if (testPrint) {
+                printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
+            } else {
+                //okMessage("ALERT - ", "Count= "+objbuildingdelPalletControl.LoadPltDataCount(objpalletbuilding.getPalletNo()).toString()+", Routeid = "+getRouteid().toString()+", PLTSN = "+objpalletbuilding.getPalletSn(), getContext());
+                printData = objSample_Print.getRoutePalletPrint(objpalletbuilding.getPalletNo(), objGlobal.getUserName() , getRouteid().toString(),objGlobal.getServerDate(),objbuildingdelPalletControl.LoadPltDataCount(objpalletbuilding.getPalletNo()).toString(),objGlobal.getServerDate() ,objpalletbuilding.getPalletSn().toString(),sp_transfer_print_copies.getSelectedItem().toString());
+            }
+
+            return objSample_Print.PrintBarcodeByte(printData);
+        } catch (Exception e) {
+            okMessage("Error 3", e.toString(), getContext());
+            return false;
+        }
+    }
 
     public boolean GetScanresult(){
         transferno = et_plt_shop_transferno.getText().toString();
@@ -430,11 +706,12 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                                 lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
                                 if (objTransferStatusPltAdp != null) {
                                     PltScanTransferShared.Routeidsave(sp_plt_route_id.getSelectedItem().toString());
+                                    setRouteid(sp_plt_route_id.getSelectedItem().toString());
                                     sp_plt_route_id.setEnabled(false);
                                     sp_plt_route_id.setClickable(false);
                                     et_plt_shop_transferno.requestFocus();
                                 }
-                                count = getPltCount();
+                                count = Integer.valueOf(getPltCount());
                                 tv_count.setText(count + "");
                                 et_plt_shop_transferno.setText("");
                                 et_plt_shop_transferno.requestFocus();
@@ -459,6 +736,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                     lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
                     if (PalletScanDeliveryItem.size() != 0) {
                         PltScanTransferShared.Routeidsave(sp_plt_route_id.getSelectedItem().toString());
+                        setRouteid(sp_plt_route_id.getSelectedItem().toString());
                         sp_plt_route_id.setEnabled(false);
                         sp_plt_route_id.setClickable(false);
                         et_plt_shop_transferno.requestFocus();
@@ -546,11 +824,12 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         sp_plt_route_id.setClickable(true);
         PltScanTransferShared.Routeidsave("");
         count = 0;
-        setCount(count);
+        setPltCount(count);
         tv_count.setText("");
         if(objbuildingdelPalletControl.deletetemp()){
             // Clear collection..
             lv_div_seperate_details.setAdapter(null);
         }
+        PltScanTransferShared.savePrinter("");
     }
 }

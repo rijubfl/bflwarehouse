@@ -15,27 +15,27 @@
         <TextView
             android:id="@+id/tv_plt_route_no"
             android:layout_width="110dp"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint=""
             android:padding="10dp"
             android:text="Route No."
             android:textColor="@color/coloBlack"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
             android:id="@+id/sp_plt_route_id"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:layout_marginLeft="5dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
             android:padding="8dp"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_plt_route_no"
             app:layout_constraintTop_toTopOf="@+id/tv_plt_route_no"
@@ -49,7 +49,7 @@
             android:background="@drawable/et_custom_total"
             android:hint="Shop Names"
             android:padding="8dp"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sp_plt_route_id"></TextView>
@@ -57,7 +57,7 @@
         <TextView
             android:id="@+id/tv_plt_toteid"
             android:layout_width="110dp"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
@@ -73,13 +73,13 @@
 
             android:id="@+id/et_plt_shop_transferno"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:layout_margin="5dp"
             android:background="@drawable/et_custom"
             android:padding="10dp"
             android:text=""
             android:textColor="@color/coloBlack"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/tv_plt_toteid"
@@ -90,7 +90,7 @@
         <Button
             android:id="@+id/bt_transfer_scan"
             android:layout_width="70dp"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:background="@drawable/btn_custom1"
             android:text="SCAN"
             android:textAllCaps="false"
@@ -103,7 +103,7 @@
         <TextView
             android:id="@+id/tv_plt_shop"
             android:layout_width="110dp"
-            android:layout_height="40dp"
+            android:layout_height="38dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
@@ -111,20 +111,60 @@
             android:padding="10dp"
             android:text="Shop Name"
             android:textColor="@color/coloBlack"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_plt_toteid" />
 
         <Spinner
-            android:id="@+id/sp_plt_shopname"
+            android:id="@+id/sp_transfer_printer"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:layout_marginRight="5dp"
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/sp_transfer_print_copies"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_plt_shop"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+
+        <Spinner
+            android:id="@+id/sp_transfer_print_copies"
+            android:layout_width="80dp"
+            android:layout_height="38dp"
+            android:layout_marginRight="0dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
             android:padding="8dp"
             android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/sp_transfer_printer"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/ch_transfer_printer"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="38dp"-->
+<!--            android:background="@drawable/et_custom"-->
+<!--            android:text="Reprint"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/sp_transfer_print_copies" />-->
+
+        <Spinner
+            android:id="@+id/sp_plt_shopname"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_plt_shop"
             app:layout_constraintTop_toTopOf="@+id/tv_plt_shop"
@@ -135,7 +175,7 @@
             android:id="@+id/TextView8"
             android:layout_width="120dp"
             android:layout_height="30dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/et_custom_total"
             android:gravity="left"
             android:hint=""
@@ -145,7 +185,7 @@
             android:textSize="14dp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_plt_shop" />
+            app:layout_constraintTop_toBottomOf="@+id/sp_transfer_printer" />
 
         <TextView
             android:id="@+id/TextView6"
@@ -208,7 +248,7 @@
         <EditText
             android:id="@+id/et_remarks"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="38dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/et_custom"
             android:hint="Remarks"
@@ -222,7 +262,7 @@
         <TextView
             android:id="@+id/tv_count"
             android:layout_width="70dp"
-            android:layout_height="wrap_content"
+            android:layout_height="38dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
@@ -239,7 +279,7 @@
             android:id="@+id/bt_status_clear"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="2dp"
             android:background="@drawable/btn_custom1"
             android:text="CLEAR"
             android:textAllCaps="false"
@@ -252,7 +292,7 @@
             android:id="@+id/bt_status_build_plt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="2dp"
             android:background="@drawable/btn_custom1"
             android:text="Build Pallet"
             android:textAllCaps="false"

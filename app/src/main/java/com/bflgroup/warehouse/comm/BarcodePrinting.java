@@ -206,6 +206,68 @@ public class BarcodePrinting {
         return printData;
     }
 
+
+    public byte[] getRoutePalletPrint(String palletno,String inCharge,String Routeid,String entryDate,String count, String delDate,String sn,String copy) {
+        String str01 = "\u0002n\r\n";
+        String str02 = "\u0002M0986\r\n";
+        String str03 = "\u0002KcLW0384;\r\n";
+        String str04 = "\u0002V0\r\n";
+        String str05 = "\u0002SG\r\n";
+        String str06 = "\u0002d\r\n";
+        String str07 = "\u0002L\r\n";
+        String str08 = "D11\r\n";
+        String str09 = "PG\r\n";
+        String str10 = "pG\r\n";
+        String str11 = "SG\r\n";
+        String str12 = "ySPM\r\n";
+        String str13 = "A2\r\n";
+        String str14 = "1911A2403390037" + mainHead + "\r\n";
+        String str15 = "1e8409402320022A" + palletno + "\r\n"; //barcode
+        String str16 = "1911A2401830023" + palletno + "\r\n"; //palletno
+        //String[] inChargeSplit = inCharge.split("-");
+        String str17 = "1911A2401390023Route : " + Routeid + "\n";
+        String str18 = "1911A1401110025 " + inCharge + "\n";
+
+        String str19 =  "1911A1400230025Build Date : " + entryDate + "\n";
+        String str20 = "1911A1400230250Count : " + count + "\n";
+        String str21 = "1911A1400670026Del Date : " + delDate + "\n";
+        String str22 = "1911A1400730228 " + sn + "\n";
+        String str23 = "Q000"+ copy +"\n";
+        String str24 = "E\n";
+
+
+        byte[] printData = new byte[]{0};
+        printData = addToDataVault(printData, str01.getBytes());
+        printData = addToDataVault(printData, str02.getBytes());
+        printData = addToDataVault(printData, str03.getBytes());
+        printData = addToDataVault(printData, str04.getBytes());
+        printData = addToDataVault(printData, str05.getBytes());
+        printData = addToDataVault(printData, str06.getBytes());
+        printData = addToDataVault(printData, str07.getBytes());
+        printData = addToDataVault(printData, str08.getBytes());
+        printData = addToDataVault(printData, str09.getBytes());
+        printData = addToDataVault(printData, str10.getBytes());
+        printData = addToDataVault(printData, str11.getBytes());
+        printData = addToDataVault(printData, str12.getBytes());
+        printData = addToDataVault(printData, str13.getBytes());
+        printData = addToDataVault(printData, str14.getBytes());
+        printData = addToDataVault(printData, str15.getBytes());
+        printData = addToDataVault(printData, str16.getBytes());
+        printData = addToDataVault(printData, str17.getBytes());
+        printData = addToDataVault(printData, str18.getBytes());
+        printData = addToDataVault(printData, str19.getBytes());
+        printData = addToDataVault(printData, str20.getBytes());
+        printData = addToDataVault(printData, str21.getBytes());
+        printData = addToDataVault(printData, str22.getBytes());
+        printData = addToDataVault(printData, str23.getBytes());
+        printData = addToDataVault(printData, str24.getBytes());
+
+        return printData;
+
+
+    }
+
+
     public byte[] getLabelWasNowHoneyWellTestPrint() {
         byte[] printData = new byte[]{0};
         printData = addToDataVault(printData, "\u0002n\r\n".getBytes());

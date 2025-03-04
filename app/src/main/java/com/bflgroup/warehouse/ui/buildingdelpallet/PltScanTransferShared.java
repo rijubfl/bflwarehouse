@@ -16,4 +16,24 @@ public class PltScanTransferShared {
     }
 
     public String Routeidload(){ return sharedRef.getString("pltrouteid",""); }
+
+    public String loadPrinter() {
+        return sharedRef.getString("Printer", "");
+    }
+
+    public void savePrintCopies(String PrintCopies){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("PrintCopies",PrintCopies);
+        editor.commit();
+    }
+
+    public String loadPrintCopies() {
+        return sharedRef.getString("PrintCopies", "");
+    }
+
+    public void savePrinter(String Printer){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("Printer",Printer);
+        editor.commit();
+    }
 }

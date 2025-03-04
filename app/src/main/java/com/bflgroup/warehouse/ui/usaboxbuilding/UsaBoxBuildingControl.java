@@ -9,6 +9,8 @@ import com.bflgroup.warehouse.db.DBConnection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -102,20 +104,19 @@ public class UsaBoxBuildingControl {
                 }
             }
             if (!TextUtils.isEmpty(toteID)) {
-                if(objGlobal.getWorkLocation().equals("KSA")) {
+                if (objGlobal.getWorkLocation().equals("KSA")) {
                     rs = dbConnection.getResultSet("select * from bflksa.dbo.ToteIDMaster where ToteID='" + toteID + "'", objGlobal.getConnection());
                     if (!rs.next()) {
                         objGlobal.setErrorMessage("ToteID " + toteID + " is invalid");
                         return false;
                     }
-                }  else if(objGlobal.getWorkLocation().equals("BAHRAIN")) {
+                } else if (objGlobal.getWorkLocation().equals("BAHRAIN")) {
                     rs = dbConnection.getResultSet("select * from bflbahrain.dbo.ToteIDMaster where ToteID='" + toteID + "'", objGlobal.getConnection());
                     if (!rs.next()) {
                         objGlobal.setErrorMessage("ToteID " + toteID + " is invalid");
                         return false;
                     }
-                }
-                else {
+                } else {
                     rs = dbConnection.getResultSet("select * from bfldata.dbo.BlueToteIDMaster where ToteID='" + toteID + "'", objGlobal.getConnection());
                     if (!rs.next()) {
                         objGlobal.setErrorMessage("ToteID " + toteID + " is invalid");
@@ -140,7 +141,7 @@ public class UsaBoxBuildingControl {
         }
     }
 
-    public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType, String selitems) {
+    public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType, String selitems,String contno) {
         try {
             rs = dbConnection.getResultSet("select top 1 itemcode from usa.dbo.upcbarcodes where upc='" + itemcode + "' order by trndate desc", objGlobal.getConnection());
             if (rs.next()) {
@@ -169,6 +170,25 @@ public class UsaBoxBuildingControl {
                     objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
                     return false;
                 }
+                if (selPalletype.equals("MB")) {
+                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.itemName,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
+                            "usa.dbo.upcbarcodes b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
+                        return false;
+                    }
+                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.itemName,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
+                            "usa.dbo.usaOrgFile b where a.DeviceId='" + objGlobal.getDeviceName() + "' and contno = '" + contno + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
+                        return false;
+                    }
+
+                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.itemName,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
+                            "usa.dbo.usaOrgFile b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
+                        return false;
+                    }
+                }
+
                 if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.Description,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
                         "consignment.dbo.ItemMaster b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'') ='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
                     objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
@@ -384,6 +404,38 @@ public class UsaBoxBuildingControl {
                     }
                 }
             } else {
+
+
+                LocalTime time = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    time = LocalTime.now();
+                }
+                int hour = 0;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    hour = time.getHour();
+                }
+                String hrFiled = FindHour(hour);
+                if (palletType.equals("MB")) {
+                    int scanQty = 0;
+                    rs = dbConnection.getResultSet("select Qty = isnull(sum(Qty),0) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+                    if (rs.next()) {
+                        scanQty = rs.getInt("Qty");
+                    }
+
+                    rs = dbConnection.getResultSet("select * from ONLINE.dbo.RFPairingCountPhotoCheckBuild where type='" + palletType + "' and trndate='" + objGlobal.getServerDate() + "' and empcode='" + objGlobal.getUserName() + "' and Warehouse='" + objGlobal.getWarehouse() + "'", objGlobal.getConnection());
+                    if (!rs.next()) {
+                        if (!dbConnection.insertUpdate("insert into ONLINE.dbo.RFPairingCountPhotoCheckBuild (empcode,type,trndate," + hrFiled + ",Warehouse)  values( '" + objGlobal.getUserName() + "','" + palletType + "','" + objGlobal.getServerDate() + "'," + scanQty + ",'" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
+                            objGlobal.getConnection().rollback();
+                            return false;
+                        }
+                    } else {
+                        if (!dbConnection.insertUpdate("update ONLINE.dbo.RFPairingCountPhotoCheckBuild set " + hrFiled + "=" + hrFiled + "+" + scanQty + " where type='" + palletType + "' and empcode='" + objGlobal.getUserName() + "' and trndate='" + objGlobal.getServerDate() + "' and Warehouse='" + objGlobal.getWarehouse() + "'", objGlobal.getConnection())) {
+                            objGlobal.getConnection().rollback();
+                            return false;
+                        }
+                    }
+                }
+
                 boxPType = "UB";
                 if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead (BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
                         "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) values ('" + objUsaBoxBuildingGlobal.getBoxNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','','" + objGlobal.getUserName() + "'," +
@@ -397,6 +449,9 @@ public class UsaBoxBuildingControl {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
+
+
+
                 if (euro.equals("Y")) {
                     boxPType = "UP";
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.usapallets(Sn,TrnDate,PalletNo,UserId,Remarks,Closed,ContNo,WHouse) values (" + objUsaBoxBuildingGlobal.getPalletSno() + "," +
@@ -435,6 +490,42 @@ public class UsaBoxBuildingControl {
         }
     }
 
+
+    private String FindHour(int Hour){
+
+    String FindHour ="";
+        switch (Hour) {
+
+            case 6:
+                FindHour = "HR0A";
+                break;
+            case 7:FindHour = "HR1A";break;
+            case 8:FindHour = "HR2A";break;
+            case 9:FindHour = "HR3A";break;
+            case 10:FindHour = "HR4A";break;
+            case 11:FindHour = "HR5A";break;
+            case 12:FindHour = "HR6A";break;
+            case 13:FindHour = "HR7A";break;
+            case 14:FindHour = "HR8A";break;
+            case 15:FindHour = "HR9A";break;
+            case 16:FindHour = "HR10A";break;
+            case 17:FindHour = "HR11A";break;
+            case 18:FindHour = "HR12A";break;
+            case 19:FindHour = "HR13A";break;
+            case 20:FindHour = "HR14A";break;
+            case 21:FindHour = "HR15A";break;
+            case 22:FindHour = "HR16A";break;
+            case 23:FindHour = "HR17A";break;
+            case 0:FindHour = "HR18A";break;
+            case 1:FindHour = "HR19A";break;
+            case 2:FindHour = "HR20A";break;
+            case 3:FindHour = "HR21A";break;
+            case 4:FindHour = "HR22A";break;
+            case 5:FindHour = "HR23A";break;
+
+         }
+         return FindHour;
+        }
     private boolean getBoxNumber(String buildType) {
         try {
             int autoSn = 0;

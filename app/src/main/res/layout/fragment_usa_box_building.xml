@@ -312,7 +312,7 @@
             android:layout_height="0dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/et_custom_total"
-            app:layout_constraintBottom_toTopOf="@+id/textView11"
+            app:layout_constraintBottom_toTopOf="@+id/et_usa_contno"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -333,18 +333,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="90dp"
+        <EditText
+            android:id="@+id/et_usa_contno"
+            android:layout_width="120dp"
             android:layout_height="40dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/et_custom"
+            android:textStyle="bold"
             android:gravity="left"
-            android:hint=""
+            android:hint="Contno(Optional)"
             android:padding="10dp"
-            android:text="Tote ID"
+
+            android:text=""
             android:textColor="@color/coloBlack"
-            android:textSize="14sp"
+            android:textSize="11sp"
             app:layout_constraintBottom_toTopOf="@+id/TextView10"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -357,15 +359,16 @@
             android:background="@drawable/et_custom"
             android:inputType="text"
             android:padding="10dp"
+            android:hint="Toteid"
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             app:layout_constraintEnd_toStartOf="@+id/tv_usa_box_last_box"
-            app:layout_constraintStart_toEndOf="@+id/textView11"
-            app:layout_constraintTop_toTopOf="@+id/textView11" />
+            app:layout_constraintStart_toEndOf="@+id/et_usa_contno"
+            app:layout_constraintTop_toTopOf="@+id/et_usa_contno" />
 
         <TextView
             android:id="@+id/tv_usa_box_last_box"
-            android:layout_width="130dp"
+            android:layout_width="100dp"
             android:layout_height="40dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
@@ -375,7 +378,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView11" />
+            app:layout_constraintTop_toTopOf="@+id/et_usa_contno" />
 
         <TextView
             android:id="@+id/textView16"

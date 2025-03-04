@@ -38,12 +38,14 @@ public class DepartmentGrnFragment extends Fragment {
     EditText et_rack_in_out_pallettop;
 
     EditText et_rack_in_out_toteid;
+    EditText et_transfer;
     EditText et_rack_in_out_BoxCount;
 
     TextView TextView8;
     //  Spinner sp_rack_in_out_warehouse;
     TextView box_count_pallet1;
     TextView TextView4;
+
     TextView TextView5;
     Button bt_rack_in_out_clear;
     Button bt_rack_in_out_save;
@@ -53,6 +55,7 @@ public class DepartmentGrnFragment extends Fragment {
     RadioButton rb_pallet_category;
     RadioButton rb_toteid_category;
     RadioGroup rg_pallet_building_category;
+    RadioButton rb_transfer_category;
 
     //    Button bt_search;
     Button btn_Box_search;
@@ -91,6 +94,7 @@ public class DepartmentGrnFragment extends Fragment {
         sp_rack_in_out_warehouseTo = (Spinner) view.findViewById(R.id.sp_rack_in_out_warehouseTo);
         box_count_pallet1 = view.findViewById(R.id.box_count_pallet1);
         et_rack_in_out_BoxCount = view.findViewById(R.id.et_rack_in_out_BoxCount);
+        et_transfer = view.findViewById(R.id.et_transfer);
         bt_rack_in_out_clear = view.findViewById(R.id.bt_rack_in_out_clear);
         bt_rack_in_out_save = view.findViewById(R.id.bt_rack_in_out_save);
         rb_pallet_category = (RadioButton) view.findViewById(R.id.rb_pallet_category);
@@ -100,6 +104,7 @@ public class DepartmentGrnFragment extends Fragment {
         TextView5 = view.findViewById(R.id.TextView5);
         TextView8 = view.findViewById(R.id.TextView8);
         TextView4 = view.findViewById(R.id.TextView4);
+        rb_transfer_category = (RadioButton) view.findViewById(R.id.rb_transfer_category);
         objPalletBoxCountControl = new DepartmentGRNControl();
 
         objPalletBoxCountShared=new DepartmentGRNShared(getContext());
@@ -117,6 +122,8 @@ public class DepartmentGrnFragment extends Fragment {
         List<String> arr1 = objPalletBoxCountControl.getWarehouse(warehouse);
         ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
         sp_rack_in_out_warehouseTo.setAdapter(arrayAdp1);
+
+
 
         rg_pallet_building_category.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
@@ -143,10 +150,8 @@ public class DepartmentGrnFragment extends Fragment {
 
                     bt_rack_in_out_save.setVisibility(View.GONE);
                     bt_rack_in_out_clear.setVisibility(View.GONE);
+                    et_transfer.setVisibility(View.GONE);
 
-                    ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.loadTotehistory();
-                    objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
-                    lv_details.setAdapter(objMyListBoxAdapter);
 
                     //some code
                 } else if (checkedId == R.id.rb_pallet_category) {
@@ -163,11 +168,39 @@ public class DepartmentGrnFragment extends Fragment {
                     lv_details.setAdapter(null);
                     bt_rack_in_out_save.setVisibility(View.VISIBLE);
                     bt_rack_in_out_clear.setVisibility(View.VISIBLE);
+                    et_transfer.setVisibility(View.GONE);
                 }
+                else if (checkedId == R.id.rb_transfer_category){
+
+                    et_rack_in_out_BoxCount.setVisibility(View.GONE);
+                    TextView5.setVisibility(View.GONE);
+                    btn_Box_search.setVisibility(View.GONE);
+
+                    et_rack_in_out_pallettop.setVisibility(View.GONE);
+                    TextView4.setVisibility(View.GONE);
+                    box_count_pallet1.setVisibility(View.GONE);
+                    et_transfer.setVisibility(View.VISIBLE);
+                    TextView8.setVisibility(View.VISIBLE);
+                    TextView8.setText("Transfer No.");
+                    et_transfer.setFocusable(true);
+                    et_transfer.requestFocus();
+                    bt_rack_in_out_save.setVisibility(View.GONE);
+                    bt_rack_in_out_clear.setVisibility(View.GONE);
+                    et_rack_in_out_toteid.setVisibility(View.GONE);
+
+
+
+                }
+
+                ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.loadTotehistory();
+                objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
+                lv_details.setAdapter(objMyListBoxAdapter);
 
             }
 
         });
+
+
 
 
 
@@ -264,6 +297,69 @@ public class DepartmentGrnFragment extends Fragment {
                 return objGlobal.getHideKeyPad();
             }
         });
+        et_transfer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.onTouchEvent(motionEvent);
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                return objGlobal.getHideKeyPad();
+            }
+        });
+
+
+
+
+        et_transfer.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
+                    String Transfer = et_transfer.getText().toString();
+
+                    if (sp_rack_in_out_warehouseTo.getSelectedItemId()==0 || sp_rack_in_out_warehouseFrom.getSelectedItemId()==0) {
+                        okMessage("Alert", "Please select the Warehouse");
+                        et_rack_in_out_toteid.setText("");
+                        et_rack_in_out_toteid.requestFocus();
+                    } else {
+                        if (Transfer.equals("")) {
+                            okMessage("Alert", "Pallet number should not be empty");
+                        } else {
+                            if (isValidTransfer(Transfer.trim())) {
+                                //isvalidrack = true;
+
+                               // String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase());
+                               // box_count_pallet1.setText(BoxCountPallet1);
+                                ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.InsertBox(et_transfer.getText().toString().trim(), sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString());
+                                objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
+                                lv_details.setAdapter(objMyListBoxAdapter);
+                                et_rack_in_out_BoxCount.setEnabled(true);
+                                et_rack_in_out_BoxCount.setFocusable(true);
+                                objPalletBoxCountShared.saveWarehouseTo(sp_rack_in_out_warehouseTo.getSelectedItem().toString());
+                                objPalletBoxCountShared.saveWarehouseFrom(sp_rack_in_out_warehouseFrom.getSelectedItem().toString());
+                                et_transfer.setText("");
+                                et_transfer.requestFocus();
+                                et_transfer.setFocusable(true);
+                                return true;
+                            } else {
+                                et_transfer.setText("");
+                                et_transfer.requestFocus();
+                                et_transfer.setFocusable(true);
+                                // isvalidrack = false;
+
+                            }
+                        }
+
+                    }
+                }
+                else{
+                   return false;
+                }
+                return false;
+
+            }
+        });
 
         et_rack_in_out_toteid.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -284,7 +380,7 @@ public class DepartmentGrnFragment extends Fragment {
 
                                // String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase());
                                // box_count_pallet1.setText(BoxCountPallet1);
-                                ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.loadhistory(et_rack_in_out_toteid.getText().toString().trim(), sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString());
+                                ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.InsertBox(et_rack_in_out_toteid.getText().toString().trim(), sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString());
                                 objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
                                 lv_details.setAdapter(objMyListBoxAdapter);
                                 et_rack_in_out_BoxCount.setEnabled(true);
@@ -459,7 +555,7 @@ public class DepartmentGrnFragment extends Fragment {
 
 
 
-        if(isBoxvalid(et_rack_in_out_BoxCount.getText().toString())){
+        if(isBoxvalid(et_rack_in_out_BoxCount.getText().toString(),et_rack_in_out_pallettop.getText().toString())){
 
 
             try {
@@ -503,6 +599,34 @@ public class DepartmentGrnFragment extends Fragment {
 
     }
 
+    private Boolean isValidTransfer(String Transfer)
+    {
+        try {
+        if(objPalletBoxCountControl.isPalletSaved(Transfer, sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString())){
+
+            okMessage("Alert","Pallet no/tote id already saved in WH department GRN - " + Transfer.toString());
+            return false;
+        }else {
+            if (objPalletBoxCountControl.isValidTransfer(Transfer, getContext())) {
+                return true;
+            }
+            else {
+                okMessage("Alert 1", "Transfer number " + Transfer.trim() + " is Invalid");
+                et_rack_in_out_toteid.setText("");
+                et_rack_in_out_toteid.requestFocus();
+                et_rack_in_out_toteid.setFocusable(true);
+                et_rack_in_out_pallettop.setText("");
+                et_rack_in_out_pallettop.requestFocus();
+                et_rack_in_out_pallettop.setFocusable(true);
+                return false;
+            }
+        }
+    }catch (Exception e){
+
+        return false;
+    }
+    }
+
     private Boolean isPalletvalid(String pallet){
         try {
 
@@ -522,7 +646,7 @@ public class DepartmentGrnFragment extends Fragment {
                 if (objPalletBoxCountControl.isValidPallet(pallet, getContext())) {
                     return true;
                 }
-                else if (objPalletBoxCountControl.isValidbox(pallet, getContext())) {
+                else if (objPalletBoxCountControl.isValidbox(et_rack_in_out_BoxCount.getText().toString(),pallet, getContext())) {
                     return true;
                 }
                 else {
@@ -543,9 +667,9 @@ public class DepartmentGrnFragment extends Fragment {
         }
     }
 
-    private Boolean isBoxvalid(String Boxno){
+    private Boolean isBoxvalid(String Boxno,String PalletNo){
         try {
-            if (objPalletBoxCountControl.isValidbox(Boxno, getContext())) {
+            if (objPalletBoxCountControl.isValidbox(Boxno,PalletNo, getContext())) {
                 // strflg = true;
                 return true;
             } else {

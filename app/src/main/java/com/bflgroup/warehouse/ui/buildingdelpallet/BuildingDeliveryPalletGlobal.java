@@ -23,18 +23,36 @@ public class BuildingDeliveryPalletGlobal {
         PalletNo = palletNo;
         return palletNo;
     }
+    public static String setPalletSn(String palletsN) {
+        palletSN = palletsN;
+        return palletSN;
+    }
+    public static String getPalletSn() {
+        return palletSN;
+    }
 
     public static String PalletNo;
+    public static String palletSN;
 
-    public static Integer getPltCount() {
+    public static int getPltCount() {
         return Count;
     }
 
-    public static Integer setPltCount(Integer count) {
+    public static int setPltCount(int count) {
         Count = count;
         return count;
     }
 
-    public static Integer Count;
+    public static String getRouteid() {
+        return Routeid;
+    }
+
+    public static String setRouteid(String routeid) {
+        Routeid = routeid;
+        return Routeid;
+    }
+
+    public static int Count;
+    public static String Routeid;
 
 }

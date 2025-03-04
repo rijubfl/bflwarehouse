@@ -1,6 +1,7 @@
 package com.bflgroup.warehouse.ui.buildingdelpallet;
 
 import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.setPalletNo;
+import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.setPalletSn;
 import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.setPltCount;
 import static com.loopj.android.http.AsyncHttpClient.log;
 
@@ -185,7 +186,7 @@ public class BuildingDeliveryPalletControl {
                     query += "select TrfNo,StoreIssue, CartonNo = isNUll(CartonNo, 0), PreparedBy, Narration, TrfDate, ShopName = isNull((Select ShopName from BFLDATA..DataSettings where ((CostCodeTo = " + dataname.get(i) + "..transferHeader.CostCodeTo and LocCodeTo = " + dataname.get(i) + "..transferHeader.LocCodeTo) and DataName = '" + dataname.get(i) + "' )), 0), (select SUM(Quantity) from " + dataname.get(i) + "..TransferDetail with(NOLOCK) where TrfNo ='" + transferno + "' ) as Quantity from " + dataname.get(i) + "..TransferHeader with(NOLOCK) where ((trfno='" + transferno + "' or StoreIssue = '" + transferno + "') and (trfType = 'R' or trftype = 'T') and CostCodeTo = '" + CostCodeTo.get(i) + "' ) ";
                 }
             }
-            Log.e("Select query", query);
+
             rs = dbConnection.getResultSet(query, objGlobal.getConnection());
             if (rs.next()) {
                 String Shopname = rs.getString("ShopName").toString();
@@ -193,18 +194,31 @@ public class BuildingDeliveryPalletControl {
                     okMessage("", "This Trf No / Toteid is not in the same Route - "+transferno, context);
 
                 } else {
-                    arr = TmpGinScan(context, android_id, rs.getString("TrfNo"), rs.getString("TrfDate"), rs.getString("StoreIssue"), rs.getString("ShopName"), String.valueOf(get_route_id), rs.getString("CartonNo"), rs.getString("PreparedBy"), rs.getString("Narration"), rs.getString("Quantity"));
+                    String shopname = rs.getString("ShopName");
+                    if (dataname.get(0).equals("BFLOMAN")) {
+                        String query7 = "select * from bfldata..TransferNoReturn where TrfNo='" + rs.getString("TrfNo") + "' and dataname = 'BFLOMAN' and shopname in (select shopname from bfldata..datasettings where routeid = '" + get_route_id + "')";
+                        ResultSet rs1 = dbConnection.getResultSet(query7, objGlobal.getConnection());
+                        if (rs1.next()) {
+                            shopname = rs1.getString("Shopname");
+                            arr = TmpGinScan(context, android_id, rs.getString("TrfNo"), rs.getString("TrfDate"), rs.getString("StoreIssue"), shopname, String.valueOf(get_route_id), rs.getString("CartonNo"), rs.getString("PreparedBy"), rs.getString("Narration"), rs.getString("Quantity"));
+                        }else{
+                            okMessage("", "This Trf No / Toteid is not in the same Route - " + transferno, context);
+                        }
+                    } else {
+                        arr = TmpGinScan(context, android_id, rs.getString("TrfNo"), rs.getString("TrfDate"), rs.getString("StoreIssue"), shopname, String.valueOf(get_route_id), rs.getString("CartonNo"), rs.getString("PreparedBy"), rs.getString("Narration"), rs.getString("Quantity"));
+                    }
                 }
+
             }
             else
             {
-
-                String query1 = "select * from BFLDATA..tmpPalletScan where DeviceName = '" + objGlobal.getDeviceName() + "'";
-                ResultSet result = dbConnection.getResultSet(query1, objGlobal.getConnection());
-                while (result.next()) {
-                    arr.add(new PalletScanDeliveryItem(result.getString("TrfNo"), result.getString("ToteId"), result.getString("ShopName"), result.getString("Qty")));
-                }
                 okMessage("", "This Trf No / Toteid is not in the same Route - " + transferno, context);
+            }
+
+            String query1 = "select * from BFLDATA..tmpPalletScan where DeviceName = '" + objGlobal.getDeviceName() + "'";
+            ResultSet result = dbConnection.getResultSet(query1, objGlobal.getConnection());
+            while (result.next()) {
+                arr.add(new PalletScanDeliveryItem(result.getString("TrfNo"), result.getString("ToteId"), result.getString("ShopName"), result.getString("Qty")));
             }
             return arr;
         } catch (Exception e) {
@@ -213,6 +227,8 @@ public class BuildingDeliveryPalletControl {
             return null;
         }
     }
+
+
 
     public ArrayList<PalletScanDeliveryItem> ScanTransfer2(Context context, String transferno, int get_route_id, String android_id, String shopname2) {
         ArrayList<PalletScanDeliveryItem> arr;
@@ -307,11 +323,11 @@ public class BuildingDeliveryPalletControl {
                 }
             }
         }
-        String query1 = "select * from BFLDATA..tmpPalletScan where DeviceName = '" + objGlobal.getDeviceName() + "'";
-        rs = dbConnection.getResultSet(query1, objGlobal.getConnection());
-        while (rs.next()) {
-            arrayList.add(new PalletScanDeliveryItem(rs.getString("TrfNo"), rs.getString("ToteId"), rs.getString("ShopName"), rs.getString("Qty")));
-        }
+//        String query1 = "select * from BFLDATA..tmpPalletScan where DeviceName = '" + objGlobal.getDeviceName() + "'";
+//        rs = dbConnection.getResultSet(query1, objGlobal.getConnection());
+//        while (rs.next()) {
+//            arrayList.add(new PalletScanDeliveryItem(rs.getString("TrfNo"), rs.getString("ToteId"), rs.getString("ShopName"), rs.getString("Qty")));
+//        }
         return arrayList;
     }
 
@@ -351,7 +367,7 @@ public class BuildingDeliveryPalletControl {
                 Log.e("PalletSn", palletSN + "");
 
             }
-
+            setPalletSn(palletSN.toString());
             pallet = setPalletNo(pallet);
             Log.e("PalletNo", pallet + "");
 
@@ -408,6 +424,7 @@ public class BuildingDeliveryPalletControl {
         return true;
 
     }
+
 
     public String GeneratePallet(String ShopName) throws SQLException {
         ResultSet rs2;
@@ -476,6 +493,17 @@ public class BuildingDeliveryPalletControl {
         return Count;
     }
 
+    public Integer LoadPltDataCount(String palletno) throws SQLException {
+        //Integer Count = 0;
+        String query1 = "select count(*) from BFLDATA..vGoodsIssue where palletno = '"+palletno+"'";
 
+        rs = dbConnection.getResultSet(query1, objGlobal.getConnection());
+        while (rs.next()) {
+            Count = rs.getInt(1);
+        }
+        log.e("BFLdata Count", Count + "");
+
+        return Count;
+    }
 
 }

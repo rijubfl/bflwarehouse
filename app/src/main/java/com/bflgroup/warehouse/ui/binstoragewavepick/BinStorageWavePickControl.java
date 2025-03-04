@@ -158,7 +158,7 @@ public class BinStorageWavePickControl {
             order = "Vertical,Horizontal,PickOrder,DoubleDeep";
             if (objGlobal.getWorkLocation().equals("KSA")) order = "Location";
             int rowno = 0;
-            rs = dbConnection.getResultSet("select distinct ToteId,BoxNo,BoxPerc,Location,Text,Color,PickOrder,Zones,DoubleDeep,CheckingType,Vertical,Horizontal " +
+            rs = dbConnection.getResultSet("select ToteId,BoxNo,BoxPerc,Location,Text,Color,PickOrder,Zones,DoubleDeep,CheckingType,rowNo=(ROW_NUMBER() OVER(ORDER BY " + order + ")) " +
                     "from #simBoxPick where Zones='" + zoneId + "' " + validTy + " order by " + order, objGlobal.getConnection());
             while (rs.next()) {
                 rowno++;
@@ -166,7 +166,7 @@ public class BinStorageWavePickControl {
                         rs.getString("BoxNo").toString(), rs.getString("BoxPerc").toString(),
                         rs.getString("Text").toString(), rs.getString("Color").toString(),
                         rs.getString("PickOrder").toString(), rs.getString("Zones").toString(),
-                        rs.getString("DoubleDeep").toString(), String.valueOf(rowno),
+                        rs.getString("DoubleDeep").toString(), rs.getString("rowNo").toString(),
                         rs.getString("CheckingType").toString(), rs.getString("Location").toString()));
             }
             if (!dbConnection.insertUpdate("drop table #simBoxPick", objGlobal.getConnection())) {

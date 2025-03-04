@@ -51,7 +51,7 @@ public class UpdateBoxQuantityControl {
             return null;
         }
         try {
-            String condition="BoxNo like 'U%' or BoxNo like 'R%'";
+            String condition="BoxNo like 'U%'";
             if(objGlobal.getWarehouse().equals("RUKOON") || objGlobal.getWarehouse().equals("BFLKSA")) condition="BoxNo like 'S%'";
             if(objGlobal.getWarehouse().equals("BFLKUWAIT")) condition="BoxNo like 'K%'";
             arr = new ArrayList<UpdateBoxItem>();
@@ -71,11 +71,11 @@ public class UpdateBoxQuantityControl {
                 }
                 else {
                     String query = "select * from usa..upcboxHead where (toteid = '" + Toteid + "' or BoxNo = '" + Toteid + "' ) and ((" + condition + ") or " +
-                            "boxno in (select BoxNo from usa.dbo.BoxAllowForEdit)) and closed = 'N'";
+                            "boxno in (select BoxNo from usa.dbo.BoxAllowForEdit where contno not in (select Contno from bfldata..BuildingCompletion)) ) and closed = 'N'";
                     ResultSet rs2 = dbConnection.getResultSet(query, objGlobal.getConnection());
                     Log.e("Query select", query);
                     if (rs2.next()) {
-                        String query3 = "select * from usa..upcboxdet where BoxNo = '" + rs2.getString("BoxNo") + "' and ((" + condition + ") or boxno in (select BoxNo from usa.dbo.BoxAllowForEdit))";
+                        String query3 = "select * from usa..upcboxdet where BoxNo = '" + rs2.getString("BoxNo") + "' and ((" + condition + ") or boxno in (select BoxNo from usa.dbo.BoxAllowForEdit where contno not in (select Contno from bfldata..BuildingCompletion)))";
                         Log.e("Query select 3", query3);
                         rs1 = dbConnection.getResultSet(query3, objGlobal.getConnection());
                         while (rs1.next()) {
@@ -83,7 +83,7 @@ public class UpdateBoxQuantityControl {
                         }
                         UpdateBoxSharedRef.saveToteid(Toteid);
                     } else {
-                        okMessage("Alert", "Toteid not found", context);
+                        okMessage("Alert", "Toteid/Boxno is Invalid or Box found in Building Completion ", context);
                         return null;
                     }
                 }

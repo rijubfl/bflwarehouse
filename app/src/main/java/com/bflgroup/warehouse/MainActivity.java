@@ -16,12 +16,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.db.DBConnection;
 import com.google.android.material.navigation.NavigationView;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private Global objGlobal = Global.getInstance();
+
+    DBConnection dbConnection = new DBConnection();
+
+    private ResultSet rs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_divsion_seperate, R.id.nav_pallet_status, R.id.nav_r1_wh_grn, R.id.nav_shop_return, R.id.nav_3pl_wh_grn, R.id.nav_rack_in_out,
                 R.id.nav_gin_verification, R.id.nav_blue_tote_transfer, R.id.nav_auto_building_jafza, R.id.nav_logoff, R.id.nav_bin_storage_put_away_multiple_tote,
                 R.id.nav_build_del_gin, R.id.nav_transfer, R.id.nav_update_box_quantity, R.id.nav_blue_to_euro_box, R.id.nav_stock_taking, R.id.nav_generate_barcode,
-                R.id.nav_shuttle_git, R.id.nav_shuttle_git, R.id.nav_stocktake, R.id.nav_pallet_box_count, R.id.nav_rack_query, R.id.nav_show_pallets, R.id.nav_warehouse_grn,
+                R.id.nav_shuttle_git, R.id.nav_stocktake, R.id.nav_pallet_box_count, R.id.nav_rack_query, R.id.nav_show_pallets, R.id.nav_warehouse_grn,
                 R.id.nav_shuttle_task_create, R.id.nav_pallets_verification,R.id.nav_jafza_racks,R.id.nav_update_box_from_pallet,R.id.nav_gin_verify_local,R.id.nav_item_pullout)
                 .setDrawerLayout(drawer)
                 .build();
@@ -68,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().findItem(R.id.nav_shop_return).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_divsion_seperate).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_3pl_wh_grn).setVisible(false);
-        navigationView.getMenu().findItem(R.id.nav_r1_wh_grn).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_rack_in_out).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_blue_tote_transfer).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_bin_storage_put_away_multiple_tote).setVisible(false);
@@ -162,9 +169,9 @@ public class MainActivity extends AppCompatActivity {
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_r1_wh_grn")) {
                 navigationView.getMenu().findItem(R.id.nav_r1_wh_grn).setVisible(true);
             }
-            if (objGlobal.getActiveMenuByUser().get(i).equals("nav_rack_in_out")) {
-                navigationView.getMenu().findItem(R.id.nav_rack_in_out).setVisible(true);
-            }
+//            if (objGlobal.getActiveMenuByUser().get(i).equals("nav_rack_in_out")) {
+//                navigationView.getMenu().findItem(R.id.nav_rack_in_out).setVisible(true);
+//            }
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_blue_tote_transfer")) {
                 navigationView.getMenu().findItem(R.id.nav_blue_tote_transfer).setVisible(true);
             }
@@ -263,6 +270,8 @@ public class MainActivity extends AppCompatActivity {
         alert.setCancelable(true);
         alert.create().show();
     }
+
+
 
 
 }
