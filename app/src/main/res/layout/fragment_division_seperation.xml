@@ -64,14 +64,28 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:padding="10dp"
             android:textColor="@color/coloBlack"
+            android:inputType="text"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/bt_div_seperate_fetch"
             app:layout_constraintStart_toEndOf="@+id/TextView1"
             app:layout_constraintTop_toTopOf="@+id/TextView1"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <Button
+            android:id="@+id/bt_div_seperate_fetch"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SCAN"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/TextView1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView1" />
 
         <TextView
             android:id="@+id/TextView2"
@@ -183,7 +197,7 @@
             android:background="@drawable/btn_custom1"
             android:text="CLEAR"
             android:textAllCaps="false"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="parent" />
@@ -195,7 +209,7 @@
             android:background="@drawable/btn_custom1"
             android:text="SAVE"
             android:textAllCaps="false"
-            android:textSize="18sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView2" />

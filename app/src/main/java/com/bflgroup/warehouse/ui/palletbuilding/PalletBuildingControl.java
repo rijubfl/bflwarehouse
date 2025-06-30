@@ -90,36 +90,33 @@ public class PalletBuildingControl {
                     "deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from bfldata..palletType where report like '%online%' and pallettype = '"+palletType+"'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.palletType where report like '%online%' and pallettype = '" + palletType + "'", objGlobal.getConnection());
             if (rs.next()) {
-
-                    rs = dbConnection.getResultSet("select Boxno1 = LEFT(BoxNo, LEN(BoxNo) - CHARINDEX('-', REVERSE(BoxNo))) from bfldata..tmpPalletBuild where  BoxNo like '%AEINT%' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
-                    String[] box1 = box.split("-");
-                        Log.e("Box",box1[0]);
-                    if (rs.next()) {
-                        Log.e("tmpBuildBox",rs.getString("Boxno1"));
-                        if (!box1[0].equals(rs.getString("Boxno1"))) {
-                            objGlobal.setErrorMessage("Multiple Container is not allowed  for PB PalletType- " + box);
-                            return false;
-                        }
+                rs = dbConnection.getResultSet("select Boxno1 = LEFT(BoxNo, LEN(BoxNo) - CHARINDEX('-', REVERSE(BoxNo))) from bfldata.dbo.tmpPalletBuild where  BoxNo like '%AEINT%' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+                String[] box1 = box.split("-");
+                Log.e("Box", box1[0]);
+                if (rs.next()) {
+                    Log.e("tmpBuildBox", rs.getString("Boxno1"));
+                    if (!box1[0].equals(rs.getString("Boxno1"))) {
+                        objGlobal.setErrorMessage("Multiple Container is not allowed  for PB PalletType- " + box);
+                        return false;
                     }
-
-
+                }
             }
 
-        if (!dbConnection.insertUpdate("insert into tmpPalletBuild (DeviceId,UserId,ToteId,BoxNo,BoxRemarks,Qty,PalletType,GroupCode,BoxPrepare) values ('" + objGlobal.getDeviceName() + "'," +
+            if (!dbConnection.insertUpdate("insert into tmpPalletBuild (DeviceId,UserId,ToteId,BoxNo,BoxRemarks,Qty,PalletType,GroupCode,BoxPrepare) values ('" + objGlobal.getDeviceName() + "'," +
                     "" + objGlobal.getUserId() + ",'" + tote + "','" + box + "','" + remarks + "'," + qty + ",'" + palletType + "','" + groupcode + "','" + boxPrepare + "')", objGlobal.getConnection())) {
                 return false;
             }
             rs = dbConnection.getResultSet("select cnt=count(distinct PalletType) from tmpPalletBuild where DeviceId='" + objGlobal.getDeviceName() + "' having " +
-                        "count(distinct PalletType)>1", objGlobal.getConnection());
-                if (rs.next()) {
-                    objGlobal.setErrorMessage("Multiple Building Category is not allowed - " + box);
-                    if (!dbConnection.insertUpdate("delete from tmpPalletBuild where (toteid='" + boxTot + "' or boxno='" + boxTot + "') and " +
-                            "deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
-                        return false;
-                    }
-                     return false;
+                    "count(distinct PalletType)>1", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Multiple Building Category is not allowed - " + box);
+                if (!dbConnection.insertUpdate("delete from tmpPalletBuild where (toteid='" + boxTot + "' or boxno='" + boxTot + "') and " +
+                        "deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+                    return false;
+                }
+                return false;
             }
             return true;
         } catch (Exception e) {
@@ -133,6 +130,11 @@ public class PalletBuildingControl {
             return false;
         }
         try {
+            rs = dbConnection.getResultSet("select top 1 * from tmpPalletBuild where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+            if(!rs.next()) {
+                objGlobal.setErrorMessage("PalletBuildingControl.validateBoxTot : Please scan the boxes for the build");
+                return false;
+            }
             if (!dbConnection.insertUpdate("delete from tmpPltBldItems where deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 return false;
             }

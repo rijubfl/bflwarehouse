@@ -40,13 +40,13 @@ public class TransferBlueToteIdControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from BlueToteIDMaster  where   left(ToteID ,1)<>'B' and   toteid='" + cartonboxtoteTrfId + "' ", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.BlueToteIDMaster where left(ToteID ,1)<>'B' and   toteid='" + cartonboxtoteTrfId + "' ", objGlobal.getConnection());
 
             if (rs==null) {
                 objGlobal.setErrorMessage("Carton box is invalid");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from upcboxhead where  ToteID ='"+cartonboxtoteTrfId+"' and closed='N'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from upcboxhead where ToteID ='"+cartonboxtoteTrfId+"' and closed='N'", objGlobal.getConnection());
 
             if (rs.next()) {
                 objGlobal.setErrorMessage("Carton box tote Id is invalid");

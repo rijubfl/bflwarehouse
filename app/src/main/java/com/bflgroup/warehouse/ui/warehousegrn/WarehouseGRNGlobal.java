@@ -1,7 +1,7 @@
-package com.bflgroup.warehouse.ui.warehousegrnnew;
-public class WarehouseGRNNewGlobal {
+package com.bflgroup.warehouse.ui.warehousegrn;
+public class WarehouseGRNGlobal {
 
-    public static WarehouseGRNNewGlobal instance;
+    public static WarehouseGRNGlobal instance;
 
     private String ginDate;
     private String warehouseFrom;
@@ -67,9 +67,9 @@ public class WarehouseGRNNewGlobal {
         this.scanBoxes = scanBoxes;
     }
 
-    public static synchronized WarehouseGRNNewGlobal getInstance() {
+    public static synchronized WarehouseGRNGlobal getInstance() {
         if (instance == null) {
-            instance = new WarehouseGRNNewGlobal();
+            instance = new WarehouseGRNGlobal();
         }
         return instance;
     }

@@ -13,6 +13,8 @@ public class UsaBoxBuildingGlobal {
     private String scanDepartment;
     private String scanBuildingCategory;
     private String scanDivision;
+    private String needBlueBox;
+    private String validateHoStock;
 
     public String getBoxNo() { return boxNo; }
     public void setBoxNo(String boxNo) { this.boxNo = boxNo; }
@@ -22,6 +24,22 @@ public class UsaBoxBuildingGlobal {
             instance = new UsaBoxBuildingGlobal();
         }
         return instance;
+    }
+
+    public String getNeedBlueBox() {
+        return needBlueBox;
+    }
+
+    public void setNeedBlueBox(String needBlueBox) {
+        this.needBlueBox = needBlueBox;
+    }
+
+    public String getValidateHoStock() {
+        return validateHoStock;
+    }
+
+    public void setValidateHoStock(String validateHoStock) {
+        this.validateHoStock = validateHoStock;
     }
 
     public String getBuildSpecialPtype() {

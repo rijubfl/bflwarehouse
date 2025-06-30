@@ -69,11 +69,11 @@ public class DivisionSeperationControl {
                 objGlobal.setErrorMessage("Invalid Transfer");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from BFLDATA.dbo.RemoveItemsFromTransfer where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection());
+            /*rs = dbConnection.getResultSet("select * from BFLDATA.dbo.RemoveItemsFromTransfer where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Transfer removal already done!");
                 return false;
-            }
+            }*/
             rs = dbConnection.getResultSet("select * from DATA2004.dbo.ExportPost where ShipNo  in (select cast(srno as varchar(20)) from bfldata.dbo.vGoodsIssuePlt " +
                     "where ShopIssue = '" + shopName + "' and TrfNo = '" + trfno + "' )", objGlobal.getConnection());
             if (rs.next()) {
@@ -94,9 +94,13 @@ public class DivisionSeperationControl {
                 return false;
             }
             if (!save) {
-                if (!dbConnection.insertUpdate("insert into tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopName + "',ItemCode,(select distinct division from " +
-                        "deptstock where Department in(select Department from usa.dbo.USAPriority where groupcode=a.groupcode)),0,Quantity from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a where " +
+                if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopName + "',ItemCode,(select distinct division from " +
+                        "deptstock where Department in(select Department from usa.dbo.USAPriority where groupcode=a.groupcode)),0,Quantity,'N' from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a where " +
                         "TrfNo='" + trfno + "'", objGlobal.getConnection())) {
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,ShopName,Itemcode,(select division from " +
+                        "HODATA.dbo.vItemMaster where Itemcode=a.Itemcode),ScanQty,0,'N' from BFLDATA.dbo.RemoveItemsFromTransfer a where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection())) {
                     return false;
                 }
             }
@@ -112,7 +116,6 @@ public class DivisionSeperationControl {
             objGlobal.setErrorMessage("Database is blank");
             return false;
         }
-        int Qty = 0;
         if (!checkConnection()) {
             return false;
         }
@@ -123,17 +126,15 @@ public class DivisionSeperationControl {
                 objGlobal.setErrorMessage("Invalid Transfer or item not found in transfer");
                 return false;
             }
-
-            rs = dbConnection.getResultSet("select a.itemcode,trf=sum(trfqty),scan=sum(qty) from BFLDATA.dbo.tmpDivSepItems  a, BFLOMAN.dbo.vTransferDetail b where " +
-                    "a.TrfNo = b.TrfNo and a.Itemcode = b.ItemCode and a.TrfNo='" + trfno + "' and a.itemcode='" + itemcode + "' and " +
-                    "Deviceid='" + objGlobal.getDeviceName() + "' group by a.itemcode having sum(qty)>=sum(TrfQty)", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select itemcode,trf=sum(trfqty),scan=sum(qty)+" + scanQty + " from BFLDATA.dbo.tmpDivSepItems where itemcode='" + itemcode + "' and " +
+                    "Deviceid='" + objGlobal.getDeviceName() + "' group by itemcode having sum(qty)+" + scanQty + ">sum(TrfQty)", objGlobal.getConnection());
             if (rs.next()) {
-                objGlobal.setErrorMessage("Scan Qty should not be more than the transfer Quantity");
+                objGlobal.setErrorMessage("Scan quantity is more than transfer quantity, itemcode:" + rs.getString("itemcode").toString() + ", " +
+                        "Transfer:" + rs.getString("trf").toString() + ", Scan:" + rs.getString("scan").toString());
                 return false;
             }
-
-            if (!dbConnection.insertUpdate("insert into tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopname + "',ItemCode,(select distinct division from " +
-                    "deptstock where Department in(select Department from usa.dbo.USAPriority where groupcode=a.groupcode))," + scanQty + ",0 from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a " +
+            if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopname + "'," +
+                    "ItemCode,(select divisiony from usa.dbo.USAPriority where groupcode=a.groupcode)," + scanQty + ",0,'Y' from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a " +
                     "where TrfNo='" + trfno + "' and ItemCode='" + itemcode + "'", objGlobal.getConnection())) {
                 return false;
             }
@@ -144,7 +145,88 @@ public class DivisionSeperationControl {
         }
     }
 
-    public boolean save(String trfno) {
+    public boolean save() {
+        double slno = 0;
+        if (!checkConnection()) {
+            return false;
+        }
+        try {
+            rs = dbConnection.getResultSet("select sn=isnull(max(sn),0)+1 from RemoveItemsFromTransfer", objGlobal.getConnection());
+            if (rs.next()) {
+                slno = rs.getInt("sn");
+            }
+            objGlobal.getConnection().setAutoCommit(false);
+            if (!dbConnection.insertUpdate("insert into bfldata.dbo.RemoveItemsFromTransfer select trfno,shopname,itemcode,sum(TrfQty),'" + objGlobal.getUserId() + "',getdate(),''," +
+                    "sum(qty)," + slno + ",'" + objGlobal.getWarehouse() + "' from BFLDATA.dbo.tmpDivSepItems where NewScan='Y' and deviceid='" + objGlobal.getDeviceName() + "' group by trfno," +
+                    "shopname,itemcode having sum(qty)>0", objGlobal.getConnection())) {
+                return false;
+            }
+            objGlobal.getConnection().commit();
+            objGlobal.getConnection().setAutoCommit(true);
+            return true;
+        } catch (Exception ex) {
+            try {
+                objGlobal.setErrorMessage("DivisionSeperationControl:Save:ex:" + ex);
+                objGlobal.getConnection().rollback();
+            } catch (SQLException e) {
+                objGlobal.setErrorMessage("DivisionSeperationControl:Save:e:" + e);
+                return false;
+            }
+            return false;
+        }
+    }
+
+    public boolean clearTable() {
+        if (!checkConnection()) {
+            return false;
+        }
+        try {
+            if (!dbConnection.insertUpdate("delete from BFLDATA.dbo.tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+                return false;
+            }
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("BinBatchInControl:boxValid:" + ex);
+            return false;
+        }
+        return true;
+    }
+
+    public List<String> loadExportShops() {
+        List<String> arr;
+        if (!checkConnection()) {
+            return null;
+        }
+        try {
+            arr = new ArrayList<String>();
+            rs = dbConnection.getResultSet("select ShopName from BFLDATA.dbo.DataSettings where ExportActive='Y' and FCCode<>'ROB' order by 1", objGlobal.getConnection());
+            while (rs.next()) {
+                arr.add(rs.getString("ShopName"));
+            }
+            return arr;
+        } catch (Exception e) {
+            objGlobal.setErrorMessage("" + e.toString());
+            return null;
+        }
+    }
+
+    ArrayList<DivisionSeperationItemTicket> loadDivSepItems() {
+        ArrayList<DivisionSeperationItemTicket> listDivisionSeperationItemTicket = new ArrayList<DivisionSeperationItemTicket>();
+        try {
+            listDivisionSeperationItemTicket.clear();
+            rs = dbConnection.getResultSet("select Itemcode,Division,TrfQty=sum(TrfQty),ScanQty=sum(Qty) from BFLDATA.dbo.tmpDivSepItems where Deviceid='" + objGlobal.getDeviceName() + "' group by " +
+                    "Itemcode,Division having sum(Qty)>0", objGlobal.getConnection());
+            while (rs.next()) {
+                listDivisionSeperationItemTicket.add(new DivisionSeperationItemTicket(rs.getString("Itemcode").toString(),
+                        rs.getString("Division").toString(), rs.getString("TrfQty").toString(), rs.getString("ScanQty").toString()));
+            }
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("GrnTransferFragment:loadTransferItemsAll:" + ex.toString());
+            return null;
+        }
+        return listDivisionSeperationItemTicket;
+    }
+
+    public boolean saveOld(String trfno) {
         double trfAmt = 0;
         double slno = 0;
         if (!checkConnection()) {
@@ -159,15 +241,15 @@ public class DivisionSeperationControl {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date date1 = sdf.parse(objGlobal.getServerDate());
             Date date2 = sdf.parse("01/01/2025");
-
             if (date1.compareTo(date2) >= 0) {
-                if (!dbConnection.insertUpdate("insert into RemoveItemsFromTransfer select trfno,shopname,itemcode,sum(TrfQty),'" + objGlobal.getUserId() + "',getdate(),'',sum(qty)," + slno + " from " +
-                        "tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' group by trfno,shopname,itemcode having sum(qty)>0", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.RemoveItemsFromTransfer select trfno,shopname,itemcode,sum(TrfQty),'" + objGlobal.getUserId() + "',getdate(),''," +
+                        "sum(qty)," + slno + ",'" + objGlobal.getDeviceName() + "','" + objGlobal.getWarehouse() + "' from BFLDATA.dbo.tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' group by trfno," +
+                        "shopname,itemcode having sum(qty)>0", objGlobal.getConnection())) {
                     return false;
                 }
             } else {
-                if (!dbConnection.insertUpdate("insert into RemoveItemsFromTransfer select trfno,shopname,itemcode,sum(TrfQty),'" + objGlobal.getUserId() + "',getdate(),'',sum(qty)," + slno + " from " +
-                        "tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' group by trfno,shopname,itemcode having sum(qty)>0", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.RemoveItemsFromTransfer select trfno,shopname,itemcode,sum(TrfQty),'" + objGlobal.getUserId() + "',getdate(),''," +
+                        "sum(qty)," + slno + ",'" + objGlobal.getDeviceName() + "','" + objGlobal.getWarehouse() + "' from BFLDATA.dbo.tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' group by trfno,shopname,itemcode having sum(qty)>0", objGlobal.getConnection())) {
                     return false;
                 }
                 if (!dbConnection.insertUpdate("insert into " + objDivisionSeperationGlobal.getDatabase() + ".dbo.DelTransferHeader(TrfNo,TrfDate,CostCodeFrom,LocCodeFrom,CostCodeTo,LocCodeTo,ACCode,Narration," +
@@ -181,7 +263,7 @@ public class DivisionSeperationControl {
                         "TrfNo='" + trfno + "'", objGlobal.getConnection())) {
                     return false;
                 }
-                if (!dbConnection.insertUpdate("select trfno,shopname,itemcode,trf=sum(TrfQty),sc=sum(qty) into #removescqty from tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' and " +
+                if (!dbConnection.insertUpdate("select trfno,shopname,itemcode,trf=sum(TrfQty),sc=sum(qty) into #removescqty from BFLDATA.dbo.tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "' and " +
                         "TrfNo='" + trfno + "' and qty>0 group by trfno,shopname,itemcode", objGlobal.getConnection())) {
                     return false;
                 }
@@ -241,56 +323,5 @@ public class DivisionSeperationControl {
             }
             return false;
         }
-    }
-
-    public boolean clearTable() {
-        if (!checkConnection()) {
-            return false;
-        }
-        try {
-            if (!dbConnection.insertUpdate("delete from tmpDivSepItems where deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
-                return false;
-            }
-        } catch (Exception ex) {
-            objGlobal.setErrorMessage("BinBatchInControl:boxValid:" + ex);
-            return false;
-        }
-        return true;
-    }
-
-    public List<String> loadExportShops() {
-        List<String> arr;
-        if (!checkConnection()) {
-            return null;
-        }
-        try {
-            arr = new ArrayList<String>();
-            rs = dbConnection.getResultSet("select ShopName from DataSettings where FCCode<>'AED' and FCCode<>'ROB' and " +
-                    "ExportActive='Y' order by ShopName", objGlobal.getConnection());
-            while (rs.next()) {
-                arr.add(rs.getString("ShopName"));
-            }
-            return arr;
-        } catch (Exception e) {
-            objGlobal.setErrorMessage("" + e.toString());
-            return null;
-        }
-    }
-
-    ArrayList<DivisionSeperationItemTicket> loadDivSepItems() {
-        ArrayList<DivisionSeperationItemTicket> listDivisionSeperationItemTicket = new ArrayList<DivisionSeperationItemTicket>();
-        try {
-            listDivisionSeperationItemTicket.clear();
-            rs = dbConnection.getResultSet("select Itemcode,Division,TrfQty=sum(TrfQty),ScanQty=sum(Qty) from tmpDivSepItems where Deviceid='" + objGlobal.getDeviceName() + "' group by " +
-                    "Itemcode,Division having sum(Qty)>0", objGlobal.getConnection());
-            while (rs.next()) {
-                listDivisionSeperationItemTicket.add(new DivisionSeperationItemTicket(rs.getString("Itemcode").toString(),
-                        rs.getString("Division").toString(), rs.getString("TrfQty").toString(), rs.getString("ScanQty").toString()));
-            }
-        } catch (Exception ex) {
-            objGlobal.setErrorMessage("GrnTransferFragment:loadTransferItemsAll:" + ex.toString());
-            return null;
-        }
-        return listDivisionSeperationItemTicket;
     }
 }

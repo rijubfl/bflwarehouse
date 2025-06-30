@@ -74,7 +74,7 @@ public class BinStorageWavePickFragment extends Fragment {
         lv_bin_storage_wave_pick_details = (ListView) view.findViewById(R.id.lv_bin_storage_wave_pick_details);
 
         try {
-            List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack();
+            List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack("");
             ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
             sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);
 
@@ -126,12 +126,28 @@ public class BinStorageWavePickFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 sp_bin_storage_wave_pick_div.setEnabled(true);
                 sp_bin_storage_wave_pick_tote_type.setEnabled(true);
+                if (sp_bin_storage_wave_pick_type.getSelectedItem().toString().equals("SKIPPED BOXES")) {
+                    List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack("SKIPPED BOXES");
+                    ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
+                    sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);
+                }
+                if (sp_bin_storage_wave_pick_type.getSelectedItem().toString().equals("OVERRIDE BOXES")){
+                    List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack("OVERRIDE BOXES");
+                    ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
+                    sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);
+                }
+                else{
+                    List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack("");
+                    ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
+                    sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);
+                }
                 if(sp_bin_storage_wave_pick_type.getSelectedItem().toString().equals("ALL WINTER")){
                     sp_bin_storage_wave_pick_div.setSelection(0);
                     sp_bin_storage_wave_pick_tote_type.setSelection(0);
                     sp_bin_storage_wave_pick_div.setEnabled(false);
                     sp_bin_storage_wave_pick_tote_type.setEnabled(false);
                 }
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -212,7 +228,7 @@ public class BinStorageWavePickFragment extends Fragment {
             bt_bin_storage_wave_pick_ticket_out.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPopupWindow(s.toteId, s.boxNo, "OUT", s.location, s.dDeep,s.toteId);
+                    openPopupWindow(s.toteId, s.boxNo, "OUT", s.location, s.dDeep);
                 }
             });
 
@@ -228,7 +244,11 @@ public class BinStorageWavePickFragment extends Fragment {
                                 public void onClick(DialogInterface dialog, int which) {
                                     b_Result = objBinStorageWavePickControl.skipWavePick(s.location);
                                     if (b_Result) {
-                                        clearAll();
+                                        if (objMyBinStorageWavePickFragmentAdp.getCount() != 1) {
+                                            clearAll(sp_bin_storage_wave_pick_rack.getSelectedItem().toString());
+                                        }
+                                        else
+                                            clearAll("");
                                     } else {
                                         okMessage("BinPutAwayFragment", objGlobal.getErrorMessage());
                                         vibrate(250);
@@ -249,7 +269,7 @@ public class BinStorageWavePickFragment extends Fragment {
         }
     }
 
-    void openPopupWindow(String toteId, String boxNo, String direction, String location, String dBeep,String toteid) {
+    void openPopupWindow(String toteId, String boxNo, String direction, String location, String dBeep) {
         Dialog myDialog;
         myDialog = new Dialog(getContext());
         myDialog.setCancelable(false);
@@ -345,6 +365,8 @@ public class BinStorageWavePickFragment extends Fragment {
             public void onClick(View v) {
                 String scanTote = et_bin_storage_wave_pick_out_toteid.getText().toString().trim();
                 String scanLocation = et_bin_storage_wave_pick_out_location.getText().toString().trim();
+                String location1 = location.replace("-","");
+                scanLocation = scanLocation.replace("-","");
                 if (TextUtils.isEmpty(scanTote)) {
                     okMessage("BinPutAwayFragment", "Please scan tote");
                     vibrate(250);
@@ -357,7 +379,7 @@ public class BinStorageWavePickFragment extends Fragment {
                     okMessage("BinPutAwayFragment", "Selected tote and scanned totes are not matching");
                     vibrate(250);
                     et_bin_storage_wave_pick_out_toteid.requestFocus();
-                } else if (!scanLocation.equals(location)) {
+                } else if (!scanLocation.equals(location1)) {
                     okMessage("BinPutAwayFragment", "Selected location and scanned totes are not matching");
                     vibrate(250);
                     et_bin_storage_wave_pick_out_location.requestFocus();
@@ -372,7 +394,11 @@ public class BinStorageWavePickFragment extends Fragment {
                                     //b_Result = objBinPutAwayMultipleToteControl.saveBinInOutMultiple(objGlobal.getWarehouse(), direction, location);
                                     b_Result = objBinPutAwayControl.saveBinInOutSingle(toteId, boxNo, direction, location, dBeep);
                                     if (b_Result) {
-                                        clearAll();
+                                        if (objMyBinStorageWavePickFragmentAdp.getCount() != 1) {
+                                            clearAll(sp_bin_storage_wave_pick_rack.getSelectedItem().toString());
+                                        }
+                                        else
+                                            clearAll("");
                                         myDialog.dismiss();
                                     } else {
                                         okMessage("BinPutAwayFragment", objGlobal.getErrorMessage());
@@ -394,17 +420,21 @@ public class BinStorageWavePickFragment extends Fragment {
         et_bin_storage_wave_pick_out_toteid.requestFocus();
     }
 
-    boolean clearAll() {
+    boolean clearAll(String zone) {
         String rack = sp_bin_storage_wave_pick_rack.getSelectedItem().toString().trim();
         String pickType = sp_bin_storage_wave_pick_type.getSelectedItem().toString().trim();
         String div = sp_bin_storage_wave_pick_div.getSelectedItem().toString().trim();
         ArrayList<BinStorageWavePickTicket> listBinStorageWavePickTicket = objBinStorageWavePickControl.loadBinStorageWaveDetails(rack, pickType, div);
         objMyBinStorageWavePickFragmentAdp = new BinStorageWavePickFragment.MyBinStorageWavePickFragmentAdp(listBinStorageWavePickTicket);
         lv_bin_storage_wave_pick_details.setAdapter(objMyBinStorageWavePickFragmentAdp);
-
-        List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack();
-        ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
-        sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);
+            List<String> arr = objBinStorageWavePickControl.loadBinStorageWavePickRack("");
+            ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
+            sp_bin_storage_wave_pick_rack.setAdapter(arrayAdp);
+        if (!zone.equals("")){
+            int pos = arrayAdp.getPosition(zone);
+            sp_bin_storage_wave_pick_rack.setSelection(pos);
+            bt_bin_storage_wave_pick_load.performClick();
+        }
         return true;
     }
 

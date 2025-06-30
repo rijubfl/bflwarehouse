@@ -169,14 +169,13 @@
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_building_del_pallet" />
                 <item
+                    android:id="@+id/nav_warehouse_gin"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_warehouse_gin" />
+                <item
                     android:id="@+id/nav_gin_verification"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_gin_verification" />
-
-                <item
-                    android:id="@+id/nav_gin_verify_local"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="@string/menu_gin_verification_local" />
                 <item
                     android:id="@+id/nav_pallets_verification"
                     android:icon="@drawable/ic_menu_send"
@@ -189,13 +188,10 @@
                     android:id="@+id/nav_department_grn"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_wh_department" />
-
-
                 <item
                     android:id="@+id/nav_transfer_validate"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_transfer_validate" />
-
                 <item
                     android:id="@+id/nav_r1_wh_grn"
                     android:icon="@drawable/ic_menu_send"

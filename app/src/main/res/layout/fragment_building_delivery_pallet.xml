@@ -13,9 +13,24 @@
         android:padding="8dp">
 
         <TextView
+            android:id="@+id/tv_plt_route_printer"
+            android:layout_width="110dp"
+            android:layout_height="38dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Printer / Copies"
+            android:textColor="@color/coloBlack"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/tv_plt_route_no"
             android:layout_width="110dp"
             android:layout_height="38dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint=""
@@ -24,7 +39,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_plt_route_printer" />
 
         <Spinner
             android:id="@+id/sp_plt_route_id"
@@ -49,7 +64,8 @@
             android:background="@drawable/et_custom_total"
             android:hint="Shop Names"
             android:padding="8dp"
-            android:textSize="13sp"
+            android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sp_plt_route_id"></TextView>
@@ -65,7 +81,7 @@
             android:padding="10dp"
             android:text="Toteid/Trf.No"
             android:textColor="@color/coloBlack"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_shopnames_col" />
 
@@ -119,16 +135,16 @@
             android:id="@+id/sp_transfer_printer"
             android:layout_width="0dp"
             android:layout_height="38dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
-            android:layout_marginRight="5dp"
             android:padding="8dp"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toStartOf="@+id/sp_transfer_print_copies"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_plt_shop"
+            app:layout_constraintStart_toEndOf="@+id/tv_plt_route_printer"
+            app:layout_constraintTop_toTopOf="@+id/tv_plt_route_printer"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
 
@@ -141,7 +157,7 @@
             android:gravity="center"
             android:hint=""
             android:padding="8dp"
-            android:textSize="14sp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/sp_transfer_printer"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
@@ -175,7 +191,7 @@
             android:id="@+id/TextView8"
             android:layout_width="120dp"
             android:layout_height="30dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom_total"
             android:gravity="left"
             android:hint=""
@@ -185,7 +201,7 @@
             android:textSize="14dp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sp_transfer_printer" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_plt_shop" />
 
         <TextView
             android:id="@+id/TextView6"

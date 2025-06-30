@@ -10,7 +10,7 @@
     <string name="menu_file">File</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
-    <string name="app_version">11.68</string>
+    <string name="app_version">12.00</string>
     <string name="menu_update_box_from_pallet">Update Box from Pallet </string>
     <string name="menu_chute_status_techno">Chute Status (Techno)</string>
     <string name="menu_chute_status_jafza">Chute Status (Jafza)</string>
@@ -38,7 +38,6 @@
     <string name="menu_building_del_gin">GIN (Route)</string>
     <string name="menu_building_del_pallet">Pallet (Route)</string>
     <string name="menu_gin_verification">GIN Verification</string>
-    <string name="menu_gin_verification_local">GIN Verify Local</string>
     <string name="menu_divsion_seperate">Remove item from Transfer</string>
     <string name="menu_bin_storage_put_away">Put Away (IN / OUT)</string>
     <string name="menu_bin_storage_put_away_multiple_tote">Put Away (IN / OUT) Multiple Tote</string>
@@ -50,6 +49,7 @@
     <string name="menu_transfer_validate">Transfer Validation</string>
     <string name="menu_r1_wh_grn">R1 WH GRN</string>
     <string name="menu_shuttle_git">Shuttle GIT</string>
+    <string name="menu_warehouse_gin">Warehouse GIN</string>
     <string name="menu_warehouse_grn">Warehouse GRN</string>
     <string name="menu_shuttle_task_create">Shuttle Task Create</string>
     <string name="menu_price_check">Item Pullout</string>
@@ -73,6 +73,25 @@
     <string-array name="rackInOut">
         <item>IN</item>
         <item>OUT</item>
+    </string-array>
+    <string-array name="vehicleType">
+        <item>--select--</item>
+        <item>5 Ton</item>
+        <item>6 Ton</item>
+        <item>8 Ton</item>
+        <item>10 Ton</item>
+        <item>20 FT</item>
+        <item>40 FT</item>
+    </string-array>
+    <string-array name="vendor">
+        <item>--select--</item>
+        <item>BFL</item>
+        <item>MDT</item>
+        <item>PALM</item>
+        <item>GSC</item>
+        <item>LOGIX</item>
+        <item>RTL</item>
+        <item>RNT</item>
     </string-array>
     <!-- TODO: For sunmi printer -->
     <string name="toast_1">Transaction print,use the AIDL mode!</string>

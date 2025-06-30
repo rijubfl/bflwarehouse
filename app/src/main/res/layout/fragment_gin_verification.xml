@@ -15,7 +15,7 @@
 
         <TextView
             android:id="@+id/TextView1"
-            android:layout_width="110dp"
+            android:layout_width="70dp"
             android:layout_height="40dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
@@ -44,19 +44,28 @@
             android:id="@+id/et_gin_verification_ginno"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
             android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
-            android:inputType="number"
+            android:layout_marginStart="5dp"
             android:background="@drawable/et_custom"
+            android:inputType="number"
             android:padding="10dp"
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/bt_gin_verification_load"
+            app:layout_constraintEnd_toStartOf="@+id/ch_gin_verification_verifiedonly"
             app:layout_constraintStart_toEndOf="@+id/TextView1"
             app:layout_constraintTop_toTopOf="@+id/TextView1"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <CheckBox
+            android:id="@+id/ch_gin_verification_verifiedonly"
+            android:layout_width="125dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:text="View Verified"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/bt_gin_verification_load"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/TextView2"

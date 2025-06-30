@@ -45,6 +45,7 @@ public class UsaBoxBuildingFragment extends Fragment {
     Boolean flagEdit;
     private Spinner sp_usa_box_pallettype;
     private TextView tv_usa_box_pallettype;
+    private TextView tv_usa_box_boxprefix;
     private TextView tv_usa_box_pallettype_allowmix;
     private TextView tv_usa_box_pallettype_build_sec;
     private Spinner sp_usa_box_size;
@@ -87,6 +88,7 @@ public class UsaBoxBuildingFragment extends Fragment {
 
         sp_usa_box_pallettype = (Spinner) view.findViewById(R.id.sp_usa_box_pallettype);
         tv_usa_box_pallettype = (TextView) view.findViewById(R.id.tv_usa_box_pallettype);
+        tv_usa_box_boxprefix = (TextView) view.findViewById(R.id.tv_usa_box_boxprefix);
         tv_usa_box_pallettype_allowmix = (TextView) view.findViewById(R.id.tv_usa_box_pallettype_allowmix);
         tv_usa_box_pallettype_build_sec = (TextView) view.findViewById(R.id.tv_usa_box_pallettype_build_sec);
         sp_usa_box_size = (Spinner) view.findViewById(R.id.sp_usa_box_size);
@@ -342,13 +344,9 @@ public class UsaBoxBuildingFragment extends Fragment {
     }
 
     private void scanPopupItems(){
-
         if (TextUtils.isEmpty(et_build_usabox_popup_qty.getText()) || et_build_usabox_popup_qty.getText().toString().equals("0")) {
             et_build_usabox_popup_qty.setText("1");
         }
-
-
-
         String itemcode = et_build_usabox_popup_itemcode.getText().toString();
         int qty = Integer.parseInt(et_build_usabox_popup_qty.getText().toString());
         String palletType = tv_usa_box_pallettype.getText().toString();
@@ -583,7 +581,7 @@ public class UsaBoxBuildingFragment extends Fragment {
             rb_usa_box_usa_category.setEnabled(false);
             rb_usa_box_tcm_category.setEnabled(false);
         }
-
+        tv_usa_box_boxprefix.setText(objGlobal.getCountryWiseBoxPrefix());
         ArrayList<UsaBoxBuildingScanItemTicket> listUsaBoxBuildingScaItems = objUsaBoxBuildingControl.loadScanItems();
         objMyLoadScanItemAdp = new MyLoadScanItemAdp(listUsaBoxBuildingScaItems);
         lv_usa_box_details.setAdapter(objMyLoadScanItemAdp);

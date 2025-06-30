@@ -73,7 +73,7 @@ public class BinBatchInControl {
                 }
                 if (!dbConnection.insertUpdate("insert into tmpBatchInTote(Userid,DeviceId,ToteId,BoxNo,BoxRemarks,sn,time1,PalletNo) values(" + objGlobal.getUserId() + "," +
                         "'" + objGlobal.getDeviceName() + "','" + toteId + "','" + rs.getString("boxno").toString() + "'," +
-                        "'" + rs.getString("remarks").toString() + "',(select isnull(max(isnull(sn,0)),0)+1 from tmpBatchInTote where " +
+                        "'" + rs.getString("remarks") + "',(select isnull(max(isnull(sn,0)),0)+1 from tmpBatchInTote where " +
                         "userid=" + objGlobal.getUserId() + "),convert(varchar,getdate(),8),'" + objBinBatchInGlobal.getPalletno() + "')", objGlobal.getConnection())) {
                     return false;
                 }
@@ -94,7 +94,7 @@ public class BinBatchInControl {
                     }
                     if (!dbConnection.insertUpdate("insert into tmpBatchInTote(Userid,DeviceId,ToteId,BoxNo,BoxRemarks,sn,time1,PalletNo) values(" + objGlobal.getUserId() + "," +
                             "'" + objGlobal.getDeviceName() + "','" + toteId + "','" + rs.getString("boxno").toString() + "'," +
-                            "'" + rs.getString("remarks").toString() + "',(select isnull(max(isnull(sn,0)),0)+1 from tmpBatchInTote where " +
+                            "'" + rs.getString("remarks") + "',(select isnull(max(isnull(sn,0)),0)+1 from tmpBatchInTote where " +
                             "userid=" + objGlobal.getUserId() + "),convert(varchar,getdate(),8),'" + objBinBatchInGlobal.getPalletno() + "')", objGlobal.getConnection())) {
                         return false;
                     }

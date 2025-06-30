@@ -52,40 +52,29 @@ public class GinVerificationControl {
                 objGlobal.setErrorMessage("saveGinVerification:001:");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.GoodsIssue where Sn=" + ginNo, objGlobal.getCloudCon());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.vgoodsissuePLt where srno=" + ginNo, objGlobal.getConnection());
             if (!rs.next()) {
-                objGlobal.setErrorMessage("GIN Number is invalid");
-                return false;
-            }
-            rs = dbConnection.getResultSet("select * from BFLDATA.dbo.contreceiptExport where GinNo='" + ginNo + "'", objGlobal.getConnection());
-            if (!rs.next()) {
-                objGlobal.setErrorMessage("Container not received yet");
-                return false;
-            }
-            rs = dbConnection.getResultSet("select * from VerifyGin where GinNo=" + ginNo, objGlobal.getConnection());
-            if (rs.next()) {
-                objGlobal.setErrorMessage("GIN Verification already done");
-                return false;
-            }
-            if(forSave){
-               /* rs = dbConnection.getResultSet("select cnt=isnull(count(*),0) from tmpGinVerify where deviceid='" + objGlobal.getDeviceName() + "' and GinNo='" + ginNo + "' and " +
-                        "Verified='' having isnull(count(*),0)>0", objGlobal.getConnection());
-                if (rs.next()) {
-                    objGlobal.setErrorMessage(rs.getString("cnt").toString()+" transfers are not yet verified");
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.GoodsIssue where Sn=" + ginNo, objGlobal.getCloudCon());
+                if (!rs.next()) {
+                    objGlobal.setErrorMessage("Invalid GIN Number");
                     return false;
-                }*/
-            } else {
-                if (!dbConnection.insertUpdate("delete from tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+                }
+            }
+            if (!objGlobal.getCountryCode().equals("UAE")) {
+                rs = dbConnection.getResultSet("select * from BFLDATA.dbo.contreceiptExport where GinNo='" + ginNo + "'", objGlobal.getConnection());
+                if (!rs.next()) {
+                    objGlobal.setErrorMessage("Container not received yet");
+                    return false;
+                }
+            }
+            if (!forSave) {
+                if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                     return false;
                 }
                 ResultSet rsDet;
                 String toteId = "";
-
-                /*rs = dbConnection.getResultSet("select ShopName,PalletNo,TrfNo,dbName=(select dataname from DataSettings where ShopName=a.ShopIssue) " +
-                        "from vGoodsIssuePlt a where SrNo=" + ginNo, objGlobal.getConnection());*/
-
-                rs = dbConnection.getResultSet("select ShopName,PalletNo,TrfNo,dbName=(select dataname from bfldata.dbo.DataSettings where ShopName=a.shopname) from " +
-                        "bfldata.dbo.GoodsIssue a where ginno=" + ginNo, objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select ShopName=ShopIssue,PalletNo,TrfNo,dbName=(select dataname from bfldata.dbo.DataSettings where ShopName=a.ShopIssue) from " +
+                        "bfldata.dbo.vGoodsIssuePlt a where SrNo=" + ginNo, objGlobal.getConnection());
                 while (rs.next()) {
                     toteId = "";
                     rsDet = dbConnection.getResultSet("select StoreIssue from " + rs.getString("dbName").toString() + ".dbo.TransferHeader " +
@@ -93,17 +82,21 @@ public class GinVerificationControl {
                     if (rsDet.next()) {
                         toteId = rsDet.getString("StoreIssue").toString();
                     }
-                    if (!dbConnection.insertUpdate("insert into tmpGinVerify(DeviceId,GinNo,ShopName,PalletNo,TrfNo,ToteId,Verified) values " +
+                    if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpGinVerify(DeviceId,GinNo,ShopName,PalletNo,TrfNo,ToteId,Verified) values " +
                             "('" + objGlobal.getDeviceName() + "'," + ginNo + ",'" + rs.getString("ShopName").toString() + "'," +
                             "'" + rs.getString("PalletNo").toString() + "','" + rs.getString("TrfNo").toString() + "'," +
                             "'" + toteId + "','')", objGlobal.getConnection())) {
                         return false;
                     }
                 }
+                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpGinVerify set Verified=b.Verified from bfldata.dbo.tmpGinVerify a,BFLDATA.dbo.VerifyGin b where a.DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                        "a.TrfNo=b.TrfNo and b.GinNo="+ginNo, objGlobal.getConnection())) {
+                    return false;
+                }
             }
             return true;
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("GinVerificationControl:validateGin:" + ex.toString());
+            objGlobal.setErrorMessage("GinVerificationControl:validateGin:" + ex);
             return false;
         }
     }
@@ -116,9 +109,8 @@ public class GinVerificationControl {
                 ginVerifyId = rs.getString("sn").toString();
             }
             objGlobal.getConnection().setAutoCommit(false);
-            if (!dbConnection.insertUpdate("insert into VerifyGin select " + ginVerifyId + ",'" + objGlobal.getServerDate() + "'," +
-                    "'" + objGlobal.getServerTime() + "'," + objGlobal.getUserId() + ",GinNo,TrfNo,ToteId,PalletNo,Verified from tmpGinVerify " +
-                    "where GinNo='" + ginno + "' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("insert into VerifyGin select " + ginVerifyId + ",'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," + objGlobal.getUserId() + ",GinNo," +
+                    "TrfNo,ToteId,PalletNo,Verified from bfldata.dbo.tmpGinVerify where GinNo='" + ginno + "' and DeviceId='" + objGlobal.getDeviceName() + "' and Verified='Y' and VerifyTime is not null", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
             }
@@ -142,7 +134,7 @@ public class GinVerificationControl {
             return false;
         }
         try {
-            if (!dbConnection.insertUpdate("delete from tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 return false;
             }
         } catch (Exception ex) {
@@ -161,42 +153,46 @@ public class GinVerificationControl {
             return false;
         }
         try {
-//            if(trfToteId.substring(0,2).equals("FN") || trfToteId.substring(0,2).equals("FT")){
-            rs = dbConnection.getResultSet("select * from tmpGinVerify where (trfno='" + trfToteId + "' or toteid = '"+trfToteId+"')", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpGinVerify where (trfno='" + trfToteId + "' or toteid = '" + trfToteId + "')", objGlobal.getConnection());
             if (!rs.next()) {
-                objGlobal.setErrorMessage("Transfer/Tote Id is not found in GIN - " +trfToteId);
+                objGlobal.setErrorMessage("Transfer/Tote Id is not found in GIN - " + trfToteId);
                 return false;
             }
-//            } else {
-//                rs = dbConnection.getResultSet("select * from tmpGinVerify where toteid='" + trfToteId + "'", objGlobal.getConnection());
-//                if (!rs.next()) {
-//                    objGlobal.setErrorMessage("Transfer/Tote Id is not found in GIN");
-//                    return false;
-//                }
-//            }
-            if (!dbConnection.insertUpdate("update tmpGinVerify set VerifyTime=getdate(),Verified='Y' where deviceid='" + objGlobal.getDeviceName() + "' and " +
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.VerifyGin where GinNo=" + ginNo + " and (trfno='" + trfToteId + "' or toteid = '" + trfToteId + "')", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Transfer/Tote Id is already verified");
+                return false;
+            }
+            if (!dbConnection.insertUpdate("update bfldata.dbo.tmpGinVerify set VerifyTime=getdate(),Verified='Y' where deviceid='" + objGlobal.getDeviceName() + "' and " +
                     "(trfno='" + trfToteId + "' or toteid='" + trfToteId + "') and ginno=" + ginNo, objGlobal.getConnection())) {
                 return false;
             }
             return true;
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("GinVerificationControl:validateTrfno:" + ex.toString());
+            objGlobal.setErrorMessage("GinVerificationControl:validateTrfno:" + ex);
             return false;
         }
     }
 
-    ArrayList<GinVerificationTicket> loadGinVerifyDetails() {
+    ArrayList<GinVerificationTicket> loadGinVerifyDetails(String checked) {
         ArrayList<GinVerificationTicket> listGinVerificationTicket = new ArrayList<GinVerificationTicket>();
         int tCnt = 0, yCnt = 0;
         try {
             listGinVerificationTicket.clear();
-            rs = dbConnection.getResultSet("select * from tmpGinVerify where deviceid='" + objGlobal.getDeviceName() + "' order by VerifyTime desc,trfNo", objGlobal.getConnection());
+            if(checked.equals("Y")){
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpGinVerify where Verified='Y' and deviceid='" + objGlobal.getDeviceName() + "' order by VerifyTime desc,trfNo", objGlobal.getConnection());
+            } else {
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpGinVerify where deviceid='" + objGlobal.getDeviceName() + "' order by VerifyTime desc,trfNo", objGlobal.getConnection());
+            }
             while (rs.next()) {
                 listGinVerificationTicket.add(new GinVerificationTicket(rs.getString("ginNo"), rs.getString("shopName"),
                         rs.getString("palletNo"), rs.getString("trfNo"), rs.getString("toteId"),
                         rs.getString("verified")));
-                tCnt++;
                 if (rs.getString("verified").equals("Y")) yCnt++;
+            }
+            rs = dbConnection.getResultSet("select toto=count(*) from bfldata.dbo.tmpGinVerify where deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                tCnt=rs.getInt("toto");
             }
             objGinVerificationGlobal.setScanCount(yCnt + "(" + tCnt + ")");
         } catch (Exception ex) {

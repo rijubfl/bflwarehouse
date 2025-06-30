@@ -617,7 +617,6 @@ public class PalletBuildingFragment extends Fragment {
         }
     }
 
-
     void vibrate(int duration) {
         Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
         assert v != null;

@@ -188,6 +188,11 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:028");
                 return false;
             }
+            if (!dbConnection.insertUpdate("delete from ROBOTICS.dbo.BlockChuteForScan where Chuteid='" + toteId + "' or Device='" + objGlobal.getDeviceName() + "'", con)) {
+                con.rollback();
+                objGlobal.setErrorNo("transferReceipt:031");
+                return false;
+            }
             labelInfo="{\"Shop\":\"" + shopName + "\",\"TrfNo\":\"" + trfRecNo + "\",\"TrfDate\":\"" + objGlobal.getServerDate() + "\",\"DeliveryDate\":\"" +
                     objGlobal.getDelDate() + "\",\"Remarks\":\"" + toteId + "\",\"PreparedBy\":\"" + objGlobal.getUserName() + "\",\"BoxNo\":\"" + cartonNo + "\",\"Quantity\":\"" + totalQty + "\"}";
             if (!dbConnection.insertUpdate("insert into SortTask values('" + objGlobal.getServerDate() + "','" + toteId + "','" + objInOutGlobal.getChuteNo() + "'," +

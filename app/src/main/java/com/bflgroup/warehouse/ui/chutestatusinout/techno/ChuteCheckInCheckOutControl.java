@@ -85,6 +85,9 @@ public class ChuteCheckInCheckOutControl {
             objGlobal.setErrorMessage("Totid is alrady used, Totid: " + toteId + "");
             return false;
         }
+        if(!validateChuteScanByUser(chuteId)){
+            return false;
+        }
         if (direction == "IN") {
             if (!TextUtils.isEmpty(getToteIdFromChuteId(chuteId))) {
                 objGlobal.setErrorMessage("Tot Id is used in another chute, Please check, " + chuteId);
@@ -105,7 +108,7 @@ public class ChuteCheckInCheckOutControl {
                 objGlobal.setErrorMessage("Tot Id is empty, Please check, " + chuteId);
                 return false;
             }
-            if (!TextUtils.equals(s_Result, toteId)) {
+            if (!TextUtils.equals(s_Result.trim(), toteId.trim())) {
                 objGlobal.setErrorMessage("Tot Id and Chute Id is not match, Please check");
                 return false;
             }
@@ -146,6 +149,10 @@ public class ChuteCheckInCheckOutControl {
                 return false;
             }
             if (!dbConnection.insertUpdate("update ChuteIdMaster set Status='" + status + "' where ChuteId='" + chuteId + "'", con)) {
+                con.rollback();
+                return false;
+            }
+            if (!dbConnection.insertUpdate("delete from ROBOTICS.dbo.BlockChuteForScan where Chuteid='" + toteId + "' or Device='" + objGlobal.getDeviceName() + "'", con)) {
                 con.rollback();
                 return false;
             }
@@ -216,6 +223,41 @@ public class ChuteCheckInCheckOutControl {
                 return false;
         } catch (Exception ex) {
             objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:validateTotidUsed:" + ex.toString());
+            return false;
+        }
+    }
+
+    public boolean validateChuteScanByUser(String chuteid) {
+        try {
+            rs = dbConnection.getResultSet("select Device,UserName from ROBOTICS.dbo.BlockChuteForScan where Chuteid='" + chuteid + "' and " +
+                    "Device<>'" + objGlobal.getDeviceName() + "'", conRobo);
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Chute "+ chuteid +" has already been scanned by User " + rs.getString("UserName") + ".");
+                return false;
+            }
+            return true;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:validateTotidUsed:" + ex);
+            return false;
+        }
+    }
+
+    public boolean clearChuteScanByUser() {
+        try {
+            b_Result = (dbConnection.insertUpdate("delete from ROBOTICS.dbo.BlockChuteForScan where Device='" + objGlobal.getDeviceName() + "'", conRobo));
+            return b_Result;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:clearChuteScanByUser:" + ex);
+            return false;
+        }
+    }
+
+    public boolean createChuteScanByUser(String chuteid) {
+        try {
+            b_Result = (dbConnection.insertUpdate("insert into ROBOTICS.dbo.BlockChuteForScan values ('" + chuteid + "','" + objGlobal.getDeviceName() + "','" + objGlobal.getUserName() + "')", conRobo));
+            return b_Result;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:createChuteScanByUser:" + ex);
             return false;
         }
     }

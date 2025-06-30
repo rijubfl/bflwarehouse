@@ -88,7 +88,7 @@ public class BarcodePrinting {
         return printData;
     }
 
-    public byte[] getUsaBoxPrint(String boxno,String pallettype,String typename, String qty,String date, String time,String remarks,String preparedby) {
+    public byte[] getUsaBoxPrint(String boxno,String pallettype,String typename, String qty,String date, String time,String remarks,String preparedby, String copy) {
         String str01 = "\u0002n\r\n";
         String str02 = "\u0002M0986\r\n";
         String str03 = "\u0002KcLW0384\r\n";
@@ -112,7 +112,7 @@ public class BarcodePrinting {
         String str21 = "1911A2401200019Box No." + "\r\n";
         String str22 = "1911A2401200150" + boxno + "\r\n";
         String str23 = "1e8405601760022A" + boxno + "\r\n";
-        String str24 = "Q0004\r\n";
+        String str24 = "Q000" + copy + "\r\n";
         String str25 = "E\r\n";
 
         //printData = addToDataVault(printData, "FB+\r\n".getBytes());

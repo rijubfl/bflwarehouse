@@ -676,8 +676,9 @@ public class TransferControl {
                 }
             }
             if(contno.equals("")) {
-                rs = dbConnection.getResultSet("select distinct boxno,contno=(case when isnull(RoboContno,'')='' then '' else LEFT(RoboContno,CHARINDEX('-',RoboContno) - 1) end) from usa.dbo.vUPCBoxDet " +
-                        "where (BoxNo='" + scan + "' or ToteID='" + scan + "') and Closed='N'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select DISTINCT BoxNo,ContNo = (CASE WHEN ISNULL(RoboContno, '') = '' THEN '' WHEN CHARINDEX('-', RoboContno) > 0 THEN " +
+                        "LEFT(RoboContno, CHARINDEX('-', RoboContno) - 1) ELSE RoboContno END) from usa.dbo.vUPCBoxDet " +
+                        "where (BoxNo='" + scan + "' or ToteID='" + scan + "') and Closed='N' and RoboContno<>''", objGlobal.getConnection());
                 while (rs.next()) {
                     boxno = rs.getString("boxno");
                     contno = rs.getString("contno");
@@ -698,12 +699,6 @@ public class TransferControl {
             if(boxno.equals("")) {
                 objGlobal.setErrorMessage("TransferControl.validateBoxPallet : Box No is empty");
                 return false;
-            }
-            if(contno.equals("")) {
-                if(!boxno.contains("R")) {
-                    objGlobal.setErrorMessage("TransferControl.validateBoxPallet : Cont No is empty");
-                    return false;
-                }
             }
             rs = dbConnection.getResultSet("select ShopName from BFLDATA.dbo.DataSettings where ShopName in(select replace(TypeName,'-W','') from BFLDATA.dbo.PalletType " +
                     "where PalletType in(select PalletType from usa.dbo.upcboxhead where boxno='" + boxno + "'))", objGlobal.getConnection());

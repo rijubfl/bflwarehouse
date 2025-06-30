@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,6 +32,7 @@ public class GinVerificationFragment extends Fragment {
 
     private Button bt_gin_verification_load;
     private EditText et_gin_verification_ginno;
+    private CheckBox ch_gin_verification_verifiedonly;
     private EditText et_gin_verification_trf_tote_id;
     private ListView lv_gin_verification_details;
     private TextView tv_gin_verification_verify;
@@ -56,6 +59,7 @@ public class GinVerificationFragment extends Fragment {
 
         bt_gin_verification_load = (Button) view.findViewById(R.id.bt_gin_verification_load);
         et_gin_verification_ginno = (EditText) view.findViewById(R.id.et_gin_verification_ginno);
+        ch_gin_verification_verifiedonly= (CheckBox) view.findViewById(R.id.ch_gin_verification_verifiedonly);
         et_gin_verification_trf_tote_id = (EditText) view.findViewById(R.id.et_gin_verification_trf_tote_id);
         lv_gin_verification_details = (ListView) view.findViewById(R.id.lv_gin_verification_details);
         bt_gin_verification_clear = (Button) view.findViewById(R.id.bt_gin_verification_clear);
@@ -68,14 +72,18 @@ public class GinVerificationFragment extends Fragment {
 
         if (objGinVerificationShared.loadVerifyGinNo()!="") {
             et_gin_verification_ginno.setText(objGinVerificationShared.loadVerifyGinNo());
-            ArrayList<GinVerificationTicket> listGinVerificationDetail = objGinVerificationControl.loadGinVerifyDetails();
-            objMyGinVerificationAdp = new MyGinVerificationAdp(listGinVerificationDetail);
-            lv_gin_verification_details.setAdapter(objMyGinVerificationAdp);
-            tv_gin_verification_verify.setText(objGinVerificationGlobal.getScanCount());
+            loadScanedDetail();
             et_gin_verification_ginno.setEnabled(false);
             bt_gin_verification_load.setEnabled(false);
             et_gin_verification_trf_tote_id.requestFocus();
         }
+
+        ch_gin_verification_verifiedonly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                loadScanedDetail();
+            }
+        });
 
         bt_gin_verification_load.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,10 +105,7 @@ public class GinVerificationFragment extends Fragment {
                         et_gin_verification_trf_tote_id.requestFocus();
                         return false;
                     } else {
-                        ArrayList<GinVerificationTicket> listGinVerificationDetail = objGinVerificationControl.loadGinVerifyDetails();
-                        objMyGinVerificationAdp = new MyGinVerificationAdp(listGinVerificationDetail);
-                        lv_gin_verification_details.setAdapter(objMyGinVerificationAdp);
-                        tv_gin_verification_verify.setText(objGinVerificationGlobal.getScanCount());
+                        loadScanedDetail();
                         et_gin_verification_trf_tote_id.setText("");
                         et_gin_verification_trf_tote_id.requestFocus();
                         return true;
@@ -185,10 +190,7 @@ public class GinVerificationFragment extends Fragment {
                 vibrate(500);
                 return false;
             } else {
-                ArrayList<GinVerificationTicket> listGinVerificationDetail = objGinVerificationControl.loadGinVerifyDetails();
-                objMyGinVerificationAdp = new MyGinVerificationAdp(listGinVerificationDetail);
-                lv_gin_verification_details.setAdapter(objMyGinVerificationAdp);
-                tv_gin_verification_verify.setText(objGinVerificationGlobal.getScanCount());
+                loadScanedDetail();
                 et_gin_verification_ginno.setText("");
                 tv_gin_verification_verify.setText("");
                 objGinVerificationShared.saveVerifyGinNo("");
@@ -201,6 +203,17 @@ public class GinVerificationFragment extends Fragment {
             return false;
         }
         return true;
+    }
+
+    void loadScanedDetail(){
+        String checked="";
+        if(ch_gin_verification_verifiedonly.isChecked()){
+            checked="Y";
+        }
+        ArrayList<GinVerificationTicket> listGinVerificationDetail = objGinVerificationControl.loadGinVerifyDetails(checked);
+        objMyGinVerificationAdp = new MyGinVerificationAdp(listGinVerificationDetail);
+        lv_gin_verification_details.setAdapter(objMyGinVerificationAdp);
+        tv_gin_verification_verify.setText(objGinVerificationGlobal.getScanCount());
     }
 
     private class LoadTransfers extends AsyncTask<Void, Void, Integer> {
@@ -236,11 +249,8 @@ public class GinVerificationFragment extends Fragment {
             if(result==0){
                 okMessage("GIN Verification", objGlobal.getErrorMessage());
             } else {
-                ArrayList<GinVerificationTicket> listGinVerificationDetail = objGinVerificationControl.loadGinVerifyDetails();
-                objMyGinVerificationAdp = new MyGinVerificationAdp(listGinVerificationDetail);
-                lv_gin_verification_details.setAdapter(objMyGinVerificationAdp);
+                loadScanedDetail();
                 objGinVerificationShared.saveVerifyGinNo(et_gin_verification_ginno.getText().toString());
-                tv_gin_verification_verify.setText(objGinVerificationGlobal.getScanCount());
                 et_gin_verification_ginno.setEnabled(false);
                 bt_gin_verification_load.setEnabled(false);
                 et_gin_verification_trf_tote_id.requestFocus();

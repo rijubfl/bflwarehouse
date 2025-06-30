@@ -14,6 +14,24 @@ public class PriceCheckScanDetail {
     private static String department;
     private static String division;
     private static String message;
+    private static String boxType;
+    public static String getBoxType() {
+        return boxType;
+    }
+
+    public static void setBoxType(String boxType) {
+        PriceCheckScanDetail.boxType = boxType;
+    }
+
+    public static String getBoxno() {
+        return boxno;
+    }
+
+    public static void setBoxno(String boxno) {
+        PriceCheckScanDetail.boxno = boxno;
+    }
+
+    private static String boxno;
 
     public static String getItemcode() {
         return itemcode;
@@ -37,22 +55,6 @@ public class PriceCheckScanDetail {
 
     public static void setGroup(String group) {
         PriceCheckScanDetail.group = group;
-    }
-
-    public static float getOldPrice() {
-        return oldPrice;
-    }
-
-    public static void setOldPrice(float oldPrice) {
-        PriceCheckScanDetail.oldPrice = oldPrice;
-    }
-
-    public static float getDiscPerc() {
-        return discPerc;
-    }
-
-    public static void setDiscPerc(float discPerc) {
-        PriceCheckScanDetail.discPerc = discPerc;
     }
 
     public static float getPrice() {
@@ -102,6 +104,23 @@ public class PriceCheckScanDetail {
     public static void setMessage(String message) {
         PriceCheckScanDetail.message = message;
     }
+
+    public static float getOldPrice() {
+        return oldPrice;
+    }
+
+    public static void setOldPrice(float oldPrice) {
+        PriceCheckScanDetail.oldPrice = oldPrice;
+    }
+
+    public static float getDiscPerc() {
+        return discPerc;
+    }
+
+    public static void setDiscPerc(float discPerc) {
+        PriceCheckScanDetail.discPerc = discPerc;
+    }
+
 
     public static synchronized PriceCheckScanDetail getInstance() {
         if (instance == null) {

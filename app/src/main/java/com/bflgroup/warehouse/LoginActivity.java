@@ -64,14 +64,16 @@ public class LoginActivity extends AppCompatActivity {
 
         List<String> arr;
         arr = new ArrayList<String>();
+        arr.add("");
         arr.add("UAE");
         arr.add("OMAN");
         arr.add("KUWAIT");
         arr.add("QATAR");
         arr.add("KSA");
         arr.add("BAHRAIN");
-        arr.add("BAHRAIN");
         arr.add("MALAYSIA");
+        arr.add("3PL");
+        objGlobal.setWarehouseCountry(arr);
         ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, arr);
         signInWarehouse.setAdapter(arrayAdp);
         if (saredRef.loadWorkLocation() != "") {
@@ -246,21 +248,20 @@ public class LoginActivity extends AppCompatActivity {
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");
             }
-            query = "select * from bfldata..LoginUserPda where Username = '" + objGlobal.getUserName()+"'  and Active = 'Y' and  CONVERT(DATE, trndate) = CONVERT(DATE, getdate()) ";
+            query = "select * from bfldata..LoginUserPda where Username = '" + objGlobal.getUserName() + "'  and Active = 'Y' and  CONVERT(DATE, trndate) = CONVERT(DATE, getdate()) ";
             rs1 = dbConnection.getResultSet(query, objGlobal.getConnection());
-                if (rs1.next()) {
-                    query = "select * from bfldata..LoginUserPda where Username = '" + objGlobal.getUserName()+"' and PDADevicename = '"+ objGlobal.getDeviceName() +"' and Active = 'Y'";
-                    rs = dbConnection.getResultSet(query, objGlobal.getConnection());
-                    if (rs.next()) {
-                        dbConnection.insertUpdate("delete from bfldata.dbo.LoginUserPda where Username = '" + objGlobal.getUserName()+"'  and Active = 'Y'", objGlobal.getConnection());
-                        dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection());
-                        return true;
-                    }
-                    objGlobal.setErrorMessage("User Already logged In to another Device on - " + rs1.getString("Trndate"));
-                    return false;
-
-             }else {
+            if (rs1.next()) {
+                query = "select * from bfldata..LoginUserPda where Username = '" + objGlobal.getUserName() + "' and PDADevicename = '" + objGlobal.getDeviceName() + "' and Active = 'Y'";
+                rs = dbConnection.getResultSet(query, objGlobal.getConnection());
+                if (rs.next()) {
+                    dbConnection.insertUpdate("delete from bfldata.dbo.LoginUserPda where Username = '" + objGlobal.getUserName() + "'  and Active = 'Y'", objGlobal.getConnection());
                     dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection());
+                    return true;
+                }
+                objGlobal.setErrorMessage("User Already logged In to another Device on - " + rs1.getString("Trndate"));
+                return false;
+            } else {
+                dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection());
             }
             dbConnection.insertUpdate("insert into bfldata.dbo.WHPdaUserVersion(userid,username,DeviceVersion,loginDate,Logintime,warehouse)values(" + objGlobal.getUserId() + "," +
                     "'" + objGlobal.getUserName() + "','" + getResources().getString(R.string.app_version) + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +

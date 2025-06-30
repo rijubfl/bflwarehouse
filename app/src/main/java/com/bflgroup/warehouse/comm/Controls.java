@@ -46,19 +46,12 @@ public class Controls {
             objGlobal.setTransferPrefixPda("");
             objGlobal.setTransferPrefixRobo("");
             if (objGlobal.getWorkLocation().equals("3PL")) {
+                objGlobal.setWarehouse("3PL");
                 return true;
             }
-            if (objGlobal.getWorkLocation().equals("KSA")) {
-                objGlobal.setCountryWiseBoxPrefix("S");
-            }
-            if (objGlobal.getWorkLocation().equals("BAHRAIN")) {
-                objGlobal.setCountryWiseBoxPrefix("B");
-            }
-
             rs = objDBConnection.getResultSet("select BFLDATA.dbo.getClientlocdetails('Warehouse')", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setWarehouse(rs.getString(1));
-                //objGlobal.setWarehouse("JAFZA");
             } else {
                 objGlobal.setErrorMessage("Invalid Warehouse, Contact IT");
                 return false;
@@ -92,13 +85,14 @@ public class Controls {
                 }
             }
 
-            rs = objDBConnection.getResultSet("select * from fabsmain.dbo.settings where descr='SKIPBATCHIN'", objGlobal.getConnection());
-            if (rs.next()) {
-                if (rs.getString("status").toString().equals("Y")) objGlobal.setSkipBatchIn(true);
-            }
-            rs = objDBConnection.getResultSet("select * from fabsmain.dbo.settings where descr='MAXTOTINBIN'", objGlobal.getConnection());
-            if (rs.next()) {
-                objGlobal.setMaxTotInBin(rs.getInt("status"));
+            rs = objDBConnection.getResultSet("select * from fabsmain.dbo.settings", objGlobal.getConnection());
+            while (rs.next()) {
+                if (rs.getString("descr").toUpperCase().equals("SKIPBATCHIN"))
+                    if (rs.getString("status").toString().equals("Y")) objGlobal.setSkipBatchIn(true);
+                if (rs.getString("descr").toUpperCase().equals("MAXTOTINBIN"))
+                    objGlobal.setMaxTotInBin(rs.getInt("status"));
+                if (rs.getString("descr").toUpperCase().equals("BOXPREFIX"))
+                    objGlobal.setCountryWiseBoxPrefix(rs.getString("status"));
             }
 
             rs = objDBConnection.getResultSet("select distinct Warehouse,TransferPrefix,TransferPrefixPda,TransferPrefixRobo " +
@@ -164,12 +158,10 @@ public class Controls {
                 roboChuteMapingAPIToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMSIsImp0aSI6ImI3YWE4NTBkN2NkYjc1MjQ2MGQyZjQzMDkyMTVhMTkwZDVjMDAwNmE4MjczZDA1YjQ2Yjg3ZjA5YmNiY2JhYzdkNTA3N2UyNGY0OWFiNjk2IiwiaWF0IjoxNzEzNDQyMzY0LjM1NDcyNSwibmJmIjoxNzEzNDQyMzY0LjM1NDcyNiwiZXhwIjoxNzc2NTE0MzY0LjM1MDY4Miwic3ViIjoiMTk2Iiwic2NvcGVzIjpbXX0.ZY8qQqdO_wr1NrrsYNlFa1wva-1nVlZYC-n8YpqLcnho4655FqlGyP87yttxGffegJH2oeIhoRjnnth-p1SityNJ47dCtPPB9dxy5IahslG3xOscMoI1OzxXeisd1Fb-SezlogB3RDxaACqU8p-96qWZ0bZ5Y_QkkMm1eAHRYcfzt_W2gSEiQrFrfuA7nk4Gn0nAUNU9BWdBdPZe02J8eYKJ7qi9w1Jq43lzPfHNtAU4u2EVyf-Ku3vMQ9nKjE6sBrfZqtzKTpXsccZll_0jgDm1H9x_iicIJWQuzgABDh2C8i3zZUJ9oiSO5XH4CR3yZySpl74HI6JSY9Xi-yOoW8XJOSU9kQez44tWRCz1towHsibLCD1IGpl_KEp7mOAeDQitk8hZjbU6cr7FfAA4w8vzTJcBUR9kk5B3ce7ETSCQjKPgZd_Lr4obfWfX2tClaLaptl1agn8_wVp6mIS4rfCLo8fQW_zcuy80uO-acyIBExs5rfZUwGwRvbIcw6Pd4HCxZJSNpXNp05DmEzc7C3Y_BNKPBCKfLZ1RXP8s05XORI_yGaIYlBB19fP_Qv6IY3FySkvuRzsKCKdmPG03vtxSsod-Uozi_952U7ZwUHJZVS05BsiRBnBWYzI_fbjeRvDpdvRjyXi6-qprJcAJqarZIvo-DnhZNuv6tdOzeCg";
             }
             objGlobal.setRoboServerIP(roboServerIP);
-
             objGlobal.setRoboChuteStatusAPI(roboChuteStatusAPI);
             objGlobal.setRoboChuteMapingAPI(roboChuteMapingAPI);
             objGlobal.setRoboSortTaskAPI(roboSortTaskAPI);
             objGlobal.setRoboLabelInfoAPI(roboLabelInfoAPI);
-
             objGlobal.setRoboChuteStatusAPIToken(roboChuteStatusAPIToken);
             objGlobal.setRoboChuteMapingAPIToken(roboChuteMapingAPIToken);
         } catch (Exception ex) {
@@ -215,5 +207,38 @@ public class Controls {
         double batteryPct = level / (double) scale;
         return (int) (batteryPct * 100);
         //}
+    }
+
+    public String getCountryDb(String country) {
+        String db = "";
+        switch (country) {
+            case "UAE":
+                db = "BFLDATA";
+                break;
+            case "OMAN":
+                db = "BFLOMAN";
+                break;
+            case "KUWAIT":
+                db = "BFLKUWAIT";
+                break;
+            case "QATAR":
+                db = "BFLQATAR";
+                break;
+            case "KSA":
+                db = "BFLKSA";
+                break;
+            case "BAHRAIN":
+                db = "BFLBAHRAIN";
+                break;
+            case "MALAYSIA":
+                db = "BFLMYS";
+                break;
+            case "3PL":
+                db = "BFLDATA";
+                break;
+            default:
+                db = "BFLDATA";
+        }
+        return db;
     }
 }

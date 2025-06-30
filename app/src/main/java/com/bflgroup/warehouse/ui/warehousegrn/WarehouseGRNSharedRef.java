@@ -1,11 +1,11 @@
-package com.bflgroup.warehouse.ui.warehousegrnnew;
+package com.bflgroup.warehouse.ui.warehousegrn;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class WarehouseGRNNewSharedRef {
+public class WarehouseGRNSharedRef {
     SharedPreferences sharedRef;
-    public WarehouseGRNNewSharedRef(Context context){
+    public WarehouseGRNSharedRef(Context context){
         sharedRef=context.getSharedPreferences("myRef", Context.MODE_PRIVATE);
     }
 
@@ -36,5 +36,12 @@ public class WarehouseGRNNewSharedRef {
         editor.commit();
     }
     public String loadWHTo(){ return sharedRef.getString("WHTo",""); }
+
+    public void saveCountry(String WHTo){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("country",WHTo);
+        editor.commit();
+    }
+    public String loadCountry(){ return sharedRef.getString("country",""); }
 
 }

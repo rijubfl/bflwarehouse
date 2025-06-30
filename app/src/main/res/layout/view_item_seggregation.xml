@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/llTitle"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        android:weightSum="4"
+        tools:ignore="MissingConstraints">
+        <TextView
+            android:id="@+id/tv_division"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Division"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp" />
+        <TextView
+            android:id="@+id/tv_itemcode"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="0.9"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Itemcode"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp" />
+        <TextView
+            android:id="@+id/tv_box_no"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="1.2"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Box no"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp" />
+        <TextView
+            android:id="@+id/tv_caption"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_weight="0.9"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Caption"
+            android:textColor="@color/coloBlack"
+            android:textSize="12dp" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

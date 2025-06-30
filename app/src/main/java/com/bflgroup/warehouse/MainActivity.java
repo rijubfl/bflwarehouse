@@ -41,14 +41,13 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_settings, R.id.nav_chute_check_in_check_out, R.id.nav_chute_check_in_check_out_jafza, R.id.nav_chute_configuration_techno,
-                R.id.nav_chute_configuration_jafza, R.id.nav_rack_in_out, R.id.nav_auto_building, R.id.nav_bin_storage_put_away, R.id.nav_bin_storage_put_away_history,
-                R.id.nav_bin_storage_wave_pick, R.id.nav_bin_storage_batch_in, R.id.nav_build_usa_box, R.id.nav_build_pallet, R.id.nav_build_del_pallet,
-                R.id.nav_divsion_seperate, R.id.nav_pallet_status, R.id.nav_r1_wh_grn, R.id.nav_shop_return, R.id.nav_3pl_wh_grn, R.id.nav_rack_in_out,
-                R.id.nav_gin_verification, R.id.nav_blue_tote_transfer, R.id.nav_auto_building_jafza, R.id.nav_logoff, R.id.nav_bin_storage_put_away_multiple_tote,
-                R.id.nav_build_del_gin, R.id.nav_transfer, R.id.nav_update_box_quantity, R.id.nav_blue_to_euro_box, R.id.nav_stock_taking, R.id.nav_generate_barcode,
-                R.id.nav_shuttle_git, R.id.nav_stocktake, R.id.nav_pallet_box_count, R.id.nav_rack_query, R.id.nav_show_pallets, R.id.nav_warehouse_grn,
-                R.id.nav_shuttle_task_create, R.id.nav_pallets_verification,R.id.nav_jafza_racks,R.id.nav_update_box_from_pallet,R.id.nav_gin_verify_local,R.id.nav_item_pullout)
+                R.id.nav_home, R.id.nav_settings, R.id.nav_chute_check_in_check_out, R.id.nav_chute_check_in_check_out_jafza, R.id.nav_chute_configuration_techno,R.id.nav_chute_configuration_jafza,
+                R.id.nav_rack_in_out, R.id.nav_auto_building, R.id.nav_bin_storage_put_away, R.id.nav_bin_storage_put_away_history,R.id.nav_bin_storage_wave_pick, R.id.nav_bin_storage_batch_in,
+                R.id.nav_build_usa_box, R.id.nav_build_pallet, R.id.nav_build_del_pallet,R.id.nav_divsion_seperate, R.id.nav_pallet_status, R.id.nav_r1_wh_grn, R.id.nav_shop_return,
+                R.id.nav_3pl_wh_grn, R.id.nav_rack_in_out,R.id.nav_gin_verification, R.id.nav_blue_tote_transfer, R.id.nav_auto_building_jafza, R.id.nav_logoff, R.id.nav_bin_storage_put_away_multiple_tote,
+                R.id.nav_build_del_gin, R.id.nav_transfer, R.id.nav_update_box_quantity, R.id.nav_blue_to_euro_box, R.id.nav_stock_taking, R.id.nav_generate_barcode,R.id.nav_shuttle_git,
+                R.id.nav_stocktake, R.id.nav_pallet_box_count, R.id.nav_rack_query, R.id.nav_show_pallets, R.id.nav_warehouse_grn,R.id.nav_shuttle_task_create, R.id.nav_pallets_verification,
+                R.id.nav_jafza_racks, R.id.nav_update_box_from_pallet, R.id.nav_item_pullout,R.id.nav_warehouse_gin)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().findItem(R.id.nav_pallet_box_count).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_rack_query).setVisible(true);
         navigationView.getMenu().findItem(R.id.nav_show_pallets).setVisible(false);
-        // navigationView.getMenu().findItem(R.id.nav_validate_toteid).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_validate_toteid).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_build_box_barcode).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_warehouse_grn).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_shuttle_task_create).setVisible(false);
@@ -99,8 +98,9 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().findItem(R.id.nav_transfer_validate).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_jafza_racks).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_update_box_from_pallet).setVisible(false);
-        navigationView.getMenu().findItem(R.id.nav_gin_verify_local).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_item_pullout).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_rack_query).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_warehouse_gin).setVisible(false);
 
         for (int i = 0; i < objGlobal.getActiveMenuByUser().size(); i++) {
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_chute_configuration_techno")) {
@@ -169,9 +169,9 @@ public class MainActivity extends AppCompatActivity {
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_r1_wh_grn")) {
                 navigationView.getMenu().findItem(R.id.nav_r1_wh_grn).setVisible(true);
             }
-//            if (objGlobal.getActiveMenuByUser().get(i).equals("nav_rack_in_out")) {
-//                navigationView.getMenu().findItem(R.id.nav_rack_in_out).setVisible(true);
-//            }
+            if (objGlobal.getActiveMenuByUser().get(i).equals("nav_rack_in_out")) {
+                navigationView.getMenu().findItem(R.id.nav_rack_in_out).setVisible(true);
+            }
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_blue_tote_transfer")) {
                 navigationView.getMenu().findItem(R.id.nav_blue_tote_transfer).setVisible(true);
             }
@@ -208,11 +208,9 @@ public class MainActivity extends AppCompatActivity {
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_rack_query")) {
                 navigationView.getMenu().findItem(R.id.nav_rack_query).setVisible(true);
             }
-
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_show_pallets")) {
                 navigationView.getMenu().findItem(R.id.nav_show_pallets).setVisible(true);
             }
-
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_build_box_barcode")) {
                 navigationView.getMenu().findItem(R.id.nav_build_box_barcode).setVisible(true);
             }
@@ -237,15 +235,15 @@ public class MainActivity extends AppCompatActivity {
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_jafza_racks")) {
                 navigationView.getMenu().findItem(R.id.nav_jafza_racks).setVisible(true);
             }
-            if (objGlobal.getActiveMenuByUser().get(i).equals("nav_gin_verify_local")) {
-                navigationView.getMenu().findItem(R.id.nav_gin_verify_local).setVisible(true);
-            } if (objGlobal.getActiveMenuByUser().get(i).equals("nav_item_pullout")) {
+            if (objGlobal.getActiveMenuByUser().get(i).equals("nav_item_pullout")) {
                 navigationView.getMenu().findItem(R.id.nav_item_pullout).setVisible(true);
+            }
+            if (objGlobal.getActiveMenuByUser().get(i).equals("nav_warehouse_gin")) {
+                navigationView.getMenu().findItem(R.id.nav_warehouse_gin).setVisible(true);
             }
         }
         navigationView.getMenu().findItem(R.id.nav_settings).setVisible(true);
         navigationView.getMenu().findItem(R.id.nav_logoff).setVisible(true);
-        navigationView.getMenu().findItem(R.id.nav_validate_toteid).setVisible(true);
     }
 
     @Override
@@ -261,17 +259,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
-    void okMessage(String title, String message) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setMessage(message);
-        alert.setTitle(title);
-        alert.setPositiveButton("OK", null);
-        alert.setCancelable(true);
-        alert.create().show();
-    }
-
-
-
 
 }

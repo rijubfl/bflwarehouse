@@ -75,7 +75,7 @@ public class BuildBoxControl {
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");
             }
-            rs = dbConnection.getResultSet("select * from bfldata..BlueToteIDMaster where ToteID = '"+toteid.trim()+"'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.BlueToteIDMaster where ToteID = '"+toteid.trim()+"'", objGlobal.getConnection());
             if (rs.next()){
                 ResultSet rs1 = dbConnection.getResultSet("select * from usa..upcBoxHead where ToteID ='"+toteid.trim()+"' and closed = 'N'", objGlobal.getConnection());
                 if(rs1.next()){

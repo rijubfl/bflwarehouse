@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="350dp"
+    android:padding="5dp"
+    android:background="@color/colorBackPopup"
+    android:layout_gravity="center"
+    android:layout_height="195dp">
+
+    <EditText
+        android:id="@+id/et_warehouse_gin_popup_palletno"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/et_custom"
+        android:hint="Pallet No"
+        android:padding="10dp"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/bt_warehouse_gin_popup_scan"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/bt_warehouse_gin_popup_scan"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:background="@drawable/btn_custom1"
+        android:text="Validate"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/et_warehouse_gin_popup_palletno"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/et_warehouse_gin_popup_palletno" />
+
+    <TextView
+        android:id="@+id/tv_warehouse_gin_popup_last_scan"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/et_custom_total"
+        android:hint="Last Scan"
+        android:padding="8dp"
+        android:textAlignment="center"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_warehouse_gin_popup_palletno" />
+
+    <Button
+        android:id="@+id/bt_warehouse_gin_popup_ok"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:background="@drawable/btn_custom1"
+        android:text="Close"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

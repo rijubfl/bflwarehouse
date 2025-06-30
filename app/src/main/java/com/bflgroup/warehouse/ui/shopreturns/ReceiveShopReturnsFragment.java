@@ -27,7 +27,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
- 
+
 import com.bflgroup.warehouse.comm.Controls;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.R;
@@ -202,7 +202,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
                 if (ch_shop_return_itemwise_scan.isChecked()) itemwiseScan = false;
                 if (ch_shop_return_itemwise_autobuild.isChecked()) autoBuild = true;
                 String autoBoxBuildPalletType = tv_shop_return_auto_build_pallettype.getText().toString();
-                b_Result = objReceiveShopReturnsControl.validateShopReturn(entryNo, itemwiseScan, autoBuild, true,toteid);
+                b_Result = objReceiveShopReturnsControl.validateShopReturn(entryNo, itemwiseScan, autoBuild, true, toteid);
                 if (!b_Result) {
                     okMessage("Shop Return", objGlobal.getErrorMessage());
                 } else {
@@ -256,7 +256,8 @@ public class ReceiveShopReturnsFragment extends Fragment {
         if (category.equals("Online Returns")) arr.add("Shop Returns For Online");
         if (category.equals("Shop Transfer")) arr.add("Shop Transfer");
         if (category.equals("WH Transfer")) arr.add("WH Transfer");
-        if (category.equals("Quality Issues") || category.equals("Quality issues")) arr.add("Quality Issues");
+        if (category.equals("Quality Issues") || category.equals("Quality issues"))
+            arr.add("Quality Issues");
         if (category.equals("NO Barcode")) {
             arr.add("NO Barcode");
         }
@@ -310,7 +311,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
             boolean itemwiseScan = true, autoBuild = false;
             if (ch_shop_return_itemwise_scan.isChecked()) itemwiseScan = false;
             if (ch_shop_return_itemwise_autobuild.isChecked()) autoBuild = true;
-            b_Result = objReceiveShopReturnsControl.validateShopReturn(entryNo, itemwiseScan, autoBuild, false,"");
+            b_Result = objReceiveShopReturnsControl.validateShopReturn(entryNo, itemwiseScan, autoBuild, false, "");
             if (!b_Result) {
                 okMessage("Shop Return", objGlobal.getErrorMessage());
                 et_shop_return_entryno.setText("");
@@ -353,7 +354,9 @@ public class ReceiveShopReturnsFragment extends Fragment {
     private boolean itemScan() {
         String entryNo = et_shop_return_entryno.getText().toString();
         String itemcode = objControls.seperateBarcode(objControls.replaceString(et_shop_return_popup_itemcode.getText().toString()));
-        String actions = sp_shop_return_popup_action.getSelectedItem().toString();
+        String actions = "";
+        if (sp_shop_return_popup_action.getSelectedItem() != null)
+            actions = sp_shop_return_popup_action.getSelectedItem().toString();
         tv_shop_return_popup_last_scan.setText("");
         tv_shop_return_popup_division.setText("");
         tv_shop_return_popup_season.setText("");

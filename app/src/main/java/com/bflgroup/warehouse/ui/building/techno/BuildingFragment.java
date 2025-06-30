@@ -1,7 +1,9 @@
 package com.bflgroup.warehouse.ui.building.techno;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -26,16 +28,10 @@ import android.widget.TextView;
 
 import com.bflgroup.warehouse.R;
 import com.bflgroup.warehouse.comm.Global;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-
-import org.json.JSONObject;
+import com.bflgroup.warehouse.comm.roboapi.RoboApi;
+import com.bflgroup.warehouse.comm.roboapi.RoboApiCallback;
 
 import java.util.ArrayList;
-
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.protocol.HTTP;
 
 public class BuildingFragment extends Fragment {
 
@@ -61,6 +57,8 @@ public class BuildingFragment extends Fragment {
     private Button bt_chute_status_building_build;
     private Button bt_chute_status_building_clear;
     private ProgressBar pr_chute_building_inout;
+
+    RoboApi objRoboApi = new RoboApi();
 
     private boolean b_Result;
     private String s_Result;
@@ -131,7 +129,6 @@ public class BuildingFragment extends Fragment {
                         if (!b_Result) {
                             okMessage("Chute Status", objGlobal.getErrorMessage());
                             //et_chute_status_inout_chuteid.setFocusable(true);
-                            progressVisivle(false);
                             et_building_chuteid.setFocusable(true);
                             strflg = true;
                             return true;
@@ -211,7 +208,6 @@ public class BuildingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 clearAll();
-                progressVisivle(false);
                 et_building_chuteid.requestFocus();
             }
         });
@@ -219,179 +215,182 @@ public class BuildingFragment extends Fragment {
         bt_chute_status_building_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String chuteId = et_building_chuteid.getText().toString();
-                String totId = et_chute_building_totid.getText().toString();
-                String shopName = tv_chute_status_building_shopname.getText().toString();
-                String status = tv_chute_building_status.getText().toString();
-                String shopId = tv_chute_status_building_shopid.getText().toString();
-                String shopToteType = tv_chute_building_shop_tote_type.getText().toString();
-                progressVisivle(true);
-                b_Result = objBuildingControl.validateCheckInOut("IN", chuteId, totId, shopId, shopName, status,shopToteType);
-                if (!b_Result) {
-                    progressVisivle(false);
-                    okMessage("Check In", objGlobal.getErrorMessage());
-                    bt_chute_status_building_in.requestFocus();
-                } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setMessage("Are You sure to save?")
-                            .setTitle("Conformation")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try {
-                                        final AsyncHttpClient client = new AsyncHttpClient();
-                                        JSONObject json = new JSONObject();
-                                        json.put("ChuteId", chuteId);
-                                        if(objGlobal.getWorkLocation().equals("KSA"))
-                                            json.put("status", true);
-                                        else
-                                            json.put("Status", "0");
-                                        StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
-                                        entity.setContentType("application/json");
-                                        if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
-                                        client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
-                                                new AsyncHttpResponseHandler() {
-                                                    @Override
-                                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                                        try {
-                                                            if (objBuildingControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
-                                                                clearAll();
-                                                                progressVisivle(false);
-                                                            } else {
-                                                                vibrate(500);
-                                                                progressVisivle(false);
-                                                                okMessage("Chute Status IN", objGlobal.getErrorMessage());
-                                                            }
-                                                            et_building_chuteid.requestFocus();
-                                                        } catch (Exception e) {
-                                                            clearAll();
-                                                            vibrate(500);
-                                                            progressVisivle(false);
-                                                            okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:try: " + e.toString());
-                                                            et_building_chuteid.requestFocus();
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                                        clearAll();
-                                                        progressVisivle(false);
-                                                        okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure: " + error.toString());
-                                                        et_building_chuteid.requestFocus();
-                                                    }
-                                                });
-                                    } catch (Exception e) {
-                                        clearAll();
-                                        progressVisivle(false);
-                                        okMessage("Chute status", "bt_chute_status_inout_in.setOnClickListener:onFailure: " + e.toString());
-                                        et_building_chuteid.requestFocus();
-                                    }
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressVisivle(false);
-                                    et_building_chuteid.requestFocus();
-                                }
-                            })
-                            .show();
-                }
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setMessage("Are You sure to save?")
+                        .setTitle("Conformation")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new BuildingFragment.ApiChuteCheckIn(getContext()).execute();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                et_building_chuteid.requestFocus();
+                            }
+                        })
+                        .show();
             }
         });
 
         bt_chute_status_building_build.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String chuteId = et_building_chuteid.getText().toString();
-                String totId = et_chute_building_totid.getText().toString();
-                String shopName = tv_chute_status_building_shopname.getText().toString();
-                String status = tv_chute_building_status.getText().toString();
-                String shopId = tv_chute_status_building_shopid.getText().toString();
-                String shopToteType = tv_chute_building_shop_tote_type.getText().toString();
-                progressVisivle(true);
-                b_Result = objBuildingControl.validateCheckInOut("OUT", chuteId, totId, shopId, shopName, status,shopToteType);
-                if (!b_Result) {
-                    progressVisivle(false);
-                    okMessage("Check In", objGlobal.getErrorMessage());
-                } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setMessage("Are You sure to save?")
-                            .setTitle("Conformation")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try {
-                                        final AsyncHttpClient client = new AsyncHttpClient();
-                                        JSONObject json = new JSONObject();
-                                        json.put("ChuteId", et_building_chuteid.getText().toString());
-                                        if(objGlobal.getWorkLocation().equals("KSA"))
-                                            json.put("status", false);
-                                        else
-                                            json.put("Status", "2");
-                                        StringEntity entity = new StringEntity(json.toString(), HTTP.UTF_8);
-                                        entity.setContentType("application/json");
-                                        if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
-                                        client.post(getContext(), objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
-                                                new AsyncHttpResponseHandler() {
-                                                    @Override
-                                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                                        b_Result = objBuildingControl.saveChuteBuilding(chuteId, totId, shopId, shopName);
-                                                        if (!b_Result) {
-                                                            okMessage("Chute status:bt_chute_status_building_build", objGlobal.getErrorMessage());
-                                                            progressVisivle(false);
-                                                            et_building_chuteid.requestFocus();
-                                                        } else {
-                                                            clearAll();
-                                                            tv_chute_status_building_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objBuildingGlobal.getBoxNo() + "  ;  " + String.valueOf(objBuildingGlobal.getTotBuildQty()));
-                                                            progressVisivle(false);
-                                                            et_building_chuteid.requestFocus();
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                                        okMessage("Chute status", "validateChuteId:onFailure: " + error.toString());
-                                                        progressVisivle(false);
-                                                        et_building_chuteid.requestFocus();
-                                                    }
-                                                });
-                                    } catch (Exception e) {
-                                        okMessage("Chute status", "validateChuteId:Exception: " + e.toString());
-                                        progressVisivle(false);
-                                        et_building_chuteid.requestFocus();
-                                    }
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressVisivle(false);
-                                    et_building_chuteid.requestFocus();
-                                }
-                            })
-                            .show();
-                }
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setMessage("Are You sure to save?")
+                        .setTitle("Conformation")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new BuildingFragment.ApiChuteCheckOut(getContext()).execute();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                et_building_chuteid.requestFocus();
+                            }
+                        })
+                        .show();
             }
         });
 
         return view;
     }
 
-    private void progressVisivle(boolean vl) {
-        if (vl) {
-            pr_chute_building_inout.setVisibility(ProgressBar.VISIBLE);
-        } else {
-            pr_chute_building_inout.setVisibility(ProgressBar.INVISIBLE);
+    private class ApiChuteCheckIn extends AsyncTask<Void, Void, Integer> {
+        private ProgressDialog dialog;
+        private Context context;
+
+        String chuteId = et_building_chuteid.getText().toString();
+        String totId = et_chute_building_totid.getText().toString();
+        String shopName = tv_chute_status_building_shopname.getText().toString();
+        String status = tv_chute_building_status.getText().toString();
+        String shopId = tv_chute_status_building_shopid.getText().toString();
+        String shopToteType = tv_chute_building_shop_tote_type.getText().toString();
+
+        public ApiChuteCheckIn(Context context) {
+            this.context = context;
+            dialog = new ProgressDialog(context);
         }
-        et_building_chuteid.setEnabled(!vl);
-        et_chute_building_totid.setEnabled(!vl);
-        lv_chute_status_building_details.setEnabled(!vl);
-        bt_chute_status_building_in.setEnabled(!vl);
-        bt_chute_status_building_build.setEnabled(!vl);
-        bt_chute_status_building_clear.setEnabled(!vl);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Loading GIN, Please wait...");
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... args) {
+            // Do any non-UI background work if needed
+            // We'll handle the async API call in onPostExecute
+            return 1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            // Trigger your async API call here
+            b_Result = objBuildingControl.validateCheckInOut("IN", chuteId, totId, shopId, shopName, status, shopToteType);
+            if (!b_Result) {
+                vibrate(500);
+                if (dialog.isShowing()) dialog.dismiss();
+                okMessage("Check In", objGlobal.getErrorMessage());
+            } else {
+                objRoboApi.postChuteStatusOld(getContext(), chuteId, "0", new RoboApiCallback() {
+                    @Override
+                    public void onSucess(int statuscode) {
+                        if (objBuildingControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
+                            clearAll();
+                            if (dialog.isShowing()) dialog.dismiss();
+                            et_building_chuteid.requestFocus();
+                        } else {
+                            vibrate(500);
+                            if (dialog.isShowing()) dialog.dismiss();
+                            okMessage("Chute Status IN", objGlobal.getErrorMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        vibrate(500);
+                        if (dialog.isShowing()) dialog.dismiss();
+                        okMessage("Second API Failed", objGlobal.getErrorMessage());
+                    }
+                });
+            }
+        }
+    }
+
+    private class ApiChuteCheckOut extends AsyncTask<Void, Void, Integer> {
+        private ProgressDialog dialog;
+        private Context context;
+
+        String chuteId = et_building_chuteid.getText().toString();
+        String totId = et_chute_building_totid.getText().toString();
+        String shopName = tv_chute_status_building_shopname.getText().toString();
+        String status = tv_chute_building_status.getText().toString();
+        String shopId = tv_chute_status_building_shopid.getText().toString();
+        String shopToteType = tv_chute_building_shop_tote_type.getText().toString();
+
+        public ApiChuteCheckOut(Context context) {
+            this.context = context;
+            dialog = new ProgressDialog(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Loading GIN, Please wait...");
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... args) {
+            // Do any non-UI background work if needed
+            // We'll handle the async API call in onPostExecute
+            return 1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            // Trigger your async API call here
+            b_Result = objBuildingControl.validateCheckInOut("OUT", chuteId, totId, shopId, shopName, status, shopToteType);
+            if (!b_Result) {
+                vibrate(500);
+                if (dialog.isShowing()) dialog.dismiss();
+                okMessage("Check Out", objGlobal.getErrorMessage());
+            } else {
+                objRoboApi.postChuteStatusOld(getContext(), chuteId, "2", new RoboApiCallback() {
+                    @Override
+                    public void onSucess(int statuscode) {
+                        b_Result = objBuildingControl.saveChuteBuilding(chuteId, totId, shopId, shopName);
+                        if (!b_Result) {
+                            vibrate(500);
+                            if (dialog.isShowing()) dialog.dismiss();
+                            okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApi:onSuccess:" + objGlobal.getErrorMessage());
+                        } else {
+                            tv_chute_status_building_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objBuildingGlobal.getBoxNo());
+                            et_building_chuteid.requestFocus();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        vibrate(500);
+                        if (dialog.isShowing()) dialog.dismiss();
+                        okMessage("Second API Failed(1)", errorMessage);
+                    }
+                });
+            }
+        }
     }
 
     boolean validateToteId(String toteId,String shopToteType) {

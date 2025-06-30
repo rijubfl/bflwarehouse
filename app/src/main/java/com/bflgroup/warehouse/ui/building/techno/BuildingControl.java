@@ -116,7 +116,7 @@ public class BuildingControl {
                 objGlobal.setErrorMessage("Tot Id is empty, Please check, " + chuteId);
                 return false;
             }
-            if (!TextUtils.equals(s_Result, toteId)) {
+            if (!TextUtils.equals(s_Result.trim(), toteId.trim())) {
                 objGlobal.setErrorMessage("Tot Id and Chute Id is not match, Please check");
                 return false;
             }
@@ -381,9 +381,9 @@ public class BuildingControl {
     public boolean checkValidToteId(String toteId) {
         try {
             if (objGlobal.getWorkLocation().equals("KSA"))
-                rs = dbConnection.getResultSet("select * from bflksa.dbo.toteidmaster where toteid='" + toteId + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.BlueToteIDMaster where ToteID='" + toteId + "'", objGlobal.getConnection());
             else
-                rs = dbConnection.getResultSet("select * from BlueToteIDMaster where ToteID='" + toteId + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from " + objGlobal.getCountryDbName() + ".dbo.toteidmaster where toteid='" + toteId + "'", objGlobal.getConnection());
             if (rs.next()) {
                 return true;
             } else {

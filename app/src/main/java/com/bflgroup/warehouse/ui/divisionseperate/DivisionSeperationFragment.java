@@ -37,6 +37,7 @@ public class DivisionSeperationFragment extends Fragment {
 
     private Spinner sp_div_seperate_shopname;
     private EditText et_div_seperate_trfno;
+    private Button bt_div_seperate_fetch;
     private EditText et_div_seperate_scan;
     private Button bt_div_seperate_clear;
     private Button bt_div_seperate_save;
@@ -59,14 +60,15 @@ public class DivisionSeperationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_division_seperation, container, false);
-
         sp_div_seperate_shopname = (Spinner) view.findViewById(R.id.sp_div_seperate_shopname);
         et_div_seperate_trfno = (EditText) view.findViewById(R.id.et_div_seperate_trfno);
+        bt_div_seperate_fetch = (Button) view.findViewById(R.id.bt_div_seperate_fetch);
         et_div_seperate_scan = (EditText) view.findViewById(R.id.et_div_seperate_scan);
         bt_div_seperate_clear = (Button) view.findViewById(R.id.bt_div_seperate_clear);
         bt_div_seperate_save = (Button) view.findViewById(R.id.bt_div_seperate_save);
         lv_div_seperate_details = (ListView) view.findViewById(R.id.lv_div_seperate_details);
-        saredRef= new DivisionSeperationShared(getContext());
+
+        saredRef = new DivisionSeperationShared(getContext());
 
         List<String> arr = objDivisionSeperationControl.loadExportShops();
         ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
@@ -76,10 +78,11 @@ public class DivisionSeperationFragment extends Fragment {
         objMyDivisionSeperationItemTicketAdp = new DivisionSeperationFragment.MyDivisionSeperationItemTicketAdp(listLoadItems);
         lv_div_seperate_details.setAdapter(objMyDivisionSeperationItemTicketAdp);
 
-        if (saredRef.loadLastTrfNo()!="") {
+        if (saredRef.loadLastTrfNo() != "") {
             sp_div_seperate_shopname.setSelection(arr.indexOf(saredRef.loadLastShop()));
             et_div_seperate_trfno.setText(saredRef.loadLastTrfNo());
             sp_div_seperate_shopname.setEnabled(false);
+            bt_div_seperate_fetch.setEnabled(false);
             et_div_seperate_trfno.setEnabled(false);
         }
 
@@ -111,37 +114,16 @@ public class DivisionSeperationFragment extends Fragment {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                    String shopname = sp_div_seperate_shopname.getSelectedItem().toString();
-                    String trfno = et_div_seperate_trfno.getText().toString();
-                    if (TextUtils.isEmpty(shopname)) {
-                        okMessage("DIV", "Please select shopname");
-                        sp_div_seperate_shopname.requestFocus();
-                        return true;
-                    } else if (TextUtils.isEmpty(trfno)) {
-                        okMessage("DIV", "Please Enter transfer number");
-                        et_div_seperate_trfno.requestFocus();
-                        return true;
-                    } else {
-                        b_Result = objDivisionSeperationControl.validateTransfer(shopname, trfno,false);
-                        if (!b_Result) {
-                            okMessage("DIV", objGlobal.getErrorMessage());
-                            et_div_seperate_trfno.setText("");
-                            et_div_seperate_trfno.requestFocus();
-                            return true;
-                        } else {
-                            saredRef.saveLastShop(shopname);
-                            saredRef.saveLastTrfNo(trfno);
-                            sp_div_seperate_shopname.setEnabled(false);
-                            et_div_seperate_trfno.setEnabled(false);
-                            ArrayList<DivisionSeperationItemTicket> listLoadItems = objDivisionSeperationControl.loadDivSepItems();
-                            objMyDivisionSeperationItemTicketAdp = new DivisionSeperationFragment.MyDivisionSeperationItemTicketAdp(listLoadItems);
-                            lv_div_seperate_details.setAdapter(objMyDivisionSeperationItemTicketAdp);
-                            et_div_seperate_scan.setText("");
-                            et_div_seperate_scan.requestFocus();
-                        }
-                    }
+                    fetchTransfer();
                 }
                 return false;
+            }
+        });
+
+        bt_div_seperate_fetch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchTransfer();
             }
         });
 
@@ -151,7 +133,7 @@ public class DivisionSeperationFragment extends Fragment {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
                     String shopname = sp_div_seperate_shopname.getSelectedItem().toString();
                     String trfno = et_div_seperate_trfno.getText().toString();
-                    String scan= objControls.seperateBarcode(objControls.replaceString(et_div_seperate_scan.getText().toString()));
+                    String scan = objControls.seperateBarcode(objControls.replaceString(et_div_seperate_scan.getText().toString()));
                     if (TextUtils.isEmpty(shopname)) {
                         okMessage("DIV", "Please select shopname");
                         sp_div_seperate_shopname.requestFocus();
@@ -161,7 +143,7 @@ public class DivisionSeperationFragment extends Fragment {
                         et_div_seperate_trfno.requestFocus();
                         return true;
                     } else {
-                        b_Result=objDivisionSeperationControl.validateTransferItem(shopname,trfno,scan,1);
+                        b_Result = objDivisionSeperationControl.validateTransferItem(shopname, trfno, scan, 1);
                         if (!b_Result) {
                             okMessage("DIV", objGlobal.getErrorMessage());
                             et_div_seperate_scan.setText("");
@@ -190,8 +172,8 @@ public class DivisionSeperationFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                b_Result=objDivisionSeperationControl.clearTable();
-                                if(b_Result){
+                                b_Result = objDivisionSeperationControl.clearTable();
+                                if (b_Result) {
                                     ArrayList<DivisionSeperationItemTicket> listLoadItems = objDivisionSeperationControl.loadDivSepItems();
                                     objMyDivisionSeperationItemTicketAdp = new DivisionSeperationFragment.MyDivisionSeperationItemTicketAdp(listLoadItems);
                                     lv_div_seperate_details.setAdapter(objMyDivisionSeperationItemTicketAdp);
@@ -201,6 +183,7 @@ public class DivisionSeperationFragment extends Fragment {
                                 saredRef.saveLastShop("");
                                 saredRef.saveLastTrfNo("");
                                 sp_div_seperate_shopname.setEnabled(true);
+                                bt_div_seperate_fetch.setEnabled(true);
                                 et_div_seperate_trfno.setEnabled(true);
                                 et_div_seperate_trfno.requestFocus();
                             }
@@ -220,7 +203,7 @@ public class DivisionSeperationFragment extends Fragment {
             public void onClick(View v) {
                 String shopname = sp_div_seperate_shopname.getSelectedItem().toString();
                 String trfno = et_div_seperate_trfno.getText().toString();
-                b_Result = objDivisionSeperationControl.validateTransfer(shopname, trfno,true);
+                b_Result = objDivisionSeperationControl.validateTransfer(shopname, trfno, true);
                 if (!b_Result) {
                     okMessage("DIV", objGlobal.getErrorMessage());
                 } else {
@@ -231,11 +214,11 @@ public class DivisionSeperationFragment extends Fragment {
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    b_Result = objDivisionSeperationControl.save(trfno);
+                                    b_Result = objDivisionSeperationControl.save();
                                     if (!b_Result) {
                                         okMessage("DIV", objGlobal.getErrorMessage());
                                     } else {
-                                        if(!objDivisionSeperationControl.clearTable()){
+                                        if (!objDivisionSeperationControl.clearTable()) {
                                             okMessage("DIV", objGlobal.getErrorMessage());
                                         } else {
                                             ArrayList<DivisionSeperationItemTicket> listLoadItems = objDivisionSeperationControl.loadDivSepItems();
@@ -246,6 +229,7 @@ public class DivisionSeperationFragment extends Fragment {
                                             saredRef.saveLastShop("");
                                             saredRef.saveLastTrfNo("");
                                             sp_div_seperate_shopname.setEnabled(true);
+                                            bt_div_seperate_fetch.setEnabled(true);
                                             et_div_seperate_trfno.setEnabled(true);
                                             et_div_seperate_trfno.requestFocus();
                                         }
@@ -303,6 +287,36 @@ public class DivisionSeperationFragment extends Fragment {
             TextView tv_div_seperate_tickte_scanqty = (TextView) myView.findViewById(R.id.tv_div_seperate_tickte_scanqty);
             tv_div_seperate_tickte_scanqty.setText(String.valueOf(s.scanQty));
             return myView;
+        }
+    }
+
+    void fetchTransfer() {
+        String shopname = sp_div_seperate_shopname.getSelectedItem().toString();
+        String trfno = et_div_seperate_trfno.getText().toString();
+        if (TextUtils.isEmpty(shopname)) {
+            okMessage("DIV", "Please select shopname");
+            sp_div_seperate_shopname.requestFocus();
+        } else if (TextUtils.isEmpty(trfno)) {
+            okMessage("DIV", "Please Enter transfer number");
+            et_div_seperate_trfno.requestFocus();
+        } else {
+            b_Result = objDivisionSeperationControl.validateTransfer(shopname, trfno, false);
+            if (!b_Result) {
+                okMessage("DIV", objGlobal.getErrorMessage());
+                et_div_seperate_trfno.setText("");
+                et_div_seperate_trfno.requestFocus();
+            } else {
+                saredRef.saveLastShop(shopname);
+                saredRef.saveLastTrfNo(trfno);
+                sp_div_seperate_shopname.setEnabled(false);
+                bt_div_seperate_fetch.setEnabled(false);
+                et_div_seperate_trfno.setEnabled(false);
+                ArrayList<DivisionSeperationItemTicket> listLoadItems = objDivisionSeperationControl.loadDivSepItems();
+                objMyDivisionSeperationItemTicketAdp = new DivisionSeperationFragment.MyDivisionSeperationItemTicketAdp(listLoadItems);
+                lv_div_seperate_details.setAdapter(objMyDivisionSeperationItemTicketAdp);
+                et_div_seperate_scan.setText("");
+                et_div_seperate_scan.requestFocus();
+            }
         }
     }
 

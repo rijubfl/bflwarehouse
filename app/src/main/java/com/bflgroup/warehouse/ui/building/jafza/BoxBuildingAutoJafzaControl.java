@@ -115,7 +115,7 @@ public class BoxBuildingAutoJafzaControl {
                 objGlobal.setErrorMessage("Tot Id is empty, Please check, " + chuteId);
                 return false;
             }
-            if (!TextUtils.equals(s_Result, toteId)) {
+            if (!TextUtils.equals(s_Result.trim(), toteId.trim())) {
                 objGlobal.setErrorMessage("Tot Id and Chute Id is not match, Please check");
                 return false;
             }

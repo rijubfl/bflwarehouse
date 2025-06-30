@@ -13,6 +13,49 @@
         android:padding="5dp">
 
         <TextView
+            android:id="@+id/TextView9"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Printer."
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/sp_shop_return_printer"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/TextView9"
+            app:layout_constraintTop_toTopOf="@+id/TextView9"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <Spinner
+            android:id="@+id/sp_shop_return_type"
+            android:layout_width="110dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
             android:id="@+id/TextView1"
             android:layout_width="80dp"
             android:layout_height="40dp"
@@ -48,22 +91,22 @@
         <CheckBox
             android:id="@+id/ch_shop_return_itemwise_scan"
             android:layout_width="0dp"
-            android:layout_marginRight="5dp"
             android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:text="Skip SKU Wise Scan"
             app:layout_constraintEnd_toStartOf="@+id/ch_shop_return_itemwise_autobuild"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/sp_shop_return_type"
+            app:layout_constraintTop_toTopOf="@+id/sp_shop_return_type" />
 
         <CheckBox
             android:id="@+id/ch_shop_return_itemwise_autobuild"
-            android:layout_width="125dp"
+            android:layout_width="110dp"
             android:layout_height="40dp"
-            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:text="Auto Build"
-            app:layout_constraintEnd_toStartOf="@+id/tv_shop_return_auto_build_pallettype"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ch_shop_return_itemwise_scan" />
 
         <TextView
@@ -78,7 +121,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/ch_shop_return_itemwise_scan" />
+            app:layout_constraintTop_toTopOf="@+id/tv_shop_return_shopname" />
 
         <Button
             android:id="@+id/bt_shop_return_scan"
@@ -142,13 +185,14 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
-            android:padding="10dp"
             android:hint="Shop Return Category"
+            android:padding="10dp"
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_shop_return_auto_build_pallettype"
             app:layout_constraintStart_toEndOf="@+id/tv_shop_return_shopname"
             app:layout_constraintTop_toTopOf="@+id/tv_shop_return_shopname" />
 
@@ -222,8 +266,7 @@
             app:layout_constraintBottom_toTopOf="@+id/TextView11"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView7"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/TextView7" />
 
         <TextView
             android:id="@+id/TextView11"
@@ -238,8 +281,26 @@
             android:textColor="@color/coloRed"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/bt_shop_return_save"
+            app:layout_constraintBottom_toTopOf="@+id/tv_shop_return_lastsave"
             app:layout_constraintEnd_toStartOf="@+id/tv_shop_return_scan_total"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_shop_return_lastsave"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloRed"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/bt_shop_return_clear"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -291,44 +352,33 @@
             android:id="@+id/bt_shop_return_save"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="4dp"
             android:background="@drawable/btn_custom1"
             android:text="SAVE"
             android:textAllCaps="false"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/textView2"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2" />
 
         <Button
             android:id="@+id/bt_shop_return_clear"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:background="@drawable/btn_custom1"
             android:text="CLEAR"
             android:textAllCaps="false"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/bt_shop_return_save"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.448"
-            app:layout_constraintStart_toEndOf="@+id/textView2" />
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginBottom="24dp"
-            android:text=""
+            android:text="  "
             android:textColor="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

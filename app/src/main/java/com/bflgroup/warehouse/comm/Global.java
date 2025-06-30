@@ -55,6 +55,7 @@ public class Global {
     private static String transferPrefixPda;
     private List<String> bluetoothDevices;
     private static String bluetoothDevicesAvailable;
+    private List<String> warehouseCountry;
 
     private static String userAllowMixCategoryBuild;
 
@@ -75,6 +76,14 @@ public class Global {
 
     public static void setCountryDbName(String countryDbName) {
         Global.countryDbName = countryDbName;
+    }
+
+    public List<String> getWarehouseCountry() {
+        return warehouseCountry;
+    }
+
+    public void setWarehouseCountry(List<String> warehouseCountry) {
+        this.warehouseCountry = warehouseCountry;
     }
 
     public static boolean getSkipBatchIn() {

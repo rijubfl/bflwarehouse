@@ -18,6 +18,14 @@ public class GinScanTransferShared {
 
     public String loadRouteid(){ return sharedRef.getString("routeid",""); }
 
+    public void saveShopnames(String shopnames){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("shopname",shopnames);
+        editor.commit();
+    }
+
+    public String loadShopnames(){ return sharedRef.getString("shopname",""); }
+
 
     public void savePalletCount(String palletcount){
         SharedPreferences.Editor editor=sharedRef.edit();

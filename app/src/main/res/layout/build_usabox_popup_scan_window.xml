@@ -119,16 +119,17 @@
     <TextView
         android:id="@+id/tv_build_usabox_popup_last_scan"
         android:layout_width="0dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/et_custom_total"
-        android:padding="8dp"
         android:hint="Last Scan"
-        android:textStyle="bold"
+        android:padding="8dp"
         android:textAlignment="center"
         android:textColor="@color/coloBlack"
         android:textSize="14dp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_build_usabox_popup_itemcode" />
 

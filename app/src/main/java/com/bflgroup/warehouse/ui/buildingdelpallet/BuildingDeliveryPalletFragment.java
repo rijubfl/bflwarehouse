@@ -171,26 +171,19 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
             sp_plt_route_id.setAdapter(arrayAdp1);
             if (PltScanTransferShared.Routeidload() != "") {
-
-
                 sp_plt_route_id.setSelection(arrayAdp1.getPosition(PltScanTransferShared.Routeidload().toString()));
                 sp_plt_route_id.setEnabled(false);
-
                 try {
-
                     PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
-
                     count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
                     count = getPltCount();
                     tv_count.setText(count+"");
-
                     objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
                     lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
                     Log.e("item","reached");
                 } catch (SQLException e) {
                     Log.e("Log",e.toString());
                 }
-
             }
         }
         else{
@@ -199,19 +192,13 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             sp_plt_route_id.setAdapter(arrayAdp1);
             Log.e("ROUTEIDLOAD -- UAE",PltScanTransferShared.Routeidload());
             if (PltScanTransferShared.Routeidload() != "") {
-
-
                 sp_plt_route_id.setSelection(arrayAdp1.getPosition(Integer.parseInt(PltScanTransferShared.Routeidload().toString())));
                 sp_plt_route_id.setEnabled(false);
-
                 try {
-
                     PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
-
                     count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
                     count = Integer.valueOf(getPltCount());
                     tv_count.setText(count+"");
-
                     objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
                     lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
                     Log.e("item","reached");

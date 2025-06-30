@@ -295,7 +295,7 @@ public class RackInOutControl {
                         if (!rs.next()) {
                             rs = dbConnection.getResultSet("select top 1 * from abudata.dbo.tcmitemsall where palletno='" + palletUp + "'", objGlobal.getConnection());
                             if (!rs.next()) {
-                                objGlobal.setErrorMessage("Pallet Number " + palletUp + " is closed already");
+                                objGlobal.setErrorMessage("Pallet Number " + palletUp + " is closed/deleted already");
                                 return false;
                             }
                         }
@@ -313,7 +313,7 @@ public class RackInOutControl {
                         if (!rs.next()) {
                             rs = dbConnection.getResultSet("select top 1 * from abudata.dbo.tcmitemsall where palletno='" + palletDown + "'", objGlobal.getConnection());
                             if (!rs.next()) {
-                                objGlobal.setErrorMessage("Pallet Number " + palletDown + " is closed already");
+                                objGlobal.setErrorMessage("Pallet Number " + palletDown + " is closed/deleted already");
                                 return false;
                             }
                         }

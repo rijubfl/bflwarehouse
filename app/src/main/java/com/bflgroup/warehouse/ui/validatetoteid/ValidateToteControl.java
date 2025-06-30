@@ -41,11 +41,10 @@ public class ValidateToteControl {
         return true;
     }
 
-
     public String checkTote(String toteId, Context context){
         String boxno = "";
         try {
-            rs = dbConnection.getResultSet("select * from bfldata..BlueToteIDMaster where ToteID = '"+toteId.trim()+"'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.BlueToteIDMaster where ToteID = '"+toteId.trim()+"'", objGlobal.getConnection());
             if (rs.next()) {
                 rs = dbConnection.getResultSet("select boxno from usa.dbo.upcboxhead where ToteID='" + toteId + "' and Closed='N'", objGlobal.getConnection());
                 if (rs.next()) {

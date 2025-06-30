@@ -5,17 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backColor"
-    tools:context=".ui.warehousegrnnew.WarehouseGRNNewFragment">
+    tools:context=".ui.warehousegrn.WarehouseGRNFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="6dp">
 
+        <Spinner
+            android:id="@+id/sp_wh_grn_country"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_wh_grn_scan_gin"
+            app:layout_constraintStart_toEndOf="@+id/textView20"
+            app:layout_constraintTop_toTopOf="@+id/textView20" />
+
+        <TextView
+            android:id="@+id/textView20"
+            android:layout_width="105dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="GIN Location"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/TextView1"
-            android:layout_width="95dp"
+            android:layout_width="105dp"
             android:layout_height="40dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint=""
@@ -24,22 +54,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/TextView8"
-            android:layout_width="95dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="W.H. To"
-            android:textColor="@color/coloBlack"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView5" />
+            app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
         <EditText
             android:id="@+id/et_wh_grn_ginno"
@@ -60,34 +75,33 @@
 
         <TextView
             android:id="@+id/et_wh_grn_warehouse_from"
-            android:layout_width="0dp"
+            android:layout_width="150dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
             android:padding="10dp"
+            android:hint="WH. From"
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/bt_wh_grn_scan_item"
-            app:layout_constraintStart_toEndOf="@+id/TextView5"
-            app:layout_constraintTop_toTopOf="@+id/TextView5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView1"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <TextView
             android:id="@+id/et_wh_grn_warehouse_to"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
             android:background="@drawable/et_custom"
             android:padding="10dp"
+            android:hint="WH. To"
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/bt_wh_grn_scan_item"
-            app:layout_constraintStart_toEndOf="@+id/TextView8"
-            app:layout_constraintTop_toTopOf="@+id/TextView8"
+            app:layout_constraintStart_toEndOf="@+id/et_wh_grn_warehouse_from"
+            app:layout_constraintTop_toTopOf="@+id/et_wh_grn_warehouse_from"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
 
         <TextView
             android:id="@+id/tv_wh_grn_gindate"
@@ -103,51 +117,19 @@
             app:layout_constraintTop_toTopOf="@+id/TextView1"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-        <TextView
-            android:id="@+id/TextView5"
-            android:layout_width="95dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="W.H. From"
-            android:textColor="@color/coloBlack"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
-
-        <TextView
-            android:id="@+id/TextView14"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="center"
-            android:hint=""
-            android:padding="10dp"
-            android:text="To"
-            android:textColor="@color/coloBlack"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/et_wh_grn_warehouse_to"
-            app:layout_constraintStart_toEndOf="@+id/et_wh_grn_warehouse_from"
-            app:layout_constraintTop_toTopOf="@+id/TextView5" />
-
         <Button
             android:id="@+id/bt_wh_grn_scan_gin"
             android:layout_width="80dp"
-            android:layout_height="40dp"
+            android:layout_height="0dp"
             android:background="@drawable/btn_custom1"
             android:text="FETCH"
             android:textAllCaps="false"
             android:textSize="14sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView20"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            app:layout_constraintTop_toTopOf="@+id/textView20"
             tools:ignore="TouchTargetSizeCheck" />
-
 
         <Button
             android:id="@+id/bt_wh_grn_scan_item"
@@ -158,16 +140,16 @@
             android:textAllCaps="false"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/TextView8"
+            app:layout_constraintBottom_toBottomOf="@+id/et_wh_grn_warehouse_from"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/TextView5"
+            app:layout_constraintTop_toTopOf="@+id/TextView1"
             tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
             android:id="@+id/TextView3"
             android:layout_width="150dp"
             android:layout_height="35dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom_total"
             android:gravity="left"
             android:hint=""
@@ -177,7 +159,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView8" />
+            app:layout_constraintTop_toBottomOf="@+id/et_wh_grn_warehouse_from" />
 
         <TextView
             android:id="@+id/TextView7"
@@ -304,7 +286,7 @@
             android:id="@+id/TextView11"
             android:layout_width="110dp"
             android:layout_height="40dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint=""
@@ -335,7 +317,6 @@
             android:layout_width="110dp"
             android:layout_height="40dp"
             android:layout_marginRight="5dp"
-            android:layout_marginBottom="10dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint=""
@@ -343,8 +324,8 @@
             android:text="Scan Pallets"
             android:textColor="@color/coloBlack"
             android:textSize="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/bt_wh_grn_clear"
-            app:layout_constraintEnd_toStartOf="@+id/tv_wh_grn_scan_plt_count" />
+            app:layout_constraintEnd_toStartOf="@+id/tv_wh_grn_scan_plt_count"
+            app:layout_constraintTop_toTopOf="@+id/TextView11" />
 
         <TextView
             android:id="@+id/tv_wh_grn_scan_plt_count"
@@ -364,9 +345,8 @@
             android:id="@+id/bt_wh_grn_clear"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="0dp"
             android:layout_marginRight="4dp"
-            android:layout_marginBottom="5dp"
             android:background="@drawable/btn_custom1"
             android:text="CLEAR"
             android:textAllCaps="false"
@@ -381,7 +361,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginBottom="5dp"
             android:background="@drawable/btn_custom1"
             android:text="SAVE"
             android:textAllCaps="false"
