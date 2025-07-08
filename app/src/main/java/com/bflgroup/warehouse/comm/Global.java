@@ -23,6 +23,8 @@ public class Global {
     private static String countryCode;
     private static String countryDbName;
     private static String exportCountryCode;
+    private static String exportCountryCostCode;
+    private static String exportCountryLocCode;
     private static String sealPrinterName;
     private static String userPrinterName;
     private static String fcCode;
@@ -124,6 +126,30 @@ public class Global {
 
     public static void setBluetoothDevicesAvailable(String bluetoothDevicesAvailable) {
         Global.bluetoothDevicesAvailable = bluetoothDevicesAvailable;
+    }
+
+    public static boolean isSkipBatchIn() {
+        return skipBatchIn;
+    }
+
+    public static String getExportCountryCostCode() {
+        return exportCountryCostCode;
+    }
+
+    public static void setExportCountryCostCode(String exportCountryCostCode) {
+        Global.exportCountryCostCode = exportCountryCostCode;
+    }
+
+    public static String getExportCountryLocCode() {
+        return exportCountryLocCode;
+    }
+
+    public static void setExportCountryLocCode(String exportCountryLocCode) {
+        Global.exportCountryLocCode = exportCountryLocCode;
+    }
+
+    public static boolean isEnterQty() {
+        return enterQty;
     }
 
     public String getDelDate() {

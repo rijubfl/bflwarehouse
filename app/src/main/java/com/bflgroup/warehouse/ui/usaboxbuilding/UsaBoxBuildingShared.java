@@ -10,6 +10,13 @@ public class UsaBoxBuildingShared {
         sharedRef=context.getSharedPreferences("myRef", Context.MODE_PRIVATE);
     }
 
+    public void savePrinter(String Printer){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("Printer",Printer);
+        editor.commit();
+    }
+    public String loadPrinter(){ return sharedRef.getString("Printer",""); }
+
     public void savePltType(String PltType){
         SharedPreferences.Editor editor=sharedRef.edit();
         editor.putString("PltType",PltType);
@@ -17,12 +24,26 @@ public class UsaBoxBuildingShared {
     }
     public String loadPltType(){ return sharedRef.getString("PltType",""); }
 
+    public void savePltTypeName(String PltTypeName){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("PltTypeName",PltTypeName);
+        editor.commit();
+    }
+    public String loadPltTypeName(){ return sharedRef.getString("PltTypeName",""); }
+
     public void saveAllowMixCategory(String mixCategory){
         SharedPreferences.Editor editor=sharedRef.edit();
         editor.putString("AllowMixCategory",mixCategory);
         editor.commit();
     }
     public String loadAllowMixCategory(){ return sharedRef.getString("AllowMixCategory",""); }
+
+    public void saveSPType(String SPType){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("SPType",SPType);
+        editor.commit();
+    }
+    public String loadSPType(){ return sharedRef.getString("SPType",""); }
 
     public void saveSize(String mixCategory){
         SharedPreferences.Editor editor=sharedRef.edit();

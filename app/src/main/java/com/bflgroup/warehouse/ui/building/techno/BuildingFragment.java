@@ -302,7 +302,7 @@ public class BuildingFragment extends Fragment {
                 if (dialog.isShowing()) dialog.dismiss();
                 okMessage("Check In", objGlobal.getErrorMessage());
             } else {
-                objRoboApi.postChuteStatusOld(getContext(), chuteId, "0", new RoboApiCallback() {
+                objRoboApi.postChuteStatus(getContext(), chuteId, "0",true, new RoboApiCallback() {
                     @Override
                     public void onSucess(int statuscode) {
                         if (objBuildingControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
@@ -368,7 +368,7 @@ public class BuildingFragment extends Fragment {
                 if (dialog.isShowing()) dialog.dismiss();
                 okMessage("Check Out", objGlobal.getErrorMessage());
             } else {
-                objRoboApi.postChuteStatusOld(getContext(), chuteId, "2", new RoboApiCallback() {
+                objRoboApi.postChuteStatus(getContext(), chuteId, "2",false, new RoboApiCallback() {
                     @Override
                     public void onSucess(int statuscode) {
                         b_Result = objBuildingControl.saveChuteBuilding(chuteId, totId, shopId, shopName);

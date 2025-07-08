@@ -381,9 +381,9 @@ public class BuildingControl {
     public boolean checkValidToteId(String toteId) {
         try {
             if (objGlobal.getWorkLocation().equals("KSA"))
-                rs = dbConnection.getResultSet("select * from bfldata.dbo.BlueToteIDMaster where ToteID='" + toteId + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from ROBOTICS.dbo.TotIdMaster where TotId='" + toteId + "'", objGlobal.getConnection());
             else
-                rs = dbConnection.getResultSet("select * from " + objGlobal.getCountryDbName() + ".dbo.toteidmaster where toteid='" + toteId + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.BlueToteIDMaster where ToteID='" + toteId + "'", objGlobal.getConnection());
             if (rs.next()) {
                 return true;
             } else {

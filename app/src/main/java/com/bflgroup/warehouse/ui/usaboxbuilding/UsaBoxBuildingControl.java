@@ -6,6 +6,7 @@ import com.bflgroup.warehouse.comm.Controls;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -73,9 +74,13 @@ public class UsaBoxBuildingControl {
         return arr;
     }
 
-    public boolean validateMain(String palletType, String groupCode, String catCode, String remarks, String taskType, String doneBy, String fSize, String gender, String toteID, String allowMix, String buildType, String euro, String spcitems) {
+    public boolean validateMain(String printer,String palletType, String groupCode, String catCode, String remarks, String taskType, String doneBy, String fSize, String gender, String toteID, String allowMix, String buildType, String euro, String spcitems) {
         if (TextUtils.isEmpty(objGlobal.getWarehouse())) {
             objGlobal.setErrorNo("savePallet:Warehouse is empty");
+            return false;
+        }
+        if (TextUtils.isEmpty(printer)) {
+            objGlobal.setErrorMessage("UsaBoxBuildingControl:validateMain: Printer is blank, can't proceed");
             return false;
         }
         if (TextUtils.isEmpty(palletType)) {
@@ -224,8 +229,16 @@ public class UsaBoxBuildingControl {
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and (isnull(itemname,'')='' or isnull(GroupCode,'')='' or " +
                     "isnull(BuildingCategory,'')='')", objGlobal.getConnection());
             if (rs.next()) {
-                objGlobal.setErrorMessage("Item Name or Group Code or Building Category is blank - " + itemcode);
-                valid = false;
+                if (rs.getString("itemname").isEmpty()) {
+                    objGlobal.setErrorMessage("Item code (" + itemcode + ") is invalid");
+                    valid = false;
+                } else if (rs.getString("GroupCode").isEmpty()) {
+                    objGlobal.setErrorMessage("Group code  is missing.");
+                    valid = false;
+                } else if (rs.getString("BuildingCategory").isEmpty()) {
+                    objGlobal.setErrorMessage("Building Category is missing.");
+                    valid = false;
+                }
             }
             if (!allowMix.equals("Y")) {
                 rs = dbConnection.getResultSet("select cnt=count(distinct BuildingCategory) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' having " +
@@ -304,18 +317,6 @@ public class UsaBoxBuildingControl {
                     valid = false;
                 }
             }
-            /*if (selPalletype.equals("OH")) {
-                double hoQty = 0;
-                rs = dbConnection.getResultSet("select quantity from ONLINE.dbo.LocStock where Itemcode='" + itemcode + "' and COSTCODE='002' and LOCCODE='02'", objGlobal.getConnection());
-                if (rs.next()) {
-                    hoQty = rs.getInt("quantity");
-                }
-                rs = dbConnection.getResultSet("select qty from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "' and qty>" + hoQty, objGlobal.getConnection());
-                if (rs.next()) {
-                    objGlobal.setErrorMessage("Cannot proceed, itemcode(" + itemcode + "). Scanned quantity is "+ rs.getString("qty") +", but only " + hoQty + " are available.");
-                    valid = false;
-                }
-            }*/
             if (!valid) {
                 if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where itemcode='" + itemcode + "' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                     valid = false;
@@ -370,7 +371,9 @@ public class UsaBoxBuildingControl {
             objUsaBoxBuildingGlobal.setBuildingSeason("");
             objUsaBoxBuildingGlobal.setNeedBlueBox("N");
             objUsaBoxBuildingGlobal.setValidateHoStock("N");
-            rs = dbConnection.getResultSet("select BuildCategoryMixAllow=isnull(BuildCategoryMixAllow,''),season=isnull(season,''),BuildSelItems=isnull(BuildSelItems,''),BlueBox=isnull(BlueBox,''),ValidateHoStock=isnull(ValidateHoStock,'') from bfldata.dbo.PalletType where PalletType='" + palletType + "'", objGlobal.getConnection());
+            objUsaBoxBuildingGlobal.setAllowInvalidItem("N");
+            rs = dbConnection.getResultSet("select BuildCategoryMixAllow=isnull(BuildCategoryMixAllow,''),season=isnull(season,''),BuildSelItems=isnull(BuildSelItems,''),BlueBox=isnull(BlueBox,'')," +
+                    "ValidateHoStock=isnull(ValidateHoStock,''),AllowInvalidItem=isnull(AllowInvalidItem,'') from bfldata.dbo.PalletType where PalletType='" + palletType + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objUsaBoxBuildingGlobal.setBuildingSeason(rs.getString("season"));
                 if (rs.getString("BuildCategoryMixAllow").equals("Y"))
@@ -381,6 +384,8 @@ public class UsaBoxBuildingControl {
                     objUsaBoxBuildingGlobal.setNeedBlueBox("Y");
                 if (rs.getString("ValidateHoStock").equals("Y"))
                     objUsaBoxBuildingGlobal.setValidateHoStock("Y");
+                if (rs.getString("AllowInvalidItem").equals("Y"))
+                    objUsaBoxBuildingGlobal.setAllowInvalidItem("Y");
             }
             return true;
         } catch (Exception ex) {
@@ -430,8 +435,6 @@ public class UsaBoxBuildingControl {
                     }
                 }
             } else {
-
-
                 LocalTime time = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     time = LocalTime.now();
@@ -447,7 +450,6 @@ public class UsaBoxBuildingControl {
                     if (rs.next()) {
                         scanQty = rs.getInt("Qty");
                     }
-
                     rs = dbConnection.getResultSet("select * from ONLINE.dbo.RFPairingCountPhotoCheckBuild where type='" + palletType + "' and trndate='" + objGlobal.getServerDate() + "' and empcode='" + objGlobal.getUserName() + "' and Warehouse='" + objGlobal.getWarehouse() + "'", objGlobal.getConnection());
                     if (!rs.next()) {
                         if (!dbConnection.insertUpdate("insert into ONLINE.dbo.RFPairingCountPhotoCheckBuild (empcode,type,trndate," + hrFiled + ",Warehouse)  values( '" + objGlobal.getUserName() + "','" + palletType + "','" + objGlobal.getServerDate() + "'," + scanQty + ",'" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
@@ -461,7 +463,6 @@ public class UsaBoxBuildingControl {
                         }
                     }
                 }
-
                 boxPType = "UB";
                 if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead (BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
                         "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) values ('" + objUsaBoxBuildingGlobal.getBoxNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','','" + objGlobal.getUserName() + "'," +
@@ -475,9 +476,6 @@ public class UsaBoxBuildingControl {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
-
-
-
                 if (euro.equals("Y")) {
                     boxPType = "UP";
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.usapallets(Sn,TrnDate,PalletNo,UserId,Remarks,Closed,ContNo,WHouse) values (" + objUsaBoxBuildingGlobal.getPalletSno() + "," +
@@ -655,6 +653,68 @@ public class UsaBoxBuildingControl {
             return false;
         }
         return true;
+    }
+
+    public boolean fetchBoxNo(String scan) {
+        objUsaBoxBuildingGlobal.setpBoxno("");
+        if (!checkConnection()) {
+            return false;
+        }
+        if(scan.isEmpty()){
+            objGlobal.setErrorMessage("Please scan box number or toteid");
+            return false;
+        }
+        try {
+            rs = dbConnection.getResultSet("select top 1 BoxNo from usa.dbo.upcboxhead where closed='N' and (boxno='" + scan + "' or toteid='" + scan + "') order by trndate", objGlobal.getConnection());
+            if (rs.next()) {
+                objUsaBoxBuildingGlobal.setpBoxno(rs.getString("BoxNo"));
+            } else {
+                objGlobal.setErrorMessage("Invalid boxn number number or toteid - " + scan + "");
+                return false;
+            }
+            return true;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("TransferControl:forPrint:" + ex);
+            return false;
+        }
+    }
+
+    public boolean forPrint(String boxno) {
+        objUsaBoxBuildingGlobal.setpDate("");
+        objUsaBoxBuildingGlobal.setpBoxno("");
+        objUsaBoxBuildingGlobal.setpDate("");
+        objUsaBoxBuildingGlobal.setpQty("");
+        objUsaBoxBuildingGlobal.setpTime("");
+        objUsaBoxBuildingGlobal.setpPallettype("");
+        objUsaBoxBuildingGlobal.setpPreparedby("");
+        objUsaBoxBuildingGlobal.setpRemarks("");
+        objUsaBoxBuildingGlobal.setpTypename("");
+        if (!checkConnection()) {
+            return false;
+        }
+        try {
+            rs = dbConnection.getResultSet("select BoxNo,Toteid,TrnDate=convert(varchar,TrnDate,103),Time1=convert(varchar,Time1,8),PalletType,PreparedBy,Remarks," +
+                    "typename=(select typename from bfldata.dbo.pallettype where pallettype=a.pallettype),Qty=ISNULL((select sum(qty) from usa.dbo.upcboxdet where " +
+                    "boxno=a.boxno),0) from usa.dbo.upcboxhead a where closed='N' and boxno='" + boxno + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                objUsaBoxBuildingGlobal.setpBoxno(rs.getString("BoxNo"));
+                objUsaBoxBuildingGlobal.setpToteid(rs.getString("Toteid"));
+                objUsaBoxBuildingGlobal.setpDate(rs.getString("TrnDate"));
+                objUsaBoxBuildingGlobal.setpQty(rs.getString("Qty"));
+                objUsaBoxBuildingGlobal.setpTime(rs.getString("Time1"));
+                objUsaBoxBuildingGlobal.setpPallettype(rs.getString("typename"));
+                objUsaBoxBuildingGlobal.setpPreparedby(rs.getString("PreparedBy"));
+                objUsaBoxBuildingGlobal.setpRemarks(rs.getString("Remarks"));
+                objUsaBoxBuildingGlobal.setpTypename(rs.getString("typename"));
+            } else {
+                objGlobal.setErrorMessage("TransferControl : Invalid boxn number number or toteid (" + boxno + ")");
+                return false;
+            }
+            return true;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("TransferControl:forPrint:" + ex);
+            return false;
+        }
     }
 
     public boolean clearTable() {

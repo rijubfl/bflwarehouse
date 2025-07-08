@@ -375,7 +375,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                 if (dialog.isShowing()) dialog.dismiss();
                 okMessage("Check In", objGlobal.getErrorMessage());
             } else {
-                objRoboApi.postChuteStatusNew(getContext(), chuteId, true, new RoboApiCallback() {
+                objRoboApi.postChuteStatus(getContext(), chuteId,"0", true, new RoboApiCallback() {
                     @Override
                     public void onSucess(int statuscode) {
                         if (objChuteCheckInCheckOutJafzaControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
@@ -441,7 +441,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                 if (dialog.isShowing()) dialog.dismiss();
                 okMessage("Check Out", objGlobal.getErrorMessage());
             } else {
-                objRoboApi.postChuteStatusNew(getContext(), chuteId, false, new RoboApiCallback() {
+                objRoboApi.postChuteStatus(getContext(), chuteId,"2", false, new RoboApiCallback() {
                     @Override
                     public void onSucess(int statuscode) {
                         b_Result = objChuteCheckInCheckOutJafzaControl.saveChuteOut(chuteId, totId, shopId, shopName);

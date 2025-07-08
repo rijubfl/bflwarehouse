@@ -252,7 +252,7 @@ public class TransferFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setMessage("Are You sure to clear all scanned items?")
+                alert.setMessage("Are you sure to clear all scanned items?")
                         .setTitle("Conformation")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -275,7 +275,7 @@ public class TransferFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setMessage("Are You sure to make transfer fot the scanned items?")
+                alert.setMessage("Are you sure to make transfer for the scanned items?")
                         .setTitle("Conformation")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {

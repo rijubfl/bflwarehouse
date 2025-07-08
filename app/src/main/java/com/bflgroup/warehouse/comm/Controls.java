@@ -74,10 +74,12 @@ public class Controls {
             }
 
             if (!objGlobal.getCountryCode().equals("UAE")) {
-                rs = objDBConnection.getResultSet("select ExportCountryCode,Dataname from bfldata.dbo.DataSettings where countrycode='" + objGlobal.getCountryCode() + "' and " +
+                rs = objDBConnection.getResultSet("select ExportCountryCode,Dataname,CostCodeTo,LocCodeTo from bfldata.dbo.DataSettings where countrycode='" + objGlobal.getCountryCode() + "' and " +
                         "ExportWH='Y'", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setExportCountryCode(rs.getString("ExportCountryCode"));
+                    objGlobal.setExportCountryCostCode(rs.getString("CostCodeTo"));
+                    objGlobal.setExportCountryLocCode(rs.getString("LocCodeTo"));
                     objGlobal.setCountryDbName(rs.getString("Dataname"));
                 } else {
                     objGlobal.setErrorMessage("LoginActivity:getControl:Invalid ExportCountryCode, Contact IT");

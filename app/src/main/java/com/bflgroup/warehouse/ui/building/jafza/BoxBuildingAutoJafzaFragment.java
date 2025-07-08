@@ -301,7 +301,7 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
                 if (dialog.isShowing()) dialog.dismiss();
                 okMessage("Check In", objGlobal.getErrorMessage());
             } else {
-                objRoboApi.postChuteStatusNew(getContext(), chuteId, true, new RoboApiCallback() {
+                objRoboApi.postChuteStatus(getContext(), chuteId, "0",true, new RoboApiCallback() {
                     @Override
                     public void onSucess(int statuscode) {
                         if (objBoxBuildingAutoJafzaControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
@@ -366,7 +366,7 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
                 if (dialog.isShowing()) dialog.dismiss();
                 okMessage("Check Out", objGlobal.getErrorMessage());
             } else {
-                objRoboApi.postChuteStatusNew(getContext(), chuteId, false, new RoboApiCallback() {
+                objRoboApi.postChuteStatus(getContext(), chuteId,"2", false, new RoboApiCallback() {
                     @Override
                     public void onSucess(int statuscode) {
                         b_Result = objBoxBuildingAutoJafzaControl.saveChuteBuilding(chuteId, totId, shopId, shopName);

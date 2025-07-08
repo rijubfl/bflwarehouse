@@ -300,7 +300,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                 if (dialog.isShowing()) dialog.dismiss();
                 okMessage("Check In", objGlobal.getErrorMessage());
             } else {
-                objRoboApi.postChuteStatusOld(getContext(), chuteId, "0", new RoboApiCallback() {
+                objRoboApi.postChuteStatus(getContext(), chuteId, "0",true, new RoboApiCallback() {
                     @Override
                     public void onSucess(int statuscode) {
                         if (objChuteCheckInCheckOutControl.saveChuteIn(chuteId, totId, shopId, shopName, "0")) {
@@ -318,7 +318,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                     public void onFailure(String errorMessage) {
                         vibrate(500);
                         if (dialog.isShowing()) dialog.dismiss();
-                        okMessage("Second API Failed", objGlobal.getErrorMessage());
+                        okMessage("Chute Status", objGlobal.getErrorMessage());
                     }
                 });
             }
@@ -366,21 +366,21 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                 if (dialog.isShowing()) dialog.dismiss();
                 okMessage("Check Out", objGlobal.getErrorMessage());
             } else {
-                objRoboApi.postChuteStatusOld(getContext(), chuteId, "2", new RoboApiCallback() {
+                objRoboApi.postChuteStatus(getContext(), chuteId, "2", false, new RoboApiCallback() {
                     @Override
                     public void onSucess(int statuscode) {
                         b_Result = objChuteCheckInCheckOutControl.saveChuteOut(chuteId, totId, shopId, shopName); //transfer receipt
                         if (!b_Result) {
                             vibrate(500);
                             if (dialog.isShowing()) dialog.dismiss();
-                            okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApi:onSuccess:" + objGlobal.getErrorMessage());
+                            okMessage("Chute Status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApi:onSuccess:" + objGlobal.getErrorMessage());
                         } else {
                             tv_chute_status_inout_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objInOutGlobal.getTrfRecNo() + "  ;  " + String.valueOf(objInOutGlobal.getTrfTotQty()));
                             tv_chute_status_inout_tot_qty.setText(String.valueOf(objInOutGlobal.getTrfTotQty()));
-                            objRoboApi.postLabelInfo(getContext(), totId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getTrfRecNo(), objInOutGlobal.getLabelInfo(), new RoboApiCallback() {
+                            objRoboApi.postLabelInfo(getContext(), chuteId, shopId, shopName, totId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getTrfRecNo(), objInOutGlobal.getLabelInfo(), new RoboApiCallback() {
                                 @Override
                                 public void onSucess(int statuscode) {
-                                    objRoboApi.postSortTask(getContext(), totId, objInOutGlobal.getChuteNo(), objInOutGlobal.getTrfRecNo(), objInOutGlobal.getTrfRecNo(), objInOutGlobal.getBatchCode(), new RoboApiCallback() {
+                                    objRoboApi.postSortTask(getContext(), chuteId, shopId, shopName, totId, objInOutGlobal.getChuteNo(), objInOutGlobal.getTrfRecNo(), objInOutGlobal.getTrfRecNo(), objInOutGlobal.getBatchCode(), new RoboApiCallback() {
                                         @Override
                                         public void onSucess(int statuscode) {
                                             if (!objChuteCheckInCheckOutControl.updateChuteApi("SortTaskApi", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo())) {
@@ -399,7 +399,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                                         public void onFailure(String errorMessage) {
                                             vibrate(500);
                                             if (dialog.isShowing()) dialog.dismiss();
-                                            okMessage("Second API Failed(3)", errorMessage);
+                                            okMessage("Chute Status", errorMessage);
                                         }
                                     });
                                 }
@@ -408,7 +408,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                                 public void onFailure(String errorMessage) {
                                     vibrate(500);
                                     if (dialog.isShowing()) dialog.dismiss();
-                                    okMessage("Second API Failed(2)", errorMessage);
+                                    okMessage("Chute Status", errorMessage);
                                 }
                             });
                         }
@@ -418,7 +418,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                     public void onFailure(String errorMessage) {
                         vibrate(500);
                         if (dialog.isShowing()) dialog.dismiss();
-                        okMessage("Second API Failed(1)", errorMessage);
+                        okMessage("Chute Status", errorMessage);
                     }
                 });
             }

@@ -696,10 +696,10 @@ public class TransferControl {
                     }
                 }
             }
-            if(boxno.equals("")) {
+            /*if(boxno.equals("")) {
                 objGlobal.setErrorMessage("TransferControl.validateBoxPallet : Box No is empty");
                 return false;
-            }
+            }*/
             rs = dbConnection.getResultSet("select ShopName from BFLDATA.dbo.DataSettings where ShopName in(select replace(TypeName,'-W','') from BFLDATA.dbo.PalletType " +
                     "where PalletType in(select PalletType from usa.dbo.upcboxhead where boxno='" + boxno + "'))", objGlobal.getConnection());
             if (rs.next()) {
@@ -720,9 +720,16 @@ public class TransferControl {
                     "itemcode,sum(qty),convert(varchar,getdate(),8),0 from usa.dbo.vupcboxdet where boxno='" + boxno + "' and closed='N' group by Itemcode", objGlobal.getConnection())) {
                 return false;
             }
-            if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set HoQty=b.quantity from bfldata.dbo.tmpRfidPdaTransferItems a,hodata.dbo.locstock b where " +
-                    "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode and b.costcode='001' and loccode='01'", objGlobal.getConnection())) {
-                return false;
+            if (objGlobal.getWorkLocation().equals("UAE")) {
+                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set HoQty=b.quantity from bfldata.dbo.tmpRfidPdaTransferItems a,hodata.dbo.locstock b where " +
+                        "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode and b.costcode='001' and loccode='01'", objGlobal.getConnection())) {
+                    return false;
+                }
+            } else {
+                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set HoQty=b.quantity from bfldata.dbo.tmpRfidPdaTransferItems a,"+ objGlobal.getCountryDbName() +".dbo.locstock b where " +
+                        "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode and b.costcode='" + objGlobal.getExportCountryCostCode() + "' and loccode='" + objGlobal.getExportCountryLocCode() + "'", objGlobal.getConnection())) {
+                    return false;
+                }
             }
             if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set description=b.description from bfldata.dbo.tmpRfidPdaTransferItems a,hodata.dbo.itemmaster b where " +
                     "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode", objGlobal.getConnection())) {

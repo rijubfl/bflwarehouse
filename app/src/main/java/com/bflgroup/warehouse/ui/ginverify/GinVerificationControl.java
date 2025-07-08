@@ -52,13 +52,15 @@ public class GinVerificationControl {
                 objGlobal.setErrorMessage("saveGinVerification:001:");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.vgoodsissuePLt where srno=" + ginNo, objGlobal.getConnection());
-            if (!rs.next()) {
+            objGlobal.setCountryCode("KSA");
+            if (objGlobal.getCountryCode().equals("UAE")) {
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.vgoodsissuePLt where srno=" + ginNo, objGlobal.getConnection());
+            } else {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.GoodsIssue where Sn=" + ginNo, objGlobal.getCloudCon());
-                if (!rs.next()) {
-                    objGlobal.setErrorMessage("Invalid GIN Number");
-                    return false;
-                }
+            }
+            if (!rs.next()) {
+                objGlobal.setErrorMessage("Invalid GIN Number");
+                return false;
             }
             if (!objGlobal.getCountryCode().equals("UAE")) {
                 rs = dbConnection.getResultSet("select * from BFLDATA.dbo.contreceiptExport where GinNo='" + ginNo + "'", objGlobal.getConnection());
@@ -73,8 +75,13 @@ public class GinVerificationControl {
                 }
                 ResultSet rsDet;
                 String toteId = "";
-                rs = dbConnection.getResultSet("select ShopName=ShopIssue,PalletNo,TrfNo,dbName=(select dataname from bfldata.dbo.DataSettings where ShopName=a.ShopIssue) from " +
-                        "bfldata.dbo.vGoodsIssuePlt a where SrNo=" + ginNo, objGlobal.getConnection());
+                if (objGlobal.getCountryCode().equals("UAE")) {
+                    rs = dbConnection.getResultSet("select ShopName=ShopIssue,PalletNo,TrfNo,dbName=(select dataname from bfldata.dbo.DataSettings where ShopName=a.ShopIssue) from " +
+                            "bfldata.dbo.vGoodsIssuePlt a where SrNo=" + ginNo, objGlobal.getConnection());
+                } else {
+                    rs = dbConnection.getResultSet("select ShopName,PalletNo,TrfNo,dbName=(select dataname from bfldata.dbo.DataSettings where ShopName=a.shopname) from " +
+                            "bfldata.dbo.GoodsIssue a where ginno=" + ginNo, objGlobal.getCloudCon());
+                }
                 while (rs.next()) {
                     toteId = "";
                     rsDet = dbConnection.getResultSet("select StoreIssue from " + rs.getString("dbName").toString() + ".dbo.TransferHeader " +
