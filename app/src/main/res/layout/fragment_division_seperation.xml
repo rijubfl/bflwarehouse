@@ -26,21 +26,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Spinner
-            android:id="@+id/sp_div_seperate_shopname"
+
+        <TextView
+            android:id="@+id/tv_div_seperate_shopname"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/et_custom_total"
-            android:gravity="center"
-            android:hint=""
-            android:padding="8dp"
-            android:textSize="14sp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint="Select Shop"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/TextView3"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"/>
 
         <TextView
             android:id="@+id/TextView1"

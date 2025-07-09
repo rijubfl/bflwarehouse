@@ -56,7 +56,6 @@ public class BuildingFragment extends Fragment {
     private Button bt_chute_status_building_in;
     private Button bt_chute_status_building_build;
     private Button bt_chute_status_building_clear;
-    private ProgressBar pr_chute_building_inout;
 
     RoboApi objRoboApi = new RoboApi();
 
@@ -87,7 +86,6 @@ public class BuildingFragment extends Fragment {
         bt_chute_status_building_in = (Button) view.findViewById(R.id.bt_chute_status_building_in);
         bt_chute_status_building_build = (Button) view.findViewById(R.id.bt_chute_status_building_build);
         bt_chute_status_building_clear = (Button) view.findViewById(R.id.bt_chute_status_building_clear);
-        pr_chute_building_inout = (ProgressBar) view.findViewById(R.id.pr_chute_building_inout);
 
         clearAll();
         et_building_chuteid.requestFocus();
@@ -281,7 +279,7 @@ public class BuildingFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage("Loading GIN, Please wait...");
+            dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.show();
         }
@@ -347,7 +345,7 @@ public class BuildingFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage("Loading GIN, Please wait...");
+            dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.show();
         }
@@ -378,6 +376,8 @@ public class BuildingFragment extends Fragment {
                             okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApi:onSuccess:" + objGlobal.getErrorMessage());
                         } else {
                             tv_chute_status_building_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objBuildingGlobal.getBoxNo());
+                            clearAll();
+                            if (dialog.isShowing()) dialog.dismiss();
                             et_building_chuteid.requestFocus();
                         }
                     }

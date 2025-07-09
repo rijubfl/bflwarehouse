@@ -17,17 +17,17 @@ public class Controls {
     DBConnection objDBConnection=new DBConnection();
     private ResultSet rs;
 
-    public boolean getControl(){
-        try{
+    public boolean getControl() {
+        try {
             List<String> arr;
             arr = new ArrayList<String>();
-            rs = objDBConnection.getResultSet("select menuid,menuname from bfldata.dbo.PdaMenuAccess where Access='Y' and UserId="+ objGlobal.getUserId() +" and " +
+            rs = objDBConnection.getResultSet("select menuid,menuname from bfldata.dbo.PdaMenuAccess where Access='Y' and UserId=" + objGlobal.getUserId() + " and " +
                     "MenuId in(select MenuId from bfldata.dbo.PdaMenuMaster where Access='Y')", objGlobal.getConnection());
             while (rs.next()) {
                 arr.add(rs.getString("menuid").toString());
             }
             objGlobal.setActiveMenuByUser(arr);
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             objGlobal.setErrorMessage("LoginActivity:getControl:" + ex.toString());
             return false;
         }

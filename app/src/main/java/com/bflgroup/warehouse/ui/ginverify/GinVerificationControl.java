@@ -52,7 +52,6 @@ public class GinVerificationControl {
                 objGlobal.setErrorMessage("saveGinVerification:001:");
                 return false;
             }
-            objGlobal.setCountryCode("KSA");
             if (objGlobal.getCountryCode().equals("UAE")) {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.vgoodsissuePLt where srno=" + ginNo, objGlobal.getConnection());
             } else {

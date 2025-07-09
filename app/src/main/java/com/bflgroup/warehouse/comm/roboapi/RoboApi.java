@@ -30,14 +30,15 @@ public class RoboApi {
                 jsonObject.put("status", blStatus);
             }
             final AsyncHttpClient client = new AsyncHttpClient();
-            if(!objGlobal.getRoboChuteStatusAPIToken().isEmpty()) client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
+            if (!objGlobal.getRoboChuteStatusAPIToken().isEmpty())
+                client.addHeader("Authorization", objGlobal.getRoboChuteStatusAPIToken());
             StringEntity entity = new StringEntity(jsonObject.toString(), HTTP.UTF_8);
             entity.setContentType("application/json");
             client.post(context, objGlobal.getRoboChuteStatusAPI(), entity, "application/json",
                     new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            if(statusCode==200) {
+                            if (statusCode == 200) {
                                 if (objGlobal.getWorkLocation().equals("UAE")) {
                                     callback.onSucess(statusCode);
                                 } else {
