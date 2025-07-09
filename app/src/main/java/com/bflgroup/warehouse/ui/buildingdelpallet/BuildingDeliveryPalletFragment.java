@@ -375,7 +375,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                         okMessage("Alert", "Pls Select Shopname First", getContext());
                     }else {
                         if (printer.isEmpty() || printer.toUpperCase().contains("SELECT")) {
-                            objGlobal.setErrorMessage("Please select printer");
+                            okMessage("Message","Please select printer",getContext());
                             b_Result = false;
                         }else {
                             PltScanTransferShared.savePrintCopies(sp_transfer_print_copies.getSelectedItem().toString());

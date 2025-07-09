@@ -266,7 +266,7 @@ public class BinPutAwayControl {
             while (rs.next()) {
                 listBinPutAwayPendingToteIdTicket.add(new BinPutAwayPendingToteIdTicket(rs.getString("BatchId").toString(),
                         rs.getString("toteid").toString(), rs.getString("boxid").toString(),
-                        rs.getString("trntime").toString().substring(0, 8), rs.getString("remarks").toString()));
+                        rs.getString("trntime").toString().substring(0, 8), rs.getString("remarks")));
             }
         } catch (Exception ex) {
             objGlobal.setErrorMessage("BinPutAwayControl:loadTransferItemsAll:" + ex.toString());

@@ -187,7 +187,7 @@ public class UsaBoxBuildingFragment extends Fragment {
                     okMessage("USABox Build", "Please select pallettype");
                     tv_usa_box_pallettype_select.requestFocus();
                 } else if (sp_usa_box_printer.getSelectedItem().toString().isEmpty() || sp_usa_box_printer.getSelectedItem().toString().equals("--Select--")) {
-                    okMessage("USABox Build", "Please select pallettype");
+                    okMessage("USABox Build", "Please select printer");
                     sp_usa_box_printer.requestFocus();
                 } else {
                     tv_usa_box_pallettype_select.setEnabled(false);

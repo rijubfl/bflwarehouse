@@ -169,6 +169,10 @@
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_building_del_pallet" />
                 <item
+                    android:id="@+id/nav_update_transfers"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_update_transfers_from_pallet" />
+                <item
                     android:id="@+id/nav_warehouse_gin"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_warehouse_gin" />
