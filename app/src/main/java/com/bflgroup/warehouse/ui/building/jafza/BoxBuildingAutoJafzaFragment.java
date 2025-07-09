@@ -280,7 +280,7 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage("Loading GIN, Please wait...");
+            dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.show();
         }
@@ -345,7 +345,7 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage("Loading GIN, Please wait...");
+            dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.show();
         }
@@ -376,6 +376,8 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
                             okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApi:onSuccess:" + objGlobal.getErrorMessage());
                         } else {
                             tv_chute_status_building_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objBuildingJafzaGLobal.getBoxNo() + "  ;  " + String.valueOf(objBuildingJafzaGLobal.getTotBuildQty()));
+                            clearAll();
+                            if (dialog.isShowing()) dialog.dismiss();
                             et_building_chuteid.requestFocus();
                         }
                     }

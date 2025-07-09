@@ -508,7 +508,7 @@ public class WarehouseGinFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage("Loading GIN, Please wait...");
+            dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.show();
         }

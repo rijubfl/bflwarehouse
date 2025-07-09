@@ -250,11 +250,13 @@
         android:name="com.bflgroup.warehouse.ui.palletsverify.PalletsVerificationFragment"
         android:label="@string/menu_pallets_verification"
         tools:layout="@layout/fragment_gin_verification" />
+
     <fragment
         android:id="@+id/nav_validate_toteid"
         android:name="com.bflgroup.warehouse.ui.validatetoteid.ValidateToteFragment"
         android:label="@string/menu_validate_tote"
         tools:layout="@layout/fragment_validatetote" />
+
     <fragment
         android:id="@+id/nav_shuttle_task_create"
         android:name="com.bflgroup.warehouse.ui.shuttletask.ShuttleTaskFragment"
