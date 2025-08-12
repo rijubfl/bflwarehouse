@@ -12,6 +12,7 @@
     <string name="menu_logout">Logout</string>
     <string name="app_version">12.09</string>
     <string name="menu_update_box_from_pallet">Update Box from Pallet </string>
+    <string name="menu_receive_shop_returns">Receive Shop Returns</string>
     <string name="menu_update_transfers_from_pallet">Update Transfers from Pallet </string>
     <string name="menu_chute_status_techno">Chute Status (Techno)</string>
     <string name="menu_chute_status_jafza">Chute Status (Jafza)</string>

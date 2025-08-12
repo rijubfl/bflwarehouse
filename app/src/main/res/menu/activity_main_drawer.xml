@@ -204,6 +204,11 @@
                     android:id="@+id/nav_3pl_wh_grn"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_3pl_grn" />
+
+                <item
+                    android:id="@+id/nav_receive_shop_returns"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_receive_shop_returns" />
             </menu>
         </item>
         <item android:title="@string/menu_rerturns_repair">

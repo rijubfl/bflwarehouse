@@ -86,8 +86,45 @@ public class BinPutAwayMultipleToteControl {
                                                         "trfno in (select trfno from bfldata.dbo.verifyGin where trfno = a.trfno) order by TrfDate desc", objGlobal.getConnection());
                                             }
                                             if (!rs.next()) {
-                                                objGlobal.setErrorMessage("Invalid Box / Pallet Number is closed Or GRN is not DONE for - (" + toteId + ") ");
-                                                return false;
+                                                rs = dbConnection.getResultSet("select boxno from usa.dbo.upcboxhead where (ToteID='" + toteId + "' or BoxNo='" + toteId + "') " +
+                                                        "union all " +
+                                                        "select distinct a.boxno from bfldata.dbo.TCMBoxes a,bfldata.dbo.TcmboxesHeader b " +
+                                                        "where a.BoxNo=b.Boxno and (b.TotId='" + toteId + "' or b.Boxno='" + toteId + "') " +
+                                                        "union all " +
+                                                        "select Boxno=palletno from bfldata.dbo.r1pallethead where palletno='" + toteId + "' " +
+                                                        "union all " +
+                                                        "select Boxno=palletno from bfldata.dbo.usapallets where palletno='" + toteId + "' " +
+                                                        "union all " +
+                                                        "select Boxno=palletno from usa.dbo.usapallets where palletno='" + toteId + "' " +
+                                                        "union all " +
+                                                        "select Boxno=palletno from bfldata.dbo.GoodsIssueHead where palletno='" + toteId + "' " +
+                                                        "union all " +
+                                                        "select top 1 Boxno=palletno from abudata.dbo.tcmitemsall where palletno='" + toteId + "' " +
+                                                        "union all " +
+                                                        "select top 1 TrfNo from " + objGlobal.getCountryDbName() + ".dbo.TransferHeader where storeissue='" + toteId + "' or " +
+                                                        "trfno='" + toteId + "'", objGlobal.getConnection());
+                                                if (!rs.next()) {
+                                                    objGlobal.setErrorMessage("Invalid Box / Pallet Number");
+                                                    return false;
+                                                } else {
+                                                    rs = dbConnection.getResultSet("select palletno from bfldata.dbo.GoodsIssueHead where palletno='" + toteId + "'", objGlobal.getConnection());
+                                                    if (!rs.next()) {
+                                                        objGlobal.setErrorMessage("GRN not done for this box");
+                                                        return false;
+                                                    } else {
+                                                        rs = dbConnection.getResultSet("select top 1 TrfNo from " + objGlobal.getCountryDbName() + ".dbo.TransferHeader where storeissue='" + toteId + "' or " +
+                                                                "trfno='" + toteId + "'", objGlobal.getConnection());
+                                                        if (!rs.next()) {
+                                                            objGlobal.setErrorMessage("Transfer not available");
+                                                        } else {
+                                                            objGlobal.setErrorMessage("Box is already closed");
+                                                        }
+                                                        return false;
+                                                    }
+
+                                                }
+                                                // objGlobal.setErrorMessage("Invalid Box / Pallet Number is closed Or GRN is not DONE for - (" + toteId + ") ");
+
                                             } else
                                                 objBinPutAwayMultipleToteGlobal.setBoxNo(rs.getString("Boxno"));
                                         } else
@@ -208,7 +245,7 @@ public class BinPutAwayMultipleToteControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from BinRackMaster where Warehouse='" + warehouse + "' and Barcode='" + location + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from BinRackMaster where Warehouse='RUKOON' and Barcode='" + location + "'", objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Invalid Location, " + location);
                 return false;
@@ -220,7 +257,7 @@ public class BinPutAwayMultipleToteControl {
         }
     }
 
-    public boolean clearScaned(){
+    public boolean clearScaned() {
         if (!checkConnection()) {
             return false;
         }
@@ -228,14 +265,14 @@ public class BinPutAwayMultipleToteControl {
             if (!dbConnection.insertUpdate("delete from tmpToteScan where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 return false;
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             objGlobal.setErrorMessage("BinPutAwayMultipleToteControl:clearScaned:" + ex.toString());
             return false;
         }
         return true;
     }
 
-    public boolean saveBinInOutMultiple(String warehouse, String direction, String location,String toteid) {
+    public boolean saveBinInOutMultiple(String warehouse, String direction, String location, String toteid) {
         b_Result = validateLocation(warehouse, location, direction);
         if (!b_Result) {
             return false;
@@ -262,7 +299,7 @@ public class BinPutAwayMultipleToteControl {
                 }
             }
             if (direction.equals("OUT")) {
-                if(toteid.isEmpty()) {
+                if (toteid.isEmpty()) {
                     if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and Location='" + location + "' and (toteid in(select ToteId from tmpToteScan where " +
                             "DeviceId='" + objGlobal.getDeviceName() + "') or  boxno in(select BoxNo from tmpToteScan where DeviceId='" + objGlobal.getDeviceName() + "'))", objGlobal.getConnection())) {
                         objGlobal.getConnection().rollback();
@@ -294,7 +331,7 @@ public class BinPutAwayMultipleToteControl {
         if (!checkConnection()) {
             return null;
         }
-        int tCount=0;
+        int tCount = 0;
         ArrayList<BinPutAwayMultipleTotePendingSaveTicket> listBinPutAwayMultipleTotePendingSave = new ArrayList<BinPutAwayMultipleTotePendingSaveTicket>();
         try {
             listBinPutAwayMultipleTotePendingSave.clear();

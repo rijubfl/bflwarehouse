@@ -60,6 +60,13 @@
         tools:layout="@layout/fragment_pallet_building" />
 
     <fragment
+        android:id="@+id/nav_receive_shop_returns"
+        android:name="com.bflgroup.warehouse.ui.verifyShopreturns.VerifyShopReturnsFragment"
+        android:label="@string/menu_receive_shop_returns"
+        tools:layout="@layout/fragment_verify_shop_returns" />
+
+
+    <fragment
         android:id="@+id/nav_rack_in_out"
         android:name="com.bflgroup.warehouse.ui.rack.RackInRackOutFragment"
         android:label="@string/menu_rack_in_out"
