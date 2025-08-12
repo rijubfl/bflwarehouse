@@ -63,12 +63,15 @@ public class TransferControl {
         }
         try {
             arr = new ArrayList<String>();
-            if (shopType.equals("E"))
+            if (shopType.equals("E")) {
                 rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Dataname<>'' and ExportActive='Y' order by ShopName", objGlobal.getConnection());
-            else if (shopType.equals("D"))
+            } else if (shopType.equals("D")) {
                 rs = dbConnection.getResultSet("select ShopName=Result from bfldata.dbo.robodcresult order by ShopName", objGlobal.getConnection());
-            else
+            } else if(shopType.equals("T")) {
+                rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Concept='P2EXP' order by ShopName", objGlobal.getConnection());
+            } else {
                 rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Dataname<>'' order by ShopName", objGlobal.getConnection());
+            }
             while (rs.next()) {
                 arr.add(rs.getString("ShopName"));
             }
@@ -100,6 +103,8 @@ public class TransferControl {
                 if (scanType.equals("D")) //add validation if needed
                     return true;
                 if (scanType.equals("P"))
+                    return true;
+                if(scanType.equals("T"))
                     return true;
             }
             if (!rcFound) {
@@ -267,7 +272,6 @@ public class TransferControl {
                 trfDate = rs.getString("entrydate");
                 description = rs.getString("descr");
             }
-
 
             if (shopName.isEmpty() || itemCode.isEmpty() || barcode.isEmpty() || trfDate.isEmpty() || description.isEmpty()) {
                 objGlobal.setErrorMessage("Pair information is not found, rfid:" + rfid);
@@ -655,18 +659,18 @@ public class TransferControl {
         try {
             objTransferGlobal.setShopName("");
             objTransferGlobal.setBoxTrfBoxNo("");
-            if(contno.equals("")) {
+            if (contno.equals("")) {
                 rs = dbConnection.getResultSet("select boxno,contno=replace(substring(BoxNo,1, CHARINDEX('-',boxno)),'-','') from usa.dbo.upcboxhead " +
                         "where (toteid='" + scan + "' or boxno='" + scan + "') and closed='N'", objGlobal.getConnection());
                 while (rs.next()) {
                     boxno = rs.getString("boxno");
                     contno = rs.getString("contno");
-                    if(!contno.equals("")) {
-                        rs = dbConnection.getResultSet("select top 1 * from usa.dbo.openusa where contno='" + contno + "'", objGlobal.getConnection());
+                    if (!contno.equals("")) {
+                        /*rs = dbConnection.getResultSet("select top 1 * from usa.dbo.openusa where contno='" + contno + "'", objGlobal.getConnection());
                         if (!rs.next()) {
                             objGlobal.setErrorMessage("Please Open the below container (" + contno + ") to proceed");
                             return false;
-                        }
+                        }*/
                         rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='" + contno + "'", objGlobal.getConnection());
                         if (!rs.next()) {
                             objGlobal.setErrorMessage("Please Purchase the container (" + contno + ") to proceed");
@@ -675,19 +679,19 @@ public class TransferControl {
                     }
                 }
             }
-            if(contno.equals("")) {
+            if (contno.equals("")) {
                 rs = dbConnection.getResultSet("select DISTINCT BoxNo,ContNo = (CASE WHEN ISNULL(RoboContno, '') = '' THEN '' WHEN CHARINDEX('-', RoboContno) > 0 THEN " +
-                        "LEFT(RoboContno, CHARINDEX('-', RoboContno) - 1) ELSE RoboContno END) from usa.dbo.vUPCBoxDet " +
-                        "where (BoxNo='" + scan + "' or ToteID='" + scan + "') and Closed='N' and RoboContno<>''", objGlobal.getConnection());
+                        "LEFT(RoboContno, CHARINDEX('-', RoboContno) - 1) ELSE RoboContno END) from usa.dbo.vUPCBoxDet where (BoxNo='" + scan + "' or ToteID='" + scan + "') and " +
+                        "Closed='N' and RoboContno<>''", objGlobal.getConnection());
                 while (rs.next()) {
                     boxno = rs.getString("boxno");
                     contno = rs.getString("contno");
-                    if(!contno.equals("")) {
-                        rs = dbConnection.getResultSet("select top 1 * from usa.dbo.openusa where contno='" + contno + "'", objGlobal.getConnection());
+                    if (!contno.equals("")) {
+                        /*rs = dbConnection.getResultSet("select top 1 * from usa.dbo.openusa where contno='" + contno + "'", objGlobal.getConnection());
                         if (!rs.next()) {
                             objGlobal.setErrorMessage("Please Open the below container (" + contno + ") to proceed");
                             return false;
-                        }
+                        }*/
                         rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='" + contno + "'", objGlobal.getConnection());
                         if (!rs.next()) {
                             objGlobal.setErrorMessage("Please Purchase the container (" + contno + ") to proceed");
@@ -718,6 +722,88 @@ public class TransferControl {
             }
             if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Qty,ScanTime,HoQty) select '" + objGlobal.getDeviceName() + "','" + shopName + "','',Itemcode," +
                     "itemcode,sum(qty),convert(varchar,getdate(),8),0 from usa.dbo.vupcboxdet where boxno='" + boxno + "' and closed='N' group by Itemcode", objGlobal.getConnection())) {
+                return false;
+            }
+            if (objGlobal.getWorkLocation().equals("UAE")) {
+                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set HoQty=b.quantity from bfldata.dbo.tmpRfidPdaTransferItems a,hodata.dbo.locstock b where " +
+                        "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode and b.costcode='001' and loccode='01'", objGlobal.getConnection())) {
+                    return false;
+                }
+            } else {
+                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set HoQty=b.quantity from bfldata.dbo.tmpRfidPdaTransferItems a," + objGlobal.getCountryDbName() + ".dbo.locstock b where " +
+                        "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode and b.costcode='" + objGlobal.getExportCountryCostCode() + "' and loccode='" + objGlobal.getExportCountryLocCode() + "'", objGlobal.getConnection())) {
+                    return false;
+                }
+            }
+            if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set description=b.description from bfldata.dbo.tmpRfidPdaTransferItems a,hodata.dbo.itemmaster b where " +
+                    "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode", objGlobal.getConnection())) {
+                return false;
+            }
+            String emptyDesc = "", zeroStock = "";
+            rs = dbConnection.getResultSet("select itemcode,Description=isnull(Description,''),diffqty=isnull(HoQty,0)-qty,HoQty=isnull(HoQty,0) from bfldata.dbo.tmpRfidPdaTransferItems " +
+                    "where (isnull(Description,'')='' or isnull(HoQty,0)<qty) and DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+            while (rs.next()) {
+                if (rs.getString("Description").equals("")) {
+                    if (emptyDesc.equals(""))
+                        emptyDesc = rs.getString("itemcode");
+                    else
+                        emptyDesc = emptyDesc + ", " + rs.getString("itemcode");
+                }
+                if (rs.getInt("diffqty") <= 0) {
+                    if (zeroStock.equals(""))
+                        zeroStock = rs.getString("itemcode") + " (" + rs.getString("HoQty") + ")";
+                    else
+                        zeroStock = zeroStock + ", " + rs.getString("itemcode") + " (" + rs.getString("HoQty") + ")";
+                }
+            }
+            if (!emptyDesc.equals("")) {
+                objGlobal.setErrorMessage("Can't Proceed, Some items are invalid " + System.lineSeparator() + "(" + emptyDesc + ")");
+                return false;
+            }
+            if (!zeroStock.equals("")) {
+                objGlobal.setErrorMessage("Can't Proceed, HO Stock not available " + System.lineSeparator() + "(" + zeroStock + ")");
+                return false;
+            }
+            objTransferGlobal.setShopName(shopName);
+            objTransferGlobal.setBoxTrfBoxNo(boxno);
+            return true;
+        } catch (Exception e) {
+            objGlobal.setErrorMessage("TransferControl.validateBoxPallet : " + e);
+            return false;
+        }
+    }
+
+    public boolean validateTransferToExp(String selshop,String scan) {
+        String trfno="";
+        if (!checkConnection()) {
+            return false;
+        }
+        try {
+            objTransferGlobal.setShopName("");
+            objTransferGlobal.setBoxTrfBoxNo("");
+            rs = dbConnection.getResultSet("select top 1 trfno from " + objGlobal.getCountryDbName() + ".dbo.TransferHeader where (TrfNo='" + scan + "' or storeissue='" + scan + "') and " +
+                    "CostCodeTo='" + objGlobal.getExportCountryCostCode() + "' and LocCodeTo='" + objGlobal.getExportCountryLocCode() + "' order by trfdate desc", objGlobal.getConnection());
+            if (!rs.next()) {
+                objGlobal.setErrorMessage("Invalid Transfer");
+                return false;
+            } else {
+                trfno=rs.getString("trfno");
+            }
+            rs = dbConnection.getResultSet("select top 1 * from BFLDATA.dbo.CloseR1pallet where Palletno='" + trfno + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Can't proceed, Transfer (" + trfno + ") is already closed");
+                return false;
+            }
+            rs = dbConnection.getResultSet("select top 1 * from RACKS..BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and (ToteId='" + trfno + "' or BoxNo='" + trfno + "')", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Can't proceed, Box/Transfer (" + trfno + ") is still in the RACK(" + rs.getString("Location") + "), please do out from rack");
+                return false;
+            }
+            if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+                return false;
+            }
+            if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Qty,ScanTime,HoQty) select '" + objGlobal.getDeviceName() + "','" + selshop + "','',Itemcode," +
+                    "itemcode,sum(quantity),convert(varchar,getdate(),8),0 from " + objGlobal.getCountryDbName() + ".dbo.TransferDetail where TrfNo='" + trfno + "' group by Itemcode", objGlobal.getConnection())) {
                 return false;
             }
             if (objGlobal.getWorkLocation().equals("UAE")) {
@@ -760,8 +846,8 @@ public class TransferControl {
                 objGlobal.setErrorMessage("Can't Proceed, HO Stock not available " + System.lineSeparator() + "("+ zeroStock +")");
                 return false;
             }
-            objTransferGlobal.setShopName(shopName);
-            objTransferGlobal.setBoxTrfBoxNo(boxno);
+            objTransferGlobal.setShopName(selshop);
+            objTransferGlobal.setBoxTrfBoxNo(trfno);
             return true;
         } catch (Exception e) {
             objGlobal.setErrorMessage("TransferControl.validateBoxPallet : " + e);

@@ -397,7 +397,6 @@ public class UsaBoxBuildingControl {
     public boolean saveBox(String palletType, String groupCode, String catCode, String remarks, String taskType, String doneBy, String fSize, String gender, String toteID, String buildTyp, String euro) {
         try {
             String boxPType = "";
-            String pltRemarks = "Euro Pallet Building in A-PDA/" + objGlobal.getUserName();
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) return false;
             b_Result = getBoxNumber(buildTyp);
             if (!b_Result) return false;
@@ -411,7 +410,7 @@ public class UsaBoxBuildingControl {
                     boxPType = "TP";
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.R1PalletHead(SN,PalletNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,UserId,PalletType,Closed,GrNo,PltNo,WHouse,FWType,FPreparedBy,FPalletType) " +
                             "values(" + objUsaBoxBuildingGlobal.getPalletSno() + ",'" + objUsaBoxBuildingGlobal.getPalletNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "',''," +
-                            "'" + objGlobal.getUserName() + "','" + pltRemarks + "'," + objGlobal.getUserId() + ",'" + palletType + "','N',0,0,'" + objGlobal.getWarehouse() + "','','','" + palletType + "')", objGlobal.getConnection())) {
+                            "'" + objGlobal.getUserName() + "','" + remarks + "'," + objGlobal.getUserId() + ",'" + palletType + "','N',0,0,'" + objGlobal.getWarehouse() + "','','','" + palletType + "')", objGlobal.getConnection())) {
                         objGlobal.getConnection().rollback();
                         return false;
                     }
@@ -479,7 +478,7 @@ public class UsaBoxBuildingControl {
                 if (euro.equals("Y")) {
                     boxPType = "UP";
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.usapallets(Sn,TrnDate,PalletNo,UserId,Remarks,Closed,ContNo,WHouse) values (" + objUsaBoxBuildingGlobal.getPalletSno() + "," +
-                            "'" + objGlobal.getServerDate() + "','" + objUsaBoxBuildingGlobal.getPalletNo() + "'," + objGlobal.getUserId() + ",'" + pltRemarks + "','N','','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
+                            "'" + objGlobal.getServerDate() + "','" + objUsaBoxBuildingGlobal.getPalletNo() + "'," + objGlobal.getUserId() + ",'" + remarks + "','N','','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
                         return false;
                     }
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.usapalletsdet(Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details,ToteID) select top 1 " + objUsaBoxBuildingGlobal.getPalletSno() + "," +
@@ -513,7 +512,6 @@ public class UsaBoxBuildingControl {
             return false;
         }
     }
-
 
     private String FindHour(int Hour) {
         String FindHour = "";

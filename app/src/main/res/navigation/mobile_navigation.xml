@@ -204,6 +204,12 @@
         tools:layout="@layout/fragment_receive_shop_returns" />
 
     <fragment
+        android:id="@+id/nav_shop_return_verify"
+        android:name="com.bflgroup.warehouse.ui.shopreturnverify.VerifyShopReturnsFragment"
+        android:label="@string/menu_shop_return_verify"
+        tools:layout="@layout/fragment_verify_shop_returns" />
+
+    <fragment
         android:id="@+id/nav_blue_tote_transfer"
         android:name="com.bflgroup.warehouse.ui.transferbluetotote.single.TransferBlueToteFragment"
         android:label="@string/menu_blue_tote_transfer"

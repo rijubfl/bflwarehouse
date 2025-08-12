@@ -24,7 +24,7 @@ public class RoboApi {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("ChuteId", chuteid);
-            if (objGlobal.getWorkLocation().equals("UAE")) {
+            if (objGlobal.getWarehouse().equals("TECHNO")) {
                 jsonObject.put("status", strStatus);
             } else {
                 jsonObject.put("status", blStatus);
@@ -39,7 +39,7 @@ public class RoboApi {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             if (statusCode == 200) {
-                                if (objGlobal.getWorkLocation().equals("UAE")) {
+                                if (objGlobal.getWarehouse().equals("TECHNO")) {
                                     callback.onSucess(statusCode);
                                 } else {
                                     try {

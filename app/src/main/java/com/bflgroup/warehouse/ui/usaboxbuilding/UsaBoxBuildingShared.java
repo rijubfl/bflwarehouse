@@ -87,4 +87,11 @@ public class UsaBoxBuildingShared {
     }
     public String loadEuro(){ return sharedRef.getString("Euro",""); }
 
+    public void savePrintCopy(String PrintCopy){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("PrintCopy",PrintCopy);
+        editor.commit();
+    }
+    public String loadPrintCopy(){ return sharedRef.getString("PrintCopy",""); }
+
 }

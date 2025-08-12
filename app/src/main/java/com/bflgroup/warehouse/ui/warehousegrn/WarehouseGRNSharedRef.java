@@ -44,4 +44,11 @@ public class WarehouseGRNSharedRef {
     }
     public String loadCountry(){ return sharedRef.getString("country",""); }
 
+    public void saveAutoPost(String autopost){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("autopost",autopost);
+        editor.commit();
+    }
+    public String loadAutoPost(){ return sharedRef.getString("autopost",""); }
+
 }

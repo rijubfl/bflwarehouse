@@ -23,6 +23,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -47,6 +48,7 @@ public class WarehouseGRNFragment extends Fragment {
     private Spinner sp_wh_grn_country;
     private TextView et_wh_grn_warehouse_from;
     private TextView et_wh_grn_warehouse_to;
+    private CheckBox ch_wh_grn_autopost;
     private Button bt_wh_grn_scan_item;
     private ListView lv_wh_grn_details;
     private Button bt_wh_grn_clear;
@@ -56,6 +58,7 @@ public class WarehouseGRNFragment extends Fragment {
     private TextView tv_wh_grn_total_plt_box_count;
     private TextView tv_wh_grn_total_plt_box_scan_count;
 
+    private CheckBox ch_warehouse_grn_new_popup_allow_pallet_scan;
     private EditText et_warehouse_grn_new_popup_scan;
     private Button bt_warehouse_grn_new_popup_scan;
     private TextView tv_warehouse_grn_new_popup_last_scan;
@@ -78,8 +81,7 @@ public class WarehouseGRNFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_warehouse_g_r_n_new, container, false);
         et_wh_grn_ginno = (EditText) view.findViewById(R.id.et_wh_grn_ginno);
         tv_wh_grn_gindate = (TextView) view.findViewById(R.id.tv_wh_grn_gindate);
@@ -87,6 +89,7 @@ public class WarehouseGRNFragment extends Fragment {
         sp_wh_grn_country = (Spinner) view.findViewById(R.id.sp_wh_grn_country);
         et_wh_grn_warehouse_from = (TextView) view.findViewById(R.id.et_wh_grn_warehouse_from);
         et_wh_grn_warehouse_to = (TextView) view.findViewById(R.id.et_wh_grn_warehouse_to);
+        ch_wh_grn_autopost = (CheckBox) view.findViewById(R.id.ch_wh_grn_autopost);
         bt_wh_grn_scan_item = (Button) view.findViewById(R.id.bt_wh_grn_scan_item);
         lv_wh_grn_details = (ListView) view.findViewById(R.id.lv_wh_grn_details);
         bt_wh_grn_clear = (Button) view.findViewById(R.id.bt_wh_grn_clear);
@@ -106,6 +109,12 @@ public class WarehouseGRNFragment extends Fragment {
             tv_wh_grn_gindate.setText(saredRef.loadGinDate());
             et_wh_grn_warehouse_from.setText(saredRef.loadWHFrom());
             et_wh_grn_warehouse_to.setText(saredRef.loadWHTo());
+            ch_wh_grn_autopost.setChecked(false);
+            ch_wh_grn_autopost.setTextColor(Color.BLACK);
+            if(saredRef.loadAutoPost().equals("Y")) {
+                ch_wh_grn_autopost.setTextColor(Color.RED);
+                ch_wh_grn_autopost.setChecked(true);
+            }
             et_wh_grn_ginno.setEnabled(false);
             sp_wh_grn_country.setEnabled(false);
             bt_wh_grn_scan_gin.setEnabled(false);
@@ -191,6 +200,7 @@ public class WarehouseGRNFragment extends Fragment {
         myDialog.setCancelable(false);
         myDialog.setContentView(R.layout.warehouse_grn_new_popup_items_scan);
 
+        ch_warehouse_grn_new_popup_allow_pallet_scan = (CheckBox) myDialog.findViewById(R.id.ch_warehouse_grn_new_popup_allow_pallet_scan);
         et_warehouse_grn_new_popup_scan = (EditText) myDialog.findViewById(R.id.et_warehouse_grn_new_popup_scan);
         bt_warehouse_grn_new_popup_scan = (Button) myDialog.findViewById(R.id.bt_warehouse_grn_new_popup_scan);
         tv_warehouse_grn_new_popup_last_scan = (TextView) myDialog.findViewById(R.id.tv_warehouse_grn_new_popup_last_scan);
@@ -235,10 +245,12 @@ public class WarehouseGRNFragment extends Fragment {
     }
 
     void scanItemcode() {
+        String allowScanPalletWise = "N";
+        if (ch_warehouse_grn_new_popup_allow_pallet_scan.isChecked()) allowScanPalletWise = "Y";
         String scanVal = et_warehouse_grn_new_popup_scan.getText().toString().trim().toUpperCase();
         tv_warehouse_grn_new_popup_last_scan.setText(scanVal);
         et_warehouse_grn_new_popup_scan.setText("");
-        b_Result = objWarehouseGRNNewControl.validateScanPalletOrBox(scanVal);
+//        b_Result = objWarehouseGRNNewControl.validateScanPalletOrBox(scanVal);
         if (!b_Result) {
             okMessage("Warehouse GRN", objGlobal.getErrorMessage());
         }
@@ -399,6 +411,14 @@ public class WarehouseGRNFragment extends Fragment {
                 tv_wh_grn_gindate.setText(objWarehouseGRNNewGlobal.getGinDate());
                 et_wh_grn_warehouse_from.setText(objWarehouseGRNNewGlobal.getWarehouseFrom());
                 et_wh_grn_warehouse_to.setText(objWarehouseGRNNewGlobal.getWarehouseTo());
+                ch_wh_grn_autopost.setChecked(false);
+                ch_wh_grn_autopost.setTextColor(Color.BLACK);
+                saredRef.saveAutoPost("N");
+                if(objWarehouseGRNNewGlobal.getAutoPost().equals("Y")) {
+                    ch_wh_grn_autopost.setTextColor(Color.RED);
+                    ch_wh_grn_autopost.setChecked(true);
+                    saredRef.saveAutoPost("Y");
+                }
                 saredRef.saveGinNo(ginNo);
                 saredRef.saveCountry(country);
                 saredRef.saveGinDate(objWarehouseGRNNewGlobal.getGinDate());
@@ -417,8 +437,7 @@ public class WarehouseGRNFragment extends Fragment {
 
     private class SaveGRN extends AsyncTask<Void, Void, Integer> {
         private ProgressDialog dialog;
-        String ginNo = et_wh_grn_ginno.getText().toString();
-        String country = sp_wh_grn_country.getSelectedItem().toString();
+        String ginNo, country, whfrom, whto, auto;
 
         public SaveGRN() {
             dialog = new ProgressDialog(getContext());
@@ -431,12 +450,18 @@ public class WarehouseGRNFragment extends Fragment {
             dialog.setCancelable(false);
             dialog.show();
             super.onPreExecute();
+
+            ginNo = et_wh_grn_ginno.getText().toString();
+            country = sp_wh_grn_country.getSelectedItem().toString();
+            whfrom = et_wh_grn_warehouse_from.getText().toString();
+            whto = et_wh_grn_warehouse_to.getText().toString();
+            auto = ch_wh_grn_autopost.isChecked() ? "Y" : "N";
         }
 
         @Override
         protected Integer doInBackground(Void... args) {
             try {
-                b_Result = objWarehouseGRNNewControl.validateGrn(country, ginNo);
+                b_Result = objWarehouseGRNNewControl.validateGrn(country, ginNo, auto,whfrom,whto);
                 if (!b_Result) return 0;
             } catch (Exception e) {
                 objGlobal.setErrorMessage(e.toString());
@@ -453,7 +478,7 @@ public class WarehouseGRNFragment extends Fragment {
                 }
                 okMessage("Save Warehouse GRN", objGlobal.getErrorMessage());
             } else {
-                b_Result = objWarehouseGRNNewControl.grnSave(country, "");
+                b_Result = objWarehouseGRNNewControl.grnSave(country, "", auto, whfrom, whto);
                 if (!b_Result) {
                     okMessage("Save Warehouse GRN", objGlobal.getErrorMessage());
                     vibrate(500);
@@ -541,6 +566,9 @@ public class WarehouseGRNFragment extends Fragment {
             tv_wh_grn_gindate.setText("");
             et_wh_grn_warehouse_to.setText("");
             et_wh_grn_warehouse_from.setText("");
+            ch_wh_grn_autopost.setChecked(false);
+            ch_wh_grn_autopost.setTextColor(Color.BLACK);
+            saredRef.saveAutoPost("N");
             saredRef.saveGinNo("");
             saredRef.saveGinDate("");
             et_wh_grn_ginno.setEnabled(true);

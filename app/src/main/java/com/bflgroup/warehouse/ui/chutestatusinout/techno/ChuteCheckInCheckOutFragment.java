@@ -383,7 +383,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                                     objRoboApi.postSortTask(getContext(), chuteId, shopId, shopName, totId, objInOutGlobal.getChuteNo(), objInOutGlobal.getTrfRecNo(), objInOutGlobal.getTrfRecNo(), objInOutGlobal.getBatchCode(), new RoboApiCallback() {
                                         @Override
                                         public void onSucess(int statuscode) {
-                                            if (!objChuteCheckInCheckOutControl.updateChuteApi("SortTaskApi", shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo())) {
+                                            if (!objChuteCheckInCheckOutControl.updateChuteApi(shopId, objInOutGlobal.getTrfRecNo(), objInOutGlobal.getChuteNo())) {
                                                 clearAll();
                                                 vibrate(500);
                                                 if (dialog.isShowing()) dialog.dismiss();

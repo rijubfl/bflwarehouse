@@ -40,6 +40,7 @@ public class TransferReceiptJafza {
         float totalAmt = 0, fcRate = 1;
 
         try {
+            objInOutJafzaGlobal.setLabelInfo("");
             objInOutJafzaGlobal.setTrfRecNo("");
             if (!dbConnection.insertUpdate("delete from ROBOTICS.dbo.tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", con)) {
                 objGlobal.setErrorNo("transferReceipt:001");

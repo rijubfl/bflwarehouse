@@ -198,7 +198,7 @@ public class DivisionSeperationControl {
         }
         try {
             arr = new ArrayList<String>();
-            rs = dbConnection.getResultSet("select ShopName from BFLDATA.dbo.DataSettings where FCCode<>'ROB' and (FCCode='AED' or ExportActive='Y') and RetailNext='Y' order by 1", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select ShopName from BFLDATA.dbo.DataSettings where FCCode<>'ROB' and (FCCode='AED' or ExportActive='Y') order by 1", objGlobal.getConnection());
             while (rs.next()) {
                 arr.add(rs.getString("ShopName"));
             }

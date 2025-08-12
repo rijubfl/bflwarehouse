@@ -142,7 +142,7 @@
             android:hint=""
             android:textStyle="bold"
             android:padding="6dp"
-            android:text="Tote ID / Pallet"
+            android:text="Tote ID"
             android:textColor="@color/coloBlack"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"

@@ -200,10 +200,6 @@ public class DepartmentGrnFragment extends Fragment {
 
         });
 
-
-
-
-
         if(!objPalletBoxCountShared.loadPalletno().equals("")){
 
             et_rack_in_out_pallettop.setText(objPalletBoxCountShared.loadPalletno());
@@ -211,8 +207,11 @@ public class DepartmentGrnFragment extends Fragment {
             sp_rack_in_out_warehouseFrom.setSelection(arrayAdp1.getPosition(objPalletBoxCountShared.loadWarehouseFrom().toString()));
             sp_rack_in_out_warehouseTo.setSelection(arrayAdp1.getPosition(objPalletBoxCountShared.loadWarehouseTO().toString()));
 
-            listBinScanToteId = objPalletBoxCountControl.loadPalletDetails(objPalletBoxCountShared.loadPalletno(),sp_rack_in_out_warehouseTo.getSelectedItem().toString());
-
+            try {
+                listBinScanToteId = objPalletBoxCountControl.loadPalletDetails(objPalletBoxCountShared.loadPalletno(), sp_rack_in_out_warehouseTo.getSelectedItem().toString());
+            } catch(Exception e) {
+                okMessage("",e.toString());
+            }
             et_rack_in_out_pallettop.setEnabled(false);
             sp_rack_in_out_warehouseTo.setEnabled(false);
             sp_rack_in_out_warehouseFrom.setEnabled(false);
@@ -743,8 +742,6 @@ public class DepartmentGrnFragment extends Fragment {
         objPalletBoxCountShared.savePalletno("");
         objPalletBoxCountShared.saveWarehouseTo("");
         objPalletBoxCountShared.saveWarehouseFrom("");
-
-
 
         box_count_pallet1.setText("");
         if (objPalletBoxCountControl.deletetmp()) {

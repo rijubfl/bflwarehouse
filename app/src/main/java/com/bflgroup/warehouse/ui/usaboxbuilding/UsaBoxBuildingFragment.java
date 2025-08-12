@@ -65,6 +65,7 @@ public class UsaBoxBuildingFragment extends Fragment {
     Boolean flagEdit;
 
     private Spinner sp_usa_box_printer;
+    private Spinner sp_usa_box_printer_copies;
     private TextView tv_usa_box_pallettype_select;
     private TextView tv_usa_box_pallettype;
     private TextView tv_usa_box_boxprefix;
@@ -131,6 +132,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_usa_box_building, container, false);
 
         sp_usa_box_printer = (Spinner) view.findViewById(R.id.sp_usa_box_printer);
+        sp_usa_box_printer_copies = (Spinner) view.findViewById(R.id.sp_usa_box_printer_copies);
         tv_usa_box_pallettype_select = (TextView) view.findViewById(R.id.tv_usa_box_pallettype_select);
         tv_usa_box_pallettype = (TextView) view.findViewById(R.id.tv_usa_box_pallettype);
         tv_usa_box_boxprefix = (TextView) view.findViewById(R.id.tv_usa_box_boxprefix);
@@ -148,13 +150,13 @@ public class UsaBoxBuildingFragment extends Fragment {
         et_usa_box_remarks = (EditText) view.findViewById(R.id.et_usa_box_remarks);
         tv_usa_box_last_box = (TextView) view.findViewById(R.id.tv_usa_box_last_box);
         tv_usa_box_building_category = (TextView) view.findViewById(R.id.tv_usa_box_building_category);
-        rb_usa_box_usa_category  = (RadioButton) view.findViewById(R.id.rb_usa_box_usa_category);
+        rb_usa_box_usa_category = (RadioButton) view.findViewById(R.id.rb_usa_box_usa_category);
         rb_usa_box_tcm_category = (RadioButton) view.findViewById(R.id.rb_usa_box_tcm_category);
         ch_usa_box_euro = (CheckBox) view.findViewById(R.id.ch_usa_box_euro);
         ch_usa_box_reprint = (CheckBox) view.findViewById(R.id.ch_usa_box_reprint);
         et_usa_contno = (EditText) view.findViewById(R.id.et_usa_contno);
 
-        flagEdit=false;
+        flagEdit = false;
         saredRef = new UsaBoxBuildingShared(getContext());
         formLoad();
         et_usa_box_toteid.setOnTouchListener(new View.OnTouchListener() {
@@ -183,42 +185,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         bt_usa_box_add_items.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(tv_usa_box_pallettype.getText().toString())) {
-                    okMessage("USABox Build", "Please select pallettype");
-                    tv_usa_box_pallettype_select.requestFocus();
-                } else if (sp_usa_box_printer.getSelectedItem().toString().isEmpty() || sp_usa_box_printer.getSelectedItem().toString().equals("--Select--")) {
-                    okMessage("USABox Build", "Please select pallettype");
-                    sp_usa_box_printer.requestFocus();
-                } else {
-                    tv_usa_box_pallettype_select.setEnabled(false);
-                    sp_usa_box_size.setEnabled(false);
-                    sp_usa_box_gender.setEnabled(false);
-                    sp_usa_box_task.setEnabled(false);
-                    sp_usa_box_done.setEnabled(false);
-                    rb_usa_box_usa_category.setEnabled(false);
-                    rb_usa_box_tcm_category.setEnabled(false);
-                    ch_usa_box_euro.setEnabled(false);
-                    sp_usa_box_printer.setEnabled(false);
-                    ch_usa_box_reprint.setEnabled(false);
-
-                    saredRef.savePltType(tv_usa_box_pallettype.getText().toString());
-                    saredRef.savePltTypeName(tv_usa_box_pallettype_select.getText().toString());
-                    saredRef.saveAllowMixCategory(tv_usa_box_pallettype_allowmix.getText().toString());
-                    saredRef.saveSize(sp_usa_box_size.getSelectedItem().toString());
-                    saredRef.saveSPType(tv_usa_box_pallettype_build_sec.getText().toString());
-                    saredRef.saveGender(sp_usa_box_gender.getSelectedItem().toString());
-                    saredRef.saveTask(sp_usa_box_task.getSelectedItem().toString());
-                    saredRef.saveDone(sp_usa_box_done.getSelectedItem().toString());
-                    if(rb_usa_box_usa_category.isChecked()) {
-                        saredRef.saveBuildType("USA");
-                    }
-                    if(rb_usa_box_tcm_category.isChecked()) {
-                        saredRef.saveBuildType("TCM");
-                    }
-                    saredRef.saveEuro("N");
-                    if(ch_usa_box_euro.isChecked()) {
-                        saredRef.saveEuro("Y");
-                    }
+                if (scanItem()) {
                     openPopupWindow();
                 }
             }
@@ -260,17 +227,17 @@ public class UsaBoxBuildingFragment extends Fragment {
                 String spcitems = tv_usa_box_pallettype_build_sec.getText().toString();
                 String remarks = et_usa_box_remarks.getText().toString();
                 remarks = remarks + "/A-PDA";
-                String nRemarks = remarks;
+                String nRemarks = remarks.replace("'", "");
                 String taskType = sp_usa_box_task.getSelectedItem().toString().replace("N/A", "");
                 String doneBy = sp_usa_box_done.getSelectedItem().toString().replace("N/A", "");
                 String fSize = sp_usa_box_size.getSelectedItem().toString().replace("N/A", "");
                 String gender = sp_usa_box_gender.getSelectedItem().toString().replace("N/A", "");
                 String toteID = et_usa_box_toteid.getText().toString().toUpperCase().trim();
-                String buildType="", euro="";
+                String buildType = "", euro = "";
                 String finalBuildType, finalEuro;
-                if(rb_usa_box_usa_category.isChecked()) buildType = "USA";
-                if(rb_usa_box_tcm_category.isChecked()) buildType = "TCM";
-                if(ch_usa_box_euro.isChecked()) euro="Y";
+                if (rb_usa_box_usa_category.isChecked()) buildType = "USA";
+                if (rb_usa_box_tcm_category.isChecked()) buildType = "TCM";
+                if (ch_usa_box_euro.isChecked()) euro = "Y";
                 finalBuildType = buildType;
                 finalEuro = euro;
                 b_Result = objUsaBoxBuildingControl.validateMain(printer, palletType, "", "", nRemarks, taskType, doneBy, fSize, gender, toteID, allowMix, buildType, euro, spcitems);
@@ -288,15 +255,17 @@ public class UsaBoxBuildingFragment extends Fragment {
                                     if (!b_Result) {
                                         okMessage("USABox Build", "bt_usa_box_save:" + objGlobal.getErrorMessage());
                                     } else {
-                                        b_Result =objUsaBoxBuildingControl.forPrint(objUsaBoxBuildingGlobal.getBoxNo());
+                                        b_Result = objUsaBoxBuildingControl.forPrint(objUsaBoxBuildingGlobal.getBoxNo());
                                         if (!b_Result) {
                                             okMessage("Upc Box", objGlobal.getErrorMessage());
                                         } else {
                                             if (!objUsaBoxBuildingGlobal.getBoxNo().isEmpty()) {
                                                 if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
-                                                    if (!printSticker(printer)) {
-                                                        okMessage("Transfer", "Printer Error, Pleasse reprint..");
-                                                        vibrate(100);
+                                                    if (!sp_usa_box_printer_copies.getSelectedItem().toString().equals("0")) {
+                                                        if (!printSticker(printer)) {
+                                                            okMessage("Transfer", "Printer Error, Pleasse reprint..");
+                                                            vibrate(100);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -323,7 +292,7 @@ public class UsaBoxBuildingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Dialog dialog;
-                List<String> arr1=objUsaBoxBuildingControl.loadSpinner("PT");
+                List<String> arr1 = objUsaBoxBuildingControl.loadSpinner("PT");
                 if (arr1.isEmpty()) {
                     okMessage("Stock Taking", objGlobal.getErrorMessage());
                 } else {
@@ -334,7 +303,7 @@ public class UsaBoxBuildingFragment extends Fragment {
                     dialog.show();
                     EditText editText = dialog.findViewById(R.id.edit_text);
                     ListView listView = dialog.findViewById(R.id.list_view);
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,  arr1);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, arr1);
                     listView.setAdapter(adapter);
                     editText.addTextChangedListener(new TextWatcher() {
                         @Override
@@ -358,8 +327,8 @@ public class UsaBoxBuildingFragment extends Fragment {
                             tv_usa_box_pallettype.setText("");
                             if (!TextUtils.equals(selVal, "N/A")) {
                                 tv_usa_box_pallettype.setText(selVal.substring(0, 2).trim());
-                                b_Result=objUsaBoxBuildingControl.getPalletTypeDetails(tv_usa_box_pallettype.getText().toString());
-                                if(b_Result){
+                                b_Result = objUsaBoxBuildingControl.getPalletTypeDetails(tv_usa_box_pallettype.getText().toString());
+                                if (b_Result) {
                                     tv_usa_box_pallettype_allowmix.setText(objUsaBoxBuildingGlobal.getBuildCategoryMixAllow());
                                     tv_usa_box_pallettype_build_sec.setText(objUsaBoxBuildingGlobal.getBuildSpecialPtype());
                                 } else {
@@ -378,12 +347,16 @@ public class UsaBoxBuildingFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (buttonView.isChecked()) {
                     String printer = sp_usa_box_printer.getSelectedItem().toString();
-                    if (printer.isEmpty() || printer.equals("--Select--")) {
-                        okMessage("Upc Box", "Please select printer");
-                        ch_usa_box_reprint.setChecked(false);
-                        vibrate(100);
+                    String printCopies = sp_usa_box_printer_copies.getSelectedItem().toString();
+                    if (printCopies.equals("0")) {
                     } else {
-                        openPopupReprint();
+                        if (printer.isEmpty() || printer.equals("--Select--")) {
+                            okMessage("UPC Box", "Please select printer");
+                            ch_usa_box_reprint.setChecked(false);
+                            vibrate(100);
+                        } else {
+                            openPopupReprint();
+                        }
                     }
                 } else {
                     // not checked
@@ -391,11 +364,15 @@ public class UsaBoxBuildingFragment extends Fragment {
             }
         });
 
-        searchflags = false;
-        objSample_Print = new BarcodePrinting();
-        bluetoothPort = BluetoothPort.getInstance();
-        bluetoothPort.SetMacFilter(false);
-        Init_BluetoothSet();
+        try {
+            searchflags = false;
+            objSample_Print = new BarcodePrinting();
+            bluetoothPort = BluetoothPort.getInstance();
+            bluetoothPort.SetMacFilter(false);
+            Init_BluetoothSet();
+        } catch (Exception e) {
+            okMessage("UPC Box", e.toString());
+        }
 
         return view;
     }
@@ -483,6 +460,55 @@ public class UsaBoxBuildingFragment extends Fragment {
         }
     }
 
+    private boolean scanItem() {
+        if (TextUtils.isEmpty(tv_usa_box_pallettype.getText().toString())) {
+            okMessage("USABox Build", "Please select pallettype");
+            tv_usa_box_pallettype_select.requestFocus();
+            return false;
+        }
+        if (!sp_usa_box_printer_copies.getSelectedItem().toString().equals("0")) {
+            if (sp_usa_box_printer.getSelectedItem().toString().isEmpty() || sp_usa_box_printer.getSelectedItem().toString().equals("--Select--")) {
+                okMessage("USABox Build", "Please select Printer");
+                sp_usa_box_printer.requestFocus();
+                return false;
+            }
+        }
+        tv_usa_box_pallettype_select.setEnabled(false);
+        sp_usa_box_size.setEnabled(false);
+        sp_usa_box_gender.setEnabled(false);
+        sp_usa_box_task.setEnabled(false);
+        sp_usa_box_done.setEnabled(false);
+        rb_usa_box_usa_category.setEnabled(false);
+        rb_usa_box_tcm_category.setEnabled(false);
+        ch_usa_box_euro.setEnabled(false);
+        sp_usa_box_printer.setEnabled(false);
+        sp_usa_box_printer_copies.setEnabled(false);
+        ch_usa_box_reprint.setEnabled(false);
+
+        saredRef.savePltType(tv_usa_box_pallettype.getText().toString());
+        saredRef.savePltTypeName(tv_usa_box_pallettype_select.getText().toString());
+        saredRef.saveAllowMixCategory(tv_usa_box_pallettype_allowmix.getText().toString());
+        saredRef.saveSize(sp_usa_box_size.getSelectedItem().toString());
+        saredRef.saveSPType(tv_usa_box_pallettype_build_sec.getText().toString());
+        saredRef.saveGender(sp_usa_box_gender.getSelectedItem().toString());
+        saredRef.saveTask(sp_usa_box_task.getSelectedItem().toString());
+        saredRef.saveDone(sp_usa_box_done.getSelectedItem().toString());
+        saredRef.savePrinter(sp_usa_box_printer.getSelectedItem().toString());
+        saredRef.savePrintCopy(sp_usa_box_printer_copies.getSelectedItem().toString());
+
+        if (rb_usa_box_usa_category.isChecked()) {
+            saredRef.saveBuildType("USA");
+        }
+        if (rb_usa_box_tcm_category.isChecked()) {
+            saredRef.saveBuildType("TCM");
+        }
+        saredRef.saveEuro("N");
+        if (ch_usa_box_euro.isChecked()) {
+            saredRef.saveEuro("Y");
+        }
+        return true;
+    }
+
     private void clearBtDevData() {
         remoteDevices = new Vector<BluetoothDevice>();
     }
@@ -536,6 +562,7 @@ public class UsaBoxBuildingFragment extends Fragment {
     private boolean reprintUpcBox() {
         String boxno = tv_upcbox_popup_reprint_boxno.getText().toString().toUpperCase();
         String printer = sp_usa_box_printer.getSelectedItem().toString();
+        String copies = sp_usa_box_printer_copies.getSelectedItem().toString();
         if (boxno.isEmpty()) {
             okMessage("Upc Box", "Please Enter Tote Number or Box number");
             vibrate(100);
@@ -786,6 +813,7 @@ public class UsaBoxBuildingFragment extends Fragment {
 
     private void formLoad() {
         sp_usa_box_printer.setEnabled(true);
+        sp_usa_box_printer_copies.setEnabled(true);
         tv_usa_box_pallettype_select.setEnabled(true);
         sp_usa_box_size.setEnabled(true);
         sp_usa_box_gender.setEnabled(true);
@@ -794,7 +822,6 @@ public class UsaBoxBuildingFragment extends Fragment {
         rb_usa_box_usa_category.setEnabled(true);
         rb_usa_box_tcm_category.setEnabled(true);
         ch_usa_box_euro.setEnabled(true);
-        sp_usa_box_printer.setEnabled(true);
         ch_usa_box_reprint.setEnabled(true);
 
         ArrayAdapter<String> arrayAdpYellow=null;
@@ -828,6 +855,18 @@ public class UsaBoxBuildingFragment extends Fragment {
         ArrayAdapter<String> arrayAdp7 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr7);
         sp_usa_box_done.setAdapter(arrayAdp7);
 
+        List<String> arr8;
+        arr8 = new ArrayList<String>();
+        arr8.add("0");
+        arr8.add("1");
+        arr8.add("2");
+        arr8.add("4");
+        ArrayAdapter<String> arrayAdp8 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr8);
+        sp_usa_box_printer_copies.setAdapter(arrayAdp8);
+
+        if(!saredRef.loadPrinter().isEmpty()) sp_usa_box_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
+        if(!saredRef.loadPrintCopy().isEmpty()) sp_usa_box_printer_copies.setSelection(arrayAdp8.getPosition(saredRef.loadPrintCopy()));
+
         tv_usa_box_boxprefix.setText(objGlobal.getCountryWiseBoxPrefix());
 
         ArrayList<UsaBoxBuildingScanItemTicket> listUsaBoxBuildingScaItems = objUsaBoxBuildingControl.loadScanItems();
@@ -844,10 +883,10 @@ public class UsaBoxBuildingFragment extends Fragment {
             tv_usa_box_pallettype_build_sec.setText(saredRef.loadSPType());
             tv_usa_box_pallettype.setText(saredRef.loadPltType());
             tv_usa_box_pallettype_select.setText(saredRef.loadPltTypeName());
-            sp_usa_box_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
 
             tv_usa_box_pallettype_select.setEnabled(false);
             sp_usa_box_printer.setEnabled(false);
+            sp_usa_box_printer_copies.setEnabled(false);
 
             if(saredRef.loadBuildType().equals("TCM")) {
                 rb_usa_box_tcm_category.setChecked(true);
@@ -953,7 +992,7 @@ public class UsaBoxBuildingFragment extends Fragment {
             } else {
                 printData = objSample_Print.getUsaBoxPrint(objUsaBoxBuildingGlobal.getBoxNo(), objUsaBoxBuildingGlobal.getpPallettype(), objUsaBoxBuildingGlobal.getpTypename(),
                         objUsaBoxBuildingGlobal.getpQty(), objUsaBoxBuildingGlobal.getpDate(), objUsaBoxBuildingGlobal.getpTime(), objUsaBoxBuildingGlobal.getpRemarks(),
-                        objUsaBoxBuildingGlobal.getpPreparedby(), "1");
+                        objUsaBoxBuildingGlobal.getpPreparedby(), sp_usa_box_printer_copies.getSelectedItem().toString());
             }
             return objSample_Print.PrintBarcodeByte(printData);
         } catch (Exception e) {
@@ -965,7 +1004,6 @@ public class UsaBoxBuildingFragment extends Fragment {
     private void btConn(final BluetoothDevice btDev) throws IOException {
         new UsaBoxBuildingFragment.connBT().execute(btDev);
     }
-
 
     private void vibrate(int duration) {
         Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);

@@ -16,133 +16,115 @@
             android:id="@+id/sp_wh_grn_country"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
             android:padding="8dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/bt_wh_grn_scan_gin"
-            app:layout_constraintStart_toEndOf="@+id/textView20"
-            app:layout_constraintTop_toTopOf="@+id/textView20" />
-
-        <TextView
-            android:id="@+id/textView20"
-            android:layout_width="105dp"
-            android:layout_height="40dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="GIN Location"
-            android:textColor="@color/coloBlack"
-            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/et_wh_grn_ginno"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/TextView1"
-            android:layout_width="105dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="GIN No."
-            android:textColor="@color/coloBlack"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView20" />
-
         <EditText
             android:id="@+id/et_wh_grn_ginno"
-            android:layout_width="0dp"
+            android:layout_width="140dp"
             android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginLeft   ="5dp"
             android:background="@drawable/et_custom"
-            android:padding="10dp"
             android:inputType="number"
+            android:padding="10dp"
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/tv_wh_grn_gindate"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/TextView1"
-            app:layout_constraintTop_toTopOf="@+id/TextView1"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+            app:layout_constraintEnd_toStartOf="@+id/bt_wh_grn_scan_gin"
+            app:layout_constraintTop_toTopOf="@+id/sp_wh_grn_country"/>
 
         <TextView
             android:id="@+id/et_wh_grn_warehouse_from"
-            android:layout_width="150dp"
+            android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginTop="5dp"
+            android:layout_marginRight="2dp"
             android:background="@drawable/et_custom"
-            android:padding="10dp"
             android:hint="WH. From"
+            android:padding="10dp"
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView1"
+            app:layout_constraintTop_toBottomOf="@+id/sp_wh_grn_country"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <TextView
             android:id="@+id/et_wh_grn_warehouse_to"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="2dp"
             android:background="@drawable/et_custom"
-            android:padding="10dp"
             android:hint="WH. To"
+            android:padding="10dp"
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/bt_wh_grn_scan_item"
-            app:layout_constraintStart_toEndOf="@+id/et_wh_grn_warehouse_from"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
             app:layout_constraintTop_toTopOf="@+id/et_wh_grn_warehouse_from"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
+        <CheckBox
+            android:id="@+id/ch_wh_grn_autopost"
+            android:layout_width="125dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom"
+            android:enabled="false"
+            android:text="Auto Posting"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/tv_wh_grn_gindate"
+            app:layout_constraintTop_toTopOf="@+id/tv_wh_grn_gindate" />
+
         <TextView
             android:id="@+id/tv_wh_grn_gindate"
-            android:layout_width="100dp"
+            android:layout_width="105dp"
             android:layout_height="40dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
             android:padding="10dp"
             android:text=""
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/bt_wh_grn_scan_gin"
-            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_wh_grn_warehouse_from"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <Button
             android:id="@+id/bt_wh_grn_scan_gin"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="0dp"
             android:background="@drawable/btn_custom1"
             android:text="FETCH"
             android:textAllCaps="false"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/textView20"
+            app:layout_constraintBottom_toBottomOf="@+id/sp_wh_grn_country"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView20"
+            app:layout_constraintTop_toTopOf="@+id/sp_wh_grn_country"
             tools:ignore="TouchTargetSizeCheck" />
 
         <Button
             android:id="@+id/bt_wh_grn_scan_item"
-            android:layout_width="80dp"
+            android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginLeft="5dp"
             android:background="@drawable/btn_custom1"
             android:text="Scan / Edit"
             android:textAllCaps="false"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/et_wh_grn_warehouse_from"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_wh_grn_gindate"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            app:layout_constraintStart_toEndOf="@+id/ch_wh_grn_autopost"
+            app:layout_constraintTop_toTopOf="@+id/tv_wh_grn_gindate"
             tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
@@ -159,7 +141,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_wh_grn_warehouse_from" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_wh_grn_gindate" />
 
         <TextView
             android:id="@+id/TextView7"

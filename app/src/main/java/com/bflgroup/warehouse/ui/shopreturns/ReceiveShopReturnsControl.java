@@ -375,10 +375,9 @@ public class ReceiveShopReturnsControl {
                 objGlobal.getConnection().rollback();
                 return false;
             }
-
             //localShopReturnHeader
-            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks) " +
-                    "values (" + slnoLocal + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "')", objGlobal.getConnection());
+            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks,Warehouse) " +
+                    "values (" + slnoLocal + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
@@ -392,8 +391,8 @@ public class ReceiveShopReturnsControl {
                 return false;
             }
             //cloud ShopReturnHeader
-            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks) " +
-                    "values (" + slnoCloud + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "')", objGlobal.getCloudCon());
+            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks,Warehouse) " +
+                    "values (" + slnoCloud + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "')", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();

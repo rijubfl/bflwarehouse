@@ -317,14 +317,21 @@ public class BinStorageWavePickFragment extends Fragment {
                         okMessage("Popup", "Cant Blank toteid");
                         vibrate(250);
                         et_bin_storage_wave_pick_out_toteid.requestFocus();
-                    } else if (!toteId.equals(et_bin_storage_wave_pick_out_toteid.getText().toString().trim())) {
-                        okMessage("BinPutAwayFragment", "Selected tote and scanned totes are not matching");
-                        et_bin_storage_wave_pick_out_toteid.setText("");
-                        vibrate(250);
-                        et_bin_storage_wave_pick_out_toteid.requestFocus();
                     } else {
-                        et_bin_storage_wave_pick_out_location.requestFocus();
-                        return true;
+                        if (toteId.equals(et_bin_storage_wave_pick_out_toteid.getText().toString().trim())) {
+                            et_bin_storage_wave_pick_out_location.requestFocus();
+                            return true;
+                        } else {
+                            if (boxNo.equals(et_bin_storage_wave_pick_out_toteid.getText().toString().trim())) {
+                                et_bin_storage_wave_pick_out_location.requestFocus();
+                                return true;
+                            } else {
+                                okMessage("BinPutAwayFragment", "Selected tote and scanned totes is not matching");
+                                et_bin_storage_wave_pick_out_toteid.setText("");
+                                vibrate(250);
+                                et_bin_storage_wave_pick_out_toteid.requestFocus();
+                            }
+                        }
                     }
                 }
                 return false;
@@ -339,8 +346,8 @@ public class BinStorageWavePickFragment extends Fragment {
                         okMessage("Popup", "Cant Blank location");
                         vibrate(250);
                         et_bin_storage_wave_pick_out_location.requestFocus();
-                    } else if (!toteId.equals(et_bin_storage_wave_pick_out_toteid.getText().toString().trim())) {
-                        okMessage("BinPutAwayFragment", "Selected location and scanned totes are not matching");
+                    } else if (!location.equals(et_bin_storage_wave_pick_out_location.getText().toString().trim())) {
+                        okMessage("BinPutAwayFragment", "Selected location and scanned location is not matching");
                         et_bin_storage_wave_pick_out_location.setText("");
                         et_bin_storage_wave_pick_out_location.requestFocus();
                         vibrate(250);
@@ -375,7 +382,7 @@ public class BinStorageWavePickFragment extends Fragment {
                     okMessage("BinPutAwayFragment", "Please scan location");
                     vibrate(250);
                     et_bin_storage_wave_pick_out_location.requestFocus();
-                } else if (!scanTote.equals(toteId)) {
+                } else if (!scanTote.equals(toteId) && !scanTote.equals(boxNo)) {
                     okMessage("BinPutAwayFragment", "Selected tote and scanned totes are not matching");
                     vibrate(250);
                     et_bin_storage_wave_pick_out_toteid.requestFocus();

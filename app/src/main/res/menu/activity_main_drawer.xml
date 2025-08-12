@@ -205,6 +205,10 @@
         <item android:title="@string/menu_rerturns_repair">
             <menu>
                 <item
+                    android:id="@+id/nav_shop_return_verify"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_shop_return_verify" />
+                <item
                     android:id="@+id/nav_shop_return"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_shop_return" />

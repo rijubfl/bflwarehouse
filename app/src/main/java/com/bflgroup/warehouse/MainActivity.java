@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().findItem(R.id.nav_gin_verification).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_r1_wh_grn).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_shop_return).setVisible(false);
+        navigationView.getMenu().findItem(R.id.nav_shop_return_verify).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_divsion_seperate).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_3pl_wh_grn).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_rack_in_out).setVisible(false);
@@ -87,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().findItem(R.id.nav_shuttle_git).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_stocktake).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_pallet_box_count).setVisible(false);
-        navigationView.getMenu().findItem(R.id.nav_rack_query).setVisible(true);
         navigationView.getMenu().findItem(R.id.nav_show_pallets).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_validate_toteid).setVisible(false);
         navigationView.getMenu().findItem(R.id.nav_build_box_barcode).setVisible(false);
@@ -160,6 +160,9 @@ public class MainActivity extends AppCompatActivity {
             }
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_shop_return")) {
                 navigationView.getMenu().findItem(R.id.nav_shop_return).setVisible(true);
+            }
+            if (objGlobal.getActiveMenuByUser().get(i).equals("nav_shop_return_verify")) {
+                navigationView.getMenu().findItem(R.id.nav_shop_return_verify).setVisible(true);
             }
             if (objGlobal.getActiveMenuByUser().get(i).equals("nav_divsion_seperate")) {
                 navigationView.getMenu().findItem(R.id.nav_divsion_seperate).setVisible(true);

@@ -206,10 +206,9 @@ public class PalletBoxCountControl {
             String query1 = "select * from tmpScannedBoxes where BoxScanned = '" + PalletBoxCountGlobal.getBoxNo() + "' and DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and BoxOriginal = '" + PalletBoxCountGlobal.getBoxNo() + "' and warehouse = '" + Warehouse + "'";
             rs = dbConnection.getResultSet(query1, objGlobal.getConnection());
             if (rs.next()) {
-                        okMessage("Alert", "Box already scanned - " + PalletBoxCountGlobal.getBoxNo(),context);
+                okMessage("Alert", "Box already scanned - " + Boxno, context);
                 //  return false;
-            }else {
-
+            } else {
                 String query3 = "update tmpScannedBoxes set BoxScanned = '" + PalletBoxCountGlobal.getBoxNo() + "', updateTime= '" + objGlobal.getServerTime() + "' where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and BoxOriginal = '" + PalletBoxCountGlobal.getBoxNo() + "' and warehouse = '" + Warehouse + "'";
                 if (!dbConnection.insertUpdate(query3, objGlobal.getConnection())) {
                     //  return false;
@@ -219,13 +218,12 @@ public class PalletBoxCountControl {
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             while (rs.next()) {
                 srno++;
-                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxOriginal"), rs.getString("toteid"),rs.getString("BoxScanned")));
+                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxOriginal"), rs.getString("toteid"), rs.getString("BoxScanned")));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return boxItemLists;
-
     }
 
     public ArrayList<BoxItemList> InsertloadBoxes(String Boxno, String Palletno, String Warehouse) {
@@ -390,16 +388,21 @@ public class PalletBoxCountControl {
         return boxItemLists;
 
     }
-    public Boolean SavePalletDetails( String palletNo, String Warehouse){
-        // String Boxcount = "0";
+    public Boolean SavePalletDetails( String palletNo, String Warehouse) {
         try {
-            if(isPalletSaved(palletNo,Warehouse)){
-                String query = "Delete from bfldata..WarehouseScannedBoxes where palletno = '"+palletNo+"' and warehouse = '"+Warehouse+"'";
+            ResultSet rs3 = dbConnection.getResultSet("select cnt=count(*) from bfldata..tmpScannedBoxes where Palletno='" + palletNo + "' and deviceId='" + objGlobal.getDeviceName() + "' and BoxScanned=''", objGlobal.getConnection());
+            if (rs3.next()) {
+                if (rs3.getInt("cnt") > 0) {
+                    objGlobal.setErrorMessage("(" + rs3.getString("cnt") + ") Boxes not verified, please double check");
+                    return false;
+                }
+            }
+            if (isPalletSaved(palletNo, Warehouse)) {
+                String query = "Delete from bfldata..WarehouseScannedBoxes where palletno = '" + palletNo + "' and warehouse = '" + Warehouse + "'";
                 if (!dbConnection.insertUpdate(query, objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
-
             }
             String query = "insert into bfldata..WarehouseScannedBoxes(Warehouse,Palletno,BoxOriginal,BoxScanned,username,userid,Date,toteid) " +
                     "select Warehouse,Palletno,BoxOriginal,BoxScanned,username,userid,Date,toteid from bfldata..tmpScannedBoxes where palletno = '" + palletNo + "' and  deviceId = '" + objGlobal.getDeviceName() + "' and Warehouse = '" + Warehouse + "'";
@@ -407,7 +410,6 @@ public class PalletBoxCountControl {
                 objGlobal.getConnection().rollback();
                 return false;
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);   // return false;
         }
