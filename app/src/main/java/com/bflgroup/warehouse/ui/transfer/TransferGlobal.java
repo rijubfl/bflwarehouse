@@ -17,12 +17,12 @@ public class TransferGlobal {
     private static String ptoteid;
     private static String premarks;
     private static String ppreparedby;
-
     private static String reprintTrfno;
     private static String reprintShop;
     private static String reprintToteid;
-
     private static String boxTrfBoxNo;
+    private static String boxTrfBoxNoPalletType;
+    private static String regSIMExclude;
 
     public static String getScanBarcode() {
         return scanBarcode;
@@ -118,6 +118,22 @@ public class TransferGlobal {
 
     public static void setPtoteid(String ptoteid) {
         TransferGlobal.ptoteid = ptoteid;
+    }
+
+    public static String getRegSIMExclude() {
+        return regSIMExclude;
+    }
+
+    public static void setRegSIMExclude(String regSIMExclude) {
+        regSIMExclude = regSIMExclude;
+    }
+
+    public static String getBoxTrfBoxNoPalletType() {
+        return boxTrfBoxNoPalletType;
+    }
+
+    public static void setBoxTrfBoxNoPalletType(String boxTrfBoxNoPalletType) {
+        TransferGlobal.boxTrfBoxNoPalletType = boxTrfBoxNoPalletType;
     }
 
     public static String getBoxTrfBoxNo() {

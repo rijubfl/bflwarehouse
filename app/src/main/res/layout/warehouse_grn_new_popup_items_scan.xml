@@ -7,17 +7,20 @@
     android:padding="5dp"
     android:background="@color/colorBackPopup"
     android:layout_gravity="center"
-    android:layout_height="600dp">
+    android:layout_height="650dp">
 
-    <CheckBox
-        android:id="@+id/ch_warehouse_grn_new_popup_allow_pallet_scan"
+    <TextView
+        android:id="@+id/tv_warehouse_grn_new_popup_palletno"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_marginRight="5dp"
-        android:background="@drawable/et_custom"
-        android:checked="true"
-        android:text="Allow Pallet wise scan"
-        android:enabled="false"
+        android:background="@drawable/et_custom_total"
+        android:hint="Pallet No"
+        android:padding="8dp"
+        android:textAlignment="center"
+        android:textColor="@color/coloRed"
+        android:textSize="18dp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/bt_warehouse_grn_new_popup_scan"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -35,7 +38,7 @@
         android:textSize="16dp"
         app:layout_constraintEnd_toStartOf="@+id/bt_warehouse_grn_new_popup_scan"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ch_ageing_printer_yellow_active" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_warehouse_grn_new_popup_palletno" />
 
     <Button
         android:id="@+id/bt_warehouse_grn_new_popup_scan"
@@ -47,7 +50,7 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/et_warehouse_grn_new_popup_scan"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ch_ageing_printer_yellow_active" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_warehouse_grn_new_popup_last_scan"

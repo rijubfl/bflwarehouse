@@ -203,7 +203,6 @@ public class TransferReceiptJafza {
             }
             con.commit();
             con.setAutoCommit(true);
-            //con.rollback();
             objInOutJafzaGlobal.setTrfRecNo(trfRecNo);
             objInOutJafzaGlobal.setBatchCode(objGlobal.getDelDate() + "-" + cartonNo);
             objInOutJafzaGlobal.setTrfTotQty(totalQty);

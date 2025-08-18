@@ -72,4 +72,14 @@ public class TransferSharedRef {
     }
 
 
+    public void saveRegSimExclude(String RegSimExclude){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("RegSimExclude",RegSimExclude);
+        editor.commit();
+    }
+
+    public String loadRegSimExclude() {
+        return sharedRef.getString("RegSimExclude", "");
+    }
+
 }

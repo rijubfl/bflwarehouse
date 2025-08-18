@@ -93,12 +93,10 @@ public class WarehouseGRNControl {
                 return false;
             }
             objWarehouseGRNNewGlobal.setAutoPost("N");
-            objWarehouseGRNNewGlobal.setPalletWise("N");
-            rs = dbConnection.getResultSet("select AutoPost=isnull(AutoPost,'N'),PalletWise=isnull(PalletWise,'N') from bfldata.dbo.WarehouseGrnAutoPosting where " +
-                    "WarehouseFrom='" + objWarehouseGRNNewGlobal.getWarehouseFrom() + "' and WarehouseTo='" + objWarehouseGRNNewGlobal.getWarehouseTo() + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select AutoPost=isnull(AutoPost,'N') from bfldata.dbo.WarehouseGrnAutoPosting where WarehouseFrom='" + objWarehouseGRNNewGlobal.getWarehouseFrom() + "' and " +
+                    "WarehouseTo='" + objWarehouseGRNNewGlobal.getWarehouseTo() + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objWarehouseGRNNewGlobal.setAutoPost(rs.getString("AutoPost"));
-                objWarehouseGRNNewGlobal.setPalletWise(rs.getString("AutoPost"));
             }
             return true;
         } catch (Exception ex) {
@@ -190,7 +188,6 @@ public class WarehouseGRNControl {
     }
 
     public boolean loadGinDetailsFromAPI(String country,String ginNo,ArrayList<WarehouseGRNDetailAPICallTicket> objWarehouseGRNNewDetailAPICallTicket) {
-        String db = objControls.getCountryDb(country);
         if (!checkConnection()) {
             return false;
         }
@@ -228,7 +225,7 @@ public class WarehouseGRNControl {
         }
     }
 
-    public boolean validateScanPalletOrBox(String scanValue,String allowScanPalletWise) {
+    public boolean validateScanPalletOrBox(String palletno, String scanValue) {
         if (!checkConnection()) {
             return false;
         }
@@ -237,28 +234,15 @@ public class WarehouseGRNControl {
             return false;
         }
         try {
-            if(allowScanPalletWise.equals("Y")) {
-                rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and (PalletNo='" + scanValue + "' or " +
-                        "boxno='" + scanValue + "' or toteid='" + scanValue + "')", objGlobal.getConnection());
-                if (!rs.next()) {
-                    objGlobal.setErrorMessage("Pallet number is not found in the GIN");
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpWarehouseGrnScanNew set scount=1,ScanDate=getdate(),ScanTime=getdate() where DeviceId='" + objGlobal.getDeviceName() + "' and " +
-                        "(PalletNo='" + scanValue + "' or BoxNo='" + scanValue + "' or ToteId='" + scanValue + "')", objGlobal.getConnection())) {
-                    return false;
-                }
-            } else {
-                rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and " +
-                        "(boxno='" + scanValue + "' or toteid='" + scanValue + "')", objGlobal.getConnection());
-                if (!rs.next()) {
-                    objGlobal.setErrorMessage("Pallet number is not found in the GIN");
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpWarehouseGrnScanNew set scount=1,ScanDate=getdate(),ScanTime=getdate() where DeviceId='" + objGlobal.getDeviceName() + "' and " +
-                        "(BoxNo='" + scanValue + "' or ToteId='" + scanValue + "')", objGlobal.getConnection())) {
-                    return false;
-                }
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and PalletNo='" + palletno + "' and " +
+                    "(boxno='" + scanValue + "' or toteid='" + scanValue + "')", objGlobal.getConnection());
+            if (!rs.next()) {
+                objGlobal.setErrorMessage("Pallet number is not found in the GIN");
+                return false;
+            }
+            if (!dbConnection.insertUpdate("update bfldata.dbo.tmpWarehouseGrnScanNew set scount=1,ScanDate=getdate(),ScanTime=getdate() where DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                    "(BoxNo='" + scanValue + "' or ToteId='" + scanValue + "')", objGlobal.getConnection())) {
+                return false;
             }
             return true;
         } catch (Exception ex) {

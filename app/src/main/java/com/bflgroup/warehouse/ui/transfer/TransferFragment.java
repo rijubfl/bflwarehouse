@@ -205,13 +205,15 @@ public class TransferFragment extends Fragment {
         sp_transfer_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                tv_transfer_shopname.setText("");
                 if (position == 3) {
-                    et_transfer_pallet_box_no.setHint("Box / Tote");
+                    et_transfer_pallet_box_no.setHint("Box Number / Tote Id");
                     et_transfer_pallet_box_no.setEnabled(true);
                     tv_transfer_shopname.setEnabled(false);
                 } else if (position == 5) {
-                    et_transfer_pallet_box_no.setHint("Transfer");
+                    et_transfer_pallet_box_no.setHint("Transfer Number.");
                     et_transfer_pallet_box_no.setEnabled(true);
+                    tv_transfer_shopname.setEnabled(false);
                 } else {
                     et_transfer_pallet_box_no.setHint("");
                     et_transfer_pallet_box_no.setEnabled(false);
@@ -418,7 +420,7 @@ public class TransferFragment extends Fragment {
                     return false;
                 }
             } else {
-                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid,selType);
+                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid,selType,objTransferGlobal.getRegSIMExclude());
                 if (!b_Result) {
                     okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
                     return false;
@@ -886,12 +888,16 @@ public class TransferFragment extends Fragment {
         allowChangeShop = true;
         sp_transfer_type.setEnabled(true);
         tv_transfer_shopname.setEnabled(true);
+        if ((sp_transfer_type.getSelectedItemId() == 3) || (sp_transfer_type.getSelectedItemId() == 5)) {
+            tv_transfer_shopname.setEnabled(false);
+        }
         et_transfer_pallet_box_no.setEnabled(false);
         if (sp_transfer_type.getSelectedItemId() == 3 || sp_transfer_type.getSelectedItemId() == 5) et_transfer_pallet_box_no.setEnabled(true);
         saredRef.saveScanType("");
         saredRef.saveShopName("");
         saredRef.savePallet("");
         saredRef.savePrinter("");
+        saredRef.saveRegSimExclude("");
     }
 
     private boolean reprintTransfer() {

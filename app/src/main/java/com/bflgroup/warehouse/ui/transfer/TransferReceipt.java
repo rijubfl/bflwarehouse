@@ -15,7 +15,7 @@ public class TransferReceipt {
     private TransferGlobal objTransferGlobal = TransferGlobal.getInstance();
     private ResultSet rs;
 
-    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype) {
+    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype, String regSIMExclude) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", trfType = "R", trfPalletNo = "", cartonNo = "1", empName = "", storeIssue = palletBoxNo, firstScanTime = "";
         if (objGlobal.getWorkLocation().equals("KSA")) preparedBy = objGlobal.getUserName();
@@ -215,6 +215,26 @@ public class TransferReceipt {
             if (trftype.equals("P") || trftype.equals("T")) {
                 if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.CloseR1pallet values('USABOX','" + palletBoxNo + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +
                         "'" + objGlobal.getUserId() + "','" + objGlobal.getUserName() + "','','',0,0,0,'Auto Closed Transfer PDA (" + trfRecNo + ")')", conLoc)) {
+                    conRob.rollback();
+                    conLoc.rollback();
+                    conRob.setAutoCommit(true);
+                    conLoc.setAutoCommit(true);
+                    objGlobal.setErrorNo("transferReceipt:022");
+                    return false;
+                }
+            }
+            if (regSIMExclude.equals("Y")) {
+                if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.Exclude_Transfers_Sim(Trfno,Trndate,Userid,Remarks) values ('" + trfRecNo + "'," +
+                        "'" + objGlobal.getServerDate() + "'," + objGlobal.getUserId() + ",'SIM Exclude Transfer, Pallet Type("+objTransferGlobal.getBoxTrfBoxNoPalletType()+")')", conLoc)) {
+                    conRob.rollback();
+                    conLoc.rollback();
+                    conRob.setAutoCommit(true);
+                    conLoc.setAutoCommit(true);
+                    objGlobal.setErrorNo("transferReceipt:022");
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("insert into usa.dbo.specialsimtransferinclude(Trndate,TrfNo,BoxNo,PalletType,UserName) values (getdate(),'" + trfRecNo + "'," +
+                        "'" + palletBoxNo + "','" + objTransferGlobal.getBoxTrfBoxNoPalletType() + "','" + objGlobal.getUserName() + "')", conLoc)) {
                     conRob.rollback();
                     conLoc.rollback();
                     conRob.setAutoCommit(true);

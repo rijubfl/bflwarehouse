@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,12 +15,15 @@ import androidx.fragment.app.Fragment;
 
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -58,7 +62,7 @@ public class WarehouseGRNFragment extends Fragment {
     private TextView tv_wh_grn_total_plt_box_count;
     private TextView tv_wh_grn_total_plt_box_scan_count;
 
-    private CheckBox ch_warehouse_grn_new_popup_allow_pallet_scan;
+    private TextView tv_warehouse_grn_new_popup_palletno;
     private EditText et_warehouse_grn_new_popup_scan;
     private Button bt_warehouse_grn_new_popup_scan;
     private TextView tv_warehouse_grn_new_popup_last_scan;
@@ -185,7 +189,6 @@ public class WarehouseGRNFragment extends Fragment {
                             }
                         })
                         .show();
-
             }
         });
         loadScanTotal();
@@ -200,12 +203,13 @@ public class WarehouseGRNFragment extends Fragment {
         myDialog.setCancelable(false);
         myDialog.setContentView(R.layout.warehouse_grn_new_popup_items_scan);
 
-        ch_warehouse_grn_new_popup_allow_pallet_scan = (CheckBox) myDialog.findViewById(R.id.ch_warehouse_grn_new_popup_allow_pallet_scan);
+        tv_warehouse_grn_new_popup_palletno = (TextView) myDialog.findViewById(R.id.tv_warehouse_grn_new_popup_palletno);
         et_warehouse_grn_new_popup_scan = (EditText) myDialog.findViewById(R.id.et_warehouse_grn_new_popup_scan);
         bt_warehouse_grn_new_popup_scan = (Button) myDialog.findViewById(R.id.bt_warehouse_grn_new_popup_scan);
         tv_warehouse_grn_new_popup_last_scan = (TextView) myDialog.findViewById(R.id.tv_warehouse_grn_new_popup_last_scan);
         lv_warehouse_grn_new_popup_scandetail = (ListView) myDialog.findViewById(R.id.lv_warehouse_grn_new_popup_scandetail);
         bt_warehouse_grn_new_popup_ok = (Button) myDialog.findViewById(R.id.bt_warehouse_grn_new_popup_ok);
+
         et_warehouse_grn_new_popup_scan.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -217,6 +221,7 @@ public class WarehouseGRNFragment extends Fragment {
                 return objGlobal.getHideKeyPad();
             }
         });
+
         et_warehouse_grn_new_popup_scan.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
@@ -245,12 +250,11 @@ public class WarehouseGRNFragment extends Fragment {
     }
 
     void scanItemcode() {
-        String allowScanPalletWise = "N";
-        if (ch_warehouse_grn_new_popup_allow_pallet_scan.isChecked()) allowScanPalletWise = "Y";
+        String palletno = tv_warehouse_grn_new_popup_palletno.getText().toString().trim().toUpperCase();
         String scanVal = et_warehouse_grn_new_popup_scan.getText().toString().trim().toUpperCase();
         tv_warehouse_grn_new_popup_last_scan.setText(scanVal);
         et_warehouse_grn_new_popup_scan.setText("");
-//        b_Result = objWarehouseGRNNewControl.validateScanPalletOrBox(scanVal);
+        b_Result = objWarehouseGRNNewControl.validateScanPalletOrBox(palletno, scanVal);
         if (!b_Result) {
             okMessage("Warehouse GRN", objGlobal.getErrorMessage());
         }
