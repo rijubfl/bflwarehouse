@@ -636,15 +636,17 @@ public class UsaBoxBuildingControl {
                     }
                 }
             } else {
+                //String palletPrefix = "USA";
+                String palletPrefix = "UAE";
                 rs = dbConnection.getResultSet("select sn=Max(sn)+1 from bfldata.dbo.USAPallets", objGlobal.getConnection());
                 if (rs.next()) {
                     objUsaBoxBuildingGlobal.setPalletSno(rs.getString("sn"));
                 }
-                rs = dbConnection.getResultSet("select sn=max(substring(palletno,4,7))+1 from bfldata.dbo.USApallets where palletno like 'USA%'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select sn=max(substring(palletno,4,7))+1 from bfldata.dbo.USApallets where palletno like '" + palletPrefix + "%'", objGlobal.getConnection());
                 if (rs.next()) {
                     pltSn = Integer.parseInt(rs.getString("sn"));
                 }
-                objUsaBoxBuildingGlobal.setPalletNo("USA" + String.format("%06d", pltSn));
+                objUsaBoxBuildingGlobal.setPalletNo(palletPrefix + String.format("%06d", pltSn));
             }
         } catch (Exception ex) {
             objGlobal.setErrorMessage("UsaBoxBuildingControl:getPalletNumber:" + ex);
