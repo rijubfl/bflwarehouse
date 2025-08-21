@@ -234,7 +234,7 @@ public class WarehouseGRNControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and PalletNo='" + palletno + "' and " +
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and " +
                     "(boxno='" + scanValue + "' or toteid='" + scanValue + "')", objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Pallet number is not found in the GIN");

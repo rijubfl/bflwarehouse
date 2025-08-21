@@ -125,7 +125,7 @@ public class TransferGlobal {
     }
 
     public static void setRegSIMExclude(String regSIMExclude) {
-        regSIMExclude = regSIMExclude;
+        TransferGlobal.regSIMExclude = regSIMExclude;
     }
 
     public static String getBoxTrfBoxNoPalletType() {

@@ -158,6 +158,8 @@ public class TransferFragment extends Fragment {
             }
         }
 
+        objTransferGlobal.setRegSIMExclude("");
+
         List<String> arr;
         arr = new ArrayList<String>();
         arr.add("RFID");//0 R

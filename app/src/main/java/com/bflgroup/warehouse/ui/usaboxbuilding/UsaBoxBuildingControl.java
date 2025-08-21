@@ -636,8 +636,10 @@ public class UsaBoxBuildingControl {
                     }
                 }
             } else {
-                //String palletPrefix = "USA";
-                String palletPrefix = "UAE";
+                String palletPrefix = "USA";
+                if(objGlobal.getWorkLocation().equals("UAE")) {
+                    palletPrefix = "UAE";
+                }
                 rs = dbConnection.getResultSet("select sn=Max(sn)+1 from bfldata.dbo.USAPallets", objGlobal.getConnection());
                 if (rs.next()) {
                     objUsaBoxBuildingGlobal.setPalletSno(rs.getString("sn"));

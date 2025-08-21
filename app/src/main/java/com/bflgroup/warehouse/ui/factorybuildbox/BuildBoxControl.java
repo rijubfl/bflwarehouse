@@ -393,8 +393,10 @@ public class BuildBoxControl {
 
     public boolean getPalletNoAutoUsa() {
         int pltSn = 0;
-        //String palletPrefix = "USA";
-        String palletPrefix = "UAE";
+        String palletPrefix = "USA";
+        if(objGlobal.getWorkLocation().equals("UAE")) {
+            palletPrefix = "UAE";
+        }
         try {
             rs = dbConnection.getResultSet("select sn=Max(sn)+1 from USAPallets", objGlobal.getConnection());
             if (rs.next()) {
