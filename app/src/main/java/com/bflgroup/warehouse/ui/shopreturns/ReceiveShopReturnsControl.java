@@ -51,7 +51,8 @@ public class ReceiveShopReturnsControl {
 
     public boolean validItemcode(String itemcode) {
         try {
-            rs = dbConnection.getResultSet("select description,groupcode,department,division,season = (select IIF(itemType='W','WINTER','SUMMER') from HODATA..itemmaster where itemcode = a.itemcode) from hodata.dbo.vitemmaster a where itemcode='" + itemcode + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select description,groupcode,department,division,season = (select IIF(itemType='W','WINTER','SUMMER') from HODATA..itemmaster where itemcode = a.itemcode) from " +
+                    "hodata.dbo.vitemmaster a where itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objReceiveShopReturnsGlobal.setScanItemDescription(rs.getString("description").toString());
                 objReceiveShopReturnsGlobal.setScanItemGroup(rs.getString("groupcode").toString());
@@ -239,6 +240,7 @@ public class ReceiveShopReturnsControl {
         }
         return true;
     }
+
     ArrayList<ReceiveShopReturnsScanItemPopupTicket> loadPopupScanItems() {
         ArrayList<ReceiveShopReturnsScanItemPopupTicket> listPopupScanItems = new ArrayList<ReceiveShopReturnsScanItemPopupTicket>();
         try {

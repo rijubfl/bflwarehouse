@@ -62,7 +62,6 @@ public class WarehouseGRNFragment extends Fragment {
     private TextView tv_wh_grn_total_plt_box_count;
     private TextView tv_wh_grn_total_plt_box_scan_count;
 
-    private TextView tv_warehouse_grn_new_popup_palletno;
     private EditText et_warehouse_grn_new_popup_scan;
     private Button bt_warehouse_grn_new_popup_scan;
     private TextView tv_warehouse_grn_new_popup_last_scan;
@@ -203,7 +202,6 @@ public class WarehouseGRNFragment extends Fragment {
         myDialog.setCancelable(false);
         myDialog.setContentView(R.layout.warehouse_grn_new_popup_items_scan);
 
-        tv_warehouse_grn_new_popup_palletno = (TextView) myDialog.findViewById(R.id.tv_warehouse_grn_new_popup_palletno);
         et_warehouse_grn_new_popup_scan = (EditText) myDialog.findViewById(R.id.et_warehouse_grn_new_popup_scan);
         bt_warehouse_grn_new_popup_scan = (Button) myDialog.findViewById(R.id.bt_warehouse_grn_new_popup_scan);
         tv_warehouse_grn_new_popup_last_scan = (TextView) myDialog.findViewById(R.id.tv_warehouse_grn_new_popup_last_scan);
@@ -250,11 +248,10 @@ public class WarehouseGRNFragment extends Fragment {
     }
 
     void scanItemcode() {
-        String palletno = tv_warehouse_grn_new_popup_palletno.getText().toString().trim().toUpperCase();
         String scanVal = et_warehouse_grn_new_popup_scan.getText().toString().trim().toUpperCase();
         tv_warehouse_grn_new_popup_last_scan.setText(scanVal);
         et_warehouse_grn_new_popup_scan.setText("");
-        b_Result = objWarehouseGRNNewControl.validateScanPalletOrBox(palletno, scanVal);
+        b_Result = objWarehouseGRNNewControl.validateScanPalletOrBox(scanVal);
         if (!b_Result) {
             okMessage("Warehouse GRN", objGlobal.getErrorMessage());
         }
