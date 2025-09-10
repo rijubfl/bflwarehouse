@@ -275,7 +275,7 @@ public class WarehouseGRNControl {
                 objGlobal.setErrorMessage("No record found for Save");
                 return false;
             }
-            if(autoPost.equals("Y")) {
+            if (autoPost.equals("Y")) {
                 /*rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=1 and BoxNo not in(select BoxNo " +
                         "from " + db + ".dbo.UPCBoxHead where Closed='N')", objGlobal.getConnection());
                 if (rs.next()) {
@@ -287,7 +287,7 @@ public class WarehouseGRNControl {
                 rs = dbConnection.getResultSet("select cnt=count(*) from usa.dbo.UPCBoxHead where BoxNo in(select BoxNo from bfldata.dbo.tmpWarehouseGrnScanNew where " +
                         "DeviceId='" + objGlobal.getDeviceName() + "' and SCount=1)", objGlobal.getConnection());
                 if (rs.next()) {
-                    if(rs.getInt("cnt")>0){
+                    if (rs.getInt("cnt") > 0) {
                         objGlobal.setErrorMessage("Can't proceed, Boxes (" + rs.getString("cnt") + ") already found in HO");
                         return false;
                     }
@@ -295,7 +295,7 @@ public class WarehouseGRNControl {
                 rs = dbConnection.getResultSet("select cnt=count(*) from BFLDATA.dbo.ShopReturnHeader where ReturnNo in(select BoxNo from bfldata.dbo.tmpWarehouseGrnScanNew where " +
                         "DeviceId='" + objGlobal.getDeviceName() + "' and SCount=1)", objGlobal.getConnection());
                 if (rs.next()) {
-                    if(rs.getInt("cnt")>0){
+                    if (rs.getInt("cnt") > 0) {
                         objGlobal.setErrorMessage("Can't proceed, Boxes (" + rs.getString("cnt") + ") already done posting");
                         return false;
                     }
@@ -472,6 +472,4 @@ public class WarehouseGRNControl {
             return null;
         }
     }
-
-
 }

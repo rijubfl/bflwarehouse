@@ -138,7 +138,7 @@ public class UsaBoxBuildingControl {
     }
 
     public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType, String selitems,String contno) {
-        if (itemcode.equals("")) {
+        if (itemcode.trim().equals("")) {
             objGlobal.setErrorMessage("Empty itemcode, please rescan");
             return false;
         }

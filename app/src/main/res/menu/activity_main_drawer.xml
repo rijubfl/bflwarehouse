@@ -241,6 +241,10 @@
                     android:id="@+id/nav_item_pullout"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_price_check" />
+                <item
+                    android:id="@+id/nav_item_segregation"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_item_segregation" />
             </menu>
         </item>
 

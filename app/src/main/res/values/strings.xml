@@ -10,7 +10,7 @@
     <string name="menu_file">File</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
-    <string name="app_version">12.29</string>
+    <string name="app_version">12.30</string>
     <string name="menu_update_box_from_pallet">Update Box from Pallet </string>
     <string name="menu_chute_status_techno">Chute Status (Techno)</string>
     <string name="menu_chute_status_jafza">Chute Status (Jafza)</string>
@@ -53,6 +53,7 @@
     <string name="menu_warehouse_grn">Warehouse GRN</string>
     <string name="menu_shuttle_task_create">Shuttle Task Create</string>
     <string name="menu_price_check">Item Pullout</string>
+    <string name="menu_item_segregation">Item Segregation</string>
     <string name="menu_3pl_grn">3PL WH GRN</string>
     <string name="menu_bin_storage_rack">Bin Storage Rack</string>
     <string name="menu_rack">Rack</string>
