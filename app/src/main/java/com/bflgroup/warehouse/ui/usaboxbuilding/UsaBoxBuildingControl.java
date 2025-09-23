@@ -226,10 +226,13 @@ public class UsaBoxBuildingControl {
                 }
             }
             boolean valid = true;
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and (isnull(itemname,'')='' or isnull(GroupCode,'')='' or " +
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and (isnull(itemcode,'')='' or isnull(itemname,'')='' or isnull(GroupCode,'')='' or " +
                     "isnull(BuildingCategory,'')='')", objGlobal.getConnection());
             if (rs.next()) {
-                if (rs.getString("itemname").isEmpty()) {
+                if (rs.getString("itemcode").isEmpty()) {
+                    objGlobal.setErrorMessage("Item code is empty");
+                    valid = false;
+                } else if (rs.getString("itemname").isEmpty()) {
                     objGlobal.setErrorMessage("Item code (" + itemcode + ") is invalid");
                     valid = false;
                 } else if (rs.getString("GroupCode").isEmpty()) {

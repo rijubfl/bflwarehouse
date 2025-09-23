@@ -755,7 +755,8 @@ public class TransferControl {
         }
     }
 
-    public boolean validateTransferToExp(String selshop,String scan) {
+    public boolean
+    validateTransferToExp(String selshop,String scan) {
         String trfno="";
         if (!checkConnection()) {
             return false;
@@ -776,7 +777,7 @@ public class TransferControl {
                 objGlobal.setErrorMessage("Can't proceed, Transfer (" + trfno + ") is already closed");
                 return false;
             }
-            rs = dbConnection.getResultSet("select top 1 * from RACKS..BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and (ToteId='" + trfno + "' or BoxNo='" + trfno + "')", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select top 1 * from RACKS.dbo.BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and (ToteId='" + trfno + "' or BoxNo='" + trfno + "')", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Can't proceed, Box/Transfer (" + trfno + ") is still in the RACK(" + rs.getString("Location") + "), please do out from rack");
                 return false;
