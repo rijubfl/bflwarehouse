@@ -10,7 +10,7 @@
     <string name="menu_file">File</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
-    <string name="app_version">12.29</string>
+    <string name="app_version">12.29.3</string>
     <string name="menu_update_box_from_pallet">Update Box from Pallet </string>
     <string name="menu_chute_status_techno">Chute Status (Techno)</string>
     <string name="menu_chute_status_jafza">Chute Status (Jafza)</string>
@@ -39,6 +39,7 @@
     <string name="menu_building_del_pallet">Pallet (Route)</string>
     <string name="menu_gin_verification">GIN Verification</string>
     <string name="menu_divsion_seperate">Remove item from Transfer</string>
+    <string name="menu_item_segregation">Item Segregation</string>
     <string name="menu_bin_storage_put_away">Put Away (IN / OUT)</string>
     <string name="menu_bin_storage_put_away_multiple_tote">Put Away (IN / OUT) Multiple Tote</string>
     <string name="menu_bin_storage_put_away_history">Put Away (IN / OUT) History</string>

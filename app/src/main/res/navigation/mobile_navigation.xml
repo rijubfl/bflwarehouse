@@ -274,6 +274,11 @@
         android:name="com.bflgroup.warehouse.ui.pricecheck.PriceCheckFragment"
         android:label="@string/menu_price_check"
         tools:layout="@layout/fragment_price_check" />
+    <fragment
+        android:id="@+id/nav_item_segregation"
+        android:name="com.bflgroup.warehouse.ui.pricecheck.ItemSegregationFragment"
+        android:label="@string/menu_item_segregation"
+        tools:layout="@layout/fragment_item_seggregation" />
 
     <fragment
         android:id="@+id/nav_settings"

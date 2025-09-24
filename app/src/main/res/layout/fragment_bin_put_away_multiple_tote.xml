@@ -108,6 +108,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
             android:background="@drawable/et_custom"
+            android:singleLine="true"
             android:padding="10dp"
             android:textColor="@color/coloBlack"
             android:textSize="14sp"

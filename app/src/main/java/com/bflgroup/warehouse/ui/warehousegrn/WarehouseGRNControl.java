@@ -116,6 +116,10 @@ public class WarehouseGRNControl {
             }
             if (country.equals("UAE")) {
                 //usa.dbo.vUPCPalletBoxDet
+                String test = "insert into bfldata.dbo.tmpWarehouseGrnScanNew(DeviceId,GINNo,GINDate,WareHouseFrom,WareHouseTo,PalletNo,BoxNo,ToteId,TCount,SCount) " +
+                "select '" + objGlobal.getDeviceName() + "','" + ginNo + "','" + objWarehouseGRNNewGlobal.getGinDate() + "','" + objWarehouseGRNNewGlobal.getWarehouseFrom() + "'," +
+                        "'" + objWarehouseGRNNewGlobal.getWarehouseTo() + "',palletno,isnull(boxno,''),isnull(ToteID,''),1,0 from usa.dbo.vUPCPalletBoxDet where closed='N' and " +
+                        "palletno in(select palletno from BFLDATA.dbo.PLTDeliveryDetails where SrNo=" + ginNo + ") group by palletno,isnull(boxno,''),isnull(ToteID,'')";
                 if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpWarehouseGrnScanNew(DeviceId,GINNo,GINDate,WareHouseFrom,WareHouseTo,PalletNo,BoxNo,ToteId,TCount,SCount) " +
                         "select '" + objGlobal.getDeviceName() + "','" + ginNo + "','" + objWarehouseGRNNewGlobal.getGinDate() + "','" + objWarehouseGRNNewGlobal.getWarehouseFrom() + "'," +
                         "'" + objWarehouseGRNNewGlobal.getWarehouseTo() + "',palletno,isnull(boxno,''),isnull(ToteID,''),1,0 from usa.dbo.vUPCPalletBoxDet where closed='N' and " +

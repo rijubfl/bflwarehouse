@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.ui.shopreturnverify.model.ShopReturnData;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class VerifyShopReturnsFragment extends Fragment implements View.OnClickL
     private ListView lvVerifyShopReturns;
     private Button btClear;
     private Button btSave;
+    private Global objGlobal = Global.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,7 +87,7 @@ public class VerifyShopReturnsFragment extends Fragment implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bt_scan:
-                if (verifyShopReturnControl.tempData().isEmpty()) {
+             //   if (verifyShopReturnControl.tempData().isEmpty()) {
                     if (etEntryNo.getText().toString() != null && etEntryNo.getText().toString() != "") {
                         ShopReturnData shopDetail = verifyShopReturnControl.shopNameCheck(etEntryNo.getText().toString());
                         if (shopDetail.shopName != null) {
@@ -109,9 +111,9 @@ public class VerifyShopReturnsFragment extends Fragment implements View.OnClickL
                     } else {
                         okMessage("Verification Shop return", "Please enter entry number", 0);
                         vibrate(500);
-                        etEntryNo.setText("");
                     }
-                }
+                    etEntryNo.setText("");
+            //    }
                 break;
             case R.id.bt_clear:
                 if (verifyShopReturnControl.countTempData() > 0)
@@ -157,6 +159,10 @@ public class VerifyShopReturnsFragment extends Fragment implements View.OnClickL
                             vibrate(500);
                         }
 
+                    }
+                    else {
+                        okMessage("Verify shop return", objGlobal.getErrorMessage(), 0);
+                        vibrate(500);
                     }
                 }
                 // Your action here

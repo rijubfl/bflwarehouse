@@ -352,6 +352,7 @@ public class UsaBoxBuildingControl {
         try {
             listScanItems.clear();
             objUsaBoxBuildingGlobal.setBuildingCategory("");
+
             rs = dbConnection.getResultSet("select itemcode,itemname=isnull(itemname,''),qty,Buildingcategory=isnull(Buildingcategory,'') from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' order by sn desc", objGlobal.getConnection());
             while (rs.next()) {
                 objUsaBoxBuildingGlobal.setBuildingCategory(rs.getString("Buildingcategory"));

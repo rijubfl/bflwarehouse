@@ -52,7 +52,7 @@ public class UpdateBoxQuantityControl {
         }
         try {
             String condition="(BoxNo like 'R%' or BoxNo like 'U%')";
-            if(objGlobal.getWarehouse().equals("RUKOON") || objGlobal.getWarehouse().equals("BFLKSA")) condition="BoxNo like 'S%'";
+            if(objGlobal.getWarehouse().equals("RUKOON") || objGlobal.getWarehouse().equals("BFLKSAR1")) condition="BoxNo like 'S%'";
             if(objGlobal.getWarehouse().equals("BFLKUWAIT")) condition="BoxNo like 'K%'";
             arr = new ArrayList<UpdateBoxItem>();
             String query1 = "select * from BFLdata..tmpUpdateBoxQty where Toteid='" + Toteid + "' and DeviceName = '" + objGlobal.getDeviceName() + "'";
