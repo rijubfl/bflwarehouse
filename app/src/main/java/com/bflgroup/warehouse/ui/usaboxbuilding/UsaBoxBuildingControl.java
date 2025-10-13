@@ -143,10 +143,17 @@ public class UsaBoxBuildingControl {
             return false;
         }
         if (qty == 0) {
-            objGlobal.setErrorMessage("Qty is 0");
-            return false;
+            if (!edit) {
+                objGlobal.setErrorMessage("Qty is 0");
+                return false;
+            }
         }
         try {
+            rs = dbConnection.getResultSet("select top 1 itemcode from bfldata.dbo.ScanWrongItem where (itemcode like '%" + itemcode + "%' or itemcode like '%" + itemcode + "%')", objGlobal.getConnection());
+            if (rs.next()){
+                objGlobal.setErrorMessage("Invalid itemcode. Please check" + itemcode);
+                return false;
+            }
             rs = dbConnection.getResultSet("select top 1 itemcode from usa.dbo.upcbarcodes where upc='" + itemcode + "' order by trndate desc", objGlobal.getConnection());
             if (rs.next()) {
                 itemcode = rs.getString("itemcode").toString();
@@ -156,8 +163,15 @@ public class UsaBoxBuildingControl {
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 if (edit) {
-                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
-                        return false;
+                    if (qty == 0){
+                        if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                            return false;
+                        }
                     }
                 } else {
                     if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=qty+" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {

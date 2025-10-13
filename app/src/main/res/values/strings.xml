@@ -10,7 +10,7 @@
     <string name="menu_file">File</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
-    <string name="app_version">12.30</string>
+    <string name="app_version">12.31ksa</string>
     <string name="menu_update_box_from_pallet">Update Box from Pallet </string>
     <string name="menu_chute_status_techno">Chute Status (Techno)</string>
     <string name="menu_chute_status_jafza">Chute Status (Jafza)</string>
@@ -65,7 +65,7 @@
     <string name="menu_show_pallets">Show Pallets Details</string>
     <string name="menu_rack_in_out_history">Rack In / Out History</string>
     <string name="menu_shop_return">Shop Returns</string>
-    <string name="menu_shop_return_verify">Shop Returns Verify</string>
+    <string name="menu_shop_return_verify">Receive from Shop</string>
     <string name="menu_inventory">Inventory</string>
     <string name="menu_stock_taking">Stock Taking</string>
     <string name="menu_generate_barcode">Generate Barcode</string>

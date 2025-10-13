@@ -182,7 +182,7 @@ public class BinPutAwayMultipleToteControl {
                             return false;
                         }
                     } else {
-                        objGlobal.setErrorMessage("Pallet/Box - " + objBinPutAwayMultipleToteGlobal.getToteId() + " is found not in location - " + location + " or Pallet is already OUT");
+                        objGlobal.setErrorMessage("Pallet/Box - " + objBinPutAwayMultipleToteGlobal.getToteId() + " is not found in - " + location + " / Pallet is already OUT");
                         return false;
                     }
                 } else {
@@ -206,6 +206,9 @@ public class BinPutAwayMultipleToteControl {
                 if (!dbConnection.insertUpdate("delete from tmpToteScan where DeviceId='" + objGlobal.getDeviceName() + "' and (ToteId='" + objBinPutAwayMultipleToteGlobal.getToteId() + "' or boxno  ='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "')", objGlobal.getConnection())) {
                     return false;
                 }
+            }
+            if (objBinPutAwayMultipleToteGlobal.getToteId().trim().isEmpty()){
+                objBinPutAwayMultipleToteGlobal.setToteId(objBinPutAwayMultipleToteGlobal.getBoxNo());
             }
             if (!dbConnection.insertUpdate("insert into tmpToteScan(DeviceId,ToteId,BoxNo,ScanDtTime,Direction,Location) values ('" + objGlobal.getDeviceName() + "','" + objBinPutAwayMultipleToteGlobal.getToteId() + "'," +
                     "'" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "',getdate(),'" + direction + "','" + location + "')", objGlobal.getConnection())) {
@@ -231,7 +234,7 @@ public class BinPutAwayMultipleToteControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from BinRackMaster where Warehouse='" + warehouse + "' and Barcode='" + location + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from Racks.dbo.BinRackMaster where Warehouse='" + warehouse + "' and Barcode='" + location + "'", objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Invalid Location, " + location);
                 return false;

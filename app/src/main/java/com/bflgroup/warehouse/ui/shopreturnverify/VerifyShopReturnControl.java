@@ -63,7 +63,7 @@ public class VerifyShopReturnControl {
                     rs = dbConnection.getResultSet("select * from BFLKSA.dbo.StoreHeader where EntryNo = '" + entryNumber + "'", objGlobal.getCloudCon());
                     if (rs.next()) {
                         try {
-                            if (rs.getString("shopname").endsWith("R1")) {
+                            if (rs.getString("shopname").endsWith("R1") || rs.getString("shopname").isEmpty()) {
                                 category = rs.getString("TrfNo1");
                                 username = String.valueOf(objGlobal.getUserName());
                                 rs = dbConnection.getResultSet("select * from BFLDATA.dbo.ShopReturnVerify where entryno = '" + entryNumber + "'", objGlobal.getConnection());

@@ -171,11 +171,12 @@ public class ReceiveShopReturnsControl {
                     }
                 }
             }
-            rs = dbConnection.getResultSet("select sn from bfldata.dbo.shopreturnverify where entryno = '" + entryNo + "'", objGlobal.getConnection());
-            if (!rs.next()) {
-                objGlobal.setErrorMessage("ReceiveShopReturnsControl.validateShopReturn 0: This has not yet been received in the warehouse. " +
-                        "Please perform Shop Returns verification first to confirm if the item has already been delivered. Entryno: " + entryNo);
-                return false;
+            if (objGlobal.getWorkLocation().equals("KSA")) {
+                rs = dbConnection.getResultSet("select sn from bfldata.dbo.shopreturnverify where entryno = '" + entryNo + "'", objGlobal.getConnection());
+                if (!rs.next()) {
+                    objGlobal.setErrorMessage("Message \n The entry " + entryNo + " is not received");
+                    return false;
+                }
             }
             rs = dbConnection.getResultSet("select * from bfldata.dbo.ShopReturnHeader where ReturnNo='" + entryNo + "'", objGlobal.getConnection());
             if (rs.next()) {
