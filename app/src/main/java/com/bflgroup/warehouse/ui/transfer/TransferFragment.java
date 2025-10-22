@@ -167,7 +167,7 @@ public class TransferFragment extends Fragment {
         arr.add("Itemcode");//2 I
         arr.add("Box");//3 P
         arr.add("ROBO Direct");//4 D
-        arr.add("Transfer");//5 P
+        arr.add("Transfer");//5 T
         ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
         sp_transfer_type.setAdapter(arrayAdp);
 
@@ -215,7 +215,6 @@ public class TransferFragment extends Fragment {
                 } else if (position == 5) {
                     et_transfer_pallet_box_no.setHint("Transfer Number.");
                     et_transfer_pallet_box_no.setEnabled(true);
-                    tv_transfer_shopname.setEnabled(false);
                 } else {
                     et_transfer_pallet_box_no.setHint("");
                     et_transfer_pallet_box_no.setEnabled(false);

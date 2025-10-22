@@ -245,6 +245,10 @@
                     android:id="@+id/nav_item_segregation"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_item_segregation" />
+                <item
+                    android:id="@+id/nav_rfid_tag_register"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_rfid_tag_register" />
             </menu>
         </item>
 

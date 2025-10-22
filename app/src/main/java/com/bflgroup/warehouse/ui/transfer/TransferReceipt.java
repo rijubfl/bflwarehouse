@@ -18,7 +18,7 @@ public class TransferReceipt {
     public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype, String regSIMExclude) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", trfType = "R", trfPalletNo = "", cartonNo = "1", empName = "", storeIssue = palletBoxNo, firstScanTime = "";
-        if (objGlobal.getWorkLocation().equals("KSA")) preparedBy = objGlobal.getUserName();
+        if (!objGlobal.getWorkLocation().equals("UAE")) preparedBy = objGlobal.getUserName();
         int totalQty = 0;
         float totalAmt = 0, fcRate = 1;
         objTransferGlobal.setTrfRecNo("");
@@ -180,9 +180,9 @@ public class TransferReceipt {
                 }
             }
             //insert for CheckingTotesSummary************************************
-            if (objGlobal.getWorkLocation().equals("KSA")) {
-                if (!dbConnection.insertUpdate("insert into bflksa.dbo.CheckingTotesSummary(SNo,TrnDate,DataName,ToteID,ShopName,Qty,TrfReceiptNo,TrfIssueNo,TrfReceiptDateTime,BoxNoF,UserID) values " +
-                        "((select max(SNo)+1 from bflksa.dbo.CheckingTotesSummary),'" + objGlobal.getServerDate() + "','" + dataName + "','','" + shopName + "'," + totalQty + ",'" + trfRecNo + "',''," +
+            if (!objGlobal.getWorkLocation().equals("UAE")) {
+                if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.CheckingTotesSummary(SNo,TrnDate,DataName,ToteID,ShopName,Qty,TrfReceiptNo,TrfIssueNo,TrfReceiptDateTime,BoxNoF,UserID) values " +
+                        "((select max(SNo)+1 from " + dataName + ".dbo.CheckingTotesSummary),'" + objGlobal.getServerDate() + "','" + dataName + "','','" + shopName + "'," + totalQty + ",'" + trfRecNo + "',''," +
                         "cast(getdate() as smalldatetime),''," + objGlobal.getUserId() + ")", conLoc)) {
                     conRob.rollback();
                     conLoc.rollback();

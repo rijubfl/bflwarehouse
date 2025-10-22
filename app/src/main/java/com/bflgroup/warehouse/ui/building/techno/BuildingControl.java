@@ -226,7 +226,7 @@ public class BuildingControl {
                 return false;
             }
             if(div.equals("TCM")) buildtype="TCM";
-            if(objGlobal.getWarehouse().equals("KSA")) buildtype="USA";
+            if(objGlobal.getWarehouseCountry().equals("KSA")) buildtype="USA";
             objBuildingGlobal.setBoxNo("");
             objBuildingGlobal.setBoxNo(getBoxNumber(buildtype));
             if (TextUtils.isEmpty(objBuildingGlobal.getBoxNo())) {
