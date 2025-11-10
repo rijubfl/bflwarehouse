@@ -10,13 +10,14 @@
     <string name="menu_file">File</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
-    <string name="app_version">12.31ksa</string>
+    <string name="app_version">12.31.1</string>
     <string name="menu_update_box_from_pallet">Update Box from Pallet </string>
     <string name="menu_chute_status_techno">Chute Status (Techno)</string>
     <string name="menu_chute_status_jafza">Chute Status (Jafza)</string>
     <string name="menu_building_auto">Building (Auto)</string>
     <string name="menu_building">Building</string>
     <string name="menu_transfer">Transfer</string>
+    <string name="menu_production_receive">Receive Production</string>
     <string name="menu_building_delivery">Delivery</string>
     <string name="menu_black_box">Black Box</string>
     <string name="menu_rerturns_repair">Returns / Repairs</string>
