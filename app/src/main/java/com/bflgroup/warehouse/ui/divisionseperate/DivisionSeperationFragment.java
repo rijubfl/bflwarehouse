@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -51,6 +52,7 @@ public class DivisionSeperationFragment extends Fragment {
 
     Global objGlobal = Global.getInstance();
     Controls objControls = new Controls();
+    DivisionSeperationGlobal objDivisionSeperationGlobal = DivisionSeperationGlobal.getInstance();
     DivisionSeperationControl objDivisionSeperationControl = new DivisionSeperationControl();
     MyDivisionSeperationItemTicketAdp objMyDivisionSeperationItemTicketAdp;
     DivisionSeperationShared saredRef;
@@ -359,7 +361,12 @@ public class DivisionSeperationFragment extends Fragment {
                 objMyDivisionSeperationItemTicketAdp = new DivisionSeperationFragment.MyDivisionSeperationItemTicketAdp(listLoadItems);
                 lv_div_seperate_details.setAdapter(objMyDivisionSeperationItemTicketAdp);
                 et_div_seperate_scan.setText("");
-                et_div_seperate_scan.requestFocus();
+                if(objDivisionSeperationGlobal.isDelall()){
+                    et_div_seperate_scan.setEnabled(false);
+                } else {
+                    et_div_seperate_scan.setEnabled(true);
+                    et_div_seperate_scan.requestFocus();
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ public class DivisionSeperationGlobal {
     private static String database;
     private static String costcode;
     private static String loccode;
+    private static boolean delall;
 
     public static String getLoccode() {
         return loccode;
@@ -29,6 +30,14 @@ public class DivisionSeperationGlobal {
 
     public static void setCostcode(String costcode) {
         DivisionSeperationGlobal.costcode = costcode;
+    }
+
+    public static boolean isDelall() {
+        return delall;
+    }
+
+    public static void setDelall(boolean delall) {
+        DivisionSeperationGlobal.delall = delall;
     }
 
     public static synchronized DivisionSeperationGlobal getInstance() {

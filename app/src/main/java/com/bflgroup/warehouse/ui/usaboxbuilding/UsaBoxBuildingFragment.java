@@ -218,76 +218,6 @@ public class UsaBoxBuildingFragment extends Fragment {
             }
         });
 
-        bt_usa_box_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String printer = sp_usa_box_printer.getSelectedItem().toString();
-                String palletType = tv_usa_box_pallettype.getText().toString();
-                String allowMix = tv_usa_box_pallettype_allowmix.getText().toString();
-                String spcitems = tv_usa_box_pallettype_build_sec.getText().toString();
-                String remarks = et_usa_box_remarks.getText().toString();
-                remarks = remarks + "/A-PDA";
-                String nRemarks = remarks.replace("'", "");
-                String taskType = sp_usa_box_task.getSelectedItem().toString().replace("N/A", "");
-                String doneBy = sp_usa_box_done.getSelectedItem().toString().replace("N/A", "");
-                String fSize = sp_usa_box_size.getSelectedItem().toString().replace("N/A", "");
-                String gender = sp_usa_box_gender.getSelectedItem().toString().replace("N/A", "");
-                String toteID = et_usa_box_toteid.getText().toString().toUpperCase().trim();
-                String buildType = "", euro = "";
-                String finalBuildType, finalEuro;
-                if (rb_usa_box_usa_category.isChecked()) buildType = "USA";
-                if (rb_usa_box_tcm_category.isChecked()) buildType = "TCM";
-                if (ch_usa_box_euro.isChecked()) euro = "Y";
-                finalBuildType = buildType;
-                finalEuro = euro;
-                b_Result = objUsaBoxBuildingControl.validateMain(printer, palletType, "", "", nRemarks, taskType, doneBy, fSize, gender, toteID, allowMix, buildType, euro, spcitems);
-                if (!b_Result) {
-                    okMessage("USABox Build", "bt_usa_box_save:" + objGlobal.getErrorMessage());
-                } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setMessage("Are You sure to save?")
-                            .setTitle("Conformation")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    b_Result = objUsaBoxBuildingControl.saveBox(palletType, "", "", nRemarks, taskType, doneBy, fSize, gender, toteID, finalBuildType, finalEuro);
-                                    if (!b_Result) {
-                                        okMessage("USABox Build", "bt_usa_box_save:" + objGlobal.getErrorMessage());
-                                    } else {
-                                        b_Result = objUsaBoxBuildingControl.forPrint(objUsaBoxBuildingGlobal.getBoxNo());
-                                        if (!b_Result) {
-                                            okMessage("Upc Box", objGlobal.getErrorMessage());
-                                        } else {
-                                            if (!objUsaBoxBuildingGlobal.getBoxNo().isEmpty()) {
-                                                if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
-                                                    if (!sp_usa_box_printer_copies.getSelectedItem().toString().equals("0")) {
-                                                        if (!printSticker(printer)) {
-                                                            okMessage("Transfer", "Printer Error, Pleasse reprint..");
-                                                            vibrate(100);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        b_Result = clearAll();
-                                        if (!b_Result) {
-                                            okMessage("USABox Build", "bt_usa_box_save:ClearAll:" + objGlobal.getErrorMessage());
-                                        }
-                                    }
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            })
-                            .show();
-                }
-            }
-        });
-
         tv_usa_box_pallettype_select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -348,8 +278,7 @@ public class UsaBoxBuildingFragment extends Fragment {
                 if (buttonView.isChecked()) {
                     String printer = sp_usa_box_printer.getSelectedItem().toString();
                     String printCopies = sp_usa_box_printer_copies.getSelectedItem().toString();
-                    if (printCopies.equals("0")) {
-                    } else {
+                    if (!printCopies.equals("0")) {
                         if (printer.isEmpty() || printer.equals("--Select--")) {
                             okMessage("UPC Box", "Please select printer");
                             ch_usa_box_reprint.setChecked(false);
@@ -358,9 +287,30 @@ public class UsaBoxBuildingFragment extends Fragment {
                             openPopupReprint();
                         }
                     }
-                } else {
-                    // not checked
                 }
+            }
+        });
+
+        bt_usa_box_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setMessage("Are You sure to Save all scanned items?")
+                        .setTitle("Conformation")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new UsaBoxBuildingFragment.SaveBox().execute();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .show();
             }
         });
 
@@ -375,6 +325,91 @@ public class UsaBoxBuildingFragment extends Fragment {
         }
 
         return view;
+    }
+
+    private class SaveBox extends AsyncTask<Void, Void, Integer> {
+        private ProgressDialog dialog;
+        public SaveBox() {
+            dialog = new ProgressDialog(getContext());
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Loading, Please wait...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... args) {
+            String palletType = tv_usa_box_pallettype.getText().toString();
+            String allowMix = tv_usa_box_pallettype_allowmix.getText().toString();
+            String spcitems = tv_usa_box_pallettype_build_sec.getText().toString();
+            String remarks = et_usa_box_remarks.getText().toString();
+            remarks = remarks + "/A-PDA";
+            String nRemarks = remarks.replace("'", "");
+            String taskType = sp_usa_box_task.getSelectedItem().toString().replace("N/A", "");
+            String doneBy = sp_usa_box_done.getSelectedItem().toString().replace("N/A", "");
+            String fSize = sp_usa_box_size.getSelectedItem().toString().replace("N/A", "");
+            String gender = sp_usa_box_gender.getSelectedItem().toString().replace("N/A", "");
+            String toteID = et_usa_box_toteid.getText().toString().toUpperCase().trim();
+            String buildType = "", euro = "";
+            String finalBuildType, finalEuro;
+            if (rb_usa_box_usa_category.isChecked()) buildType = "USA";
+            if (rb_usa_box_tcm_category.isChecked()) buildType = "TCM";
+            if (ch_usa_box_euro.isChecked()) euro = "Y";
+            finalBuildType = buildType;
+            finalEuro = euro;
+            try {
+                b_Result = objUsaBoxBuildingControl.validateMain(sp_usa_box_printer.getSelectedItem().toString(), palletType, "", "", nRemarks, taskType, doneBy, fSize, gender, toteID, allowMix, buildType, euro, spcitems);
+                if(!b_Result) {
+                    return 0;
+                } else {
+                    b_Result = objUsaBoxBuildingControl.saveBox(palletType, "", "", nRemarks, taskType, doneBy, fSize, gender, toteID, finalBuildType, finalEuro);
+                    if (!b_Result) {
+                        return 0;
+                    }
+                }
+            } catch (Exception e) {
+                objGlobal.setErrorMessage(e.toString());
+                return 0;
+            }
+            return 1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (result == 0) {
+                okMessage("Box Build", "bt_usa_box_save:" + objGlobal.getErrorMessage());
+                vibrate(500);
+            } else {
+                b_Result = objUsaBoxBuildingControl.forPrint(objUsaBoxBuildingGlobal.getBoxNo());
+                if (!b_Result) {
+                    okMessage("Box Build", objGlobal.getErrorMessage());
+                } else {
+                    if (!objUsaBoxBuildingGlobal.getBoxNo().isEmpty()) {
+                        if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
+                            if (!sp_usa_box_printer_copies.getSelectedItem().toString().equals("0")) {
+                                if (!printSticker(sp_usa_box_printer.getSelectedItem().toString())) {
+                                    okMessage("Box Build", "Printer Error, Pleasse reprint..");
+                                    vibrate(100);
+                                }
+                            }
+                        }
+                    }
+                    b_Result = clearAll();
+                    if (!b_Result) {
+                        okMessage("USABox Build", "bt_usa_box_save:ClearAll:" + objGlobal.getErrorMessage());
+                        vibrate(100);
+                    }
+                }
+            }
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
     }
 
     public void Init_BluetoothSet() {

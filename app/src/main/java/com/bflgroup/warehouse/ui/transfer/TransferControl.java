@@ -755,8 +755,7 @@ public class TransferControl {
         }
     }
 
-    public boolean
-    validateTransferToExp(String selshop,String scan) {
+    public boolean validateTransferToExp(String selshop,String scan) {
         String trfno="";
         if (!checkConnection()) {
             return false;

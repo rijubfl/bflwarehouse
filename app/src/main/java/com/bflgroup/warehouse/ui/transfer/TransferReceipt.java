@@ -54,12 +54,12 @@ public class TransferReceipt {
                 totalQty = rs.getInt("qty");
             }
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
-                objGlobal.setErrorNo("transferReceipt:007");
+                objGlobal.setErrorNo("transferReceipt:003");
                 return false;
             }
             if (TextUtils.isEmpty(objGlobal.getDelDate())) {
                 objGlobal.setErrorMessage("Delivery Date not set");
-                objGlobal.setErrorNo("transferReceipt:008");
+                objGlobal.setErrorNo("transferReceipt:004");
                 return false;
             }
             rs = dbConnection.getResultSet("select * from bfldata.dbo.datasettings where shopname='" + shopName + "'", objGlobal.getConnection());
@@ -82,19 +82,19 @@ public class TransferReceipt {
             }
             if (TextUtils.isEmpty(dataName) || TextUtils.isEmpty(costCodeTo) || TextUtils.isEmpty(locCodeTo)) {
                 objGlobal.setErrorMessage("Invalid Dataname");
-                objGlobal.setErrorNo("transferReceipt:009");
+                objGlobal.setErrorNo("transferReceipt:005");
                 return false;
             }
             cartonNo = getCartonNo(conRob, dataName, objGlobal.getServerDate(), costCodeTo, locCodeTo);
             if (TextUtils.isEmpty(cartonNo)) {
                 objGlobal.setErrorMessage("Box Number is wrong");
-                objGlobal.setErrorNo("transferReceipt:010");
+                objGlobal.setErrorNo("transferReceipt:006");
                 return false;
             }
             trfRecNo = getLatestTrfNo(conRob, dataName);
             if (TextUtils.isEmpty(trfRecNo)) {
                 objGlobal.setErrorMessage("Transfer Receipt number is wrong");
-                objGlobal.setErrorNo("transferReceipt:011");
+                objGlobal.setErrorNo("transferReceipt:007");
                 return false;
             }
         } catch (Exception e) {
@@ -164,7 +164,7 @@ public class TransferReceipt {
                 conLoc.rollback();
                 conRob.setAutoCommit(true);
                 conLoc.setAutoCommit(true);
-                objGlobal.setErrorNo("transferReceipt:009");
+                objGlobal.setErrorNo("transferReceipt:017");
                 return false;
             }
             //insert for tmpPrintTransferRfidNew************************************
@@ -175,7 +175,7 @@ public class TransferReceipt {
                     conLoc.rollback();
                     conRob.setAutoCommit(true);
                     conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:017");
+                    objGlobal.setErrorNo("transferReceipt:018");
                     return false;
                 }
             }
@@ -188,7 +188,7 @@ public class TransferReceipt {
                     conLoc.rollback();
                     conRob.setAutoCommit(true);
                     conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:018");
+                    objGlobal.setErrorNo("transferReceipt:019");
                     return false;
                 }
             }
@@ -200,7 +200,7 @@ public class TransferReceipt {
                     conLoc.rollback();
                     conRob.setAutoCommit(true);
                     conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:019");
+                    objGlobal.setErrorNo("transferReceipt:020");
                     return false;
                 }
                 if (!dbConnection.insertUpdate("update usa.dbo.UPCBoxHead set Closed='Y' where boxno='" + palletBoxNo + "'", conLoc)) {
@@ -208,7 +208,7 @@ public class TransferReceipt {
                     conLoc.rollback();
                     conRob.setAutoCommit(true);
                     conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:025");
+                    objGlobal.setErrorNo("transferReceipt:021");
                     return false;
                 }
             }
@@ -230,7 +230,7 @@ public class TransferReceipt {
                     conLoc.rollback();
                     conRob.setAutoCommit(true);
                     conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:022");
+                    objGlobal.setErrorNo("transferReceipt:023");
                     return false;
                 }
                 if (!dbConnection.insertUpdate("insert into usa.dbo.specialsimtransferinclude(Trndate,TrfNo,BoxNo,PalletType,UserName) values (getdate(),'" + trfRecNo + "'," +
@@ -239,7 +239,7 @@ public class TransferReceipt {
                     conLoc.rollback();
                     conRob.setAutoCommit(true);
                     conLoc.setAutoCommit(true);
-                    objGlobal.setErrorNo("transferReceipt:022");
+                    objGlobal.setErrorNo("transferReceipt:024");
                     return false;
                 }
             }
@@ -254,10 +254,10 @@ public class TransferReceipt {
                 conRob.rollback();
                 conLoc.rollback();
             } catch (SQLException sqlException) {
-                objGlobal.setErrorMessage("transferReceipt:sqlException:2: " + sqlException);
+                objGlobal.setErrorMessage(objGlobal.getErrorNo()+":transferReceipt:sqlException:2: " + sqlException);
                 return false;
             }
-            objGlobal.setErrorMessage(":transferReceipt:exception:3: " + exception);
+            objGlobal.setErrorMessage(objGlobal.getErrorNo()+":transferReceipt:exception:3: " + exception);
             return false;
         }
     }
