@@ -239,11 +239,6 @@
         android:label="@string/menu_stock_taking"
         tools:layout="@layout/fragment_ageing_stock_taking" />
 
-    <fragment
-        android:id="@+id/nav_receive_production"
-        android:name="com.bflgroup.warehouse.ui.productionreceive.ProductionReceiveFragment"
-        android:label="@string/menu_production_receive"
-        tools:layout="@layout/fragment_production_receive" />
 
     <fragment
         android:id="@+id/nav_generate_barcode"
