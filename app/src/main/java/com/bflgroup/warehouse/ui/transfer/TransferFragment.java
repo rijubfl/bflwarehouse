@@ -480,7 +480,7 @@ public class TransferFragment extends Fragment {
                     return false;
                 }
             } else {
-                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid,selType,objTransferGlobal.getRegSIMExclude());
+                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid,selType,objTransferGlobal.getRegSIMExclude(),objTransferGlobal.getTypeUsaTcm());
                 if (!b_Result) {
                     okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
                     return false;

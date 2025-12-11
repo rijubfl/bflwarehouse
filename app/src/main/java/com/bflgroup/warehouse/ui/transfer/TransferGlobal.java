@@ -23,6 +23,7 @@ public class TransferGlobal {
     private static String boxTrfBoxNo;
     private static String boxTrfBoxNoPalletType;
     private static String regSIMExclude;
+    private static String typeUsaTcm;
 
     public static String getScanBarcode() {
         return scanBarcode;
@@ -182,6 +183,14 @@ public class TransferGlobal {
 
     public static void setReprintToteid(String reprintToteid) {
         TransferGlobal.reprintToteid = reprintToteid;
+    }
+
+    public static String getTypeUsaTcm() {
+        return typeUsaTcm;
+    }
+
+    public static void setTypeUsaTcm(String typeUsaTcm) {
+        TransferGlobal.typeUsaTcm = typeUsaTcm;
     }
 
     public static TransferGlobal instance;
