@@ -33,16 +33,16 @@ public class ReceiveShopReturnsControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("BFLDATA");
-        if (dbConnection.checkConnectionClosed() == false) {
+        if (!dbConnection.checkConnectionClosed()) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("1 ReceiveShopReturnsControl : Connection error");
                 return false;
             }
         }
-        if (dbConnection.checkCloudConnectionClosed() == false) {
+        if (!dbConnection.checkCloudConnectionClosed()) {
             b_Result = dbConnection.connectCloudDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("2 ReceiveShopReturnsControl : Cloud Connection error");
             }
         }

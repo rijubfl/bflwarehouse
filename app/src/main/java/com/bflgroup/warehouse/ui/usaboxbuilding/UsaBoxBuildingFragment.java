@@ -203,8 +203,6 @@ public class UsaBoxBuildingFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (!clearAll()) {
                                     okMessage("USABox Build", "bt_usa_box_clear:" + objGlobal.getErrorMessage());
-                                } else {
-
                                 }
                             }
                         })
@@ -523,6 +521,8 @@ public class UsaBoxBuildingFragment extends Fragment {
         saredRef.savePltType(tv_usa_box_pallettype.getText().toString());
         saredRef.savePltTypeName(tv_usa_box_pallettype_select.getText().toString());
         saredRef.saveAllowMixCategory(tv_usa_box_pallettype_allowmix.getText().toString());
+        saredRef.saveNeedBlueBox(objUsaBoxBuildingGlobal.getNeedBlueBox().toString());
+        saredRef.saveValidateHoStock(objUsaBoxBuildingGlobal.getValidateHoStock().toString());
         saredRef.saveSize(sp_usa_box_size.getSelectedItem().toString());
         saredRef.saveSPType(tv_usa_box_pallettype_build_sec.getText().toString());
         saredRef.saveGender(sp_usa_box_gender.getSelectedItem().toString());
@@ -833,6 +833,8 @@ public class UsaBoxBuildingFragment extends Fragment {
         saredRef.savePltType("");
         saredRef.savePltTypeName("");
         saredRef.saveAllowMixCategory("");
+        saredRef.saveNeedBlueBox("");
+        saredRef.saveValidateHoStock("");
         saredRef.saveSPType("");
         saredRef.saveSize("");
         saredRef.saveGender("");
@@ -915,8 +917,11 @@ public class UsaBoxBuildingFragment extends Fragment {
             sp_usa_box_done.setSelection(arrayAdp7.getPosition(saredRef.loadDone()));
 
             tv_usa_box_pallettype_allowmix.setText(saredRef.loadAllowMixCategory());
+            objUsaBoxBuildingGlobal.setNeedBlueBox(saredRef.loadNeedBlueBox());
+            objUsaBoxBuildingGlobal.setValidateHoStock(saredRef.loadValidateHoStock());
             tv_usa_box_pallettype_build_sec.setText(saredRef.loadSPType());
             tv_usa_box_pallettype.setText(saredRef.loadPltType());
+            tv_usa_box_pallettype_select.setText(saredRef.loadPltTypeName());
             tv_usa_box_pallettype_select.setText(saredRef.loadPltTypeName());
 
             tv_usa_box_pallettype_select.setEnabled(false);
@@ -941,6 +946,7 @@ public class UsaBoxBuildingFragment extends Fragment {
                 ch_usa_box_euro.setChecked(false);
                 ch_usa_box_euro.setEnabled(false);
             }
+
             sp_usa_box_size.setEnabled(false);
             sp_usa_box_task.setEnabled(false);
             sp_usa_box_done.setEnabled(false);
