@@ -219,9 +219,11 @@ public class UsaBoxBuildingFragment extends Fragment {
             }
         });
 
+
         bt_usa_box_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bt_usa_box_save.setEnabled(false);
                 String printer = sp_usa_box_printer.getSelectedItem().toString();
                 String palletType = tv_usa_box_pallettype.getText().toString();
                 String allowMix = tv_usa_box_pallettype_allowmix.getText().toString();
@@ -286,6 +288,7 @@ public class UsaBoxBuildingFragment extends Fragment {
                             })
                             .show();
                 }
+                bt_usa_box_save.setEnabled(true);
             }
         });
 
