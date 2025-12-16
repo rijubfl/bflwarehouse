@@ -27,6 +27,10 @@ public class WarehouseGRNControl {
         if (b_Result == false) {
             objGlobal.setErrorMessage("WarehouseGRNNewControl : Connection error");
         }
+        b_Result = dbConnection.connectCloudDb();
+        if (!b_Result) {
+            objGlobal.setErrorMessage("2 ReceiveShopReturnsControl : Cloud Connection error");
+        }
     }
 
     public boolean checkConnection() {
@@ -37,6 +41,12 @@ public class WarehouseGRNControl {
             if (b_Result == false) {
                 objGlobal.setErrorMessage("WarehouseGRNNewControl.checkConnection : Connection error");
                 return false;
+            }
+        }
+        if (dbConnection.checkCloudConnectionClosed() == false) {
+            b_Result = dbConnection.connectCloudDb();
+            if (b_Result == false) {
+                objGlobal.setErrorMessage("2 ReceiveShopReturnsControl : Cloud Connection error");
             }
         }
         return true;
@@ -81,6 +91,12 @@ public class WarehouseGRNControl {
             if (objWarehouseGRNNewGlobal.getWarehouseTo().isEmpty()) {
                 objGlobal.setErrorMessage("Empty Warehouse TO");
                 return false;
+            }
+            objWarehouseGRNNewGlobal.setAutoPost("N");
+            rs = dbConnection.getResultSet("select AutoPost=isnull(AutoPost,'N') from bfldata.dbo.WarehouseGrnAutoPosting where WarehouseFrom='" + objWarehouseGRNNewGlobal.getWarehouseFrom() + "' and " +
+                    "WarehouseTo='" + objWarehouseGRNNewGlobal.getWarehouseTo() + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                objWarehouseGRNNewGlobal.setAutoPost(rs.getString("AutoPost"));
             }
             return true;
         } catch (Exception ex) {
@@ -172,7 +188,6 @@ public class WarehouseGRNControl {
     }
 
     public boolean loadGinDetailsFromAPI(String country,String ginNo,ArrayList<WarehouseGRNDetailAPICallTicket> objWarehouseGRNNewDetailAPICallTicket) {
-        String db = objControls.getCountryDb(country);
         if (!checkConnection()) {
             return false;
         }
@@ -219,14 +234,14 @@ public class WarehouseGRNControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and (PalletNo='" + scanValue + "' or " +
-                    "boxno='" + scanValue + "' or toteid='" + scanValue + "')", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                    "(PalletNo='" + scanValue + "' or boxno='" + scanValue + "' or toteid='" + scanValue + "')", objGlobal.getConnection());
             if (!rs.next()) {
-                objGlobal.setErrorMessage("Pallet number is not found in the GIN");
+                objGlobal.setErrorMessage("Pallet number or Box number is not found in the GIN");
                 return false;
             }
-            if (!dbConnection.insertUpdate("update bfldata.dbo.tmpWarehouseGrnScanNew set scount=1,ScanDate=getdate(),ScanTime=getdate() where DeviceId='" + objGlobal.getDeviceName() + "' and (PalletNo='" + scanValue + "' or " +
-                    "BoxNo='" + scanValue + "' or ToteId='" + scanValue + "')", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("update bfldata.dbo.tmpWarehouseGrnScanNew set scount=1,ScanDate=getdate(),ScanTime=getdate() where DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                    "(PalletNo='" + scanValue + "' or boxno='" + scanValue + "' or toteid='" + scanValue + "')", objGlobal.getConnection())) {
                 return false;
             }
             return true;
@@ -236,7 +251,7 @@ public class WarehouseGRNControl {
         }
     }
 
-    public boolean validateGrn(String country,String ginNo) {
+    public boolean validateGrn(String country,String ginNo, String autoPost, String whFrom,String whTo) {
         String db = objControls.getCountryDb(country);
         if (!checkConnection()) {
             return false;
@@ -245,7 +260,7 @@ public class WarehouseGRNControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from " + db + ".dbo.WHGRNDetails where GINNo='" + ginNo + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.WHGRNDetails where GINNo='" + ginNo + "' and WareHouseFrom='" + whFrom + "' and WareHouseTo='" + whTo + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("GIN Number: " + ginNo + ", already found in GRN");
                 return false;
@@ -254,6 +269,37 @@ public class WarehouseGRNControl {
             if (!rs.next()) {
                 objGlobal.setErrorMessage("No record found for Save");
                 return false;
+            }
+            rs = dbConnection.getResultSet("select cnt=count(distinct PalletNo) from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=0", objGlobal.getConnection());
+            if (!rs.next()) {
+                objGlobal.setErrorMessage("No record found for Save");
+                return false;
+            }
+            if (autoPost.equals("Y")) {
+                /*rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=1 and BoxNo not in(select BoxNo " +
+                        "from " + db + ".dbo.UPCBoxHead where Closed='N')", objGlobal.getConnection());
+                if (rs.next()) {
+                    if(rs.getInt("cnt")>0){
+                        objGlobal.setErrorMessage("Can't proceed, Boxes (" + rs.getString("cnt") + ") are invalid or closed");
+                        return false;
+                    }
+                }*/
+                rs = dbConnection.getResultSet("select cnt=count(*) from usa.dbo.UPCBoxHead where BoxNo in(select BoxNo from bfldata.dbo.tmpWarehouseGrnScanNew where " +
+                        "DeviceId='" + objGlobal.getDeviceName() + "' and SCount=1)", objGlobal.getConnection());
+                if (rs.next()) {
+                    if (rs.getInt("cnt") > 0) {
+                        objGlobal.setErrorMessage("Can't proceed, Boxes (" + rs.getString("cnt") + ") already found in HO");
+                        return false;
+                    }
+                }
+                rs = dbConnection.getResultSet("select cnt=count(*) from BFLDATA.dbo.ShopReturnHeader where ReturnNo in(select BoxNo from bfldata.dbo.tmpWarehouseGrnScanNew where " +
+                        "DeviceId='" + objGlobal.getDeviceName() + "' and SCount=1)", objGlobal.getConnection());
+                if (rs.next()) {
+                    if (rs.getInt("cnt") > 0) {
+                        objGlobal.setErrorMessage("Can't proceed, Boxes (" + rs.getString("cnt") + ") already done posting");
+                        return false;
+                    }
+                }
             }
             return true;
         } catch (Exception ex) {
@@ -277,8 +323,8 @@ public class WarehouseGRNControl {
         }
     }
 
-    public boolean grnSave(String country, String remarks) {
-        int sn = 0;
+    public boolean grnSave(String country, String remarks,String autopost, String whFrom, String whTo) {
+        int grnno = 0;
         String db = objControls.getCountryDb(country);
         if (!checkConnection()) {
             return false;
@@ -286,24 +332,55 @@ public class WarehouseGRNControl {
         try {
             rs = dbConnection.getResultSet("select sn=isnull(max(grnno),0)+1 from bfldata.dbo.WHGRNHeader", objGlobal.getConnection());
             if (rs.next()) {
-                sn = rs.getInt("sn");
+                grnno = rs.getInt("sn");
             }
-            if (sn == 0) {
+            if (grnno == 0) {
                 objGlobal.setErrorMessage("Wrong SN");
                 return false;
             }
             objGlobal.getConnection().setAutoCommit(false);
-            if (!dbConnection.insertUpdate("insert into " + db + ".dbo.WHGRNHeader(GRNNo,GRNDate,GRNTime,UserName,Remarks,RecWarehouse) values (" + sn + ",'" + objGlobal.getServerDate() + "'," +
-                    "'" + objGlobal.getServerTime() + "','" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("insert into bfldata.dbo.WHGRNHeader(GRNNo,GRNDate,GRNTime,UserName,Remarks,RecWarehouse,AutoPost,GinLocation) values (" + grnno + ",'" + objGlobal.getServerDate() + "'," +
+                    "'" + objGlobal.getServerTime() + "','" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "','" + autopost + "','" + country + "')", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 objGlobal.getConnection().setAutoCommit(true);
                 return false;
             }
-            if (!dbConnection.insertUpdate("insert into " + db + ".dbo.WHGRNDetails select " + sn + ",GINNo,GINDate,PalletNo,WareHouseFrom,WareHouseTo,BoxNo,0,'',ToteId from " +
+            if (!dbConnection.insertUpdate("insert into bfldata.dbo.WHGRNDetails select " + grnno + ",GINNo,GINDate,PalletNo,WareHouseFrom,WareHouseTo,BoxNo,0,'',ToteId from " +
                     "bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount>0", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 objGlobal.getConnection().setAutoCommit(true);
                 return false;
+            }
+            //auto box and posting
+            if (autopost.equals("Y")) {
+                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead(BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
+                        "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) select BoxNo,'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "',NewPallet,PreparedBy,Remarks," +
+                        "Userid,'R1','N',GroupCode,OldBoxNo,Prepared1,Prepared2,WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID from " + db + ".DBO.UPCBoxHead where BoxNo in(select BoxNo from " +
+                        "bfldata.dbo.tmpWarehouseGrnScanNew where SCount=1 and DeviceId='" + objGlobal.getDeviceName() + "')", objGlobal.getConnection())) {
+                    objGlobal.getConnection().rollback();
+                    objGlobal.getConnection().setAutoCommit(true);
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxDet(BoxNo,Itemcode,Qty,QtyIssued,Status,UPC,imgfile) select BoxNo,Itemcode,Qty,QtyIssued,Status,UPC,imgfile from " + db + ".DBO.UPCBoxDet " +
+                        "where BoxNo in(select BoxNo from bfldata.dbo.tmpWarehouseGrnScanNew where SCount=1 and DeviceId='" + objGlobal.getDeviceName() + "')", objGlobal.getConnection())) {
+                    objGlobal.getConnection().rollback();
+                    objGlobal.getConnection().setAutoCommit(true);
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead(BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
+                        "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) select TrfNo,'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','',PreparedBy,'KSA to YOTO Transfers'," +
+                        "0,'R1','N','',StoreIssue,0,0,'" + objGlobal.getWorkLocation() + "','','','R1','','',StoreIssue from " + db + ".dbo.TransferHeader where TrfNo in(select BoxNo from " +
+                        "bfldata.dbo.tmpWarehouseGrnScanNew where SCount=1 and DeviceId='" + objGlobal.getDeviceName() + "')", objGlobal.getConnection())) {
+                    objGlobal.getConnection().rollback();
+                    objGlobal.getConnection().setAutoCommit(true);
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxDet(BoxNo,Itemcode,Qty,QtyIssued,Status,UPC,imgfile) select TrfNo,ItemCode,Quantity,0,'',ItemCode,'' " +
+                        "from " + db + ".dbo.TransferDetail where TrfNo in(select BoxNo from bfldata.dbo.tmpWarehouseGrnScanNew where SCount=1 and DeviceId='" + objGlobal.getDeviceName() + "')", objGlobal.getConnection())) {
+                    objGlobal.getConnection().rollback();
+                    objGlobal.getConnection().setAutoCommit(true);
+                    return false;
+                }
             }
             objGlobal.getConnection().commit();
             objGlobal.getConnection().setAutoCommit(true);
@@ -395,6 +472,4 @@ public class WarehouseGRNControl {
             return null;
         }
     }
-
-
 }

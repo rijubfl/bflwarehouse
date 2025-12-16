@@ -139,6 +139,10 @@
                     android:id="@+id/nav_update_box_from_pallet"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_update_box_from_pallet" />
+                <item
+                    android:id="@+id/nav_receive_production"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_production_receive" />
             </menu>
         </item>
         <item android:title="@string/menu_black_box">
@@ -214,6 +218,10 @@
         <item android:title="@string/menu_rerturns_repair">
             <menu>
                 <item
+                    android:id="@+id/nav_shop_return_verify"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_shop_return_verify" />
+                <item
                     android:id="@+id/nav_shop_return"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_shop_return" />
@@ -246,6 +254,14 @@
                     android:id="@+id/nav_item_pullout"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_price_check" />
+                <item
+                    android:id="@+id/nav_item_segregation"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_item_segregation" />
+                <item
+                    android:id="@+id/nav_rfid_tag_register"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_rfid_tag_register" />
             </menu>
         </item>
 

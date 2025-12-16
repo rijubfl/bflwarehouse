@@ -226,7 +226,7 @@ public class BuildingControl {
                 return false;
             }
             if(div.equals("TCM")) buildtype="TCM";
-            if(objGlobal.getWarehouse().equals("KSA")) buildtype="USA";
+            if(objGlobal.getWarehouseCountry().equals("KSA")) buildtype="USA";
             objBuildingGlobal.setBoxNo("");
             objBuildingGlobal.setBoxNo(getBoxNumber(buildtype));
             if (TextUtils.isEmpty(objBuildingGlobal.getBoxNo())) {
@@ -381,7 +381,7 @@ public class BuildingControl {
     public boolean checkValidToteId(String toteId) {
         try {
             if (objGlobal.getWorkLocation().equals("KSA"))
-                rs = dbConnection.getResultSet("select * from ROBOTICS.dbo.TotIdMaster where TotId='" + toteId + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from bflksa.dbo.ToteIdMaster where ToteId='" + toteId + "'", objGlobal.getConnection()); // toteidmaster changed from robotics to ksa
             else
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.BlueToteIDMaster where ToteID='" + toteId + "'", objGlobal.getConnection());
             if (rs.next()) {

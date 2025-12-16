@@ -52,7 +52,7 @@ public class UpdateBoxQuantityControl {
         }
         try {
             String condition="(BoxNo like 'R%' or BoxNo like 'U%')";
-            if(objGlobal.getWarehouse().equals("RUKOON") || objGlobal.getWarehouse().equals("BFLKSA")) condition="BoxNo like 'S%'";
+            if(objGlobal.getWarehouse().equals("RUKOON") || objGlobal.getWarehouse().equals("BFLKSAR1")) condition="BoxNo like 'S%'";
             if(objGlobal.getWarehouse().equals("BFLKUWAIT")) condition="BoxNo like 'K%'";
             arr = new ArrayList<UpdateBoxItem>();
             String query1 = "select * from BFLdata..tmpUpdateBoxQty where Toteid='" + Toteid + "' and DeviceName = '" + objGlobal.getDeviceName() + "'";
@@ -230,9 +230,9 @@ public class UpdateBoxQuantityControl {
         return true;
     }
 
-    public int GetTotalQty(String ToteId){
+    public int GetTotalQty(String ToteId) {
         int qty = 0;
-        String Query = "select sum(BoxQuantity) from bfldata..tmpUpdateBoxQty where toteid = '"+ToteId+"' and DeviceName = '" + objGlobal.getDeviceName() + "'";
+        String Query = "select sum(BoxQuantity) from bfldata..tmpUpdateBoxQty where toteid = '" + ToteId + "' and DeviceName = '" + objGlobal.getDeviceName() + "'";
         Log.e("Sum(Qty)", Query);
         rs = dbConnection.getResultSet(Query, objGlobal.getConnection());
         try {
@@ -245,9 +245,9 @@ public class UpdateBoxQuantityControl {
         return qty;
     }
 
-    public int ReducedQty(String ToteId){
+    public int ReducedQty(String ToteId) {
         int qty = 0;
-        String Query = "select sum(Qty) from bfldata..tmpUpdateBoxQty where toteid = '"+ToteId+"' and DeviceName = '" + objGlobal.getDeviceName() + "'";
+        String Query = "select sum(Qty) from bfldata..tmpUpdateBoxQty where toteid = '" + ToteId + "' and DeviceName = '" + objGlobal.getDeviceName() + "'";
         Log.e("Sum(Qty)", Query);
         rs = dbConnection.getResultSet(Query, objGlobal.getConnection());
         try {

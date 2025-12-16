@@ -55,7 +55,6 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
     private Button bt_chute_status_building_in;
     private Button bt_chute_status_building_build;
     private Button bt_chute_status_building_clear;
-    private ProgressBar pr_chute_building_inout;
 
     RoboApi objRoboApi = new RoboApi();
 
@@ -86,7 +85,6 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
         bt_chute_status_building_in = (Button) view.findViewById(R.id.bt_chute_status_building_in);
         bt_chute_status_building_build = (Button) view.findViewById(R.id.bt_chute_status_building_build);
         bt_chute_status_building_clear = (Button) view.findViewById(R.id.bt_chute_status_building_clear);
-        pr_chute_building_inout = (ProgressBar) view.findViewById(R.id.pr_chute_building_inout);
 
         clearAll();
         et_building_chuteid.requestFocus();

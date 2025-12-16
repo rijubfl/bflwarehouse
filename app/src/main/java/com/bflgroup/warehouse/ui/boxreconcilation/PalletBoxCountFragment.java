@@ -117,7 +117,6 @@ public class PalletBoxCountFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(!et_rack_in_out_pallettop.getText().toString().equals("") ) {
-
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     alert.setMessage("Do you want to Save this pallet - " + objPalletBoxCountShared.loadPalletno() )
                             .setTitle("Confirmation")
@@ -126,9 +125,10 @@ public class PalletBoxCountFragment extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     if (objPalletBoxCountControl.SavePalletDetails(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString())) {
-
                                         okMessage("Success", "Pallet Saved Successfully");
                                         Clear();
+                                    } else {
+                                        okMessage("Alert", objGlobal.getErrorMessage());
                                     }
 
                                 }

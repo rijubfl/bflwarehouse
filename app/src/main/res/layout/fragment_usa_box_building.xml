@@ -61,18 +61,62 @@
             app:layout_constraintStart_toEndOf="@+id/rg_pallet_building_category"
             app:layout_constraintTop_toTopOf="@+id/rg_pallet_building_category" />
 
-        <Spinner
-            android:id="@+id/sp_usa_box_printer"
-            android:layout_width="140dp"
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="65dp"
             android:layout_height="40dp"
             android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Printer"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rg_pallet_building_category" />
+
+        <Spinner
+            android:id="@+id/sp_usa_box_printer"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
             android:padding="8dp"
             android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rg_pallet_building_category" />
+            app:layout_constraintEnd_toStartOf="@+id/textView18"
+            app:layout_constraintStart_toEndOf="@+id/textView11"
+            app:layout_constraintTop_toTopOf="@+id/textView11" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Copies"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/sp_usa_box_printer_copies"
+            app:layout_constraintTop_toTopOf="@+id/textView11" />
+
+        <Spinner
+            android:id="@+id/sp_usa_box_printer_copies"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView11" />
 
         <CheckBox
             android:id="@+id/ch_usa_box_euro"
@@ -95,10 +139,26 @@
             app:layout_constraintTop_toTopOf="@+id/tv_usa_box_building_category" />
 
         <TextView
+            android:id="@+id/textView19"
+            android:layout_width="95dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Pallet Type"
+            android:textColor="@color/coloBlack"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+        <TextView
             android:id="@+id/tv_usa_box_pallettype_select"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
@@ -107,8 +167,8 @@
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             app:layout_constraintEnd_toStartOf="@+id/tv_usa_box_pallettype"
-            app:layout_constraintStart_toEndOf="@+id/sp_usa_box_printer"
-            app:layout_constraintTop_toTopOf="@+id/sp_usa_box_printer" />
+            app:layout_constraintStart_toEndOf="@+id/textView19"
+            app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
         <TextView
             android:id="@+id/tv_usa_box_pallettype"
@@ -122,7 +182,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/sp_usa_box_printer" />
+            app:layout_constraintTop_toTopOf="@+id/tv_usa_box_pallettype_select" />
 
         <TextView
             android:id="@+id/tv_usa_box_pallettype_allowmix"
@@ -167,7 +227,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sp_usa_box_printer" />
+            app:layout_constraintTop_toBottomOf="@+id/textView19" />
 
         <TextView
             android:id="@+id/textView15"

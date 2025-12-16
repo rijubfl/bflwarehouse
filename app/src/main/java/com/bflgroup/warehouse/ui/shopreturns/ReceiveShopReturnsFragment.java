@@ -379,7 +379,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
             return false;
         }
         b_Result = objReceiveShopReturnsControl.validItemcode(itemcode);
-        if (b_Result == false) {
+        if (!b_Result) {
             okMessage("Shop Return", "Invalid Itemcode");
             vibrate(500);
             et_shop_return_popup_itemcode.setText("");
@@ -388,7 +388,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
         }
 
         b_Result = objReceiveShopReturnsControl.validateShopReturnItem(false, entryNo, itemcode, qty, flagEdit, actions, true);
-        if (b_Result == false) {
+        if (!b_Result) {
             okMessage("Shop Return", "openPopupWindow:et_build_usabox_popup_itemcode:" + objGlobal.getErrorMessage());
             vibrate(500);
             et_shop_return_popup_itemcode.setText("");

@@ -4,6 +4,7 @@ public class BinPutAwayMultipleToteGlobal {
 
     public static BinPutAwayMultipleToteGlobal instance;
     private static String boxNo;
+    private static String toteId;
     private static String doubleDeep;
     private static int scanCount;
     public static String getBoxNo() {
@@ -28,6 +29,14 @@ public class BinPutAwayMultipleToteGlobal {
 
     public static void setScanCount(int scanCount) {
         BinPutAwayMultipleToteGlobal.scanCount = scanCount;
+    }
+
+    public static String getToteId() {
+        return toteId;
+    }
+
+    public static void setToteId(String toteId) {
+        BinPutAwayMultipleToteGlobal.toteId = toteId;
     }
 
     public static synchronized BinPutAwayMultipleToteGlobal getInstance() {

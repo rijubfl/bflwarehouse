@@ -22,6 +22,7 @@ public class Global {
     private static String location;
     private static String countryCode;
     private static String countryDbName;
+    private static String exportCountryStoreName;
     private static String exportCountryCode;
     private static String exportCountryCostCode;
     private static String exportCountryLocCode;
@@ -114,6 +115,14 @@ public class Global {
 
     public static String getExportCountryCode() {
         return exportCountryCode;
+    }
+
+    public static String getExportCountryStoreName() {
+        return exportCountryStoreName;
+    }
+
+    public static void setExportCountryStoreName(String exportCountryStoreName) {
+        Global.exportCountryStoreName = exportCountryStoreName;
     }
 
     public static void setExportCountryCode(String exportCountryCode) {

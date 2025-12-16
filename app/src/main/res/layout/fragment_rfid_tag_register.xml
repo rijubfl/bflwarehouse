@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backColor"
+    tools:context=".ui.rfidtagregister.RfidTagRegisterFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <RadioGroup
+            android:id="@+id/rg_rfid_tag_register"
+            android:layout_width="0dp"
+            android:layout_height="85dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RadioButton
+                android:id="@+id/rb_rfid_tag_register_single"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:background="@drawable/et_custom"
+                android:text="Single"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rb_rfid_tag_register_auto"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <RadioButton
+                android:id="@+id/rb_rfid_tag_register_auto"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/et_custom"
+                android:checked="true"
+                android:text="Auto"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TouchTargetSizeCheck" />
+        </RadioGroup>
+
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left|center"
+            android:hint=""
+            android:padding="6dp"
+            android:text="EPC"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tv_rfid_tag_register_epc_count"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bt_rfid_tag_register_options" />
+
+        <TextView
+            android:id="@+id/tv_rfid_tag_register_scantime"
+            android:layout_width="55dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left|center"
+            android:hint=""
+            android:padding="6dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_rfid_tag_register_total"
+            app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+        <TextView
+            android:id="@+id/tv_rfid_tag_register_epc_count"
+            android:layout_width="55dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="right|center"
+            android:hint=""
+            android:padding="6dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_rfid_tag_register_scantime"
+            app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+        <TextView
+            android:id="@+id/tv_rfid_tag_register_total"
+            android:layout_width="55dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="right|center"
+            android:hint=""
+            android:padding="6dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+        <ListView
+            android:id="@+id/lv_rfid_tag_register_rfids"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/bt_rfid_tag_register_clear"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+
+        <Button
+            android:id="@+id/bt_rfid_tag_register_save"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Close"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2" />
+
+        <Button
+            android:id="@+id/bt_rfid_tag_register_clear"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Clear"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/bt_rfid_tag_register_options"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Options"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/bt_rfid_tag_register_connect"
+            app:layout_constraintTop_toBottomOf="@+id/bt_rfid_tag_register_connect" />
+
+        <Button
+            android:id="@+id/bt_rfid_tag_register_connect"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Connect"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/rg_rfid_tag_register"
+            app:layout_constraintTop_toTopOf="@+id/rg_rfid_tag_register" />
+
+        <Button
+            android:id="@+id/bt_rfid_tag_register_start"
+            android:layout_width="0dp"
+            android:layout_height="85dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Start"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bt_rfid_tag_register_connect"
+            app:layout_constraintTop_toTopOf="@+id/bt_rfid_tag_register_connect" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" "
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>

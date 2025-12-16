@@ -391,27 +391,28 @@ public class BuildBoxControl {
         return true;
     }
 
-
     public boolean getPalletNoAutoUsa() {
         int pltSn = 0;
+        String palletPrefix = "USA";
+        if(objGlobal.getWorkLocation().equals("UAE")) {
+            palletPrefix = "UAE";
+        }
         try {
             rs = dbConnection.getResultSet("select sn=Max(sn)+1 from USAPallets", objGlobal.getConnection());
             if (rs.next()) {
                 objBuildBoxGlobal.setPalletSno(rs.getString("sn").toString());
             }
-            rs = dbConnection.getResultSet("select sn=max(substring(palletno,4,7))+1 from USApallets where palletno like 'USA%'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select sn=max(substring(palletno,4,7))+1 from USApallets where palletno like '" + palletPrefix + "%'", objGlobal.getConnection());
             if (rs.next()) {
                 pltSn = Integer.parseInt(rs.getString("sn").toString());
             }
-            objBuildBoxGlobal.setPalletNo("USA" + String.format("%06d", pltSn));
+            objBuildBoxGlobal.setPalletNo(palletPrefix + String.format("%06d", pltSn));
         } catch (Exception ex) {
             objGlobal.setErrorMessage("PalletBuildingControl:getPalletNoAutoUsa:" + ex.toString());
             return false;
         }
         return true;
     }
-
-
 
     public ArrayList<BuildBoxitem> checkitems(){
         ArrayList<BuildBoxitem> arr = new ArrayList<BuildBoxitem>();

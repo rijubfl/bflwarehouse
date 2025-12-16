@@ -78,8 +78,8 @@ public class GinVerificationControl {
                     rs = dbConnection.getResultSet("select ShopName=ShopIssue,PalletNo,TrfNo,dbName=(select dataname from bfldata.dbo.DataSettings where ShopName=a.ShopIssue) from " +
                             "bfldata.dbo.vGoodsIssuePlt a where SrNo=" + ginNo, objGlobal.getConnection());
                 } else {
-                    rs = dbConnection.getResultSet("select ShopName,PalletNo,TrfNo,dbName=(select dataname from bfldata.dbo.DataSettings where ShopName=a.shopname) from " +
-                            "bfldata.dbo.GoodsIssue a where ginno=" + ginNo, objGlobal.getCloudCon());
+                    rs = dbConnection.getResultSet("select ShopName=ActualShop,PalletNo,TrfNo,dbName=(select dataname from bfldata.dbo.DataSettings where ShopName=a.ActualShop) from " +
+                            "bfldata.dbo.GoodsIssue a where sn=" + ginNo, objGlobal.getCloudCon());
                 }
                 while (rs.next()) {
                     toteId = "";

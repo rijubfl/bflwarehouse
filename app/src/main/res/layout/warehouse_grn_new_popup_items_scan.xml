@@ -7,18 +7,18 @@
     android:padding="5dp"
     android:background="@color/colorBackPopup"
     android:layout_gravity="center"
-    android:layout_height="600dp">
+    android:layout_height="650dp">
 
     <EditText
         android:id="@+id/et_warehouse_grn_new_popup_scan"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_marginRight="5dp"
         android:background="@drawable/et_custom"
         android:hint="Scan Pallet / Box / Totes"
         android:padding="10dp"
         android:textColor="@color/coloBlack"
-        android:textSize="14dp"
+        android:textSize="16dp"
         app:layout_constraintEnd_toStartOf="@+id/bt_warehouse_grn_new_popup_scan"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,18 +26,19 @@
     <Button
         android:id="@+id/bt_warehouse_grn_new_popup_scan"
         android:layout_width="100dp"
-        android:layout_height="40dp"
+        android:layout_height="0dp"
         android:background="@drawable/btn_custom1"
         android:text="SCAN"
         android:textAllCaps="false"
         android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/et_warehouse_grn_new_popup_scan"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/et_warehouse_grn_new_popup_scan" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_warehouse_grn_new_popup_last_scan"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:layout_marginTop="5dp"
         android:background="@drawable/et_custom_total"
         android:hint="Last Scan"

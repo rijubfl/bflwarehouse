@@ -28,7 +28,7 @@ public class UsaBoxBuildingControl {
     public UsaBoxBuildingControl() {
         objGlobal.setDbName("USA");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("UsaBoxBuildingControl : Connection error");
         }
     }
@@ -36,9 +36,9 @@ public class UsaBoxBuildingControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("USA");
-        if (dbConnection.checkConnectionClosed() == false) {
+        if (!dbConnection.checkConnectionClosed()) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("BinBatchInControl.checkConnection : Connection error");
                 return false;
             }
@@ -138,15 +138,22 @@ public class UsaBoxBuildingControl {
     }
 
     public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType, String selitems,String contno) {
-        if (itemcode.equals("")) {
+        if (itemcode.trim().equals("")) {
             objGlobal.setErrorMessage("Empty itemcode, please rescan");
             return false;
         }
         if (qty == 0) {
-            objGlobal.setErrorMessage("Qty is 0");
-            return false;
+            if (!edit) {
+                objGlobal.setErrorMessage("Qty is 0");
+                return false;
+            }
         }
         try {
+            rs = dbConnection.getResultSet("select top 1 itemcode from bfldata.dbo.ScanWrongItem where (itemcode like '%" + itemcode + "%' or itemcode like '%" + itemcode + "%')", objGlobal.getConnection());
+            if (rs.next()){
+                objGlobal.setErrorMessage("Invalid itemcode. Please check" + itemcode);
+                return false;
+            }
             rs = dbConnection.getResultSet("select top 1 itemcode from usa.dbo.upcbarcodes where upc='" + itemcode + "' order by trndate desc", objGlobal.getConnection());
             if (rs.next()) {
                 itemcode = rs.getString("itemcode").toString();
@@ -156,8 +163,15 @@ public class UsaBoxBuildingControl {
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 if (edit) {
-                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
-                        return false;
+                    if (qty == 0){
+                        if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                            return false;
+                        }
                     }
                 } else {
                     if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=qty+" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
@@ -169,11 +183,21 @@ public class UsaBoxBuildingControl {
                         "values('" + objGlobal.getDeviceName() + "','" + itemcode + "','','',''," + qty + ",'','')", objGlobal.getConnection())) {
                     return false;
                 }
-                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.Description,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
-                        "HODATA.dbo.ItemMaster b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
-                    objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
-                    return false;
+                if (objGlobal.getWorkLocation().equals("UAE")) {
+                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.Description,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
+                            "HODATA.dbo.ItemMaster b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
+                        return false;
+                    }
+                } else {
+                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.Description,''),groupcode=isnull(b.groupcode,'') from " +
+                            "bfldata.dbo.tmpScanItemsBox a," + objGlobal.getCountryDbName() + ".dbo.ItemMaster b where a.DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                            "a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
+                        return false;
+                    }
                 }
+
                 if (selPalletype.equals("MB")) {
                     if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.itemName,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
                             "usa.dbo.upcbarcodes b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
@@ -226,10 +250,13 @@ public class UsaBoxBuildingControl {
                 }
             }
             boolean valid = true;
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and (isnull(itemname,'')='' or isnull(GroupCode,'')='' or " +
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and (isnull(itemcode,'')='' or isnull(itemname,'')='' or isnull(GroupCode,'')='' or " +
                     "isnull(BuildingCategory,'')='')", objGlobal.getConnection());
             if (rs.next()) {
-                if (rs.getString("itemname").isEmpty()) {
+                if (rs.getString("itemcode").isEmpty()) {
+                    objGlobal.setErrorMessage("Item code is empty");
+                    valid = false;
+                } else if (rs.getString("itemname").isEmpty()) {
                     objGlobal.setErrorMessage("Item code (" + itemcode + ") is invalid");
                     valid = false;
                 } else if (rs.getString("GroupCode").isEmpty()) {
@@ -352,6 +379,7 @@ public class UsaBoxBuildingControl {
         try {
             listScanItems.clear();
             objUsaBoxBuildingGlobal.setBuildingCategory("");
+
             rs = dbConnection.getResultSet("select itemcode,itemname=isnull(itemname,''),qty,Buildingcategory=isnull(Buildingcategory,'') from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' order by sn desc", objGlobal.getConnection());
             while (rs.next()) {
                 objUsaBoxBuildingGlobal.setBuildingCategory(rs.getString("Buildingcategory"));
@@ -397,7 +425,6 @@ public class UsaBoxBuildingControl {
     public boolean saveBox(String palletType, String groupCode, String catCode, String remarks, String taskType, String doneBy, String fSize, String gender, String toteID, String buildTyp, String euro) {
         try {
             String boxPType = "";
-            String pltRemarks = "Euro Pallet Building in A-PDA/" + objGlobal.getUserName();
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) return false;
             b_Result = getBoxNumber(buildTyp);
             if (!b_Result) return false;
@@ -411,7 +438,7 @@ public class UsaBoxBuildingControl {
                     boxPType = "TP";
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.R1PalletHead(SN,PalletNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,UserId,PalletType,Closed,GrNo,PltNo,WHouse,FWType,FPreparedBy,FPalletType) " +
                             "values(" + objUsaBoxBuildingGlobal.getPalletSno() + ",'" + objUsaBoxBuildingGlobal.getPalletNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "',''," +
-                            "'" + objGlobal.getUserName() + "','" + pltRemarks + "'," + objGlobal.getUserId() + ",'" + palletType + "','N',0,0,'" + objGlobal.getWarehouse() + "','','','" + palletType + "')", objGlobal.getConnection())) {
+                            "'" + objGlobal.getUserName() + "','" + remarks + "'," + objGlobal.getUserId() + ",'" + palletType + "','N',0,0,'" + objGlobal.getWarehouse() + "','','','" + palletType + "')", objGlobal.getConnection())) {
                         objGlobal.getConnection().rollback();
                         return false;
                     }
@@ -479,7 +506,7 @@ public class UsaBoxBuildingControl {
                 if (euro.equals("Y")) {
                     boxPType = "UP";
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.usapallets(Sn,TrnDate,PalletNo,UserId,Remarks,Closed,ContNo,WHouse) values (" + objUsaBoxBuildingGlobal.getPalletSno() + "," +
-                            "'" + objGlobal.getServerDate() + "','" + objUsaBoxBuildingGlobal.getPalletNo() + "'," + objGlobal.getUserId() + ",'" + pltRemarks + "','N','','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
+                            "'" + objGlobal.getServerDate() + "','" + objUsaBoxBuildingGlobal.getPalletNo() + "'," + objGlobal.getUserId() + ",'" + remarks + "','N','','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
                         return false;
                     }
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.usapalletsdet(Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details,ToteID) select top 1 " + objUsaBoxBuildingGlobal.getPalletSno() + "," +
@@ -513,7 +540,6 @@ public class UsaBoxBuildingControl {
             return false;
         }
     }
-
 
     private String FindHour(int Hour) {
         String FindHour = "";
@@ -638,15 +664,17 @@ public class UsaBoxBuildingControl {
                     }
                 }
             } else {
+                //String palletPrefix = "USA";
+                String palletPrefix = "UAE";
                 rs = dbConnection.getResultSet("select sn=Max(sn)+1 from bfldata.dbo.USAPallets", objGlobal.getConnection());
                 if (rs.next()) {
                     objUsaBoxBuildingGlobal.setPalletSno(rs.getString("sn"));
                 }
-                rs = dbConnection.getResultSet("select sn=max(substring(palletno,4,7))+1 from bfldata.dbo.USApallets where palletno like 'USA%'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select sn=max(substring(palletno,4,7))+1 from bfldata.dbo.USApallets where palletno like '" + palletPrefix + "%'", objGlobal.getConnection());
                 if (rs.next()) {
                     pltSn = Integer.parseInt(rs.getString("sn"));
                 }
-                objUsaBoxBuildingGlobal.setPalletNo("USA" + String.format("%06d", pltSn));
+                objUsaBoxBuildingGlobal.setPalletNo(palletPrefix + String.format("%06d", pltSn));
             }
         } catch (Exception ex) {
             objGlobal.setErrorMessage("UsaBoxBuildingControl:getPalletNumber:" + ex);

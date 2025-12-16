@@ -33,16 +33,16 @@ public class ReceiveShopReturnsControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("BFLDATA");
-        if (dbConnection.checkConnectionClosed() == false) {
+        if (!dbConnection.checkConnectionClosed()) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("1 ReceiveShopReturnsControl : Connection error");
                 return false;
             }
         }
-        if (dbConnection.checkCloudConnectionClosed() == false) {
+        if (!dbConnection.checkCloudConnectionClosed()) {
             b_Result = dbConnection.connectCloudDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("2 ReceiveShopReturnsControl : Cloud Connection error");
             }
         }
@@ -51,7 +51,8 @@ public class ReceiveShopReturnsControl {
 
     public boolean validItemcode(String itemcode) {
         try {
-            rs = dbConnection.getResultSet("select description,groupcode,department,division,season = (select IIF(itemType='W','WINTER','SUMMER') from HODATA..itemmaster where itemcode = a.itemcode) from hodata.dbo.vitemmaster a where itemcode='" + itemcode + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select description,groupcode,department,division,season = (select IIF(itemType='W','WINTER','SUMMER') from HODATA..itemmaster where itemcode = a.itemcode) from " +
+                    "hodata.dbo.vitemmaster a where itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objReceiveShopReturnsGlobal.setScanItemDescription(rs.getString("description").toString());
                 objReceiveShopReturnsGlobal.setScanItemGroup(rs.getString("groupcode").toString());
@@ -79,13 +80,13 @@ public class ReceiveShopReturnsControl {
                 if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpShopRerturnScanItems where deviceid='" + objGlobal.getDeviceName() + "' and trfqty>0", objGlobal.getConnection())) {
                     return false;
                 }
-                double scanQtyItemScan=0;
-                String scanActioItemScan="";
+                double scanQtyItemScan = 0;
+                String scanActioItemScan = "";
                 rs = dbConnection.getResultSet("select * from " + objGlobal.getCloudDbName() + ".dbo.storedetail where entryno='" + entryNo + "'", objGlobal.getCloudCon());
                 while (rs.next()) {
-                    if(!itemScan) {
+                    if (!itemScan) {
                         scanQtyItemScan = rs.getInt("quantity");
-                        scanActioItemScan="USA Transfer to Shop";
+                        scanActioItemScan = "USA Transfer to Shop";
                     }
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpShopRerturnScanItems(DeviceId,itemcode,itemname,TrfQty,ScanQty,actions) values('" + objGlobal.getDeviceName() + "'," +
                             "'" + rs.getString("itemcode").toString() + "',''," + rs.getInt("quantity") + "," + scanQtyItemScan + ",'" + scanActioItemScan + "')", objGlobal.getConnection())) {
@@ -170,6 +171,13 @@ public class ReceiveShopReturnsControl {
                     }
                 }
             }
+            if (objGlobal.getWorkLocation().equals("KSA")) {
+                rs = dbConnection.getResultSet("select sn from bfldata.dbo.shopreturnverify where entryno = '" + entryNo + "'", objGlobal.getConnection());
+                if (!rs.next()) {
+                    objGlobal.setErrorMessage("Message \n The entry " + entryNo + " is not received");
+                    return false;
+                }
+            }
             rs = dbConnection.getResultSet("select * from bfldata.dbo.ShopReturnHeader where ReturnNo='" + entryNo + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("ReceiveShopReturnsControl.validateShopReturn 0: Entry number already save, " + entryNo);
@@ -239,6 +247,7 @@ public class ReceiveShopReturnsControl {
         }
         return true;
     }
+
     ArrayList<ReceiveShopReturnsScanItemPopupTicket> loadPopupScanItems() {
         ArrayList<ReceiveShopReturnsScanItemPopupTicket> listPopupScanItems = new ArrayList<ReceiveShopReturnsScanItemPopupTicket>();
         try {
@@ -246,7 +255,7 @@ public class ReceiveShopReturnsControl {
             rs = dbConnection.getResultSet("select itemcode,actions,scanqty=sum(scanqty) from bfldata.dbo.tmpShopRerturnScanItems where " +
                     "deviceid='" + objGlobal.getDeviceName() + "' and scanqty>0 group by itemcode,actions", objGlobal.getConnection());
             while (rs.next()) {
-                listPopupScanItems.add(new ReceiveShopReturnsScanItemPopupTicket(rs.getString("itemcode").toString(),rs.getString("actions").toString(),
+                listPopupScanItems.add(new ReceiveShopReturnsScanItemPopupTicket(rs.getString("itemcode").toString(), rs.getString("actions").toString(),
                         rs.getInt("scanqty")));
             }
         } catch (Exception ex) {
@@ -295,9 +304,9 @@ public class ReceiveShopReturnsControl {
         return true;
     }
 
-    public boolean saveShopTransfer(String entryNo, String shopName, String category, String remarks,boolean itemScan, boolean autoBuild, String autoBuildPalletType) {
+    public boolean saveShopTransfer(String entryNo, String shopName, String category, String remarks, boolean itemScan, boolean autoBuild, String autoBuildPalletType) {
         int slnoCloud = 0, slnoLocal = 0;
-        String sItemScan="N";
+        String sItemScan = "N";
         if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
             return false;
         }
@@ -318,8 +327,8 @@ public class ReceiveShopReturnsControl {
                 }
             }
             objReceiveShopReturnsGlobal.setBoxNo("");
-            if(itemScan){
-                sItemScan="Y";
+            if (itemScan) {
+                sItemScan = "Y";
             }
             if (autoBuild) {
                 if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
@@ -375,10 +384,9 @@ public class ReceiveShopReturnsControl {
                 objGlobal.getConnection().rollback();
                 return false;
             }
-
             //localShopReturnHeader
-            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks) " +
-                    "values (" + slnoLocal + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "')", objGlobal.getConnection());
+            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks,Warehouse) " +
+                    "values (" + slnoLocal + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
@@ -392,8 +400,8 @@ public class ReceiveShopReturnsControl {
                 return false;
             }
             //cloud ShopReturnHeader
-            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks) " +
-                    "values (" + slnoCloud + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "')", objGlobal.getCloudCon());
+            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks,Warehouse) " +
+                    "values (" + slnoCloud + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "')", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();

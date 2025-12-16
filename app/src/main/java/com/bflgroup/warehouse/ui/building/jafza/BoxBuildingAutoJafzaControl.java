@@ -383,7 +383,7 @@ public class BoxBuildingAutoJafzaControl {
 
     public boolean validForCheckBuildOrExport(String shopname) {
         try {
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.datasettings where shopname='" + shopname + "' and Building='Y'", conRobo);
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.datasettings where shopname='" + shopname + "' and Building='Y'", conRobo);
             if (!rs.next()) {
                 objGlobal.setErrorMessage(shopname + " is not for building, please use the Transfer option");
                 return false;

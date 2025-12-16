@@ -6,6 +6,8 @@ public class WarehouseGRNGlobal {
     private String ginDate;
     private String warehouseFrom;
     private String warehouseTo;
+    private String autoPost;
+    private String palletWise;
     private int totalPallets;
     private int scanPallets;
     private int totalBoxes;
@@ -29,6 +31,22 @@ public class WarehouseGRNGlobal {
 
     public String getWarehouseTo() {
         return warehouseTo;
+    }
+
+    public String getAutoPost() {
+        return autoPost;
+    }
+
+    public void setAutoPost(String autoPost) {
+        this.autoPost = autoPost;
+    }
+
+    public String getPalletWise() {
+        return palletWise;
+    }
+
+    public void setPalletWise(String palletWise) {
+        this.palletWise = palletWise;
     }
 
     public void setWarehouseTo(String warehouseTo) {

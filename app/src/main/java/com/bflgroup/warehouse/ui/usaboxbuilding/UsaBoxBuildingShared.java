@@ -87,4 +87,25 @@ public class UsaBoxBuildingShared {
     }
     public String loadEuro(){ return sharedRef.getString("Euro",""); }
 
+    public void savePrintCopy(String PrintCopy){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("PrintCopy",PrintCopy);
+        editor.commit();
+    }
+    public String loadPrintCopy(){ return sharedRef.getString("PrintCopy",""); }
+
+    public void saveNeedBlueBox(String NeedBlueBox){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("NeedBlueBox",NeedBlueBox);
+        editor.commit();
+    }
+    public String loadNeedBlueBox(){ return sharedRef.getString("NeedBlueBox",""); }
+
+    public void saveValidateHoStock(String ValidateHoStock){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("ValidateHoStock",ValidateHoStock);
+        editor.commit();
+    }
+    public String loadValidateHoStock(){ return sharedRef.getString("ValidateHoStock",""); }
+
 }

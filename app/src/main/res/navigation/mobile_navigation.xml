@@ -216,6 +216,12 @@
         tools:layout="@layout/fragment_receive_shop_returns" />
 
     <fragment
+        android:id="@+id/nav_shop_return_verify"
+        android:name="com.bflgroup.warehouse.ui.shopreturnverify.VerifyShopReturnsFragment"
+        android:label="@string/menu_shop_return_verify"
+        tools:layout="@layout/fragment_verify_shop_returns" />
+
+    <fragment
         android:id="@+id/nav_blue_tote_transfer"
         android:name="com.bflgroup.warehouse.ui.transferbluetotote.single.TransferBlueToteFragment"
         android:label="@string/menu_blue_tote_transfer"
@@ -244,6 +250,7 @@
         android:name="com.bflgroup.warehouse.ui.ageingstocktaking.AgeingStockTakingFragment"
         android:label="@string/menu_stock_taking"
         tools:layout="@layout/fragment_ageing_stock_taking" />
+
 
     <fragment
         android:id="@+id/nav_generate_barcode"
@@ -280,6 +287,23 @@
         android:name="com.bflgroup.warehouse.ui.pricecheck.PriceCheckFragment"
         android:label="@string/menu_price_check"
         tools:layout="@layout/fragment_price_check" />
+    <fragment
+        android:id="@+id/nav_item_segregation"
+        android:name="com.bflgroup.warehouse.ui.pricecheck.ItemSegregationFragment"
+        android:label="@string/menu_item_segregation"
+        tools:layout="@layout/fragment_item_seggregation" />
+
+    <fragment
+        android:id="@+id/nav_item_segregation"
+        android:name="com.bflgroup.warehouse.ui.pricecheck.ItemSegregationFragment"
+        android:label="@string/menu_item_segregation"
+        tools:layout="@layout/fragment_item_seggregation" />
+
+    <fragment
+        android:id="@+id/nav_rfid_tag_register"
+        android:name="com.bflgroup.warehouse.ui.rfidtagregister.RfidTagRegisterFragment"
+        android:label="@string/menu_rfid_tag_register"
+        tools:layout="@layout/fragment_rfid_tag_register" />
 
     <fragment
         android:id="@+id/nav_settings"

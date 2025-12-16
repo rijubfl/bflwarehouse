@@ -1,7 +1,6 @@
 package com.bflgroup.warehouse.ui.divisionseperate;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
@@ -44,6 +43,7 @@ public class DivisionSeperationControl {
     }
 
     public boolean validateTransfer(String shopName, String trfno, boolean save) {
+        boolean delAll=false;
         if (TextUtils.isEmpty(trfno) || TextUtils.isEmpty(shopName)) {
             objGlobal.setErrorMessage("Transfer Number or Shop name is blank");
             return false;
@@ -63,24 +63,37 @@ public class DivisionSeperationControl {
                 objGlobal.setErrorMessage("Invalid shop");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.Transferheader where " +
+            rs = dbConnection.getResultSet("select top 1 * from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.Transferheader where " +
                     "TrfNo='" + trfno + "' and CostCodeTo='" + objDivisionSeperationGlobal.getCostcode() + "'", objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Invalid Transfer");
                 return false;
             }
-            /*rs = dbConnection.getResultSet("select * from BFLDATA.dbo.RemoveItemsFromTransfer where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select top 1 * from BFLDATA.dbo.RemoveItemsFromTransferActivate where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection());
             if (rs.next()) {
-                objGlobal.setErrorMessage("Transfer removal already done!");
-                return false;
-            }*/
-            rs = dbConnection.getResultSet("select * from DATA2004.dbo.ExportPost where ShipNo  in (select cast(srno as varchar(20)) from bfldata.dbo.vGoodsIssuePlt " +
+                delAll = true;
+            } else {
+                rs = dbConnection.getResultSet("select top 1 * from BFLDATA.dbo.GINDeleteItems where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection());
+                if (!rs.next()) {
+                    objGlobal.setErrorMessage("The transfer number does not exist in the deletion list.");
+                    return false;
+                }
+            }
+            if(delAll) {
+                rs = dbConnection.getResultSet("select top 1 * from BFLDATA.dbo.RemoveItemsFromTransfer where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection());
+                if (rs.next()) {
+                    objGlobal.setErrorMessage("Transfer removal already done!");
+                    return false;
+                }
+            }
+            objDivisionSeperationGlobal.setDelall(delAll);
+            rs = dbConnection.getResultSet("select top 1 * from DATA2004.dbo.ExportPost where ShipNo  in (select cast(srno as varchar(20)) from bfldata.dbo.vGoodsIssuePlt " +
                     "where ShopIssue = '" + shopName + "' and TrfNo = '" + trfno + "' )", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Cannot Delete the transfer - " + trfno + " Shopname - " + shopName + ", GIN already Posted!");
                 return false;
             }
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.ExportPostNew where GinNo in (select cast(srno as varchar(20)) from bfldata.dbo.vGoodsIssuePlt where " +
+            rs = dbConnection.getResultSet("select top 1 * from bfldata.dbo.ExportPostNew where GinNo in (select cast(srno as varchar(20)) from bfldata.dbo.vGoodsIssuePlt where " +
                     "ShopIssue = '" + shopName + "' and TrfNo = '" + trfno + "' )", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Cannot Delete the transfer - " + trfno + " Shopname - " + shopName + ", GIN already Posted!");
@@ -94,14 +107,22 @@ public class DivisionSeperationControl {
                 return false;
             }
             if (!save) {
-                if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopName + "',ItemCode,(select distinct division from " +
-                        "deptstock where Department in(select Department from usa.dbo.USAPriority where groupcode=a.groupcode)),0,Quantity,'N' from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a where " +
-                        "TrfNo='" + trfno + "'", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopName + "',ItemCode," +
+                        "(select distinct division from deptstock where Department in(select Department from usa.dbo.USAPriority where groupcode=a.groupcode)),0,Quantity," +
+                        "'N' from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a where TrfNo='" + trfno + "'", objGlobal.getConnection())) {
                     return false;
                 }
-                if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,ShopName,Itemcode,(select division from " +
-                        "HODATA.dbo.vItemMaster where Itemcode=a.Itemcode),ScanQty,0,'N' from BFLDATA.dbo.RemoveItemsFromTransfer a where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection())) {
-                    return false;
+                if (delAll) {
+                    if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopName + "',ItemCode," +
+                            "(select distinct division from deptstock where Department in(select Department from usa.dbo.USAPriority where groupcode=a.groupcode)),Quantity,0," +
+                            "'N' from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a where TrfNo='" + trfno + "'", objGlobal.getConnection())) {
+                        return false;
+                    }
+                } else {
+                    if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,ShopName,Itemcode,(select division from " +
+                            "HODATA.dbo.vItemMaster where Itemcode=a.Itemcode),ScanQty,0,'N' from BFLDATA.dbo.RemoveItemsFromTransfer a where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection())) {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -124,6 +145,12 @@ public class DivisionSeperationControl {
                     "TrfNo='" + trfno + "' and itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Invalid Transfer or item not found in transfer");
+                return false;
+            }
+            rs = dbConnection.getResultSet("select * from BFLDATA.dbo.GINDeleteItems where shopname='" + shopname + "' and TrfNo='" + trfno + "' and " +
+                    "itemcode='" + itemcode + "'", objGlobal.getConnection());
+            if (!rs.next()) {
+                objGlobal.setErrorMessage("The itemcode (" + itemcode + ") is not found in the deletion list.");
                 return false;
             }
             rs = dbConnection.getResultSet("select itemcode,trf=sum(trfqty),scan=sum(qty)+" + scanQty + " from BFLDATA.dbo.tmpDivSepItems where itemcode='" + itemcode + "' and " +
@@ -198,7 +225,7 @@ public class DivisionSeperationControl {
         }
         try {
             arr = new ArrayList<String>();
-            rs = dbConnection.getResultSet("select ShopName from BFLDATA.dbo.DataSettings where FCCode<>'ROB' and (FCCode='AED' or ExportActive='Y') and RetailNext='Y' order by 1", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select ShopName from BFLDATA.dbo.DataSettings where FCCode<>'ROB' and (FCCode='AED' or ExportActive='Y') order by 1", objGlobal.getConnection());
             while (rs.next()) {
                 arr.add(rs.getString("ShopName"));
             }
