@@ -239,6 +239,7 @@
         android:label="@string/menu_stock_taking"
         tools:layout="@layout/fragment_ageing_stock_taking" />
 
+
     <fragment
         android:id="@+id/nav_generate_barcode"
         android:name="com.bflgroup.warehouse.ui.generatebarcode.GenerateBarcodeFragment"
@@ -274,6 +275,11 @@
         android:name="com.bflgroup.warehouse.ui.pricecheck.PriceCheckFragment"
         android:label="@string/menu_price_check"
         tools:layout="@layout/fragment_price_check" />
+    <fragment
+        android:id="@+id/nav_item_segregation"
+        android:name="com.bflgroup.warehouse.ui.pricecheck.ItemSegregationFragment"
+        android:label="@string/menu_item_segregation"
+        tools:layout="@layout/fragment_item_seggregation" />
 
     <fragment
         android:id="@+id/nav_item_segregation"

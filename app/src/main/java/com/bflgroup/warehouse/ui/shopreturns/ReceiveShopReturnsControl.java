@@ -80,13 +80,13 @@ public class ReceiveShopReturnsControl {
                 if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpShopRerturnScanItems where deviceid='" + objGlobal.getDeviceName() + "' and trfqty>0", objGlobal.getConnection())) {
                     return false;
                 }
-                double scanQtyItemScan=0;
-                String scanActioItemScan="";
+                double scanQtyItemScan = 0;
+                String scanActioItemScan = "";
                 rs = dbConnection.getResultSet("select * from " + objGlobal.getCloudDbName() + ".dbo.storedetail where entryno='" + entryNo + "'", objGlobal.getCloudCon());
                 while (rs.next()) {
-                    if(!itemScan) {
+                    if (!itemScan) {
                         scanQtyItemScan = rs.getInt("quantity");
-                        scanActioItemScan="USA Transfer to Shop";
+                        scanActioItemScan = "USA Transfer to Shop";
                     }
                     if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpShopRerturnScanItems(DeviceId,itemcode,itemname,TrfQty,ScanQty,actions) values('" + objGlobal.getDeviceName() + "'," +
                             "'" + rs.getString("itemcode").toString() + "',''," + rs.getInt("quantity") + "," + scanQtyItemScan + ",'" + scanActioItemScan + "')", objGlobal.getConnection())) {
@@ -171,6 +171,13 @@ public class ReceiveShopReturnsControl {
                     }
                 }
             }
+            if (objGlobal.getWorkLocation().equals("KSA")) {
+                rs = dbConnection.getResultSet("select sn from bfldata.dbo.shopreturnverify where entryno = '" + entryNo + "'", objGlobal.getConnection());
+                if (!rs.next()) {
+                    objGlobal.setErrorMessage("Message \n The entry " + entryNo + " is not received");
+                    return false;
+                }
+            }
             rs = dbConnection.getResultSet("select * from bfldata.dbo.ShopReturnHeader where ReturnNo='" + entryNo + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("ReceiveShopReturnsControl.validateShopReturn 0: Entry number already save, " + entryNo);
@@ -248,7 +255,7 @@ public class ReceiveShopReturnsControl {
             rs = dbConnection.getResultSet("select itemcode,actions,scanqty=sum(scanqty) from bfldata.dbo.tmpShopRerturnScanItems where " +
                     "deviceid='" + objGlobal.getDeviceName() + "' and scanqty>0 group by itemcode,actions", objGlobal.getConnection());
             while (rs.next()) {
-                listPopupScanItems.add(new ReceiveShopReturnsScanItemPopupTicket(rs.getString("itemcode").toString(),rs.getString("actions").toString(),
+                listPopupScanItems.add(new ReceiveShopReturnsScanItemPopupTicket(rs.getString("itemcode").toString(), rs.getString("actions").toString(),
                         rs.getInt("scanqty")));
             }
         } catch (Exception ex) {
@@ -297,9 +304,9 @@ public class ReceiveShopReturnsControl {
         return true;
     }
 
-    public boolean saveShopTransfer(String entryNo, String shopName, String category, String remarks,boolean itemScan, boolean autoBuild, String autoBuildPalletType) {
+    public boolean saveShopTransfer(String entryNo, String shopName, String category, String remarks, boolean itemScan, boolean autoBuild, String autoBuildPalletType) {
         int slnoCloud = 0, slnoLocal = 0;
-        String sItemScan="N";
+        String sItemScan = "N";
         if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
             return false;
         }
@@ -320,8 +327,8 @@ public class ReceiveShopReturnsControl {
                 }
             }
             objReceiveShopReturnsGlobal.setBoxNo("");
-            if(itemScan){
-                sItemScan="Y";
+            if (itemScan) {
+                sItemScan = "Y";
             }
             if (autoBuild) {
                 if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {

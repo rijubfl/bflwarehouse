@@ -598,7 +598,7 @@ public class DepartmentGrnFragment extends Fragment {
 
     }
 
-    private Boolean isValidTransfer(String Transfer)
+    private Boolean isValidTransfer(String Transfer) //SR0602505,SP0024199
     {
         try {
         if(objPalletBoxCountControl.isPalletSaved(Transfer, sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString())){

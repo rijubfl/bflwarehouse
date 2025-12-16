@@ -93,7 +93,7 @@ public class BinPutAwayMultipleToteControl {
                 if(rs.next()) found =true;
             }
             if(!found) {
-                if (direction.equals("OUT")) {
+         //       if (direction.equals("OUT")) {
                     if (objGlobal.getWorkLocation().equals("KSA")) {
                         rs = dbConnection.getResultSet("select top 1 Boxno=TrfNo,toteid=storeissue,closed='N' from " + objGlobal.getCountryDbName() + ".dbo.TransferHeader a where (storeissue='" + scan + "' or " +
                                 "trfno='" + scan + "') and trfno not in (select palletno from bfldata.dbo.closeR1pallet) and LEFT(TrfNo, 2) not in ('SN','SR','SO') and " +
@@ -103,7 +103,8 @@ public class BinPutAwayMultipleToteControl {
                                 "trfno='" + scan + "') and trfno not in (select palletno from bfldata.dbo.closeR1pallet) and LEFT(TrfNo, 2) not in ('SN','SR','SO') and LEFT(storeissue, 2) not in ('SG') and " +
                                 "trfno in (select trfno from bfldata.dbo.verifyGin where trfno = a.trfno) order by TrfDate desc", objGlobal.getConnection());
                     }
-                }
+                   if(rs.next()) found = true;
+              //  }
             }
             if(!found) {
                 objGlobal.setErrorMessage("Invalid Box / Pallet / Tote ID - (" + scan + ")");
@@ -138,16 +139,24 @@ public class BinPutAwayMultipleToteControl {
                     return false;
                 }
                 if (!objBinPutAwayMultipleToteGlobal.getBoxNo().equals("")) {
-                    rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and (Toteid='" + objBinPutAwayMultipleToteGlobal.getToteId() + "' or BoxNo='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "')", objGlobal.getConnection());
+                    if (!objBinPutAwayMultipleToteGlobal.getToteId().trim().equals("")){
+                        rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and (Toteid='" + objBinPutAwayMultipleToteGlobal.getToteId() + "' or BoxNo='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "')", objGlobal.getConnection());
+                    }
+                    else{
+                        rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and BoxNo='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "'", objGlobal.getConnection());
+                    }
+
                     if (rs.next()) {
                         objGlobal.setErrorMessage("ToteID/Pallet found in location, " + rs.getString("location").toString());
                         return false;
                     }
                 } else {
-                    rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and (Toteid='" + objBinPutAwayMultipleToteGlobal.getToteId() + "')", objGlobal.getConnection());
-                    if (rs.next()) {
-                        objGlobal.setErrorMessage("ToteID/Pallet found in location, " + rs.getString("location").toString());
-                        return false;
+                    if (!objBinPutAwayMultipleToteGlobal.getToteId().equals("")) {
+                        rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and (Toteid='" + objBinPutAwayMultipleToteGlobal.getToteId() + "')", objGlobal.getConnection());
+                        if (rs.next()) {
+                            objGlobal.setErrorMessage("ToteID/Pallet found in location, " + rs.getString("location").toString());
+                            return false;
+                        }
                     }
                 }
                 int totTotCnt = 1;
@@ -173,7 +182,7 @@ public class BinPutAwayMultipleToteControl {
                             return false;
                         }
                     } else {
-                        objGlobal.setErrorMessage("Pallet/Box - " + objBinPutAwayMultipleToteGlobal.getToteId() + " is found not in location - " + location + " or Pallet is already OUT");
+                        objGlobal.setErrorMessage("Pallet/Box - " + objBinPutAwayMultipleToteGlobal.getToteId() + " is not found in - " + location + " / Pallet is already OUT");
                         return false;
                     }
                 } else {
@@ -197,6 +206,9 @@ public class BinPutAwayMultipleToteControl {
                 if (!dbConnection.insertUpdate("delete from tmpToteScan where DeviceId='" + objGlobal.getDeviceName() + "' and (ToteId='" + objBinPutAwayMultipleToteGlobal.getToteId() + "' or boxno  ='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "')", objGlobal.getConnection())) {
                     return false;
                 }
+            }
+            if (objBinPutAwayMultipleToteGlobal.getToteId().trim().isEmpty()){
+                objBinPutAwayMultipleToteGlobal.setToteId(objBinPutAwayMultipleToteGlobal.getBoxNo());
             }
             if (!dbConnection.insertUpdate("insert into tmpToteScan(DeviceId,ToteId,BoxNo,ScanDtTime,Direction,Location) values ('" + objGlobal.getDeviceName() + "','" + objBinPutAwayMultipleToteGlobal.getToteId() + "'," +
                     "'" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "',getdate(),'" + direction + "','" + location + "')", objGlobal.getConnection())) {
@@ -222,7 +234,7 @@ public class BinPutAwayMultipleToteControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from BinRackMaster where Warehouse='" + warehouse + "' and Barcode='" + location + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from Racks.dbo.BinRackMaster where Warehouse='" + warehouse + "' and Barcode='" + location + "'", objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Invalid Location, " + location);
                 return false;

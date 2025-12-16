@@ -661,21 +661,24 @@ public class TransferControl {
             objTransferGlobal.setBoxTrfBoxNo("");
             objTransferGlobal.setRegSIMExclude("");
             objTransferGlobal.setBoxTrfBoxNoPalletType("");
-            objTransferGlobal.setTypeUsaTcm("");
+//            rs = dbConnection.getResultSet("select distinct BoxNo,PalletType,contno=(select case when RoboContno<>'' then RoboContno else replace(substring(BoxNo,1, CHARINDEX('-',boxno)),'-','') end)  from " +
+//                    "usa.dbo.vUPCBoxDet where (BoxNo='" + scan + "' or ToteID='" + scan + "') and Closed='N'", objGlobal.getConnection());
 
-            rs = dbConnection.getResultSet("select distinct BoxNo,PalletType,contno=(select case when RoboContno<>'' then RoboContno else " +
-                    "replace(substring(BoxNo,1, CHARINDEX('-',boxno)),'-','') end)  from usa.dbo.vUPCBoxDet where (BoxNo='" + scan + "' or ToteID='" + scan + "') " +
-                    "and Closed='N'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("SELECT DISTINCT BoxNo,PalletType,contno = CASE WHEN RoboContno <> '' THEN RoboContno WHEN CHARINDEX('-', BoxNo) > 0 AND LEN(LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1)) >= 4 THEN LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1) ELSE '' END FROM usa.dbo.vUPCBoxDet WHERE (BoxNo = '"+scan+"' OR ToteID = '"+scan+"') AND Closed = 'N'", objGlobal.getConnection());
+
             while (rs.next()) {
                 typeUsaTcm = "USABOX";
                 boxOrPalletNo = rs.getString("boxno");
                 contno = rs.getString("contno");
                 pallettype = rs.getString("PalletType");
                 if (!contno.isEmpty()) {
-                    rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='" + contno + "'", objGlobal.getConnection());
+                    rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='" + contno + "' or BOLNO= '" + contno + "'", objGlobal.getConnection());
                     if (!rs.next()) {
+                        rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='KN"+contno+"' or contno='W"+contno+"'", objGlobal.getConnection());
+                        if (!rs.next()){
                         objGlobal.setErrorMessage("Please Purchase the container (" + contno + ") to proceed");
                         return false;
+                        }
                     }
                 }
             }

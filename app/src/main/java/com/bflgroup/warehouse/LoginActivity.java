@@ -257,7 +257,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 objGlobal.setErrorMessage("User Already logged In to another Device on - " + rs1.getString("Trndate"));
                 return false;
-            } else {
+            }
+        else {
                 dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection());
             }
             dbConnection.insertUpdate("insert into bfldata.dbo.WHPdaUserVersion(userid,username,DeviceVersion,loginDate,Logintime,warehouse)values(" + objGlobal.getUserId() + "," +
