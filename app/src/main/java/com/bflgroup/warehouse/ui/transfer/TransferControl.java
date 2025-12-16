@@ -673,7 +673,7 @@ public class TransferControl {
                 if (!contno.isEmpty()) {
                     rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='" + contno + "' or BOLNO= '" + contno + "'", objGlobal.getConnection());
                     if (!rs.next()) {
-                        rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='KN"+contno+"'", objGlobal.getConnection());
+                        rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='KN"+contno+"' or contno='W"+contno+"'", objGlobal.getConnection());
                         if (!rs.next()){
                         objGlobal.setErrorMessage("Please Purchase the container (" + contno + ") to proceed");
                         return false;
