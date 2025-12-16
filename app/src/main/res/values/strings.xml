@@ -55,6 +55,7 @@
     <string name="menu_shuttle_task_create">Shuttle Task Create</string>
     <string name="menu_price_check">Item Pullout</string>
     <string name="menu_item_segregation">Item Segregation</string>
+    <string name="menu_rfid_tag_register">RFID Tag/Sticker Register</string>
     <string name="menu_3pl_grn">3PL WH GRN</string>
     <string name="menu_bin_storage_rack">Bin Storage Rack</string>
     <string name="menu_rack">Rack</string>

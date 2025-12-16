@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp">
+        android:padding="6dp">
 
         <TextView
             android:id="@+id/TextView3"
@@ -26,13 +26,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <TextView
             android:id="@+id/tv_div_seperate_shopname"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint="Select Shop"
@@ -48,7 +46,7 @@
             android:id="@+id/TextView1"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint=""
@@ -80,47 +78,32 @@
             android:layout_width="80dp"
             android:layout_height="40dp"
             android:background="@drawable/btn_custom1"
-            android:text="SCAN"
+            android:text="Fetch"
             android:textAllCaps="false"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/TextView1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/TextView1" />
 
-        <TextView
-            android:id="@+id/TextView2"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/et_custom"
-            android:textColor="@color/coloBlack"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="Scan Item"
-            android:textSize="14dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
-
         <EditText
             android:id="@+id/et_div_seperate_scan"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/et_custom"
             android:padding="10dp"
+            android:hint="Scan Itemcode"
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/TextView1"
-            app:layout_constraintTop_toTopOf="@+id/TextView2" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
 
         <TextView
             android:id="@+id/TextView8"
             android:layout_width="130dp"
             android:layout_height="30dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/et_custom_total"
             android:gravity="left"
             android:hint=""
@@ -130,7 +113,7 @@
             android:textSize="14dp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView2" />
+            app:layout_constraintTop_toBottomOf="@+id/et_div_seperate_scan" />
 
         <TextView
             android:id="@+id/TextView6"
@@ -222,7 +205,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="   "
+            android:text="  "
             android:textColor="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -167,7 +167,7 @@ public class TransferFragment extends Fragment {
         arr.add("Itemcode");//2 I
         arr.add("Box");//3 P
         arr.add("ROBO Direct");//4 D
-        arr.add("Transfer");//5 P
+        arr.add("Transfer");//5 T
         ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
         sp_transfer_type.setAdapter(arrayAdp);
 
@@ -215,7 +215,6 @@ public class TransferFragment extends Fragment {
                 } else if (position == 5) {
                     et_transfer_pallet_box_no.setHint("Transfer Number.");
                     et_transfer_pallet_box_no.setEnabled(true);
-                    tv_transfer_shopname.setEnabled(false);
                 } else {
                     et_transfer_pallet_box_no.setHint("");
                     et_transfer_pallet_box_no.setEnabled(false);
@@ -290,7 +289,7 @@ public class TransferFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                transfer();
+                                new TransferFragment.SaveTransfer().execute();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -382,6 +381,65 @@ public class TransferFragment extends Fragment {
         return view;
     }
 
+    private class SaveTransfer extends AsyncTask<Void, Void, Integer> {
+        private ProgressDialog dialog;
+        public SaveTransfer() {
+            dialog = new ProgressDialog(getContext());
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Loading, Please wait...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... args) {
+            try {
+                b_Result =transfer();
+                if(!b_Result) {
+                    return 0;
+                }
+            } catch (Exception e) {
+                objGlobal.setErrorMessage(e.toString());
+                return 0;
+            }
+            return 1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (result == 0) {
+                okMessage("Box Build", "bt_usa_box_save:" + objGlobal.getErrorMessage());
+                vibrate(500);
+            } else {
+                String shopname = tv_transfer_shopname.getText().toString();
+                String printer = sp_transfer_printer.getSelectedItem().toString();
+                if (!objTransferGlobal.getTrfRecNo().isEmpty()) {
+                    tv_transfer_last_transfer.setText("Trf.No.: " + objTransferGlobal.getTrfRecNo() + ", Shop Name.: " + shopname);
+                    b_Result = objTransferControl.forPrint(shopname, objTransferGlobal.getTrfRecNo());
+                    if (!b_Result) {
+                        okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+                        vibrate(100);
+                    }
+                    if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
+                        if (!printSticker(printer)) {
+                            okMessage("Transfer", "Printer Error, Pleasse reprint..");
+                            vibrate(100);
+                        }
+                    }
+                }
+                clearAll();
+            }
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+    }
+
     private boolean transfer() {
         String shopname = tv_transfer_shopname.getText().toString();
         String pallet = et_transfer_pallet_box_no.getText().toString();
@@ -422,7 +480,7 @@ public class TransferFragment extends Fragment {
                     return false;
                 }
             } else {
-                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid,selType,objTransferGlobal.getRegSIMExclude());
+                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid,selType,objTransferGlobal.getRegSIMExclude(),objTransferGlobal.getTypeUsaTcm());
                 if (!b_Result) {
                     okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
                     return false;
@@ -431,21 +489,6 @@ public class TransferFragment extends Fragment {
             if (!objBuildingJafzaGLobal.getBoxNo().isEmpty()) {
                 tv_transfer_last_transfer.setText("Box.No.: " + objBuildingJafzaGLobal.getBoxNo() + ", Shop Name.: " + shopname);
             }
-            if (!objTransferGlobal.getTrfRecNo().isEmpty()) {
-                tv_transfer_last_transfer.setText("Trf.No.: " + objTransferGlobal.getTrfRecNo() + ", Shop Name.: " + shopname);
-                b_Result = objTransferControl.forPrint(shopname, objTransferGlobal.getTrfRecNo());
-                if (!b_Result) {
-                    okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
-                    vibrate(100);
-                }
-                if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
-                    if (!printSticker(printer)) {
-                        okMessage("Transfer", "Printer Error, Pleasse reprint..");
-                        vibrate(100);
-                    }
-                }
-            }
-            clearAll();
             return true;
         } catch (Exception e) {
             okMessage("Transfer", e.toString());

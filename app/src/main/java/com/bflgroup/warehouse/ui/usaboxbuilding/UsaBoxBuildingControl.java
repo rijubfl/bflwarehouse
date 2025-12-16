@@ -28,7 +28,7 @@ public class UsaBoxBuildingControl {
     public UsaBoxBuildingControl() {
         objGlobal.setDbName("USA");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("UsaBoxBuildingControl : Connection error");
         }
     }
@@ -36,9 +36,9 @@ public class UsaBoxBuildingControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("USA");
-        if (dbConnection.checkConnectionClosed() == false) {
+        if (!dbConnection.checkConnectionClosed()) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("BinBatchInControl.checkConnection : Connection error");
                 return false;
             }
@@ -183,11 +183,21 @@ public class UsaBoxBuildingControl {
                         "values('" + objGlobal.getDeviceName() + "','" + itemcode + "','','',''," + qty + ",'','')", objGlobal.getConnection())) {
                     return false;
                 }
-                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.Description,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
-                        "HODATA.dbo.ItemMaster b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
-                    objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
-                    return false;
+                if (objGlobal.getWorkLocation().equals("UAE")) {
+                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.Description,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
+                            "HODATA.dbo.ItemMaster b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
+                        return false;
+                    }
+                } else {
+                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.Description,''),groupcode=isnull(b.groupcode,'') from " +
+                            "bfldata.dbo.tmpScanItemsBox a," + objGlobal.getCountryDbName() + ".dbo.ItemMaster b where a.DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                            "a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        objGlobal.setErrorMessage("UsaBoxBuildingControl:validateItemcode: Item not found -" + itemcode);
+                        return false;
+                    }
                 }
+
                 if (selPalletype.equals("MB")) {
                     if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set ItemName=isnull(b.itemName,''),groupcode=isnull(b.groupcode,'') from bfldata.dbo.tmpScanItemsBox a," +
                             "usa.dbo.upcbarcodes b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.ItemCode and isnull(a.ItemName,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
@@ -240,10 +250,13 @@ public class UsaBoxBuildingControl {
                 }
             }
             boolean valid = true;
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and (isnull(itemname,'')='' or isnull(GroupCode,'')='' or " +
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and (isnull(itemcode,'')='' or isnull(itemname,'')='' or isnull(GroupCode,'')='' or " +
                     "isnull(BuildingCategory,'')='')", objGlobal.getConnection());
             if (rs.next()) {
-                if (rs.getString("itemname").isEmpty()) {
+                if (rs.getString("itemcode").isEmpty()) {
+                    objGlobal.setErrorMessage("Item code is empty");
+                    valid = false;
+                } else if (rs.getString("itemname").isEmpty()) {
                     objGlobal.setErrorMessage("Item code (" + itemcode + ") is invalid");
                     valid = false;
                 } else if (rs.getString("GroupCode").isEmpty()) {

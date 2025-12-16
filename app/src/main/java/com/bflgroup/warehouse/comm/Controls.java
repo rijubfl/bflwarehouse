@@ -91,7 +91,8 @@ public class Controls {
             rs = objDBConnection.getResultSet("select * from fabsmain.dbo.settings", objGlobal.getConnection());
             while (rs.next()) {
                 if (rs.getString("descr").toUpperCase().equals("SKIPBATCHIN"))
-                    if (rs.getString("status").toString().equals("Y")) objGlobal.setSkipBatchIn(true);
+                    if (rs.getString("status").toString().equals("Y"))
+                        objGlobal.setSkipBatchIn(true);
                 if (rs.getString("descr").toUpperCase().equals("MAXTOTINBIN"))
                     objGlobal.setMaxTotInBin(rs.getInt("status"));
                 if (rs.getString("descr").toUpperCase().equals("BOXPREFIX"))
@@ -150,7 +151,7 @@ public class Controls {
                     roboChuteStatusAPIToken = "";
                     roboChuteMapingAPIToken = "";
                 }
-            } else {
+            } else if (objGlobal.getCountryCode().equals("KSA")) {
                 //KSA ROBO
                 roboServerIP = "10.70.240.223";
                 roboChuteStatusAPI = "http://bflksawh1.fortiddns.com:3001/api/v1/wms/chute/";
@@ -159,6 +160,15 @@ public class Controls {
                 roboLabelInfoAPI = "http://10.70.8.13:3001/api/v1/wms/print/";
                 roboChuteStatusAPIToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDMzMTgyNzEsImlkIjoiaXEiLCJ1c2VybmFtZSI6ImlxIiwidXVpZCI6IjAwM2ZhYWFiLTYxMjYtNGExZi05OTQ0LTZlYmVkZGY4ZjIzNyJ9.SHn1sVspVECVdemXaZ7HK0iAAj_Owax8sOnhfgZBHrE";
                 roboChuteMapingAPIToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMSIsImp0aSI6ImI3YWE4NTBkN2NkYjc1MjQ2MGQyZjQzMDkyMTVhMTkwZDVjMDAwNmE4MjczZDA1YjQ2Yjg3ZjA5YmNiY2JhYzdkNTA3N2UyNGY0OWFiNjk2IiwiaWF0IjoxNzEzNDQyMzY0LjM1NDcyNSwibmJmIjoxNzEzNDQyMzY0LjM1NDcyNiwiZXhwIjoxNzc2NTE0MzY0LjM1MDY4Miwic3ViIjoiMTk2Iiwic2NvcGVzIjpbXX0.ZY8qQqdO_wr1NrrsYNlFa1wva-1nVlZYC-n8YpqLcnho4655FqlGyP87yttxGffegJH2oeIhoRjnnth-p1SityNJ47dCtPPB9dxy5IahslG3xOscMoI1OzxXeisd1Fb-SezlogB3RDxaACqU8p-96qWZ0bZ5Y_QkkMm1eAHRYcfzt_W2gSEiQrFrfuA7nk4Gn0nAUNU9BWdBdPZe02J8eYKJ7qi9w1Jq43lzPfHNtAU4u2EVyf-Ku3vMQ9nKjE6sBrfZqtzKTpXsccZll_0jgDm1H9x_iicIJWQuzgABDh2C8i3zZUJ9oiSO5XH4CR3yZySpl74HI6JSY9Xi-yOoW8XJOSU9kQez44tWRCz1towHsibLCD1IGpl_KEp7mOAeDQitk8hZjbU6cr7FfAA4w8vzTJcBUR9kk5B3ce7ETSCQjKPgZd_Lr4obfWfX2tClaLaptl1agn8_wVp6mIS4rfCLo8fQW_zcuy80uO-acyIBExs5rfZUwGwRvbIcw6Pd4HCxZJSNpXNp05DmEzc7C3Y_BNKPBCKfLZ1RXP8s05XORI_yGaIYlBB19fP_Qv6IY3FySkvuRzsKCKdmPG03vtxSsod-Uozi_952U7ZwUHJZVS05BsiRBnBWYzI_fbjeRvDpdvRjyXi6-qprJcAJqarZIvo-DnhZNuv6tdOzeCg";
+            } else {
+                //Other Countries
+                roboServerIP = objGlobal.getServerIP();
+                roboChuteStatusAPI = "";
+                roboChuteMapingAPI = "";
+                roboSortTaskAPI = "";
+                roboLabelInfoAPI = "";
+                roboChuteStatusAPIToken = "";
+                roboChuteMapingAPIToken = "";
             }
             objGlobal.setRoboServerIP(roboServerIP);
             objGlobal.setRoboChuteStatusAPI(roboChuteStatusAPI);

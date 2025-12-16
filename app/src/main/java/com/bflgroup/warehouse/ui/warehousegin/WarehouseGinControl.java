@@ -39,7 +39,6 @@ public class WarehouseGinControl {
         return true;
     }
 
-
     public boolean loadScanPalletFromAPI(String palletno) {
         if (!checkConnection()) {
             return false;
