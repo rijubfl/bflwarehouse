@@ -5,12 +5,14 @@ public class PalletScanDeliveryItem {
     public String Toteid;
     public String ShopName;
     public String Qty;
+    public int RouteId;
 
-    public PalletScanDeliveryItem(String transferNo, String toteid, String shopName, String qty) {
+    public PalletScanDeliveryItem(String transferNo, String toteid, String shopName, String qty, int routeId) {
         TransferNo = transferNo;
         Toteid = toteid;
         ShopName = shopName;
         Qty = qty;
+        RouteId = routeId;
     }
 
 }

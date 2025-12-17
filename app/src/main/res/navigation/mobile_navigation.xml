@@ -59,11 +59,11 @@
         android:label="@string/menu_building_pallet"
         tools:layout="@layout/fragment_pallet_building" />
 
-    <fragment
-        android:id="@+id/nav_receive_shop_returns"
-        android:name="com.bflgroup.warehouse.ui.verifyShopreturns.VerifyShopReturnsFragment"
-        android:label="@string/menu_receive_shop_returns"
-        tools:layout="@layout/fragment_verify_shop_returns" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_receive_shop_returns"-->
+<!--        android:name="com.bflgroup.warehouse.ui.verifyShopreturns.VerifyShopReturnsFragment"-->
+<!--        android:label="@string/menu_receive_shop_returns"-->
+<!--        tools:layout="@layout/fragment_verify_shop_returns" />-->
 
 
     <fragment
@@ -173,11 +173,11 @@
         android:name="com.bflgroup.warehouse.ui.Updateboxfrompallet.AddOrRemoveBoxInPalletFragment"
         android:label="@string/menu_update_box_from_pallet"
         tools:layout="@layout/fragment_pallet_box_count" />
-    <fragment
-        android:id="@+id/nav_update_transfers"
-        android:name="com.bflgroup.warehouse.ui.updateTransfersFromPallet.AddOrRemoveTransferInPalletFragment"
-        android:label="@string/menu_update_transfers_from_pallet"
-        tools:layout="@layout/fragment_add_or_remove_transfer_in_pallet" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_update_transfers"-->
+<!--        android:name="com.bflgroup.warehouse.ui.updateTransfersFromPallet.AddOrRemoveTransferInPalletFragment"-->
+<!--        android:label="@string/menu_update_transfers_from_pallet"-->
+<!--        tools:layout="@layout/fragment_add_or_remove_transfer_in_pallet" />-->
 
     <fragment
         android:id="@+id/nav_department_grn"

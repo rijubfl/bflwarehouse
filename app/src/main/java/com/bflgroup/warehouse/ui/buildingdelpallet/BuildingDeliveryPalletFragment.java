@@ -1,15 +1,13 @@
 package com.bflgroup.warehouse.ui.buildingdelpallet;
 
-import static com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferGlobal.getCount;
-import static com.bflgroup.warehouse.ui.buildingdelgin.GinScanTransferGlobal.setCount;
 import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.getPltCount;
 import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.getRouteid;
-import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.setPalletSn;
 import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.setPltCount;
 import static com.bflgroup.warehouse.ui.buildingdelpallet.BuildingDeliveryPalletGlobal.setRouteid;
 import static com.loopj.android.http.AsyncHttpClient.log;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -32,8 +30,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -48,10 +44,10 @@ import com.bflgroup.warehouse.comm.BarcodePrinting;
 import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
-import com.bflgroup.warehouse.ui.transfer.TransferFragment;
-import com.bflgroup.warehouse.ui.transfer.TransferSharedRef;
 import com.sewoo.port.android.BluetoothPort;
 import com.sewoo.request.android.RequestHandler;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -70,13 +66,13 @@ public class BuildingDeliveryPalletFragment extends Fragment {
     private BuildingDeliveryPalletGlobal objpalletbuilding = BuildingDeliveryPalletGlobal.getInstance();
     private BuildingDeliveryPalletControl objbuildingdelPalletControl = new BuildingDeliveryPalletControl();
     private BluetoothPort bluetoothPort;
-    private Spinner sp_plt_route_id;
+    private TextView tv_plt_route_id;
     private TextView tv_shopnames_col;
     private EditText et_plt_shop_transferno;
     private TextView tv_count;
     private Spinner sp_transfer_printer;
     private EditText Remarks;
-    private Spinner sp_plt_shopname;
+    private TextView tv_plt_shopname;
     private Button bt_transfer_scan;
     private Button bt_shop_return_scan;
     private Button bt_div_Clear;
@@ -85,7 +81,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
     private BroadcastReceiver discoveryResult;
     private ListView lv_div_seperate_details;
     private String transferno = "";
-    private  int get_route_id;
+    private int get_route_id;
     public boolean b_Result;
     String remark = "";
     Integer count = 0;
@@ -96,7 +92,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
     MyTransferStatusPltAdp objTransferStatusPltAdp = null;
     PltScanTransferShared PltScanTransferShared;
     private BluetoothDevices objBluetoothDevices = new BluetoothDevices();
-//    private CheckBox ch_transfer_printer;
+    //    private CheckBox ch_transfer_printer;
     private Spinner sp_transfer_print_copies;
     private Thread btThread;
     private BarcodePrinting objSample_Print;
@@ -108,6 +104,14 @@ public class BuildingDeliveryPalletFragment extends Fragment {
     private boolean searchflags;
 
     private boolean testPrint = false;
+    private ListView lvShops;
+    private Button btCancel;
+    private List<String> shopNamesFromTransfers;
+    private ShopFromTransferAdp objShopFromTransferAdp;
+    Dialog myDialog;
+    private String get_shop_names;
+    private String selectedShopName = "";
+
     public BuildingDeliveryPalletFragment() {
         // Required empty public constructor
     }
@@ -117,11 +121,11 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_building_delivery_pallet, container, false);
 
-        sp_plt_route_id =  (Spinner) view.findViewById(R.id.sp_plt_route_id);
+        tv_plt_route_id = (TextView) view.findViewById(R.id.tv_plt_route_id);
         tv_shopnames_col = (TextView) view.findViewById(R.id.tv_shopnames_col);
         et_plt_shop_transferno = (EditText) view.findViewById(R.id.et_plt_shop_transferno);
         Remarks = (EditText) view.findViewById(R.id.et_remarks);
-        sp_plt_shopname = (Spinner) view.findViewById(R.id.sp_plt_shopname);
+        tv_plt_shopname = (TextView) view.findViewById(R.id.tv_plt_shopname);
         bt_transfer_scan = (Button) view.findViewById(R.id.bt_transfer_scan);
         // bt_shop_return_scan = (Button) view.findViewById(R.id.bt_shop_return_scan);
         bt_status_build_plt = (Button) view.findViewById(R.id.bt_status_build_plt);
@@ -130,7 +134,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         tv_count = (TextView) view.findViewById(R.id.tv_count);
         sp_transfer_printer = (Spinner) view.findViewById(R.id.sp_transfer_printer);
 //        ch_transfer_printer = (CheckBox) view.findViewById(R.id.ch_transfer_printer);
-        PltScanTransferShared=new PltScanTransferShared(getContext());
+        PltScanTransferShared = new PltScanTransferShared(getContext());
         sp_transfer_print_copies = (Spinner) view.findViewById(R.id.sp_transfer_print_copies);
 
         searchflags = false;
@@ -165,49 +169,47 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         sp_transfer_print_copies.setSelection(arrayAdp.getPosition(PltScanTransferShared.loadPrintCopies().toString()));
 
 
-
-        if ( objGlobal.getCountryCode().equals("KSA")){
-            List<String> arr1 = objbuildingdelPalletControl.loadKsaShops();
-            ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
-            sp_plt_route_id.setAdapter(arrayAdp1);
-            if (PltScanTransferShared.Routeidload() != "") {
-                sp_plt_route_id.setSelection(arrayAdp1.getPosition(PltScanTransferShared.Routeidload().toString()));
-                sp_plt_route_id.setEnabled(false);
-                try {
-                    PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
-                    count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
-                    count = getPltCount();
-                    tv_count.setText(count+"");
-                    objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
-                    lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
-                    Log.e("item","reached");
-                } catch (SQLException e) {
-                    Log.e("Log",e.toString());
-                }
-            }
-        }
-        else{
-            List<Integer> arr1 = objbuildingdelPalletControl.loadRoute();
-            ArrayAdapter<Integer> arrayAdp1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
-            sp_plt_route_id.setAdapter(arrayAdp1);
-            Log.e("ROUTEIDLOAD -- UAE",PltScanTransferShared.Routeidload());
-            if (PltScanTransferShared.Routeidload() != "") {
-                sp_plt_route_id.setSelection(arrayAdp1.getPosition(Integer.parseInt(PltScanTransferShared.Routeidload().toString())));
-                sp_plt_route_id.setEnabled(false);
-                try {
-                    PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
-                    count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
-                    count = Integer.valueOf(getPltCount());
-                    tv_count.setText(count+"");
-                    objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
-                    lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
-                    Log.e("item","reached");
-                } catch (SQLException e) {
-                    Log.e("Log",e.toString());
-                }
-
-            }
-        }
+//        if (objGlobal.getCountryCode().equals("KSA")) {
+//            List<String> arr1 = objbuildingdelPalletControl.loadKsaShops();
+//            ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
+//            tv_plt_route_id.setAdapter(arrayAdp1);
+//            if (PltScanTransferShared.Routeidload() != "") {
+//                tv_plt_route_id.setSelection(arrayAdp1.getPosition(PltScanTransferShared.Routeidload().toString()));
+//                tv_plt_route_id.setEnabled(false);
+//                try {
+//                    PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
+//                    count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
+//                    count = getPltCount();
+//                    tv_count.setText(count + "");
+//                    objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
+//                    lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
+//                    Log.e("item", "reached");
+//                } catch (SQLException e) {
+//                    Log.e("Log", e.toString());
+//                }
+//            }
+//        } else {
+//            List<Integer> arr1 = objbuildingdelPalletControl.loadRoute();
+//            ArrayAdapter<Integer> arrayAdp1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
+//            tv_plt_route_id.setText(arrayAdp1);
+//            Log.e("ROUTEIDLOAD -- UAE", PltScanTransferShared.Routeidload());
+//            if (PltScanTransferShared.Routeidload() != "") {
+//                tv_plt_route_id.setSelection(arrayAdp1.getPosition(Integer.parseInt(PltScanTransferShared.Routeidload().toString())));
+//                tv_plt_route_id.setEnabled(false);
+//                try {
+//                    PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
+//                    count = Integer.valueOf(objbuildingdelPalletControl.LoadPltDataCount().toString());
+//                    count = Integer.valueOf(getPltCount());
+//                    tv_count.setText(count + "");
+//                    objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
+//                    lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
+//                    Log.e("item", "reached");
+//                } catch (SQLException e) {
+//                    Log.e("Log", e.toString());
+//                }
+//
+//            }
+        //    }
 
 //        ch_transfer_printer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 //            @Override
@@ -220,35 +222,31 @@ public class BuildingDeliveryPalletFragment extends Fragment {
 //            }
 //        });
 
-        sp_plt_route_id.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
-                if (objGlobal.getCountryCode().equals("KSA")){
-
-
-
-
-                    get_route_id = objbuildingdelPalletControl.loadKsaRoute(sp_plt_route_id.getSelectedItem().toString().split("\\(")[0]);
-                    String get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
-                    tv_shopnames_col.setText(get_shop_names);
-
-                }
-                else
-                {
-                    get_route_id = Integer.parseInt(sp_plt_route_id.getSelectedItem().toString());
-
-                    String get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
-                    tv_shopnames_col.setText(get_shop_names);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
+//        tv_plt_route_id.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+//                // your code here
+//                if (objGlobal.getCountryCode().equals("KSA")) {
+//
+//
+//                    get_route_id = objbuildingdelPalletControl.loadKsaRoute(tv_plt_route_id.getSelectedItem().toString().split("\\(")[0]);
+//                    String get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
+//                    tv_shopnames_col.setText(get_shop_names);
+//
+//                } else {
+//                    get_route_id = Integer.parseInt(tv_plt_route_id.getSelectedItem().toString());
+//
+//                    String get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
+//                    tv_shopnames_col.setText(get_shop_names);
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parentView) {
+//                // your code here
+//            }
+//
+//        });
 
         et_plt_shop_transferno.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -266,18 +264,25 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                    if(GetScanresult()){
-                        et_plt_shop_transferno.requestFocus();
-                        et_plt_shop_transferno.setFocusable(true);
-                        strflg = true;
-                        return true;
-                    }else {
-                        et_plt_shop_transferno.requestFocus();
-                        et_plt_shop_transferno.setFocusable(true);
-                        return true;
-                    }
-                }
-                else {
+                  //  if (getPltCount() == 0)
+                        openPopupShopsFromTransfers();
+//                    else {
+//                        if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0)
+//                            get_route_id = objbuildingdelPalletControl.loadKsaRoute(PalletScanDeliveryItem.get(0).ShopName);
+//                        GetScanresult();
+//                    }
+                    return true;
+//                    if (GetScanresult()) {
+//                        et_plt_shop_transferno.requestFocus();
+//                        et_plt_shop_transferno.setFocusable(true);
+//                        strflg = true;
+//                        return true;
+//                    } else {
+//                        et_plt_shop_transferno.requestFocus();
+//                        et_plt_shop_transferno.setFocusable(true);
+//                        return true;
+//                    }
+                } else {
                     if (strflg) {
                         strflg = false;
                         return true;
@@ -308,47 +313,49 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             }
         });
 
-        et_plt_shop_transferno.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                    if(GetScanresult()){
-                        et_plt_shop_transferno.requestFocus();
-                        et_plt_shop_transferno.setFocusable(true);
-                        strflg = true;
-                        return true;
-                    }else {
-                        et_plt_shop_transferno.requestFocus();
-                        et_plt_shop_transferno.setFocusable(true);
-                        return true;
-                    }
-                }
-                else {
-                    if (strflg) {
-                        strflg = false;
-                        return true;
-                    } else {
-                        if (i == 1011) {
-                            et_plt_shop_transferno.setFocusable(true);
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                    //return false;
-                }
-            }
-
-
-        });
+//        et_plt_shop_transferno.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+//                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
+//                    if (GetScanresult()) {
+//                        et_plt_shop_transferno.requestFocus();
+//                        et_plt_shop_transferno.setFocusable(true);
+//                        strflg = true;
+//                        return true;
+//                    } else {
+//                        et_plt_shop_transferno.requestFocus();
+//                        et_plt_shop_transferno.setFocusable(true);
+//                        return true;
+//                    }
+//                } else {
+//                    if (strflg) {
+//                        strflg = false;
+//                        return true;
+//                    } else {
+//                        if (i == 1011) {
+//                            et_plt_shop_transferno.setFocusable(true);
+//                            return true;
+//                        } else {
+//                            return false;
+//                        }
+//                    }
+//                    //return false;
+//                }
+//            }
+//
+//
+//        });
 
         bt_transfer_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(GetScanresult()){
-                    Log.e("Error","Reached here");
-                    et_plt_shop_transferno.requestFocus();
-                }
+             //   if (getPltCount() == 0)
+                    openPopupShopsFromTransfers();
+//                else {
+//                    if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0)
+//                        get_route_id = objbuildingdelPalletControl.loadKsaRoute(PalletScanDeliveryItem.get(0).ShopName);
+//                    GetScanresult();
+//                }
             }
         });
 
@@ -356,34 +363,33 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    Log.e("Focus","Lost Focus");
+                    Log.e("Focus", "Lost Focus");
                     et_plt_shop_transferno.setText(et_plt_shop_transferno.getText().toString().toUpperCase());
                 }
             }
         });
 
 
-
-        bt_status_build_plt.setOnClickListener(new View.OnClickListener(){
+        bt_status_build_plt.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 try {
                     String printer = sp_transfer_printer.getSelectedItem().toString();
                     remark = Remarks.getText().toString();
-                    if(sp_plt_shopname.getSelectedItemPosition() == 0){
-                        okMessage("Alert", "Pls Select Shopname First", getContext());
-                    }else {
+//                    if (tv_plt_shopname.getText() != null && !tv_plt_shopname.getText().equals("")) {
+//                        okMessage("Alert", "Pls Select Shopname First", getContext());
+//                    } else {
                         if (printer.isEmpty() || printer.toUpperCase().contains("SELECT")) {
-                            okMessage("Message","Please select printer",getContext());
+                            okMessage("Message", "Please select printer", getContext());
                             b_Result = false;
-                        }else {
+                        } else {
                             PltScanTransferShared.savePrintCopies(sp_transfer_print_copies.getSelectedItem().toString());
                             PltScanTransferShared.savePrinter(sp_transfer_printer.getSelectedItem().toString());
                             if (PalletScanDeliveryItem.size() >= 1) {
 
                                 try {
-                                    if (objbuildingdelPalletControl.InsertPalletDetails(remark, sp_plt_route_id.getSelectedItem().toString())) {
+                                    if (objbuildingdelPalletControl.InsertPalletDetails(remark, tv_plt_route_id.getText().toString())) {
                                         Log.e("return", "Build");
                                         okMessage("SUCCESS", "Build Pallet Successfully Pallet Number is - " + BuildingDeliveryPalletGlobal.getPalletNo(), getContext());
                                         if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
@@ -408,7 +414,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                                 okMessage("Alert", "Please Scan Trf No/Tote id before building Pallet", getContext());
                             }
                         }
-                    }
+                  //  }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -442,17 +448,114 @@ public class BuildingDeliveryPalletFragment extends Fragment {
 
             }
         });
-        sp_plt_shopname.setAdapter(null);
+        //  sp_plt_shopname.setAdapter(null);
 
-
-
-
+        if (objbuildingdelPalletControl.LoadPltData() != null && objbuildingdelPalletControl.LoadPltData().size() != 0) {
+            PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
+            tv_plt_route_id.setText(String.valueOf(PalletScanDeliveryItem.get(0).RouteId));
+            get_shop_names = objbuildingdelPalletControl.LoadShops(PalletScanDeliveryItem.get(0).RouteId);
+            tv_shopnames_col.setText(get_shop_names);
+            count = PalletScanDeliveryItem.size();
+            tv_count.setText(count + "");
+            setPltCount(count);
+            objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
+            lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
+        }
         return view;
     }
+
+
+    private void openPopupShopsFromTransfers() {
+        myDialog = new Dialog(getContext());
+        myDialog.setCancelable(false);
+        myDialog.setContentView(R.layout.view_shops_from_transfer);
+        lvShops = (ListView) myDialog.findViewById(R.id.lv_shops);
+        btCancel = (Button) myDialog.findViewById(R.id.bt_cancel);
+        shopNamesFromTransfers = objbuildingdelPalletControl.loadShopsFromTransfers(et_plt_shop_transferno.getText().toString());
+        objShopFromTransferAdp = new ShopFromTransferAdp(shopNamesFromTransfers);
+        lvShops.setAdapter(objShopFromTransferAdp);
+
+        btCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        });
+
+        myDialog.show();
+    }
+
+    private class ShopFromTransferAdp extends BaseAdapter {
+        public List<String> shopNames;
+
+        public ShopFromTransferAdp(List<String> shopNames) {
+            this.shopNames = shopNames;
+        }
+
+        @Override
+        public int getCount() {
+            return shopNames.size();
+        }
+
+        @Override
+        public String getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater mInflater = getLayoutInflater();
+            View myView = mInflater.inflate(R.layout.view_shops, null);
+            TextView tvShopname = (TextView) myView.findViewById(R.id.tv_shop_name);
+            tvShopname.setText(shopNames.get(position));
+
+            tvShopname.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    get_route_id = objbuildingdelPalletControl.loadKsaRoute(shopNames.get(position));
+                    PltScanTransferShared.shopNameSave(shopNames.get(position));
+                    myDialog.dismiss();
+                    transferno = et_plt_shop_transferno.getText().toString();
+                    String shopname = tv_plt_shopname.getText().toString();
+                    get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
+                    selectedShopName = shopNames.get(position);
+                    if (GetScanresult()) {
+                        Log.e("Error", "Reached here");
+                        et_plt_shop_transferno.requestFocus();
+                        PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer2(getActivity(), transferno, get_route_id, android_id, shopname);
+                        objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
+                        lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
+                        if (objTransferStatusPltAdp != null) {
+                            if (PalletScanDeliveryItem != null && !PalletScanDeliveryItem.isEmpty()) {
+                                setRouteid(tv_plt_route_id.getText().toString());
+                                tv_plt_route_id.setEnabled(false);
+                                tv_plt_route_id.setClickable(false);
+                                et_plt_shop_transferno.requestFocus();
+                            }
+
+                        }
+
+                        count = Integer.valueOf(getPltCount());
+                        tv_count.setText(count + "");
+                        et_plt_shop_transferno.setText("");
+                        et_plt_shop_transferno.requestFocus();
+                    }
+                }
+            });
+            return myView;
+        }
+    }
+
 
     private void clearBtDevData() {
         remoteDevices = new Vector<BluetoothDevice>();
     }
+
     private void bluetoothSetup() {
         clearBtDevData();
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -546,7 +649,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             }
         }
         printBarCode();
-       // clear();
+        // clear();
         return true;
     }
 
@@ -620,7 +723,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                 printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
             } else {
                 //okMessage("ALERT - ", "Count= "+objbuildingdelPalletControl.LoadPltDataCount(objpalletbuilding.getPalletNo()).toString()+", Routeid = "+getRouteid().toString()+", PLTSN = "+objpalletbuilding.getPalletSn(), getContext());
-                printData = objSample_Print.getRoutePalletPrint(objpalletbuilding.getPalletNo(), objGlobal.getUserName() , getRouteid().toString(),objGlobal.getServerDate(),objbuildingdelPalletControl.LoadPltDataCount(objpalletbuilding.getPalletNo()).toString(),objGlobal.getServerDate() ,objpalletbuilding.getPalletSn().toString(),sp_transfer_print_copies.getSelectedItem().toString());
+                printData = objSample_Print.getRoutePalletPrint(objpalletbuilding.getPalletNo(), objGlobal.getUserName(), getRouteid().toString(), objGlobal.getServerDate(), objbuildingdelPalletControl.LoadPltDataCount(objpalletbuilding.getPalletNo()).toString(), objGlobal.getServerDate(), objpalletbuilding.getPalletSn().toString(), sp_transfer_print_copies.getSelectedItem().toString());
             }
 
             return objSample_Print.PrintBarcodeByte(printData);
@@ -630,114 +733,51 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         }
     }
 
-    public boolean GetScanresult(){
+    public boolean GetScanresult() {
+        PltScanTransferShared.Routeidsave(tv_plt_route_id.getText().toString());
         transferno = et_plt_shop_transferno.getText().toString();
         Log.e("transferno", transferno);
-        if(et_plt_shop_transferno.getText().toString().isEmpty()) {
-            okMessage("Alert",  "Please Scan Trf no/Toteid", getContext());
+        if (et_plt_shop_transferno.getText().toString().isEmpty()) {
+            okMessage("Alert", "Please Scan Trf no/Toteid", getContext());
             return false;
-        }else {
-            if (sp_plt_route_id.getSelectedItemId() != 0) {
-                List<String> arr1 = objbuildingdelPalletControl.GetShops(getActivity(), transferno, get_route_id);
-                ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1)
-                {
-                    @Override
-                    public boolean isEnabled(int position){
-                        // Disable the first item from Spinner
-                        // First item will be use for hint
-                        return position != 0;
-                    }
-                    @Override
-                    public View getDropDownView(
-                            int position, View convertView,
-                            @NonNull ViewGroup parent) {
-
-                        // Get the item view
-                        View view = super.getDropDownView(
-                                position, convertView, parent);
-                        TextView textView = (TextView) view;
-                        if(position == 0){
-                            // Set the hint text color gray
-                            textView.setTextColor(Color.GRAY);
-                        }
-                        else { textView.setTextColor(Color.BLACK); }
-                        return view;
-                    }
-                };
-
-                sp_plt_shopname.setAdapter(arrayAdp1);
-                //sp_plt_shopname.setSelection(arrayAdp1.getPosition(Integer.parseInt(PltScanTransferShared.Routeidload().toString())));
-                //sp_plt_shopname.setEnabled(true);
-
-                int SpinnerCount = sp_plt_shopname.getAdapter().getCount();
-
-
-                PalletScanDeliveryItem = new ArrayList<>();
-                // sp_plt_shopname.setSelection(0);
-                if (SpinnerCount > 2) {
-
-                    Log.e("Loaded", "Here");
-                    sp_plt_shopname.setEnabled(true);
-
-
-
-                    sp_plt_shopname.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-
-                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                            Log.e("Loaded2", "Here");
-                            if(sp_plt_shopname.getSelectedItemId() != 0){
-                                String shopname = sp_plt_shopname.getSelectedItem().toString();
-                                PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer2(getActivity(), transferno, get_route_id, android_id, shopname);
-                                objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
-                                lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
-                                if (objTransferStatusPltAdp != null) {
-                                    PltScanTransferShared.Routeidsave(sp_plt_route_id.getSelectedItem().toString());
-                                    setRouteid(sp_plt_route_id.getSelectedItem().toString());
-                                    sp_plt_route_id.setEnabled(false);
-                                    sp_plt_route_id.setClickable(false);
-                                    et_plt_shop_transferno.requestFocus();
-                                }
-                                count = Integer.valueOf(getPltCount());
-                                tv_count.setText(count + "");
-                                et_plt_shop_transferno.setText("");
-                                et_plt_shop_transferno.requestFocus();
-                            }
-                            else{
-
-                            }
-
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parentView) {
-                        }
-
-                    });
-
-                } else {
-                    sp_plt_shopname.setEnabled(false);
-                    PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer(getActivity(), transferno, get_route_id, android_id);
-                    et_plt_shop_transferno.requestFocus();
-                    objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
-                    lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
-                    if (PalletScanDeliveryItem.size() != 0) {
-                        PltScanTransferShared.Routeidsave(sp_plt_route_id.getSelectedItem().toString());
-                        setRouteid(sp_plt_route_id.getSelectedItem().toString());
-                        sp_plt_route_id.setEnabled(false);
-                        sp_plt_route_id.setClickable(false);
-                        et_plt_shop_transferno.requestFocus();
-                        count = getPltCount();
-                        tv_count.setText(count+"");
-                        et_plt_shop_transferno.setText("");
-                        sp_plt_shopname.setAdapter(null);
-                    }
+        } else {
+            if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0) {
+                if (get_route_id != PalletScanDeliveryItem.get(0).RouteId) {
+                    okMessage("", "This Trf No / Toteid is not in the same Route - " + transferno, getActivity());
+                    return false;
                 }
             }
-            else{
-                okMessage("Alert", "Please Select Route", getContext());
-                return false;
+            PalletScanDeliveryItem = new ArrayList<>();
+            PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer(getActivity(), transferno, get_route_id, android_id);
+            et_plt_shop_transferno.requestFocus();
+            objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
+            lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
+            if (PalletScanDeliveryItem.size() != 0) {
+                PltScanTransferShared.Routeidsave(tv_plt_route_id.getText().toString());
+                setRouteid(tv_plt_route_id.getText().toString());
+                tv_plt_route_id.setEnabled(false);
+                tv_plt_route_id.setClickable(false);
+                et_plt_shop_transferno.requestFocus();
+                setPltCount(count+1);
+                count = getPltCount();
+                if (count == 1){
+                    tv_plt_route_id.setText(String.valueOf(get_route_id));
+                    tv_shopnames_col.setText(get_shop_names);
+                    PltScanTransferShared.shopNameSave(selectedShopName);
+                    PltScanTransferShared.Routeidsave(String.valueOf(get_route_id));
+                    tv_plt_shopname.setText(selectedShopName);
+                }
+                tv_count.setText(count + "");
+                et_plt_shop_transferno.setText("");
+                //     tv_plt_shopname.setText("");
+                //       sp_plt_shopname.setAdapter(null);
             }
+
+            // }
+//            } else {
+//                okMessage("Alert", "Please Select Route", getContext());
+//                return false;
+//            }
             // Log.e("getCount spinner", SpinnerCount + "");
 
 
@@ -749,10 +789,8 @@ public class BuildingDeliveryPalletFragment extends Fragment {
     }
 
 
-
-
     private class MyTransferStatusPltAdp extends BaseAdapter {
-        public  ArrayList<PalletScanDeliveryItem> pltScanItemsList;
+        public ArrayList<PalletScanDeliveryItem> pltScanItemsList;
 
         public MyTransferStatusPltAdp(ArrayList<PalletScanDeliveryItem> PltScanItems) {
             this.pltScanItemsList = PltScanItems;
@@ -799,24 +837,27 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         alert.create().show();
     }
 
-    private void clear(){
-        sp_plt_route_id.clearFocus();
+    private void clear() {
+        tv_plt_route_id.clearFocus();
         et_plt_shop_transferno.setText("");
         Remarks.setText("");
-        sp_plt_shopname.setAdapter(null);
-        sp_plt_route_id.setSelection(0);
+        // sp_plt_shopname.setAdapter(null);
+        tv_plt_shopname.setText("");
+        tv_plt_route_id.setText("");
         transferno = "";
         tv_shopnames_col.setText("");
-        sp_plt_route_id.setEnabled(true);
-        sp_plt_route_id.setClickable(true);
+        tv_plt_route_id.setEnabled(true);
+        tv_plt_route_id.setClickable(true);
         PltScanTransferShared.Routeidsave("");
         count = 0;
         setPltCount(count);
         tv_count.setText("");
-        if(objbuildingdelPalletControl.deletetemp()){
+        if (objbuildingdelPalletControl.deletetemp()) {
             // Clear collection..
             lv_div_seperate_details.setAdapter(null);
+            PalletScanDeliveryItem = new ArrayList<>();
         }
         PltScanTransferShared.savePrinter("");
+
     }
 }

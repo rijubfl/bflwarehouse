@@ -41,13 +41,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_plt_route_printer" />
 
-        <Spinner
-            android:id="@+id/sp_plt_route_id"
+        <TextView
+            android:id="@+id/tv_plt_route_id"
             android:layout_width="0dp"
             android:layout_height="38dp"
             android:layout_marginLeft="5dp"
+            android:textColor="@color/coloBlack"
             android:background="@drawable/et_custom_total"
-            android:gravity="center"
+            android:gravity="left"
             android:hint=""
             android:padding="8dp"
             android:textSize="13sp"
@@ -68,7 +69,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sp_plt_route_id"></TextView>
+            app:layout_constraintTop_toBottomOf="@+id/tv_plt_route_id"></TextView>
 
         <TextView
             android:id="@+id/tv_plt_toteid"
@@ -171,14 +172,15 @@
 <!--            app:layout_constraintEnd_toEndOf="parent"-->
 <!--            app:layout_constraintTop_toTopOf="@+id/sp_transfer_print_copies" />-->
 
-        <Spinner
-            android:id="@+id/sp_plt_shopname"
+        <TextView
+            android:id="@+id/tv_plt_shopname"
             android:layout_width="0dp"
             android:layout_height="38dp"
             android:layout_marginLeft="5dp"
             android:background="@drawable/et_custom_total"
-            android:gravity="center"
+            android:gravity="left"
             android:hint=""
+            android:textColor="@color/coloBlack"
             android:padding="8dp"
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"

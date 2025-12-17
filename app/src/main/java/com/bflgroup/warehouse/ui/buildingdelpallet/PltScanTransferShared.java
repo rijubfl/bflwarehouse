@@ -17,6 +17,14 @@ public class PltScanTransferShared {
 
     public String Routeidload(){ return sharedRef.getString("pltrouteid",""); }
 
+    public void shopNameSave(String shopName){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("shopname",shopName);
+        editor.commit();
+    }
+
+    public String shopNameLoad(){ return sharedRef.getString("shopname",""); }
+
     public String loadPrinter() {
         return sharedRef.getString("Printer", "");
     }
