@@ -24,7 +24,7 @@ public class WarehouseGRNControl {
     public WarehouseGRNControl() {
         objGlobal.setDbName("BFLDATA");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("WarehouseGRNNewControl : Connection error");
         }
         b_Result = dbConnection.connectCloudDb();
@@ -38,14 +38,14 @@ public class WarehouseGRNControl {
         objGlobal.setDbName("BFLDATA");
         if (dbConnection.checkConnectionClosed() == false) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("WarehouseGRNNewControl.checkConnection : Connection error");
                 return false;
             }
         }
         if (dbConnection.checkCloudConnectionClosed() == false) {
             b_Result = dbConnection.connectCloudDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("2 ReceiveShopReturnsControl : Cloud Connection error");
             }
         }
@@ -355,7 +355,7 @@ public class WarehouseGRNControl {
             if (autopost.equals("Y")) {
                 if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead(BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
                         "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) select BoxNo,'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "',NewPallet,PreparedBy,Remarks," +
-                        "Userid,'R1','N',GroupCode,OldBoxNo,Prepared1,Prepared2,WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID from " + db + ".DBO.UPCBoxHead where BoxNo in(select BoxNo from " +
+                        "Userid,PalletType,'N',GroupCode,OldBoxNo,Prepared1,Prepared2,WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID from " + db + ".DBO.UPCBoxHead where BoxNo in(select BoxNo from " +
                         "bfldata.dbo.tmpWarehouseGrnScanNew where SCount=1 and DeviceId='" + objGlobal.getDeviceName() + "')", objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     objGlobal.getConnection().setAutoCommit(true);
