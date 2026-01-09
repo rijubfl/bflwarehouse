@@ -1,7 +1,6 @@
 package com.bflgroup.warehouse.ui.departmentgrn;
 
 
-
 import android.content.Context;
 import android.util.Log;
 
@@ -14,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 public class DepartmentGRNControl {
@@ -56,39 +54,39 @@ public class DepartmentGRNControl {
             String query = "select * from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "'";
             rs = dbConnection.getResultSet(query, objGlobal.getConnection());
             if (!rs.next()) {
-                String query4 = "select distinct Boxno, toteid from usa..vUPCBoxDet where (palletno = '" + Palletno + "' or boxno = '" + Palletno  + "' or toteid = '"+ Palletno +"') and Closed = 'N'";
+                String query4 = "select distinct Boxno, toteid from usa..vUPCBoxDet where (palletno = '" + Palletno + "' or boxno = '" + Palletno + "' or toteid = '" + Palletno + "') and Closed = 'N'";
                 rs = dbConnection.getResultSet(query4, objGlobal.getConnection());
                 if (rs.next()) {
                     String query1 = "insert into bfldata.dbo.tmpwhdepartmentGRN(warehouseTo,WarehouseFrom,palletno,BoxNo,toteid,username, userid,deviceid, Date, updateTime) " +
-                            "select Distinct '" + WarehouseTo + "','"+WarehouseFrom+"','"+Palletno+"',Boxno, Toteid,'" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getDeviceName() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "' from usa..vUPCBoxDet where (palletno = '" + Palletno + "' or boxno = '" + Palletno  + "' or toteid = '"+ Palletno +"') and Closed = 'N'";
+                            "select Distinct '" + WarehouseTo + "','" + WarehouseFrom + "','" + Palletno + "',Boxno, Toteid,'" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getDeviceName() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "' from usa..vUPCBoxDet where (palletno = '" + Palletno + "' or boxno = '" + Palletno + "' or toteid = '" + Palletno + "') and Closed = 'N'";
                     if (!dbConnection.insertUpdate(query1, objGlobal.getConnection())) {
                         return null;
                     }
                 } else {
-                    String query5 = "select distinct Boxno,TotId from BFLDATA..vR1Pallet where (palletno = '" + Palletno + "' or Boxno = '" + Palletno+ "' or TotId = '"+ Palletno +"') and Closed = 'N'";
+                    String query5 = "select distinct Boxno,TotId from BFLDATA..vR1Pallet where (palletno = '" + Palletno + "' or Boxno = '" + Palletno + "' or TotId = '" + Palletno + "') and Closed = 'N'";
                     rs = dbConnection.getResultSet(query5, objGlobal.getConnection());
                     if (rs.next()) {
                         String query1 = "insert into bfldata.dbo.tmpwhdepartmentGRN(warehouseTo,warehouseFrom,palletno,BoxNo,toteid,username, userid,deviceid, Date,updateTime) " +
-                                "select Distinct '" + WarehouseTo + "','"+WarehouseFrom+"','"+Palletno+"',Boxno, TotId, '" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getDeviceName() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "' from bfldata..vR1Pallet where (palletno = '" + Palletno + "' or Boxno = '" + Palletno+ "' or TotId = '"+ Palletno +"') and Closed = 'N'";
+                                "select Distinct '" + WarehouseTo + "','" + WarehouseFrom + "','" + Palletno + "',Boxno, TotId, '" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getDeviceName() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "' from bfldata..vR1Pallet where (palletno = '" + Palletno + "' or Boxno = '" + Palletno + "' or TotId = '" + Palletno + "') and Closed = 'N'";
                         if (!dbConnection.insertUpdate(query1, objGlobal.getConnection())) {
                             return null;
                         }
                     } else {
-                        String query6 = "select distinct Boxno from USA..KNBboxes where (palletno = '" + Palletno + "'  or Boxno = '"+Palletno +"') and Closed = 'N'";
+                        String query6 = "select distinct Boxno from USA..KNBboxes where (palletno = '" + Palletno + "'  or Boxno = '" + Palletno + "') and Closed = 'N'";
                         rs = dbConnection.getResultSet(query6, objGlobal.getConnection());
                         if (rs.next()) {
                             String query1 = "insert into bfldata.dbo.tmpwhdepartmentGRN(warehouseTo,warehouseFrom,palletno,BoxNo,username, userid,deviceid, Date,updateTime) " +
-                                    "select Distinct '" + WarehouseTo + "','"+WarehouseFrom+"','"+Palletno+"',Boxno, '" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getDeviceName() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "' from USA..KNBboxes where (palletno = '" + Palletno + "'  or Boxno = '"+Palletno +"') and Closed = 'N'";
+                                    "select Distinct '" + WarehouseTo + "','" + WarehouseFrom + "','" + Palletno + "',Boxno, '" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getDeviceName() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "' from USA..KNBboxes where (palletno = '" + Palletno + "'  or Boxno = '" + Palletno + "') and Closed = 'N'";
                             if (!dbConnection.insertUpdate(query1, objGlobal.getConnection())) {
                                 return null;
                             }
-                        }else {
+                        } else {
                             //BFLDATA.dbo.vGoodsIssue
-                            String query7 = "select distinct trfno from BFLDATA.dbo.vGoodsIssue where palletno = '"+ Palletno +"'";
+                            String query7 = "select distinct trfno from BFLDATA.dbo.vGoodsIssue where palletno = '" + Palletno + "'";
                             rs = dbConnection.getResultSet(query7, objGlobal.getConnection());
-                            if (rs.next()){
+                            if (rs.next()) {
                                 String query1 = "insert into bfldata.dbo.tmpwhdepartmentGRN(warehouseTo,warehouseFrom,palletno,BoxNo,username, userid,deviceid, Date,updateTime) " +
-                                        "select Distinct '" + WarehouseTo + "','"+WarehouseFrom+"','"+Palletno+"',trfno, '" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getDeviceName() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "' from BFLDATA.dbo.vGoodsIssue where palletno = '" + Palletno + "'";
+                                        "select Distinct '" + WarehouseTo + "','" + WarehouseFrom + "','" + Palletno + "',trfno, '" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getDeviceName() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "' from BFLDATA.dbo.vGoodsIssue where palletno = '" + Palletno + "'";
                                 if (!dbConnection.insertUpdate(query1, objGlobal.getConnection())) {
                                     return null;
                                 }
@@ -100,11 +98,11 @@ public class DepartmentGRNControl {
                 }
             }
             int srno = 0;
-            String query2 = "select Palletno, Boxno, Toteid, verified = isnull(verified,'') from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and (palletno = '" + Palletno + "' or boxno = '"+Palletno+"' or toteid = '"+Palletno+"') and warehousefrom ='" +WarehouseFrom+"' and warehouseTO = '"+ WarehouseTo + "'";
+            String query2 = "select Palletno, Boxno, Toteid, verified = isnull(verified,'') from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and (palletno = '" + Palletno + "' or boxno = '" + Palletno + "' or toteid = '" + Palletno + "') and warehousefrom ='" + WarehouseFrom + "' and warehouseTO = '" + WarehouseTo + "'";
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             while (rs.next()) {
                 srno++;
-                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxNo"),rs.getString("Toteid"), rs.getString("verified")));
+                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxNo"), rs.getString("Toteid"), rs.getString("verified")));
             }
             return boxItemLists;
 
@@ -121,64 +119,87 @@ public class DepartmentGRNControl {
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
                 objGlobal.setErrorNo("transferReceipt:007");
             }
-            String query = "select * from WHDepartmentGRNHead where  palletno = '" + Toteid + "' and warehouseFrom = '"+WarehouseFrom+"' and warehouseTo = '"+WarehouseTo+"'  and Convert(varchar,GETDATE(),103) = Date ";
+            String query = "select * from WHDepartmentGRNHead where  palletno = '" + Toteid + "' and warehouseFrom = '" + WarehouseFrom + "' and warehouseTo = '" + WarehouseTo + "'  and Convert(varchar,GETDATE(),103) = Date ";
             rs = dbConnection.getResultSet(query, objGlobal.getConnection());
             if (!rs.next()) {
-            int Srno = GetGrnNum();
-            String query1 = "insert into bfldata..WHDepartmentGRNHead(WarehouseFrom,WarehouseTo,Palletno,username,userid,Date,updateTime, Srno) " +
-                    "values ('" + WarehouseFrom + "','" + WarehouseTo + "','" + Toteid + "','" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getServerDate() + "', '" + objGlobal.getServerTime() + "'," + Srno + " )";
-            if (!dbConnection.insertUpdate(query1, objGlobal.getConnection())) {
-                objGlobal.getConnection().rollback();
-                return null;
-            }
-            String query4 = "select distinct Boxno, toteid from usa..vUPCBoxDet where (boxno = '" + Toteid + "' or toteid = '" + Toteid + "') and Closed = 'N'";
-            rs = dbConnection.getResultSet(query4, objGlobal.getConnection());
-            if (rs.next()) {
-                String query2 = "insert into bfldata..WHDepartmentGRN(srno, Palletno,BoxNo,Toteid,username,userid) " +
-                        "select distinct " + Srno + ", palletno,BoxNo,toteid,'" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "' from usa..vUPCBoxDet where (boxno = '" + Toteid + "' or toteid = '" + Toteid + "') and Closed = 'N' ";
-                if (!dbConnection.insertUpdate(query2, objGlobal.getConnection())) {
+                int Srno = GetGrnNum();
+                String query1 = "insert into bfldata..WHDepartmentGRNHead(WarehouseFrom,WarehouseTo,Palletno,username,userid,Date,updateTime, Srno) " +
+                        "values ('" + WarehouseFrom + "','" + WarehouseTo + "','" + Toteid + "','" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "','" + objGlobal.getServerDate() + "', '" + objGlobal.getServerTime() + "'," + Srno + " )";
+                if (!dbConnection.insertUpdate(query1, objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return null;
                 }
-            }
-            else {
-                String query5 = "select distinct Boxno,TotId from BFLDATA..vR1Pallet where (Boxno = '" + Toteid+ "' or TotId = '"+ Toteid +"') and Closed = 'N'";
-                rs = dbConnection.getResultSet(query5, objGlobal.getConnection());
+                String query4 = "select distinct Boxno, toteid from usa..vUPCBoxDet where (boxno = '" + Toteid + "' or toteid = '" + Toteid + "') and Closed = 'N'";
+                rs = dbConnection.getResultSet(query4, objGlobal.getConnection());
                 if (rs.next()) {
                     String query2 = "insert into bfldata..WHDepartmentGRN(srno, Palletno,BoxNo,Toteid,username,userid) " +
-                            "select Distinct " + Srno + ", palletno,BoxNo,totid,'" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "' from bfldata..vR1Pallet where ( Boxno = '" + Toteid+ "' or TotId = '"+ Toteid +"') and Closed = 'N'";
+                            "select distinct " + Srno + ", palletno,BoxNo,toteid,'" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "' from usa..vUPCBoxDet where (boxno = '" + Toteid + "' or toteid = '" + Toteid + "') and Closed = 'N' ";
                     if (!dbConnection.insertUpdate(query2, objGlobal.getConnection())) {
+                        objGlobal.getConnection().rollback();
                         return null;
                     }
                 } else {
-                    String query6 = "select distinct Boxno from USA..KNBboxes where ( Boxno = '"+Toteid +"') and Closed = 'N'";
-                    rs = dbConnection.getResultSet(query6, objGlobal.getConnection());
+                    String query5 = "select distinct Boxno,TotId from BFLDATA..vR1Pallet where (Boxno = '" + Toteid + "' or TotId = '" + Toteid + "') and Closed = 'N'";
+                    rs = dbConnection.getResultSet(query5, objGlobal.getConnection());
                     if (rs.next()) {
                         String query2 = "insert into bfldata..WHDepartmentGRN(srno, Palletno,BoxNo,Toteid,username,userid) " +
-                                "select Distinct " + Srno + ", '',BoxNo,'','" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "' from USA..KNBboxes where ( Boxno = '"+Toteid +"') and Closed = 'N'";
+                                "select Distinct " + Srno + ", palletno,BoxNo,totid,'" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "' from bfldata..vR1Pallet where ( Boxno = '" + Toteid + "' or TotId = '" + Toteid + "') and Closed = 'N'";
                         if (!dbConnection.insertUpdate(query2, objGlobal.getConnection())) {
                             return null;
                         }
-                    }else{
-                        String query7 = "select * from bfldata..TransferNoReturn where TrfNo='" + Toteid + "'";
-                        rs = dbConnection.getResultSet(query7, objGlobal.getConnection());
+                    } else {
+                        String query6 = "select distinct Boxno from USA..KNBboxes where ( Boxno = '" + Toteid + "') and Closed = 'N'";
+                        rs = dbConnection.getResultSet(query6, objGlobal.getConnection());
                         if (rs.next()) {
                             String query2 = "insert into bfldata..WHDepartmentGRN(srno, Palletno,BoxNo,Toteid,username,userid) " +
-                                    "select Distinct " + Srno + ", '',TrfNo,'','" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "' from bfldata..TransferNoReturn where trfno = '"+ Toteid +"'";
+                                    "select Distinct " + Srno + ", '',BoxNo,'','" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "' from USA..KNBboxes where ( Boxno = '" + Toteid + "') and Closed = 'N'";
                             if (!dbConnection.insertUpdate(query2, objGlobal.getConnection())) {
                                 return null;
+                            }
+                        } else {
+                            String query7 = "";
+                            if (objGlobal.getCountryCode().equals("UAE"))
+                                query7 = "select * from bfldata..TransferNoReturn where TrfNo='" + Toteid + "'";
+                            else
+                                query7 = "select * from bflksa..transferheader where trfno = '" + Toteid + "' and trfno not in (select palletno from bfldata..CloseR1pallet)";
+                            rs = dbConnection.getResultSet(query7, objGlobal.getConnection());
+                            if (rs.next()) {
+                                String query2 = "";
+                                if (objGlobal.getCountryCode().equals("UAE"))
+                                {
+                                    query2 = "insert into bfldata..WHDepartmentGRN(srno, Palletno,BoxNo,Toteid,username,userid) " +
+                                            "select Distinct " + Srno + ", '',TrfNo,'','" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "' from bfldata..TransferNoReturn where trfno = '" + Toteid + "'";
+                                }
+                                else {
+                                    query2 = "insert into bfldata..WHDepartmentGRN(srno, Palletno,BoxNo,Toteid,username,userid) " +
+                                            "select Distinct " + Srno + ", '',TrfNo,'','" + objGlobal.getUserName() + "','" + objGlobal.getUserId() + "' from " + objGlobal.getCountryDbName() + ".dbo.TransferHeader where trfno = '" + Toteid + "'";
+                                }
+                                if (!dbConnection.insertUpdate(query2, objGlobal.getConnection())) {
+                                    return null;
+                                }
+                            }
+                            else{
+                                String rollBackQuery = "delete from WHDepartmentGRNHead where  palletno = '" + Toteid +"' and warehouseFrom = '" + WarehouseFrom + "' and warehouseTo = '" + WarehouseTo + "'  and Convert(varchar,GETDATE(),103) = Date";
+                                if (!dbConnection.insertUpdate(rollBackQuery, objGlobal.getConnection())) {
+
+                                    return null;
+                                }
+                                else {
+                                    objGlobal.setErrorMessage("The tote/box " + Toteid + " is closed or Invalid");
+                                    return null;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
             int srno = 0;
-            String query2 = "select top 25 Palletno, Boxno, Toteid, verified = 'Y' from BFLDATA..WHDepartmentGRN where username ='"+objGlobal.getUserName()+"' order by srno desc";
+           // String query2 = "select top 25 Palletno, Boxno, Toteid, verified = 'Y' from BFLDATA..WHDepartmentGRN where username ='" + objGlobal.getUserName() + "' order by srno desc";
+            String query2 = "SELECT a.Palletno, Boxno, Toteid, verified = 'Y' FROM BFLDATA..WHDepartmentGRN a INNER JOIN BFLDATA..WHDepartmentGRNHead b ON a.srno = b.srno WHERE b.username = '" + objGlobal.getUserName() + "' AND CAST(b.[Date] AS DATE) = CAST(GETDATE() AS DATE) ORDER BY a.srno DESC";
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             while (rs.next()) {
                 srno++;
-                boxItemLists.add(new BoxItemList(srno, rs.getString("Palletno"), rs.getString("BoxNo"),rs.getString("Toteid"), rs.getString("verified")));
+                boxItemLists.add(new BoxItemList(srno, rs.getString("Palletno"), rs.getString("BoxNo"), rs.getString("Toteid"), rs.getString("verified")));
             }
             return boxItemLists;
 
@@ -198,11 +219,12 @@ public class DepartmentGRNControl {
             }
 
             int srno = 0;
-            String query2 = "select top 25 Palletno, Boxno, Toteid, verified = 'Y' from BFLDATA..WHDepartmentGRN where username ='"+objGlobal.getUserName()+"' order by srno desc";
+            // String query2 = "select top 25 Palletno, Boxno, Toteid, verified = 'Y' from BFLDATA..WHDepartmentGRN where username ='"+objGlobal.getUserName()+"' order by srno desc";
+            String query2 = "SELECT a.Palletno, Boxno, Toteid, verified = 'Y' FROM BFLDATA..WHDepartmentGRN a INNER JOIN BFLDATA..WHDepartmentGRNHead b ON a.srno = b.srno WHERE b.username = '" + objGlobal.getUserName() + "' AND CAST(b.[Date] AS DATE) = CAST(GETDATE() AS DATE) ORDER BY a.srno DESC";
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             while (rs.next()) {
                 srno++;
-                boxItemLists.add(new BoxItemList(srno, rs.getString("Palletno"), rs.getString("BoxNo"),rs.getString("Toteid"), rs.getString("verified")));
+                boxItemLists.add(new BoxItemList(srno, rs.getString("Palletno"), rs.getString("BoxNo"), rs.getString("Toteid"), rs.getString("verified")));
             }
             return boxItemLists;
 
@@ -216,7 +238,7 @@ public class DepartmentGRNControl {
     public int getCountBoxesScanned(String palletno, String warehouse) {
         int Count = 0;
         try {
-            String query2 = "select Count(*) from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and (palletno = '" + palletno + "' or boxno = '"+palletno+"' or toteid = '"+palletno+"') and warehouseTo = '" + warehouse + "' and isnull(verified,'')<>''";
+            String query2 = "select Count(*) from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and (palletno = '" + palletno + "' or boxno = '" + palletno + "' or toteid = '" + palletno + "') and warehouseTo = '" + warehouse + "' and isnull(verified,'')<>''";
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             while (rs.next()) {
                 Count = rs.getInt(1);
@@ -272,7 +294,7 @@ public class DepartmentGRNControl {
                     DepartmentGRNGlobal.setBoxNo(box);
                     DepartmentGRNGlobal.setToteid("");
                 } else {
-                    ResultSet rs3 = dbConnection.getResultSet("select * from bfldata..vGoodsissue where trfno = '" + Boxno + "' and palletno = '"+ Palletno +"'", objGlobal.getConnection());
+                    ResultSet rs3 = dbConnection.getResultSet("select * from bfldata..vGoodsissue where trfno = '" + Boxno + "' and palletno = '" + Palletno + "'", objGlobal.getConnection());
                     if (rs3.next()) {
                         box = rs3.getString("trfno");
                         DepartmentGRNGlobal.setBoxNo(box);
@@ -307,7 +329,7 @@ public class DepartmentGRNControl {
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             while (rs.next()) {
                 srno++;
-                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxNo"),rs.getString("Toteid"), rs.getString("verified")));
+                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxNo"), rs.getString("Toteid"), rs.getString("verified")));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -331,11 +353,11 @@ public class DepartmentGRNControl {
             }
 //            }
 
-            String query2 = "select Palletno, Boxno, Toteid, verified = isnull(verified,'') from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' order by Date,updatetime desc";
+            String query2 = "select Palletno, Boxno, Toteid, verified = isnull(verified,'') from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' order by Date, updatetime desc";
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             while (rs.next()) {
                 srno++;
-                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxNo"),rs.getString("Toteid"), rs.getString("verified")));
+                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxNo"), rs.getString("Toteid"), rs.getString("verified")));
             }
             return boxItemLists;
 
@@ -349,9 +371,8 @@ public class DepartmentGRNControl {
 
 
     public boolean isPalletSaved(String palletno, String warehouseTo, String warehouseFrom) throws SQLException {
-        ResultSet rs1 = dbConnection.getResultSet("select * from bfldata..WHDepartmentGRNHead where Palletno = '" + palletno + "' and warehouseTo = '"+warehouseTo+"' and warehouseFrom = '"+warehouseFrom+"' and Convert(varchar,GETDATE(),103) = Date", objGlobal.getConnection());
-        if(rs1.next())
-        {
+        ResultSet rs1 = dbConnection.getResultSet("select * from bfldata..WHDepartmentGRNHead where Palletno = '" + palletno + "' and warehouseTo = '" + warehouseTo + "' and warehouseFrom = '" + warehouseFrom + "' and Convert(varchar,GETDATE(),103) = Date", objGlobal.getConnection());
+        if (rs1.next()) {
             return true;
         }
         return false;
@@ -364,24 +385,32 @@ public class DepartmentGRNControl {
         rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
         while (rs.next()) {
             srno++;
-            boxItemLists.add(new BoxItemList(srno, palletno, rs.getString("BoxNo"),rs.getString("Toteid"),"Y"));
+            boxItemLists.add(new BoxItemList(srno, palletno, rs.getString("BoxNo"), rs.getString("Toteid"), "Y"));
         }
         return boxItemLists;
     }
 
-    public Boolean isValidTransfer(String Trfno, Context context){
+    public Boolean isValidTransfer(String Trfno, Context context) {
         try{
-            ResultSet rs = dbConnection.getResultSet("select * from bfldata..TransferNoReturn where TrfNo='" + Trfno + "' ", objGlobal.getConnection());
+            String query = "";
+            if (objGlobal.getCountryCode().equals("UAE")){
+                query  = "select * from bfldata..TransferNoReturn where TrfNo='" + Trfno + "'";
+            }
+            else{
+                query= "select * from "+objGlobal.getCountryDbName()+"..TransferHeader where TrfNo='" + Trfno + "'";
+            }
+            ResultSet rs = dbConnection.getResultSet(query, objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Transfer Number " + Trfno + " is Invalid");
                 return false;
             }
         } catch (SQLException e) {
-        throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
         return true;
     }
-    public Boolean isValidPallet(String palletno, Context context){
+
+    public Boolean isValidPallet(String palletno, Context context) {
         try {
             ResultSet rs = dbConnection.getResultSet("select * from bfldata.dbo.r1pallethead where palletno='" + palletno + "' and closed='N'", objGlobal.getConnection());
             if (!rs.next()) {
@@ -393,25 +422,25 @@ public class DepartmentGRNControl {
                         if (!rs.next()) {
                             rs = dbConnection.getResultSet("select top 1 * from abudata.dbo.tcmitemsall where palletno='" + palletno + "'", objGlobal.getConnection());
                             if (!rs.next()) {
-                               // String Query = "select * from usa.dbo.vupcboxDet where (BoxNo='" + palletno.trim() + "'  or toteid = '"+palletno.trim()+"' ) and Closed='N'";
-                                rs = dbConnection.getResultSet("select * from usa.dbo.vupcboxDet where (BoxNo='" + palletno + "'  or toteid = '"+palletno+"' ) and Closed='N'", objGlobal.getConnection());
+                                // String Query = "select * from usa.dbo.vupcboxDet where (BoxNo='" + palletno.trim() + "'  or toteid = '"+palletno.trim()+"' ) and Closed='N'";
+                                rs = dbConnection.getResultSet("select * from usa.dbo.vupcboxDet where (BoxNo='" + palletno + "'  or toteid = '" + palletno + "' ) and Closed='N'", objGlobal.getConnection());
                                 if (!rs.next()) {
                                     rs = dbConnection.getResultSet("select distinct a.boxno from bfldata.dbo.TCMBoxes a,bfldata.dbo.TcmboxesHeader b where a.BoxNo=b.Boxno " +
-                                            "and (b.BoxNo='" + palletno + "' or TotiD = '"+palletno+"' )and a.Closed='N'", objGlobal.getConnection());
+                                            "and (b.BoxNo='" + palletno + "' or TotiD = '" + palletno + "' )and a.Closed='N'", objGlobal.getConnection());
                                     if (!rs.next()) {
-                                        rs = dbConnection.getResultSet("select * from usa..knbboxes where BoxNo = '"+palletno+"' and closed = 'N'", objGlobal.getConnection());
+                                        rs = dbConnection.getResultSet("select * from usa..knbboxes where BoxNo = '" + palletno + "' and closed = 'N'", objGlobal.getConnection());
                                         if (!rs.next()) {
 
 
-                                            objGlobal.setErrorMessage("Invalid Pallet/Box number or Pallet/Box is closed already - " +palletno);
+                                            objGlobal.setErrorMessage("Invalid Pallet/Box number or Pallet/Box is closed already - " + palletno);
                                             return false;
                                         }
                                     }
                                 }
 
-                               // objGlobal.setErrorMessage("Pallet Number " + palletno + " is closed already");
+                                // objGlobal.setErrorMessage("Pallet Number " + palletno + " is closed already");
 
-                               // return false;
+                                // return false;
                             }
                         }
                     }
@@ -427,28 +456,26 @@ public class DepartmentGRNControl {
 
     public boolean isVerified(String Palletno, String WarehouseTo, String WarehouseFrom) {
         try {
-            String query2 = "select Palletno, Boxno, Toteid, verified = isnull(verified,'') from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and warehouseTo = '"+WarehouseTo+"' and warehouseFrom = '"+WarehouseFrom+"' and isnull(verified,'')='' ";
+            String query2 = "select Palletno, Boxno, Toteid, verified = isnull(verified,'') from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and warehouseTo = '" + WarehouseTo + "' and warehouseFrom = '" + WarehouseFrom + "' and isnull(verified,'')='' ";
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             if (rs.next()) {
                 return false;
             }
-        }
-        catch(Exception exeception){
+        } catch (Exception exeception) {
             return false;
         }
 
         return true;
     }
 
-    public Boolean isValidTote(String toteId, Context context){
+    public Boolean isValidTote(String toteId, Context context) {
         try {
             String Query = "select * from usa.dbo.upcboxhead where ToteID='" + toteId.trim() + "' and Closed='N'";
             ResultSet resultSet = dbConnection.getResultSet(Query, objGlobal.getConnection());
 
             if (resultSet.next()) {// objGlobal.setErrorMessage(objGlobal.getErrorMessage().toString() );
                 return true;
-            }
-            else {
+            } else {
                 rs = dbConnection.getResultSet("select distinct a.boxno from bfldata.dbo.TCMBoxes a,bfldata.dbo.TcmboxesHeader b where a.BoxNo=b.Boxno " +
                         "and b.TotId='" + toteId + "' and a.Closed='N'", objGlobal.getConnection());
                 if (rs.next()) {
@@ -466,18 +493,18 @@ public class DepartmentGRNControl {
 
     }
 
-    public Boolean isValidbox(String BoxNo, String PalletNo, Context context){
+    public Boolean isValidbox(String BoxNo, String PalletNo, Context context) {
         try {
-            String Query = "select * from usa.dbo.vupcboxDet where (BoxNo='" + BoxNo.trim() + "'  or toteid = '"+BoxNo.trim()+"' ) and Closed='N'";
+            String Query = "select * from usa.dbo.vupcboxDet where (BoxNo='" + BoxNo.trim() + "'  or toteid = '" + BoxNo.trim() + "' ) and Closed='N'";
             rs = dbConnection.getResultSet(Query, objGlobal.getConnection());
             if (!rs.next()) {
                 rs = dbConnection.getResultSet("select distinct a.boxno from bfldata.dbo.TCMBoxes a,bfldata.dbo.TcmboxesHeader b where a.BoxNo=b.Boxno " +
-                        "and (b.BoxNo='" + BoxNo + "' or TotiD = '"+BoxNo+"' )and a.Closed='N'", objGlobal.getConnection());
+                        "and (b.BoxNo='" + BoxNo + "' or TotiD = '" + BoxNo + "' )and a.Closed='N'", objGlobal.getConnection());
                 if (!rs.next()) {
-                    rs = dbConnection.getResultSet("select * from usa..knbboxes where BoxNo = '"+BoxNo+"' and closed = 'N'", objGlobal.getConnection());
+                    rs = dbConnection.getResultSet("select * from usa..knbboxes where BoxNo = '" + BoxNo + "' and closed = 'N'", objGlobal.getConnection());
 
                     if (!rs.next()) {
-                        rs = dbConnection.getResultSet("select * from bfldata..vGoodsIssue where trfno = '"+BoxNo+"' and palletno = '"+PalletNo+"'", objGlobal.getConnection());
+                        rs = dbConnection.getResultSet("select * from bfldata..vGoodsIssue where trfno = '" + BoxNo + "' and palletno = '" + PalletNo + "'", objGlobal.getConnection());
                         if (!rs.next()) {
                             objGlobal.setErrorMessage("Invalid box or box is closed");
                             return false;
@@ -493,21 +520,21 @@ public class DepartmentGRNControl {
     }
 
 
-    public ArrayList<BoxItemList> loadPalletDetails(String Palletno, String Warehouse){
+    public ArrayList<BoxItemList> loadPalletDetails(String Palletno, String Warehouse) {
         int srno = 0;
         ArrayList<BoxItemList> boxItemLists = new ArrayList<>();
         try {
 
 
-            String query2 = "select Palletno, Boxno, Toteid, verified = isnull(verified,'') from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and warehouseTo = '"+Warehouse+"' order by Date,updatetime desc";
+            String query2 = "select Palletno, Boxno, Toteid, verified = isnull(verified,'') from bfldata.dbo.tmpwhdepartmentGRN where DeviceId = '" + objGlobal.getDeviceName() + "' and palletno = '" + Palletno + "' and warehouseTo = '" + Warehouse + "' order by Date,updatetime desc";
             rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
             while (rs.next()) {
                 srno++;
-                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxNo"),rs.getString("Toteid"), rs.getString("verified")));
+                boxItemLists.add(new BoxItemList(srno, Palletno, rs.getString("BoxNo"), rs.getString("Toteid"), rs.getString("verified")));
 
             }
-        }catch (Exception e){
-            Log.e("Alert",e.getMessage());
+        } catch (Exception e) {
+            Log.e("Alert", e.getMessage());
 
         }
 
@@ -516,23 +543,23 @@ public class DepartmentGRNControl {
     }
 
 
-    public int GetGrnNum(){
+    public int GetGrnNum() {
         int num = 0;
         try {
-        String query2 = "select srno = max(isnull(srno,0)) + 1 from bfldata..WHDepartmentGRNHead";
-        rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
-        while (rs.next()) {
+            String query2 = "select srno = max(isnull(srno,0)) + 1 from bfldata..WHDepartmentGRNHead";
+            rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
+            while (rs.next()) {
 
-           num =  rs.getInt("srno");
+                num = rs.getInt("srno");
 
-        }
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);   // return false;
         }
         return num;
     }
 
-    public Boolean SavePalletDetails( String palletNo, String WarehouseTo, String WarehouseFrom){
+    public Boolean SavePalletDetails(String palletNo, String WarehouseTo, String WarehouseFrom) {
         try {
 
             if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
@@ -540,14 +567,14 @@ public class DepartmentGRNControl {
             }
             int Srno = GetGrnNum();
             String query = "insert into bfldata..WHDepartmentGRNHead(WarehouseFrom,WarehouseTo,Palletno,username,userid,Date,updateTime, Srno) " +
-                    "select distinct '"+WarehouseFrom+"','"+WarehouseTo+"',Palletno,username,userid,'"+ objGlobal.getServerDate()  +"', '"+ objGlobal.getServerTime() +"',"+Srno+" from bfldata.dbo.tmpwhdepartmentGRN where palletno = '" + palletNo + "' and  deviceId = '" + objGlobal.getDeviceName() + "' ";
+                    "select distinct '" + WarehouseFrom + "','" + WarehouseTo + "',Palletno,username,userid,'" + objGlobal.getServerDate() + "', '" + objGlobal.getServerTime() + "'," + Srno + " from bfldata.dbo.tmpwhdepartmentGRN where palletno = '" + palletNo + "' and  deviceId = '" + objGlobal.getDeviceName() + "' ";
             if (!dbConnection.insertUpdate(query, objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
             }
 
             String query1 = "insert into bfldata..WHDepartmentGRN(srno, Palletno,BoxNo,Toteid,username,userid) " +
-                    "select "+Srno+", Palletno,BoxNo,Toteid,username,userid from bfldata.dbo.tmpwhdepartmentGRN a where palletno = '" + palletNo + "'  and deviceId = '" + objGlobal.getDeviceName() + "' ";
+                    "select " + Srno + ", Palletno,BoxNo,Toteid,username,userid from bfldata.dbo.tmpwhdepartmentGRN a where palletno = '" + palletNo + "'  and deviceId = '" + objGlobal.getDeviceName() + "' ";
             if (!dbConnection.insertUpdate(query1, objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
@@ -560,28 +587,28 @@ public class DepartmentGRNControl {
     }
 
 
-    public String BoxPalletCount(String palletNo){
+    public String BoxPalletCount(String palletNo) {
         String Boxcount = "0";
         try {
-            if(palletNo.substring(0,3).equals("USA")) {
+            if (palletNo.substring(0, 3).equals("USA")) {
                 String query = "select count = count(distinct Boxno) from USA..vUPCBOXdet where palletno = '" + palletNo + "' and closed = 'N'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                 if (rs.next()) {
                     Boxcount = rs.getString("count");
                 }
-            }else if(palletNo.substring(0,3).equals("PLT")){
+            } else if (palletNo.substring(0, 3).equals("PLT")) {
                 String query = "select count = count(distinct Boxno) from BFLDATA..vR1Pallet where palletno = '" + palletNo + "' and closed = 'N'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                 if (rs.next()) {
                     Boxcount = rs.getString("count");
                 }
-            }else if(palletNo.substring(0,3).equals("KNB")){
+            } else if (palletNo.substring(0, 3).equals("KNB")) {
                 String query = "select count = count(distinct Boxno) from usa..knbboxes where palletno = '" + palletNo + "' and closed = 'N'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                 if (rs.next()) {
                     Boxcount = rs.getString("count");
                 }
-            }else{
+            } else {
                 String query = "select count = count(distinct trfno) from bfldata..vGoodsissue where palletno = '" + palletNo + "'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                 if (rs.next()) {
@@ -604,7 +631,7 @@ public class DepartmentGRNControl {
         alert.create().show();
     }
 
-    public List<String> loadWarehouse(){
+    public List<String> loadWarehouse() {
 
         List<String> arr;
         try {
@@ -622,7 +649,7 @@ public class DepartmentGRNControl {
     }
 
 
-    public List<String> getWarehouse(String warehouse){
+    public List<String> getWarehouse(String warehouse) {
         List<String> arr;
         if (!checkConnection()) {
             return null;
@@ -631,7 +658,7 @@ public class DepartmentGRNControl {
             arr = new ArrayList<String>();
 
             arr.add("Select Warehouse");
-            rs = dbConnection.getResultSet("select distinct department from bfldata..warehouseDepartment where warehouse = '"+warehouse+"'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select distinct department from bfldata..warehouseDepartment where warehouse = '" + warehouse + "'", objGlobal.getConnection());
             while (rs.next()) {
                 arr.add(rs.getString("department"));
             }

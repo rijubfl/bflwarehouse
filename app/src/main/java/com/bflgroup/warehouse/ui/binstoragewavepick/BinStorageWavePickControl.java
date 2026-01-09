@@ -93,9 +93,11 @@ public class BinStorageWavePickControl {
                             "AND NOT EXISTS (SELECT 1 FROM bfldata..CloseR1pallet b WHERE b.PalletNo = a.BoxNo)))";
                 }
                 else{
-                    query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
-                            "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'' and BoxNo not in(select ToteId from racks.dbo.SkipWavePick where Fix='N' union all " +
-                            "select ToteId=BoxNo from racks.dbo.SkipWavePick where Fix='N')) and ISNULL(Zones,'')<>''";
+                    query = "SELECT DISTINCT b.Zones FROM RACKS.dbo.BinRackMaster b with (nolock) WHERE b.Zones IS NOT NULL AND b.Zones <> '' AND EXISTS (SELECT 1" +
+                            "FROM tempdata.dbo.SIMProdReadyPalletsList p with (nolock) WHERE p.Rack <> '' AND p.Rack = b.Barcode AND NOT EXISTS (SELECT 1 FROM RACKS.dbo.SkipWavePick s with (nolock) WHERE s.Fix = 'N' AND (s.ToteId = p.BoxNo OR s.BoxNo = p.BoxNo)))";
+//                    query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
+//                            "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'' and BoxNo not in(select ToteId from racks.dbo.SkipWavePick where Fix='N' union all " +
+//                            "select ToteId=BoxNo from racks.dbo.SkipWavePick where Fix='N')) and ISNULL(Zones,'')<>''";
                 }
 
             }

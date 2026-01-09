@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:padding="8dp">
 
+        <!-- Row 1: Printer / Copies -->
         <TextView
             android:id="@+id/tv_plt_route_printer"
             android:layout_width="110dp"
@@ -26,118 +27,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_plt_route_no"
-            android:layout_width="110dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="Route No."
-            android:textColor="@color/coloBlack"
-            android:textSize="13sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_plt_route_printer" />
-
-        <TextView
-            android:id="@+id/tv_plt_route_id"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_marginLeft="5dp"
-            android:textColor="@color/coloBlack"
-            android:background="@drawable/et_custom_total"
-            android:gravity="left"
-            android:hint=""
-            android:padding="8dp"
-            android:textSize="13sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tv_plt_route_no"
-            app:layout_constraintTop_toTopOf="@+id/tv_plt_route_no"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-        <TextView
-            android:id="@+id/tv_shopnames_col"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom_total"
-            android:hint="Shop Names"
-            android:padding="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_plt_route_id"></TextView>
-
-        <TextView
-            android:id="@+id/tv_plt_toteid"
-            android:layout_width="110dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="Toteid/Trf.No"
-            android:textColor="@color/coloBlack"
-            android:textSize="13sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_shopnames_col" />
-
-        <EditText
-
-            android:id="@+id/et_plt_shop_transferno"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/et_custom"
-            android:padding="10dp"
-            android:text=""
-            android:textColor="@color/coloBlack"
-            android:textSize="13sp"
-            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/tv_plt_toteid"
-            app:layout_constraintTop_toBottomOf="@+id/tv_shopnames_col">
-
-        </EditText>
-
-        <Button
-            android:id="@+id/bt_transfer_scan"
-            android:layout_width="70dp"
-            android:layout_height="38dp"
-            android:background="@drawable/btn_custom1"
-            android:text="SCAN"
-            android:textAllCaps="false"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_plt_toteid"
-            tools:ignore="TouchTargetSizeCheck" />
-
-        <TextView
-            android:id="@+id/tv_plt_shop"
-            android:layout_width="110dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="Shop Name"
-            android:textColor="@color/coloBlack"
-            android:textSize="13sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_plt_toteid" />
-
         <Spinner
             android:id="@+id/sp_transfer_printer"
             android:layout_width="0dp"
             android:layout_height="38dp"
-            android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
@@ -147,7 +42,6 @@
             app:layout_constraintStart_toEndOf="@+id/tv_plt_route_printer"
             app:layout_constraintTop_toTopOf="@+id/tv_plt_route_printer"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
 
         <Spinner
             android:id="@+id/sp_transfer_print_copies"
@@ -163,14 +57,112 @@
             app:layout_constraintTop_toTopOf="@+id/sp_transfer_printer"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-<!--        <CheckBox-->
-<!--            android:id="@+id/ch_transfer_printer"-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="38dp"-->
-<!--            android:background="@drawable/et_custom"-->
-<!--            android:text="Reprint"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@+id/sp_transfer_print_copies" />-->
+        <!-- Row 2 (MOVED UP): Toteid/Trf.No + EditText + Scan -->
+        <TextView
+            android:id="@+id/tv_plt_toteid"
+            android:layout_width="110dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Toteid/Trf.No"
+            android:textColor="@color/coloBlack"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_plt_route_printer" />
+
+        <EditText
+            android:id="@+id/et_plt_shop_transferno"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom"
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
+            app:layout_constraintStart_toEndOf="@+id/tv_plt_toteid"
+            app:layout_constraintTop_toTopOf="@+id/tv_plt_toteid" />
+
+        <Button
+            android:id="@+id/bt_transfer_scan"
+            android:layout_width="70dp"
+            android:layout_height="38dp"
+            android:background="@drawable/btn_custom1"
+            android:text="SCAN"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_plt_toteid"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <!-- Row 3 (MOVED DOWN): Route No + Route ID -->
+        <TextView
+            android:id="@+id/tv_plt_route_no"
+            android:layout_width="110dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Route No."
+            android:textColor="@color/coloBlack"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_plt_toteid" />
+
+        <TextView
+            android:id="@+id/tv_plt_route_id"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="8dp"
+            android:textColor="@color/coloBlack"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_plt_route_no"
+            app:layout_constraintTop_toTopOf="@+id/tv_plt_route_no"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <!-- Shop Names (below Route ID) -->
+        <TextView
+            android:id="@+id/tv_shopnames_col"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom_total"
+            android:hint="Shop Names"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_plt_route_id" />
+
+        <!-- Shop Name row (below Shop Names) -->
+        <TextView
+            android:id="@+id/tv_plt_shop"
+            android:layout_width="110dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:hint=""
+            android:padding="10dp"
+            android:text="Shop Name"
+            android:textColor="@color/coloBlack"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_shopnames_col" />
 
         <TextView
             android:id="@+id/tv_plt_shopname"
@@ -180,15 +172,15 @@
             android:background="@drawable/et_custom_total"
             android:gravity="left"
             android:hint=""
-            android:textColor="@color/coloBlack"
             android:padding="8dp"
+            android:textColor="@color/coloBlack"
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_plt_shop"
             app:layout_constraintTop_toTopOf="@+id/tv_plt_shop"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-
+        <!-- Table headers -->
         <TextView
             android:id="@+id/TextView8"
             android:layout_width="120dp"
@@ -251,18 +243,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/TextView8" />
 
+        <!-- List -->
         <ListView
             android:id="@+id/lv_div_seperate_det"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/et_remarks"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView8"
-            app:layout_constraintBottom_toTopOf="@+id/et_remarks" />
+            app:layout_constraintTop_toBottomOf="@+id/TextView8" />
 
+        <!-- Remarks -->
         <EditText
             android:id="@+id/et_remarks"
             android:layout_width="0dp"
@@ -293,6 +287,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/et_remarks" />
 
+        <!-- Bottom buttons -->
         <Button
             android:id="@+id/bt_status_clear"
             android:layout_width="0dp"
@@ -334,7 +329,6 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="SpeakableTextPresentCheck" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

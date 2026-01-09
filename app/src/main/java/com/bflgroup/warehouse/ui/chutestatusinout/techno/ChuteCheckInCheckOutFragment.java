@@ -214,23 +214,36 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
         bt_chute_status_inout_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setMessage("Are You sure to save?")
-                        .setTitle("Conformation")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new ChuteCheckInCheckOutFragment.ApiChuteCheckIn(getContext()).execute();
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                et_chute_status_inout_chuteid.requestFocus();
-                            }
-                        })
-                        .show();
+                try{
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setMessage("Are You sure to save?")
+                            .setTitle("Conformation")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    try {
+                                        new ChuteCheckInCheckOutFragment.ApiChuteCheckIn(getContext()).execute();
+                                    }
+                                    catch (Exception e){
+                                        objGlobal.setErrorMessage(e.getMessage());
+                                        okMessage("Error",objGlobal.getErrorMessage());
+                                    }
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    et_chute_status_inout_chuteid.requestFocus();
+                                }
+                            })
+                            .show();
+                }
+                catch (Exception e){
+                    objGlobal.setErrorMessage(e.getMessage());
+                    okMessage("Error",objGlobal.getErrorMessage());
+                }
+
             }
         });
 

@@ -188,8 +188,6 @@ public class DepartmentGrnFragment extends Fragment {
                     bt_rack_in_out_clear.setVisibility(View.GONE);
                     et_rack_in_out_toteid.setVisibility(View.GONE);
 
-
-
                 }
 
                 ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.loadTotehistory();
@@ -331,8 +329,13 @@ public class DepartmentGrnFragment extends Fragment {
                                // String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase());
                                // box_count_pallet1.setText(BoxCountPallet1);
                                 ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.InsertBox(et_transfer.getText().toString().trim(), sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString());
-                                objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
-                                lv_details.setAdapter(objMyListBoxAdapter);
+                                if (listBinScanToteId != null) {
+                                    objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
+                                    lv_details.setAdapter(objMyListBoxAdapter);
+                                }
+                                else{
+                                    okMessage("Message",objGlobal.getErrorMessage());
+                                }
                                 et_rack_in_out_BoxCount.setEnabled(true);
                                 et_rack_in_out_BoxCount.setFocusable(true);
                                 objPalletBoxCountShared.saveWarehouseTo(sp_rack_in_out_warehouseTo.getSelectedItem().toString());
@@ -341,6 +344,7 @@ public class DepartmentGrnFragment extends Fragment {
                                 et_transfer.requestFocus();
                                 et_transfer.setFocusable(true);
                                 return true;
+
                             } else {
                                 et_transfer.setText("");
                                 et_transfer.requestFocus();
@@ -380,8 +384,13 @@ public class DepartmentGrnFragment extends Fragment {
                                // String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase());
                                // box_count_pallet1.setText(BoxCountPallet1);
                                 ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.InsertBox(et_rack_in_out_toteid.getText().toString().trim(), sp_rack_in_out_warehouseTo.getSelectedItem().toString(), sp_rack_in_out_warehouseFrom.getSelectedItem().toString());
-                                objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
-                                lv_details.setAdapter(objMyListBoxAdapter);
+                                if (listBinScanToteId!= null) {
+                                    objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
+                                    lv_details.setAdapter(objMyListBoxAdapter);
+                                }
+                                else{
+                                    okMessage("Message",objGlobal.getErrorMessage());
+                                }
                                 et_rack_in_out_BoxCount.setEnabled(true);
                                 et_rack_in_out_BoxCount.setFocusable(true);
                                 objPalletBoxCountShared.saveWarehouseTo(sp_rack_in_out_warehouseTo.getSelectedItem().toString());
@@ -690,7 +699,9 @@ public class DepartmentGrnFragment extends Fragment {
         }
         @Override
         public int getCount() {
+            if (itBoxItemList != null)
             return itBoxItemList.size();
+            else return 0;
         }
 
         @Override

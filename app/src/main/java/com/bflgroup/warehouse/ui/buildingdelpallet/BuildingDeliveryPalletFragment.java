@@ -44,6 +44,7 @@ import com.bflgroup.warehouse.comm.BarcodePrinting;
 import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
+import com.bflgroup.warehouse.ui.buildingdelpallet.models.ShopInfo;
 import com.sewoo.port.android.BluetoothPort;
 import com.sewoo.request.android.RequestHandler;
 
@@ -53,8 +54,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class BuildingDeliveryPalletFragment extends Fragment {
 
@@ -106,11 +110,11 @@ public class BuildingDeliveryPalletFragment extends Fragment {
     private boolean testPrint = false;
     private ListView lvShops;
     private Button btCancel;
-    private List<String> shopNamesFromTransfers;
+    private List<ShopInfo> shopNamesFromTransfers;
     private ShopFromTransferAdp objShopFromTransferAdp;
     Dialog myDialog;
     private String get_shop_names;
-    private String selectedShopName = "";
+    private ShopInfo selectedShopName ;
 
     public BuildingDeliveryPalletFragment() {
         // Required empty public constructor
@@ -264,8 +268,43 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                  //  if (getPltCount() == 0)
+                    //  if (getPltCount() == 0)
+                    if (objbuildingdelPalletControl.transferCount(et_plt_shop_transferno.getText().toString().trim()) == 0) {
+                        objGlobal.setErrorMessage("Transfer is Invalid");
+                        okMessage("Message", objGlobal.getErrorMessage(), getActivity());
+                        et_plt_shop_transferno.setText("");
+                    } else if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0) {
+                        boolean isRouteMatch = false;
+                        List<ShopInfo> tempShopFromTransfers = objbuildingdelPalletControl.loadShopsFromTransfers(et_plt_shop_transferno.getText().toString().trim());
+                      shopNamesFromTransfers = new ArrayList<>();
+                      for (ShopInfo tempShop : tempShopFromTransfers){
+                          int tempRouteId = objbuildingdelPalletControl.loadKsaRoute(tempShop.getShopName());
+                          if (tempRouteId == PalletScanDeliveryItem.get(0).RouteId){
+                              isRouteMatch = true;
+                              shopNamesFromTransfers.add(tempShop);
+                          }
+                      }
+                      if (isRouteMatch){
+                          if (shopNamesFromTransfers.size() == 1)
+                              trfDetail(shopNamesFromTransfers.get(0));
+                          else
+                              openPopupShopsFromTransfers();
+                      }
+                      else{
+                          objGlobal.setErrorMessage("This Trf No / Toteid is not in the same Route - " + transferno);
+                          okMessage("Message", objGlobal.getErrorMessage(), getActivity());
+                          et_plt_shop_transferno.setText("");
+                          return false;
+                      }
+
+                    } else if (objbuildingdelPalletControl.transferCount(et_plt_shop_transferno.getText().toString().trim()) == 1) {
+                        shopNamesFromTransfers = objbuildingdelPalletControl.loadShopsFromTransfers(et_plt_shop_transferno.getText().toString().trim());
+                        trfDetail(shopNamesFromTransfers.get(0));
+                    } else
+                    {
+                        shopNamesFromTransfers = objbuildingdelPalletControl.loadShopsFromTransfers(et_plt_shop_transferno.getText().toString().trim());
                         openPopupShopsFromTransfers();
+                    }
 //                    else {
 //                        if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0)
 //                            get_route_id = objbuildingdelPalletControl.loadKsaRoute(PalletScanDeliveryItem.get(0).ShopName);
@@ -349,13 +388,47 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         bt_transfer_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             //   if (getPltCount() == 0)
+                if (objbuildingdelPalletControl.transferCount(et_plt_shop_transferno.getText().toString().trim()) == 0) {
+                    objGlobal.setErrorMessage("Transfer is Invalid");
+                    okMessage("Message", objGlobal.getErrorMessage(), getActivity());
+                    et_plt_shop_transferno.setText("");
+                } else if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0) {
+                    boolean isRouteMatch = false;
+                    List<ShopInfo> tempShopFromTransfers = objbuildingdelPalletControl.loadShopsFromTransfers(et_plt_shop_transferno.getText().toString().trim());
+                    shopNamesFromTransfers = new ArrayList<>();
+                    for (ShopInfo tempShop : tempShopFromTransfers){
+                        int tempRouteId = objbuildingdelPalletControl.loadKsaRoute(tempShop.getShopName());
+                        if (tempRouteId == PalletScanDeliveryItem.get(0).RouteId){
+                            isRouteMatch = true;
+                            shopNamesFromTransfers.add(tempShop);
+
+                        }
+                    }
+                    if (isRouteMatch){
+                        if (shopNamesFromTransfers.size() == 1)
+                            trfDetail(shopNamesFromTransfers.get(0));
+                        else
+                            openPopupShopsFromTransfers();
+                    }
+                    else{
+                        objGlobal.setErrorMessage("This Trf No / Toteid is not in the same Route - " + transferno);
+                        okMessage("Message", objGlobal.getErrorMessage(), getActivity());
+                        et_plt_shop_transferno.setText("");
+                    }
+
+                } else if (objbuildingdelPalletControl.transferCount(et_plt_shop_transferno.getText().toString().trim()) == 1) {
+                    shopNamesFromTransfers = objbuildingdelPalletControl.loadShopsFromTransfers(et_plt_shop_transferno.getText().toString().trim());
+                    trfDetail(shopNamesFromTransfers.get(0));
+                } else
+                {
+                    shopNamesFromTransfers = objbuildingdelPalletControl.loadShopsFromTransfers(et_plt_shop_transferno.getText().toString().trim());
                     openPopupShopsFromTransfers();
-//                else {
-//                    if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0)
-//                        get_route_id = objbuildingdelPalletControl.loadKsaRoute(PalletScanDeliveryItem.get(0).ShopName);
-//                    GetScanresult();
-//                }
+                }
+//                    else {
+//                        if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0)
+//                            get_route_id = objbuildingdelPalletControl.loadKsaRoute(PalletScanDeliveryItem.get(0).ShopName);
+//                        GetScanresult();
+//                    }
             }
         });
 
@@ -364,7 +437,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     Log.e("Focus", "Lost Focus");
-                    et_plt_shop_transferno.setText(et_plt_shop_transferno.getText().toString().toUpperCase());
+                    et_plt_shop_transferno.setText(et_plt_shop_transferno.getText().toString().trim().toUpperCase());
                 }
             }
         });
@@ -380,41 +453,41 @@ public class BuildingDeliveryPalletFragment extends Fragment {
 //                    if (tv_plt_shopname.getText() != null && !tv_plt_shopname.getText().equals("")) {
 //                        okMessage("Alert", "Pls Select Shopname First", getContext());
 //                    } else {
-                        if (printer.isEmpty() || printer.toUpperCase().contains("SELECT")) {
-                            okMessage("Message", "Please select printer", getContext());
-                            b_Result = false;
-                        } else {
-                            PltScanTransferShared.savePrintCopies(sp_transfer_print_copies.getSelectedItem().toString());
-                            PltScanTransferShared.savePrinter(sp_transfer_printer.getSelectedItem().toString());
-                            if (PalletScanDeliveryItem.size() >= 1) {
+                    if (printer.isEmpty() || printer.toUpperCase().contains("SELECT")) {
+                        okMessage("Message", "Please select printer", getContext());
+                        b_Result = false;
+                    } else {
+                        PltScanTransferShared.savePrintCopies(sp_transfer_print_copies.getSelectedItem().toString());
+                        PltScanTransferShared.savePrinter(sp_transfer_printer.getSelectedItem().toString());
+                        if (PalletScanDeliveryItem.size() >= 1) {
 
-                                try {
-                                    if (objbuildingdelPalletControl.InsertPalletDetails(remark, tv_plt_route_id.getText().toString())) {
-                                        Log.e("return", "Build");
-                                        okMessage("SUCCESS", "Build Pallet Successfully Pallet Number is - " + BuildingDeliveryPalletGlobal.getPalletNo(), getContext());
-                                        if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
-                                            if (!printSticker(printer)) {
-                                                okMessage("Pallet Delivery", "Printer Error, Please reprint..", getContext());
+                            try {
+                                if (objbuildingdelPalletControl.InsertPalletDetails(remark, tv_plt_route_id.getText().toString())) {
+                                    Log.e("return", "Build");
+                                    okMessage("SUCCESS", "Build Pallet Successfully Pallet Number is - " + BuildingDeliveryPalletGlobal.getPalletNo(), getContext());
+                                    if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
+                                        if (!printSticker(printer)) {
+                                            okMessage("Pallet Delivery", "Printer Error, Please reprint..", getContext());
 
-                                            }
                                         }
-
-                                        clear();
-
-                                        lv_div_seperate_details.setAdapter(null);
-                                        // Toast.makeText(getContext(), "Value 0325    Inserted", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        okMessage("Alert", objGlobal.getErrorMessage(), getContext());
                                     }
-                                } catch (ParseException e) {
-                                    log.e("Error message", e.toString());
+
+                                    clear();
+
+                                    lv_div_seperate_details.setAdapter(null);
+                                    // Toast.makeText(getContext(), "Value 0325    Inserted", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    okMessage("Alert", objGlobal.getErrorMessage(), getContext());
                                 }
-                            } else {
-                                Log.e("return", "Not Build");
-                                okMessage("Alert", "Please Scan Trf No/Tote id before building Pallet", getContext());
+                            } catch (ParseException e) {
+                                log.e("Error message", e.toString());
                             }
+                        } else {
+                            Log.e("return", "Not Build");
+                            okMessage("Alert", "Please Scan Trf No/Tote id before building Pallet", getContext());
                         }
-                  //  }
+                    }
+                    //  }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -453,6 +526,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         if (objbuildingdelPalletControl.LoadPltData() != null && objbuildingdelPalletControl.LoadPltData().size() != 0) {
             PalletScanDeliveryItem = objbuildingdelPalletControl.LoadPltData();
             tv_plt_route_id.setText(String.valueOf(PalletScanDeliveryItem.get(0).RouteId));
+            get_route_id = PalletScanDeliveryItem.get(0).RouteId;
             get_shop_names = objbuildingdelPalletControl.LoadShops(PalletScanDeliveryItem.get(0).RouteId);
             tv_shopnames_col.setText(get_shop_names);
             count = PalletScanDeliveryItem.size();
@@ -462,6 +536,27 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
         }
         return view;
+    }
+
+
+    private List<String> matchedShops(List<String> transferShops, String selectedShops) {
+
+
+        for (String shop : selectedShops.split("\\|")) {
+            shop = shop.trim();
+            for (String transferShop : transferShops) {
+                if (shop.equalsIgnoreCase(transferShop.trim())) {
+                    transferShops.add(shop);
+                    break;
+                }
+            }
+        }
+
+        if (transferShops.isEmpty()) {
+            transferShops = null;
+        }
+        return transferShops;
+
     }
 
 
@@ -486,9 +581,9 @@ public class BuildingDeliveryPalletFragment extends Fragment {
     }
 
     private class ShopFromTransferAdp extends BaseAdapter {
-        public List<String> shopNames;
+        public List<ShopInfo> shopNames;
 
-        public ShopFromTransferAdp(List<String> shopNames) {
+        public ShopFromTransferAdp(List<ShopInfo> shopNames) {
             this.shopNames = shopNames;
         }
 
@@ -512,42 +607,46 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             LayoutInflater mInflater = getLayoutInflater();
             View myView = mInflater.inflate(R.layout.view_shops, null);
             TextView tvShopname = (TextView) myView.findViewById(R.id.tv_shop_name);
-            tvShopname.setText(shopNames.get(position));
+            tvShopname.setText(shopNames.get(position).getShopName());
 
             tvShopname.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    get_route_id = objbuildingdelPalletControl.loadKsaRoute(shopNames.get(position));
-                    PltScanTransferShared.shopNameSave(shopNames.get(position));
+                    trfDetail(shopNames.get(position));
                     myDialog.dismiss();
-                    transferno = et_plt_shop_transferno.getText().toString();
-                    String shopname = tv_plt_shopname.getText().toString();
-                    get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
-                    selectedShopName = shopNames.get(position);
-                    if (GetScanresult()) {
-                        Log.e("Error", "Reached here");
-                        et_plt_shop_transferno.requestFocus();
-                        PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer2(getActivity(), transferno, get_route_id, android_id, shopname);
-                        objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
-                        lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
-                        if (objTransferStatusPltAdp != null) {
-                            if (PalletScanDeliveryItem != null && !PalletScanDeliveryItem.isEmpty()) {
-                                setRouteid(tv_plt_route_id.getText().toString());
-                                tv_plt_route_id.setEnabled(false);
-                                tv_plt_route_id.setClickable(false);
-                                et_plt_shop_transferno.requestFocus();
-                            }
-
-                        }
-
-                        count = Integer.valueOf(getPltCount());
-                        tv_count.setText(count + "");
-                        et_plt_shop_transferno.setText("");
-                        et_plt_shop_transferno.requestFocus();
-                    }
                 }
             });
             return myView;
+        }
+    }
+
+    private void trfDetail(ShopInfo selectedShop) {
+        get_route_id = objbuildingdelPalletControl.loadKsaRoute(selectedShop.getShopName());
+        PltScanTransferShared.shopNameSave(selectedShop.getShopName());
+        transferno = et_plt_shop_transferno.getText().toString().trim();
+        String shopname = tv_plt_shopname.getText().toString();
+        get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
+        selectedShopName = selectedShop;
+        if (GetScanresult()) {
+            Log.e("Error", "Reached here");
+            et_plt_shop_transferno.requestFocus();
+            PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer2(getActivity(), transferno, get_route_id, android_id, shopname);
+            objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
+            lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
+            if (objTransferStatusPltAdp != null) {
+                if (PalletScanDeliveryItem != null && !PalletScanDeliveryItem.isEmpty()) {
+                    setRouteid(tv_plt_route_id.getText().toString());
+                    tv_plt_route_id.setEnabled(false);
+                    tv_plt_route_id.setClickable(false);
+                    et_plt_shop_transferno.requestFocus();
+                }
+
+            }
+
+            count = Integer.valueOf(getPltCount());
+            tv_count.setText(count + "");
+            et_plt_shop_transferno.setText("");
+            et_plt_shop_transferno.requestFocus();
         }
     }
 
@@ -735,20 +834,21 @@ public class BuildingDeliveryPalletFragment extends Fragment {
 
     public boolean GetScanresult() {
         PltScanTransferShared.Routeidsave(tv_plt_route_id.getText().toString());
-        transferno = et_plt_shop_transferno.getText().toString();
+        transferno = et_plt_shop_transferno.getText().toString().trim();
         Log.e("transferno", transferno);
-        if (et_plt_shop_transferno.getText().toString().isEmpty()) {
+        if (et_plt_shop_transferno.getText().toString().trim().isEmpty()) {
             okMessage("Alert", "Please Scan Trf no/Toteid", getContext());
             return false;
         } else {
             if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0) {
                 if (get_route_id != PalletScanDeliveryItem.get(0).RouteId) {
-                    okMessage("", "This Trf No / Toteid is not in the same Route - " + transferno, getActivity());
+                    objGlobal.setErrorMessage("This Trf No / Toteid is not in the same Route - " + transferno);
+                    okMessage("Message", objGlobal.getErrorMessage(), getActivity());
                     return false;
                 }
             }
             PalletScanDeliveryItem = new ArrayList<>();
-            PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer(getActivity(), transferno, get_route_id, android_id);
+            PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer(getActivity(), transferno, get_route_id, android_id,selectedShopName);
             et_plt_shop_transferno.requestFocus();
             objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
             lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
@@ -758,14 +858,14 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                 tv_plt_route_id.setEnabled(false);
                 tv_plt_route_id.setClickable(false);
                 et_plt_shop_transferno.requestFocus();
-                setPltCount(count+1);
+                setPltCount(PalletScanDeliveryItem.size());
                 count = getPltCount();
-                if (count == 1){
+                if (count == 1) {
                     tv_plt_route_id.setText(String.valueOf(get_route_id));
                     tv_shopnames_col.setText(get_shop_names);
-                    PltScanTransferShared.shopNameSave(selectedShopName);
+                    PltScanTransferShared.shopNameSave(selectedShopName.getShopName());
                     PltScanTransferShared.Routeidsave(String.valueOf(get_route_id));
-                    tv_plt_shopname.setText(selectedShopName);
+                    tv_plt_shopname.setText(selectedShopName.getShopName());
                 }
                 tv_count.setText(count + "");
                 et_plt_shop_transferno.setText("");
