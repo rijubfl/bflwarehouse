@@ -18,6 +18,17 @@ public class ReceiveShopReturnsGlobal {
 
     private String boxNo;
 
+
+    private String pBoxno;
+    private String pToteid;
+    private String pPallettype;
+    private String pTypename;
+    private String pQty;
+    private String pDate;
+    private String pTime;
+    private String pRemarks;
+    private String pPreparedby;
+
     public static ReceiveShopReturnsGlobal instance;
 
     public static synchronized ReceiveShopReturnsGlobal getInstance() {
@@ -135,5 +146,77 @@ public class ReceiveShopReturnsGlobal {
     }
     public void setScanItemSeason(String setScanItemSeason) {
         this.setScanItemSeason = setScanItemSeason;
+    }
+
+    public String getpPreparedby() {
+        return pPreparedby;
+    }
+
+    public void setpPreparedby(String pPreparedby) {
+        this.pPreparedby = pPreparedby;
+    }
+
+    public String getpRemarks() {
+        return pRemarks;
+    }
+
+    public void setpRemarks(String pRemarks) {
+        this.pRemarks = pRemarks;
+    }
+
+    public String getpTime() {
+        return pTime;
+    }
+
+    public void setpTime(String pTime) {
+        this.pTime = pTime;
+    }
+
+    public String getpDate() {
+        return pDate;
+    }
+
+    public void setpDate(String pDate) {
+        this.pDate = pDate;
+    }
+
+    public String getpQty() {
+        return pQty;
+    }
+
+    public void setpQty(String pQty) {
+        this.pQty = pQty;
+    }
+
+    public String getpTypename() {
+        return pTypename;
+    }
+
+    public void setpTypename(String pTypename) {
+        this.pTypename = pTypename;
+    }
+
+    public String getpPallettype() {
+        return pPallettype;
+    }
+
+    public void setpPallettype(String pPallettype) {
+        this.pPallettype = pPallettype;
+    }
+
+    public String getpToteid() {
+        return pToteid;
+    }
+
+    public void setpToteid(String pToteid) {
+        this.pToteid = pToteid;
+    }
+
+    public String getpBoxno() {
+        return pBoxno;
+    }
+
+    public void setpBoxno(String pBoxno) {
+        this.pBoxno = pBoxno;
     }
 }

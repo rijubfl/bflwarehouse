@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ChuteCheckInCheckOutControl {
 
@@ -88,7 +89,7 @@ public class ChuteCheckInCheckOutControl {
         if(!validateChuteScanByUser(chuteId)){
             return false;
         }
-        if (direction == "IN") {
+        if (Objects.equals(direction, "IN")) {
             if (!TextUtils.isEmpty(getToteIdFromChuteId(chuteId))) {
                 objGlobal.setErrorMessage("Tot Id is used in another chute, Please check, " + chuteId);
                 return false;
@@ -102,7 +103,7 @@ public class ChuteCheckInCheckOutControl {
                 return false;
             }
         }
-        if (direction == "OUT") {
+        if (Objects.equals(direction, "OUT")) {
             s_Result = getToteIdFromChuteId(chuteId);
             if (TextUtils.isEmpty(s_Result)) {
                 objGlobal.setErrorMessage("Tot Id is empty, Please check, " + chuteId);
@@ -178,10 +179,7 @@ public class ChuteCheckInCheckOutControl {
     public boolean checkValidChuteId(String chuteId) {
         try {
             rs = dbConnection.getResultSet("select * from ChuteIdMaster where ChuteId='" + chuteId + "'", conRobo);
-            if (rs.next()) {
-                return true;
-            } else
-                return false;
+            return rs.next();
         } catch (Exception ex) {
             objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:checkPendingTransferInChuteId:" + ex.toString());
             return false;
@@ -191,10 +189,7 @@ public class ChuteCheckInCheckOutControl {
     public boolean checkValidToteId(String toteId) {
         try {
             rs = dbConnection.getResultSet("select * from TotIdMaster where TotId='" + toteId + "'", conRobo);
-            if (rs.next()) {
-                return true;
-            } else
-                return false;
+            return rs.next();
         } catch (Exception ex) {
             objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:checkPendingTransferInChuteId:" + ex.toString());
             return false;
@@ -204,10 +199,7 @@ public class ChuteCheckInCheckOutControl {
     public boolean validateChuteError(String chuteId) {
         try {
             rs = dbConnection.getResultSet("select * from ErrChuteId where ChuteId='" + chuteId + "' and ErrType='DGR'", conRobo);
-            if (rs.next()) {
-                return true;
-            } else
-                return false;
+            return rs.next();
         } catch (Exception ex) {
             objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:checkPendingTransferInChuteId:" + ex.toString());
             return false;
@@ -216,11 +208,15 @@ public class ChuteCheckInCheckOutControl {
 
     public boolean validateTotidUsed(String toteId) {
         try {
-            rs = dbConnection.getResultSet("select * from SortTask where ToteId='" + toteId + "' and TrnDate='" + objGlobal.getServerDate() + "'", conRobo);
-            if (rs.next()) {
-                return true;
-            } else
-                return false;
+            String reuse = "";
+            rs = dbConnection.getResultSet("select * from TotIdMaster where TotId='" + toteId + "'", conRobo);
+            if (rs.next()) reuse = rs.getString("reuse");
+            if (reuse.equals("Y")) {
+                rs = dbConnection.getResultSet("select * from SortTask where ToteId='" + toteId + "' and TrnDate='" + objGlobal.getServerDate() + "'", conRobo);
+            } else {
+                rs = dbConnection.getResultSet("select * from SortTask where ToteId='" + toteId + "'", conRobo);
+            }
+            return rs.next();
         } catch (Exception ex) {
             objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:validateTotidUsed:" + ex.toString());
             return false;

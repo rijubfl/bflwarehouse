@@ -52,4 +52,11 @@ public class ReceiveShopReturnsShared {
     }
     public String loadAutoBuildPalletType(){ return sharedRef.getString("AutoBuildPalletType",""); }
 
+    public void savePrinter(String savePrinter){
+        SharedPreferences.Editor editor=sharedRef.edit();
+        editor.putString("savePrinter",savePrinter);
+        editor.commit();
+    }
+    public String loadPrinter(){ return sharedRef.getString("loadPrinter",""); }
+
 }

@@ -181,7 +181,6 @@ public class PalletStatusControl {
                 }
             }
 
-
             if (status.equals("RACK")) {
                 String processNo = "", prodDate = "";
                 rs = dbConnection.getResultSet("select top 1 ProcessNo,ProdDate=convert(varchar,getdate(),103) from TEMPDATA.dbo.SIMProdReadyPalletsList order by ProcessNo desc", objGlobal.getConnection());

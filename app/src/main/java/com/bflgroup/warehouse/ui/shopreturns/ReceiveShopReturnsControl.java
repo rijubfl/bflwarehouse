@@ -191,7 +191,7 @@ public class ReceiveShopReturnsControl {
 
             String[] arrOfStr = entryNo.split("/", 0);
             String shopLetter = arrOfStr[0].replace("RTN", "");
-            rs = dbConnection.getResultSet("select DataName,ShopName from datasettings where ShopLetter='" + shopLetter + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select DataName,ShopName from bfldata.dbo.datasettings where ShopLetter='" + shopLetter + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setCloudDbName(rs.getString("DataName").toString());
                 objReceiveShopReturnsGlobal.setShopName(rs.getString("ShopName").toString());
@@ -430,13 +430,13 @@ public class ReceiveShopReturnsControl {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.PrintFromPda(warehouse,PSystemName,PType,PItem,ReqUser,ReqDate,ReqTime,Printed) values ('" + objGlobal.getWarehouse() + "'," +
+                /*if (!dbConnection.insertUpdate("insert into bfldata.dbo.PrintFromPda(warehouse,PSystemName,PType,PItem,ReqUser,ReqDate,ReqTime,Printed) values ('" + objGlobal.getWarehouse() + "'," +
                         "'" + objGlobal.getUserPrinterName() + "','UB','" + objReceiveShopReturnsGlobal.getBoxNo() + "','" + objGlobal.getUserName() + "','" + objGlobal.getServerDate() + "'," +
                         "'" + objGlobal.getServerTime() + "','N')", objGlobal.getConnection())) {
                     objGlobal.getCloudCon().rollback();
                     objGlobal.getConnection().rollback();
                     return false;
-                }
+                }*/
             }
             //auto buil box end
             objGlobal.getCloudCon().commit();
@@ -478,5 +478,41 @@ public class ReceiveShopReturnsControl {
         }
     }
 
-
+    public boolean forPrint(String boxno) {
+        objReceiveShopReturnsGlobal.setpDate("");
+        objReceiveShopReturnsGlobal.setpBoxno("");
+        objReceiveShopReturnsGlobal.setpDate("");
+        objReceiveShopReturnsGlobal.setpQty("");
+        objReceiveShopReturnsGlobal.setpTime("");
+        objReceiveShopReturnsGlobal.setpPallettype("");
+        objReceiveShopReturnsGlobal.setpPreparedby("");
+        objReceiveShopReturnsGlobal.setpRemarks("");
+        objReceiveShopReturnsGlobal.setpTypename("");
+        if (!checkConnection()) {
+            return false;
+        }
+        try {
+            rs = dbConnection.getResultSet("select BoxNo,Toteid,TrnDate=convert(varchar,TrnDate,103),Time1=convert(varchar,Time1,8),PalletType,PreparedBy,Remarks," +
+                    "typename=(select typename from bfldata.dbo.pallettype where pallettype=a.pallettype),Qty=ISNULL((select sum(qty) from usa.dbo.upcboxdet where " +
+                    "boxno=a.boxno),0) from usa.dbo.upcboxhead a where closed='N' and boxno='" + boxno + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                objReceiveShopReturnsGlobal.setpBoxno(rs.getString("BoxNo"));
+                objReceiveShopReturnsGlobal.setpToteid(rs.getString("Toteid"));
+                objReceiveShopReturnsGlobal.setpDate(rs.getString("TrnDate"));
+                objReceiveShopReturnsGlobal.setpQty(rs.getString("Qty"));
+                objReceiveShopReturnsGlobal.setpTime(rs.getString("Time1"));
+                objReceiveShopReturnsGlobal.setpPallettype(rs.getString("typename"));
+                objReceiveShopReturnsGlobal.setpPreparedby(rs.getString("PreparedBy"));
+                objReceiveShopReturnsGlobal.setpRemarks(rs.getString("Remarks"));
+                objReceiveShopReturnsGlobal.setpTypename(rs.getString("typename"));
+            } else {
+                objGlobal.setErrorMessage("TransferControl : Invalid boxn number number or toteid (" + boxno + ")");
+                return false;
+            }
+            return true;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("TransferControl:forPrint:" + ex);
+            return false;
+        }
+    }
 }
