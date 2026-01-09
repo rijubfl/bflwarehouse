@@ -22,7 +22,7 @@ public class R1WhGrnControl {
     public R1WhGrnControl() {
         objGlobal.setDbName("USA");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("R1WhGrnControl : Connection error");
         }
     }
@@ -32,7 +32,7 @@ public class R1WhGrnControl {
         objGlobal.setDbName("USA");
         if (dbConnection.checkConnectionClosed() == false) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("R1WhGrnControl.checkConnection : Connection error");
                 return false;
             }

@@ -14,7 +14,7 @@
 
         <TextView
             android:id="@+id/TextView9"
-            android:layout_width="80dp"
+            android:layout_width="70dp"
             android:layout_height="40dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
@@ -30,30 +30,29 @@
             android:id="@+id/sp_shop_return_printer"
             android:layout_width="0dp"
             android:layout_height="40dp"
+            android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
             android:padding="8dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/sp_shop_return_printer_copies"
             app:layout_constraintStart_toEndOf="@+id/TextView9"
             app:layout_constraintTop_toTopOf="@+id/TextView9"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <Spinner
-            android:id="@+id/sp_shop_return_type"
-            android:layout_width="110dp"
+            android:id="@+id/sp_shop_return_printer_copies"
+            android:layout_width="75dp"
             android:layout_height="40dp"
-            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
             android:hint=""
             android:padding="8dp"
             android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView9"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/TextView9" />
 
         <TextView
             android:id="@+id/TextView1"
@@ -92,17 +91,17 @@
             android:id="@+id/ch_shop_return_itemwise_scan"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:text="Skip SKU Wise Scan"
             app:layout_constraintEnd_toStartOf="@+id/ch_shop_return_itemwise_autobuild"
-            app:layout_constraintStart_toEndOf="@+id/sp_shop_return_type"
-            app:layout_constraintTop_toTopOf="@+id/sp_shop_return_type" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/TextView9" />
 
         <CheckBox
             android:id="@+id/ch_shop_return_itemwise_autobuild"
-            android:layout_width="110dp"
+            android:layout_width="150dp"
             android:layout_height="40dp"
             android:background="@drawable/et_custom"
             android:text="Auto Build"
@@ -133,7 +132,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/TextView1"
+            app:layout_constraintTop_toTopOf="@+id/et_shop_return_entryno"
             tools:ignore="TouchTargetSizeCheck" />
 
         <EditText
@@ -178,7 +177,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
+            app:layout_constraintTop_toBottomOf="@+id/et_shop_return_entryno" />
 
         <TextView
             android:id="@+id/tv_shop_return_category"

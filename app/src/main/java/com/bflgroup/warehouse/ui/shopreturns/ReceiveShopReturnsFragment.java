@@ -1,9 +1,17 @@
 package com.bflgroup.warehouse.ui.shopreturns;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -28,12 +36,20 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bflgroup.warehouse.comm.BarcodePrinting;
+import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Controls;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.ui.usaboxbuilding.UsaBoxBuildingControl;
+import com.bflgroup.warehouse.ui.usaboxbuilding.UsaBoxBuildingGlobal;
+import com.sewoo.port.android.BluetoothPort;
+import com.sewoo.request.android.RequestHandler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class ReceiveShopReturnsFragment extends Fragment {
 
@@ -57,6 +73,8 @@ public class ReceiveShopReturnsFragment extends Fragment {
     private Button bt_shop_return_popup_diff_excess_password_ok;
 
     private Spinner sp_shop_return_popup_action;
+    private Spinner sp_shop_return_printer;
+    private Spinner sp_shop_return_printer_copies;
     private EditText et_shop_return_popup_itemcode;
     private EditText et_shop_return_popup_qty;
     private TextView tv_shop_return_popup_last_scan;
@@ -82,6 +100,21 @@ public class ReceiveShopReturnsFragment extends Fragment {
     MyLoadScanItemPopupAdp objMyLoadScanItemPopupAdp;
     MyLoadScanItemAdp objMyLoadScanItemAdp;
 
+    private BarcodePrinting objSample_Print;
+    private BluetoothDevices objBluetoothDevices = new BluetoothDevices();
+    private BluetoothPort bluetoothPort;
+    private BroadcastReceiver connectDevice;
+    private Thread btThread;
+    private boolean testPrint = false;
+    private BluetoothAdapter mBluetoothAdapter;
+    private BroadcastReceiver discoveryResult;
+    private BroadcastReceiver searchStart;
+    private BroadcastReceiver searchFinish;
+    private Vector<BluetoothDevice> remoteDevices;
+    private ArrayAdapter<String> adapter;
+    private boolean searchflags;
+    private static final int REQUEST_ENABLE_BT = 2;
+
     public ReceiveShopReturnsFragment() {
         // Required empty public constructor
     }
@@ -92,6 +125,8 @@ public class ReceiveShopReturnsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_receive_shop_returns, container, false);
 
         et_shop_return_entryno = (EditText) view.findViewById(R.id.et_shop_return_entryno);
+        sp_shop_return_printer = (Spinner) view.findViewById(R.id.sp_shop_return_printer);
+        sp_shop_return_printer_copies= (Spinner) view.findViewById(R.id.sp_shop_return_printer_copies);
         ch_shop_return_itemwise_scan = (CheckBox) view.findViewById(R.id.ch_shop_return_itemwise_scan);
         ch_shop_return_itemwise_autobuild = (CheckBox) view.findViewById(R.id.ch_shop_return_itemwise_autobuild);
         tv_shop_return_auto_build_pallettype = (TextView) view.findViewById(R.id.tv_shop_return_auto_build_pallettype);
@@ -108,6 +143,29 @@ public class ReceiveShopReturnsFragment extends Fragment {
         bt_shop_return_clear = (Button) view.findViewById(R.id.bt_shop_return_clear);
         saredRef = new ReceiveShopReturnsShared(getContext());
         flagEdit = false;
+
+        b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
+        if (!b_Result) {
+            okMessage("Transfer", objGlobal.getErrorMessage());
+        } else {
+            ArrayAdapter<String> arrayAdpYellow;
+            arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
+            sp_shop_return_printer.setAdapter(arrayAdpYellow);
+            if (saredRef.loadPrinter() != "") {
+                sp_shop_return_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
+            }
+        }
+
+        List<String> arr8;
+        arr8 = new ArrayList<String>();
+        arr8.add("0");
+        arr8.add("1");
+        arr8.add("2");
+        arr8.add("4");
+        ArrayAdapter<String> arrayAdp8 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr8);
+        sp_shop_return_printer_copies.setAdapter(arrayAdp8);
+        sp_shop_return_printer_copies.setSelection(arrayAdp8.getPosition("2"));
+
         if (saredRef.loadEntryNo() != "") {
             et_shop_return_entryno.setText(saredRef.loadEntryNo());
             tv_shop_return_category.setText(saredRef.loadCategory());
@@ -215,6 +273,13 @@ public class ReceiveShopReturnsFragment extends Fragment {
                 }
             }
         });
+
+        searchflags = false;
+        objSample_Print = new BarcodePrinting();
+        bluetoothPort = BluetoothPort.getInstance();
+        bluetoothPort.SetMacFilter(false);
+        Init_BluetoothSet();
+
         return view;
     }
 
@@ -230,6 +295,22 @@ public class ReceiveShopReturnsFragment extends Fragment {
                         if (!b_Result) {
                             okMessage("Shop Return", objGlobal.getErrorMessage());
                         } else {
+                            if (!objReceiveShopReturnsGlobal.getBoxNo().isEmpty()) {
+                                if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
+                                    if (!sp_shop_return_printer_copies.getSelectedItem().toString().equals("0")) {
+                                        String printer = sp_shop_return_printer.getSelectedItem().toString();
+                                        b_Result = objReceiveShopReturnsControl.forPrint(objReceiveShopReturnsGlobal.getBoxNo());
+                                        if (!b_Result) {
+                                            okMessage("Upc Box", objGlobal.getErrorMessage());
+                                        } else {
+                                            if (!printSticker(printer)) {
+                                                okMessage("Transfer", "Printer Error, Pleasse reprint..");
+                                                vibrate(100);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             b_Result = clearAll();
                             if (!b_Result) {
                                 okMessage("Shop Return", objGlobal.getErrorMessage());
@@ -332,6 +413,7 @@ public class ReceiveShopReturnsFragment extends Fragment {
                     saredRef.saveEntryNo(entryNo);
                     saredRef.saveItemWiseScan("N");
                     saredRef.saveAutoBuild("N");
+                    saredRef.savePrinter(sp_shop_return_printer.getSelectedItem().toString());
                     if (ch_shop_return_itemwise_scan.isChecked()) saredRef.saveItemWiseScan("Y");
                     if (ch_shop_return_itemwise_autobuild.isChecked()) saredRef.saveAutoBuild("Y");
                     saredRef.saveShop(objReceiveShopReturnsGlobal.getShopName());
@@ -657,6 +739,183 @@ public class ReceiveShopReturnsFragment extends Fragment {
                 tv_shop_return_diffqty_ticket.setTextColor(Color.RED);
             }
             return myView;
+        }
+    }
+
+    private boolean printSticker(String device) {
+        if (!bluetoothPort.isConnected()) {
+            try {
+                btConn(mBluetoothAdapter.getRemoteDevice(device));
+            } catch (Exception e) {
+                okMessage("Error 2", e.toString());
+                return false;
+            }
+        }
+        printBarCode();
+        return true;
+    }
+
+    private boolean printBarCode() {
+        try {
+            //testPrint=true;
+            byte[] printData = null;
+            if (testPrint) {
+                printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
+            } else {
+                printData = objSample_Print.getUsaBoxPrint(objReceiveShopReturnsGlobal.getpBoxno(), objReceiveShopReturnsGlobal.getpPallettype(), objReceiveShopReturnsGlobal.getpTypename(),
+                        objReceiveShopReturnsGlobal.getpQty(), objReceiveShopReturnsGlobal.getpDate(), objReceiveShopReturnsGlobal.getpTime(), objReceiveShopReturnsGlobal.getpRemarks(),
+                        objReceiveShopReturnsGlobal.getpPreparedby(), sp_shop_return_printer_copies.getSelectedItem().toString());
+            }
+            return objSample_Print.PrintBarcodeByte(printData);
+        } catch (Exception e) {
+            okMessage("Error 3", e.toString());
+            return false;
+        }
+    }
+
+    private void clearBtDevData() {
+        remoteDevices = new Vector<BluetoothDevice>();
+    }
+
+    public void Init_BluetoothSet() {
+        bluetoothSetup();
+        connectDevice = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                    //"BlueTooth Connect"
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    try {
+                        if (bluetoothPort.isConnected())
+                            bluetoothPort.disconnect();
+                    } catch (IOException e) {
+                        okMessage("IOException", e.toString());
+                    } catch (InterruptedException e) {
+                        okMessage("InterruptedException", e.toString());
+                    }
+                    if ((btThread != null) && (btThread.isAlive())) {
+                        btThread.interrupt();
+                        btThread = null;
+                    }
+                }
+            }
+        };
+
+        discoveryResult = new BroadcastReceiver() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String key;
+                boolean bFlag = true;
+                BluetoothDevice btDev;
+                BluetoothDevice remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (remoteDevice != null) {
+                    if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "]";
+                    } else {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "] [Paired]";
+                    }
+                    if (bluetoothPort.isValidAddress(remoteDevice.getAddress())) {
+                        for (int i = 0; i < remoteDevices.size(); i++) {
+                            btDev = remoteDevices.elementAt(i);
+                            if (remoteDevice.getAddress().equals(btDev.getAddress())) {
+                                bFlag = false;
+                                break;
+                            }
+                        }
+                        if (bFlag) {
+                            remoteDevices.add(remoteDevice);
+                            adapter.add(key);
+                        }
+                    }
+                }
+            }
+        };
+        getActivity().registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        searchStart = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            }
+        };
+        getActivity().registerReceiver(searchStart, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+        searchFinish = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                searchflags = true;
+            }
+        };
+        getActivity().registerReceiver(searchFinish, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+    }
+
+    private void bluetoothSetup() {
+        clearBtDevData();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            return;
+        }
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+    private void btConn(final BluetoothDevice btDev) throws IOException {
+        new ReceiveShopReturnsFragment.connBT().execute(btDev);
+    }
+
+    class connBT extends AsyncTask<BluetoothDevice, Void, Integer> {
+        private final ProgressDialog dialog = new ProgressDialog(getActivity());
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getActivity());
+        String str_temp = "";
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Connecting Device...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(BluetoothDevice... params) {
+            Integer retVal = null;
+            try {
+                bluetoothPort.connect(params[0]);
+                str_temp = params[0].getAddress();
+                retVal = Integer.valueOf(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+                retVal = Integer.valueOf(-1);
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (dialog.isShowing())
+                dialog.dismiss();
+            if (result.intValue() == 0) {
+                RequestHandler rh = new RequestHandler();
+                btThread = new Thread(rh);
+                btThread.start();
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED));
+                printBarCode();
+            } else {
+                alert
+                        .setTitle("Error 4")
+                        .setMessage("Failed to connect Bluetooth device.")
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+            super.onPostExecute(result);
         }
     }
 

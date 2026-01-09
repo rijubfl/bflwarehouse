@@ -109,6 +109,9 @@ public class BuildingDeliveryPalletControl {
             return null;
         }
         try {
+            if (shopName.startsWith("MUY")) {
+                 shopName = shopName.substring(3, shopName.length());
+            }
             rs = dbConnection.getResultSet("select distinct RouteId from bfldata.dbo.DataSettings where ShopName = '"+shopName+"'", objGlobal.getConnection());
             while (rs.next()) {
                 arr = rs.getInt("RouteId");

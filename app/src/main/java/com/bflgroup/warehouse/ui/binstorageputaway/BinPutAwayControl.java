@@ -22,7 +22,7 @@ public class BinPutAwayControl {
     public BinPutAwayControl() {
         objGlobal.setDbName("RACKS");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("BinPutAwayControl : Connection error");
         }
     }
@@ -30,9 +30,9 @@ public class BinPutAwayControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("RACKS");
-        if (dbConnection.checkConnectionClosed() == false) {
+        if (!dbConnection.checkConnectionClosed()) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("BinPutAwayControl.checkConnection : Connection error");
                 return false;
             }
