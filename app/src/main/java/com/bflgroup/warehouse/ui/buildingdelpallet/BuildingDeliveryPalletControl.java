@@ -70,12 +70,14 @@ public class BuildingDeliveryPalletControl {
     public List<ShopInfo> loadShopsFromTransfers(String trfNo){
         List<ShopInfo> shopNames = new ArrayList<>();
         try{
-            rs = dbConnection.getResultSet("select ShopName,Dataname from bfldata.dbo.TransferNoReturn where trfno = '"+trfNo+"'", objGlobal.getConnection());
-            while (rs.next()) {
-               shopNames.add( new ShopInfo(
-                       rs.getString("ShopName"),
-                       rs.getString("Dataname")
-               ));
+            if (objGlobal.getWarehouseCountry().equals("UAE")) {
+                rs = dbConnection.getResultSet("select ShopName,Dataname from bfldata.dbo.TransferNoReturn where trfno = '" + trfNo + "'", objGlobal.getConnection());
+                while (rs.next()) {
+                    shopNames.add(new ShopInfo(
+                            rs.getString("ShopName"),
+                            rs.getString("Dataname")
+                    ));
+                }
             }
             return shopNames;
         }
