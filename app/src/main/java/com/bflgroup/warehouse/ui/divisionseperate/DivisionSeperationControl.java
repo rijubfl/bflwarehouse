@@ -24,7 +24,7 @@ public class DivisionSeperationControl {
     public DivisionSeperationControl() {
         objGlobal.setDbName("BFLDATA");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("1 DivisionSeperationControl : Connection error");
         }
     }
@@ -32,9 +32,9 @@ public class DivisionSeperationControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("BFLDATA");
-        if (dbConnection.checkConnectionClosed() == false) {
+        if (!dbConnection.checkConnectionClosed()) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("3 DivisionSeperationControl.checkConnection : Connection error");
                 return false;
             }
