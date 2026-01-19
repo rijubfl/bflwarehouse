@@ -26,6 +26,7 @@ public class PalletStatusControl {
             objGlobal.setErrorMessage("PalletStatusControl : Connection error");
         }
     }
+
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("BFLDATA");
@@ -38,8 +39,9 @@ public class PalletStatusControl {
         }
         return true;
     }
+
     boolean getPalletStatus(String scan, String warehouse) {
-        String pltType = "", boxno = "", toteid = "", palletno = "", status = "", buildCategory = "", type = "", checkingType="", golden="N";
+        String pltType = "", boxno = "", toteid = "", palletno = "", status = "", buildCategory = "", type = "", checkingType = "", golden = "N";
         boolean found = false;
         if (!checkConnection()) {
             return false;
@@ -162,24 +164,58 @@ public class PalletStatusControl {
             if (rs.next()) {
                 golden = "Y";
             }
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.PalletType where PalletType='" + pltType + "' and DirectProduction='Y'", objGlobal.getConnection());
-            if (rs.next()) {
-                status = "PRODUCTION - D";
-            } else {
-                rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where (PalletNo='" + palletno + "' or boxno='" + boxno + "')", objGlobal.getConnection());
+
+
+            rs = dbConnection.getResultSet("select boxno,PalletType from usa.dbo.vUPCBoxDet where closed='N' and PalletNo='" + scan + "'", objGlobal.getConnection());
+            while (rs.next()) {
+                boxno = rs.getString("boxno");
+                pltType = rs.getString("PalletType");
+                rs = dbConnection.getResultSet("select * from usa..OverrideMaxQtyHeader where boxno='" + boxno + "' and DATEDIFF(DAY, GETDATE(), EntryDate) BETWEEN -2 AND 0 ", objGlobal.getConnection());
                 if (rs.next()) {
-                    status = "PRODUCTION - S";
-                    checkingType = rs.getString("checkingType");
-                } else {
-                    rs = dbConnection.getResultSet("select * from usa..OverrideMaxQtyHeader where boxno='"+boxno+"' and DATEDIFF(DAY, GETDATE(), EntryDate) BETWEEN -2 AND 0 ", objGlobal.getConnection());
-                    if (rs.next()) {
-                        status = "BOX PICKING ";
-                    } else {
-                        status = "RACK ";
-                    }
-                   // status = "RACK";
+                    status = "BOX PICKING ";
+                    break;
                 }
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.PalletType where PalletType='" + pltType + "' and DirectProduction='Y'", objGlobal.getConnection());
+                if (rs.next()) {
+                    status = "PRODUCTION - D";
+                } else {
+                    rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where boxno='" + boxno + "'", objGlobal.getConnection());
+                    if (rs.next()) {
+                        status = "PRODUCTION - S";
+                    } else {
+                        if (status.contains("PRODUCTION")) {
+                            status = "BOX PICKING ";
+                            break;
+                        }
+                    }
+                }
+
             }
+
+            if (status.equals("")) {
+                status = "RACK ";
+            }
+
+
+//            rs = dbConnection.getResultSet("select * from bfldata.dbo.PalletType where PalletType='" + pltType + "' and DirectProduction='Y'", objGlobal.getConnection());
+//            if (rs.next()) {
+//                status = "PRODUCTION - D";
+//            } else {
+//                rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where (PalletNo='" + palletno + "' or boxno='" + boxno + "')", objGlobal.getConnection());
+//                if (rs.next()) {
+//                    status = "PRODUCTION - S";
+//                    checkingType = rs.getString("checkingType");
+//                } else {
+//                    rs = dbConnection.getResultSet("select * from usa..OverrideMaxQtyHeader where boxno='"+boxno+"' and DATEDIFF(DAY, GETDATE(), EntryDate) BETWEEN -2 AND 0 ", objGlobal.getConnection());
+//                    if (rs.next()) {
+//                        status = "BOX PICKING ";
+//                    } else {
+//                        status = "RACK ";
+//                    }
+//                   // status = "RACK";
+//                }
+//            }
+
 
             if (status.equals("RACK")) {
                 String processNo = "", prodDate = "";
@@ -200,9 +236,9 @@ public class PalletStatusControl {
                 }
             }
 
-            if(!toteid.isEmpty()) {
+            if (!toteid.isEmpty()) {
                 if (!dbConnection.insertUpdate("insert into racks.dbo.BinPutAwayHistory select Warehouse,convert(varchar,getdate(),103),convert(varchar,getdate(),8),ToteId,BoxNo,'OUT',Location,0,'STS-PDA','BLACKBOX' from " +
-                        "RACKS.dbo.BinRack where Warehouse='BLACKBOX' and ToteId='" +toteid + "'", objGlobal.getConnection())) {
+                        "RACKS.dbo.BinRack where Warehouse='BLACKBOX' and ToteId='" + toteid + "'", objGlobal.getConnection())) {
                     return false;
                 }
                 if (!dbConnection.insertUpdate("delete from RACKS.dbo.BinRack where Warehouse='BLACKBOX' and ToteId='" + toteid + "'", objGlobal.getConnection())) {
@@ -219,7 +255,7 @@ public class PalletStatusControl {
             objPalletStatusGlobal.setGolden(golden);
 
             if (!dbConnection.insertUpdate("insert into bfldata.dbo.PalletStatusScan (PalletNo,Status,UserId,TrnDate,TrnTime,Boxno,Toteid,warehouse,OrgPalletno) values ('" + scan + "','" + status + "'," + objGlobal.getUserId() + ",'" + objGlobal.getServerDate() + "'," +
-                    "'" + objGlobal.getServerTime() + "', '"+ objPalletStatusGlobal.getBoxno() + "','"+ objPalletStatusGlobal.getToteid() + "', '"+warehouse+"' ,'" + objPalletStatusGlobal.getPalletno() + "')", objGlobal.getConnection())) {
+                    "'" + objGlobal.getServerTime() + "', '" + objPalletStatusGlobal.getBoxno() + "','" + objPalletStatusGlobal.getToteid() + "', '" + warehouse + "' ,'" + objPalletStatusGlobal.getPalletno() + "')", objGlobal.getConnection())) {
                 return false;
             }
             return true;
@@ -229,7 +265,7 @@ public class PalletStatusControl {
         }
     }
 
-    public List<String> getWarehouse(String warehouse){
+    public List<String> getWarehouse(String warehouse) {
         List<String> arr;
         if (!checkConnection()) {
             return null;
@@ -238,7 +274,7 @@ public class PalletStatusControl {
             arr = new ArrayList<String>();
 
             arr.add("Select Warehouse");
-            rs = dbConnection.getResultSet("select distinct department from bfldata..warehouseDepartment where warehouse = '"+warehouse+"'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select distinct department from bfldata..warehouseDepartment where warehouse = '" + warehouse + "'", objGlobal.getConnection());
             while (rs.next()) {
                 arr.add(rs.getString("department"));
             }

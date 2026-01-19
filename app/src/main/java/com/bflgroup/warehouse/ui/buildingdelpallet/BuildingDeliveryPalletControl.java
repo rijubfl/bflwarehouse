@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
+import com.bflgroup.warehouse.ui.buildingdelpallet.models.ShopInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,13 +53,29 @@ public class BuildingDeliveryPalletControl {
         }
         return true;
     }
-
-    public List<String> loadShopsFromTransfers(String trfNo){
+    public List<String> loadShopsFromRoute(int routeId){
         List<String> shopNames = new ArrayList<>();
         try{
-            rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.TransferNoReturn where trfno = '"+trfNo+"'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.datasettings where routeid = '"+routeId+"'", objGlobal.getConnection());
             while (rs.next()) {
                 shopNames.add(rs.getString("ShopName"));
+            }
+            return shopNames;
+        }
+        catch (Exception e){
+            objGlobal.setErrorMessage("" + e.toString());
+            return null;
+        }
+    }
+    public List<ShopInfo> loadShopsFromTransfers(String trfNo){
+        List<ShopInfo> shopNames = new ArrayList<>();
+        try{
+            rs = dbConnection.getResultSet("select ShopName,Dataname from bfldata.dbo.TransferNoReturn where trfno = '"+trfNo+"'", objGlobal.getConnection());
+            while (rs.next()) {
+               shopNames.add( new ShopInfo(
+                       rs.getString("ShopName"),
+                       rs.getString("Dataname")
+               ));
             }
             return shopNames;
         }
@@ -92,6 +109,9 @@ public class BuildingDeliveryPalletControl {
             return null;
         }
         try {
+            if (shopName.startsWith("MUY")) {
+                 shopName = shopName.substring(3, shopName.length());
+            }
             rs = dbConnection.getResultSet("select distinct RouteId from bfldata.dbo.DataSettings where ShopName = '"+shopName+"'", objGlobal.getConnection());
             while (rs.next()) {
                 arr = rs.getInt("RouteId");
@@ -121,6 +141,19 @@ public class BuildingDeliveryPalletControl {
         }
     }
 
+    public Integer transferCount(String trfno){
+        rs = dbConnection.getResultSet("select count(*) as trfCount from bfldata..transfernoreturn where trfno = '"+trfno+"'",objGlobal.getConnection());
+        try {
+            if (rs.next()){
+                return rs.getInt("trfCount");
+            }
+            else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public String LoadShops(int route_id) {
         String shops = "";
@@ -186,22 +219,22 @@ public class BuildingDeliveryPalletControl {
         }
     }
 
-    public ArrayList<PalletScanDeliveryItem> ScanTransfer(Context context, String transferno, int get_route_id, String android_id) {
+    public ArrayList<PalletScanDeliveryItem> ScanTransfer(Context context, String transferno, int get_route_id, String android_id,ShopInfo selectedShopName) {
         ArrayList<PalletScanDeliveryItem> arr;
         if (!checkConnection()) {
             return null;
         }
         try {
             arr = new ArrayList<PalletScanDeliveryItem>();
-            String query = "";
+            String query = "select TrfNo,StoreIssue, CartonNo = isNUll(CartonNo, 0), PreparedBy, Narration, TrfDate, ShopName = isNull((Select ShopName from BFLDATA..DataSettings where ((CostCodeTo = " + selectedShopName.getDataName() + "..transferHeader.CostCodeTo and LocCodeTo = " + selectedShopName.getDataName() + "..transferHeader.LocCodeTo) and DataName = '" + selectedShopName.getDataName() + "' )), 0), (select SUM(Quantity) from " + selectedShopName.getDataName() + "..TransferDetail with(NOLOCK) where TrfNo ='" + transferno + "' ) as Quantity from " + selectedShopName.getDataName() + "..TransferHeader with(NOLOCK) where ((trfno='" + transferno + "' or StoreIssue = '" + transferno + "') and (trfType = 'R' or trftype = 'T')) ";
 
-            for (int i = 0; i < dataname.size(); i++) {
-                query += "select TrfNo, StoreIssue, CartonNo = isNUll(CartonNo, 0), PreparedBy, Narration, TrfDate, ShopName = isNull((Select ShopName from BFLDATA..DataSettings  where ((CostCodeTo = " + dataname.get(i) + "..transferHeader.CostCodeTo and LocCodeTo = " + dataname.get(i) + "..transferHeader.LocCodeTo) and DataName = '" + dataname.get(i) + "' )), 0), (select SUM(Quantity) from " + dataname.get(i) + "..TransferDetail with(NOLOCK) where TrfNo ='" + transferno + "' ) as Quantity  from " + dataname.get(i) + "..TransferHeader with(NOLOCK) where ((trfno='" + transferno + "' or StoreIssue = '" + transferno + "') and (trfType = 'R' or trftype = 'T') and CostCodeTo = '" + CostCodeTo.get(i) + "' ) Union ";
-
-                if (dataname.get(i) == dataname.get(dataname.size() - 1)) {
-                    query += "select TrfNo,StoreIssue, CartonNo = isNUll(CartonNo, 0), PreparedBy, Narration, TrfDate, ShopName = isNull((Select ShopName from BFLDATA..DataSettings where ((CostCodeTo = " + dataname.get(i) + "..transferHeader.CostCodeTo and LocCodeTo = " + dataname.get(i) + "..transferHeader.LocCodeTo) and DataName = '" + dataname.get(i) + "' )), 0), (select SUM(Quantity) from " + dataname.get(i) + "..TransferDetail with(NOLOCK) where TrfNo ='" + transferno + "' ) as Quantity from " + dataname.get(i) + "..TransferHeader with(NOLOCK) where ((trfno='" + transferno + "' or StoreIssue = '" + transferno + "') and (trfType = 'R' or trftype = 'T') and CostCodeTo = '" + CostCodeTo.get(i) + "' ) ";
-                }
-            }
+//            for (int i = 0; i < dataname.size(); i++) {
+//                query += "select TrfNo, StoreIssue, CartonNo = isNUll(CartonNo, 0), PreparedBy, Narration, TrfDate, ShopName = isNull((Select ShopName from BFLDATA..DataSettings  where ((CostCodeTo = " + dataname.get(i) + "..transferHeader.CostCodeTo and LocCodeTo = " + dataname.get(i) + "..transferHeader.LocCodeTo) and DataName = '" + dataname.get(i) + "' )), 0), (select SUM(Quantity) from " + dataname.get(i) + "..TransferDetail with(NOLOCK) where TrfNo ='" + transferno + "' ) as Quantity  from " + dataname.get(i) + "..TransferHeader with(NOLOCK) where ((trfno='" + transferno + "' or StoreIssue = '" + transferno + "') and (trfType = 'R' or trftype = 'T') and CostCodeTo = '" + CostCodeTo.get(i) + "' ) Union ";
+//
+//                if (dataname.get(i) == dataname.get(dataname.size() - 1)) {
+//                    query += "select TrfNo,StoreIssue, CartonNo = isNUll(CartonNo, 0), PreparedBy, Narration, TrfDate, ShopName = isNull((Select ShopName from BFLDATA..DataSettings where ((CostCodeTo = " + dataname.get(i) + "..transferHeader.CostCodeTo and LocCodeTo = " + dataname.get(i) + "..transferHeader.LocCodeTo) and DataName = '" + dataname.get(i) + "' )), 0), (select SUM(Quantity) from " + dataname.get(i) + "..TransferDetail with(NOLOCK) where TrfNo ='" + transferno + "' ) as Quantity from " + dataname.get(i) + "..TransferHeader with(NOLOCK) where ((trfno='" + transferno + "' or StoreIssue = '" + transferno + "') and (trfType = 'R' or trftype = 'T') and CostCodeTo = '" + CostCodeTo.get(i) + "' ) ";
+//                }
+//            }
 
             rs = dbConnection.getResultSet(query, objGlobal.getConnection());
             if (rs.next()) {
@@ -216,12 +249,12 @@ public class BuildingDeliveryPalletControl {
                         ResultSet rs1 = dbConnection.getResultSet(query7, objGlobal.getConnection());
                         if (rs1.next()) {
                             shopname = rs1.getString("Shopname");
-                            arr = TmpGinScan(context, android_id, rs.getString("TrfNo"), rs.getString("TrfDate"), rs.getString("StoreIssue"), shopname, String.valueOf(get_route_id), rs.getString("CartonNo"), rs.getString("PreparedBy"), rs.getString("Narration"), rs.getString("Quantity"));
+                            arr = TmpGinScan(context, android_id, rs.getString("TrfNo"), rs.getString("TrfDate"), rs.getString("StoreIssue"), selectedShopName.getShopName(), String.valueOf(get_route_id), rs.getString("CartonNo"), rs.getString("PreparedBy"), rs.getString("Narration"), rs.getString("Quantity"), selectedShopName.getShopName());
                         }else{
                             okMessage("", "This Trf No / Toteid is not in the same Route - " + transferno, context);
                         }
                     } else {
-                        arr = TmpGinScan(context, android_id, rs.getString("TrfNo"), rs.getString("TrfDate"), rs.getString("StoreIssue"), shopname, String.valueOf(get_route_id), rs.getString("CartonNo"), rs.getString("PreparedBy"), rs.getString("Narration"), rs.getString("Quantity"));
+                        arr = TmpGinScan(context, android_id, rs.getString("TrfNo"), rs.getString("TrfDate"), rs.getString("StoreIssue"), selectedShopName.getShopName(), String.valueOf(get_route_id), rs.getString("CartonNo"), rs.getString("PreparedBy"), rs.getString("Narration"), rs.getString("Quantity"),selectedShopName.getShopName());
                     }
                 }
 
@@ -279,7 +312,7 @@ public class BuildingDeliveryPalletControl {
 
                     } else {
 
-                        arr = TmpGinScan(context, android_id, rs1.getString("TrfNo"), rs1.getString("TrfDate"), rs1.getString("StoreIssue"), shopname2, String.valueOf(get_route_id), rs1.getString("CartonNo"), rs1.getString("PreparedBy"), rs1.getString("Narration"), rs1.getString("Quantity"));
+                        arr = TmpGinScan(context, android_id, rs1.getString("TrfNo"), rs1.getString("TrfDate"), rs1.getString("StoreIssue"), shopname2, String.valueOf(get_route_id), rs1.getString("CartonNo"), rs1.getString("PreparedBy"), rs1.getString("Narration"), rs1.getString("Quantity"),shopname2);
                     }
 
                 } else {
@@ -301,12 +334,12 @@ public class BuildingDeliveryPalletControl {
     }
 
 
-    public ArrayList<PalletScanDeliveryItem> TmpGinScan(Context context, String android_id, String TrfNo, String Trfdate, String ToteId, String ShopName, String Route_id, String BoxNo, String PreparedBy, String Narration, String Quantity) throws SQLException {
+    public ArrayList<PalletScanDeliveryItem> TmpGinScan(Context context, String android_id, String TrfNo, String Trfdate, String ToteId, String ShopName, String Route_id, String BoxNo, String PreparedBy, String Narration, String Quantity, String selectedShop) throws SQLException {
         if (!checkConnection()) {
             return null;
         }
         ArrayList<PalletScanDeliveryItem> arrayList = new ArrayList<>();
-        String query = "select * from BFLdata..tmpPalletScan where (TrfNo='" + TrfNo + "' or ToteId = '" + TrfNo + "') and shopname = '"+ShopName+"' and DeviceName = '" + objGlobal.getDeviceName() + "'";
+        String query = "select * from BFLdata..tmpPalletScan where (TrfNo='" + TrfNo + "' or ToteId = '" + TrfNo + "') and shopname = '"+selectedShop+"' and DeviceName = '" + objGlobal.getDeviceName() + "'";
         String query2 = "select * from BFLDATA..vGoodsIssuePlt  with(NOLOCK) where TrfNo='" + TrfNo + "' and ShopIssue='" + ShopName + "'";
         String query3 = "select * from BFLDATA..vGoodsIssue with(NOLOCK) where TrfNo='" + TrfNo + "' and Actualshop='" + ShopName + "'";
 

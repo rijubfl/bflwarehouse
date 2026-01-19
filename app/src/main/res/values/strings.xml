@@ -10,7 +10,11 @@
     <string name="menu_file">File</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
+<<<<<<< HEAD
     <string name="app_version">13.07</string>
+=======
+    <string name="app_version">13.05</string>
+>>>>>>> 1c0c623b74e8636fc7e3a7d10f8143b3eda3d8db
     <string name="menu_update_box_from_pallet">Update Box from Pallet </string>
     <string name="menu_chute_status_techno">Chute Status (Techno)</string>
     <string name="menu_chute_status_jafza">Chute Status (Jafza)</string>
@@ -22,7 +26,7 @@
     <string name="menu_black_box">Black Box</string>
     <string name="menu_rerturns_repair">Returns / Repairs</string>
     <string name="menu_bin_storage">Bin Storage</string>
-    <string name="menu_chute_check_in_check_out_techno">Chute Check In / Out (Techno)</string>
+    <string name="menu_chute_check_in_check_out_techno">Chute Check In / Out Techno</string>
     <string name="menu_chute_check_in_check_out_jafza">Chute Check In / Out (Jafza)</string>
     <string name="menu_chute_configuraion_techno">Chute Configuration (Techno)</string>
     <string name="menu_chute_configuraion_jafza">Chute Configuration (Jazfa)</string>
