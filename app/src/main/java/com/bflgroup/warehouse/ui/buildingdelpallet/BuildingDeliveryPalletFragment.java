@@ -303,7 +303,10 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                     } else
                     {
                         shopNamesFromTransfers = objbuildingdelPalletControl.loadShopsFromTransfers(et_plt_shop_transferno.getText().toString().trim());
-                        openPopupShopsFromTransfers();
+                        if (shopNamesFromTransfers.size() == 1)
+                            trfDetail(shopNamesFromTransfers.get(0));
+                        else
+                            openPopupShopsFromTransfers();
                     }
 //                    else {
 //                        if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0)
@@ -422,7 +425,10 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                 } else
                 {
                     shopNamesFromTransfers = objbuildingdelPalletControl.loadShopsFromTransfers(et_plt_shop_transferno.getText().toString().trim());
-                    openPopupShopsFromTransfers();
+                    if (shopNamesFromTransfers.size() == 1)
+                        trfDetail(shopNamesFromTransfers.get(0));
+                    else
+                        openPopupShopsFromTransfers();
                 }
 //                    else {
 //                        if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0)

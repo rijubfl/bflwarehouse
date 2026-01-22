@@ -181,7 +181,7 @@ public class PalletBuildingFragment extends Fragment {
                     toteId = objControls.replaceString(toteId);
                     if (sp_pallet_building_category.getSelectedItem().toString().equals("TCM")) { }
                     if (sp_pallet_building_category.getSelectedItem().toString().equals("USA")) {
-                        b_Result = objPalletBuildingControl.validateBoxTotUsa(toteId);
+                        b_Result = objPalletBuildingControl.validateBoxTotUsa(toteId,objPalletBuildingGlobal.getTotCnt());
                     }
                     if (!b_Result) {
                         okMessage("BinBatchInFragment:et_bin_batch_in_toteid", objGlobal.getErrorMessage());
@@ -211,7 +211,7 @@ public class PalletBuildingFragment extends Fragment {
                 toteId = objControls.replaceString(toteId);
                 if (sp_pallet_building_category.getSelectedItem().toString().equals("TCM")) { }
                 if (sp_pallet_building_category.getSelectedItem().toString().equals("USA")) {
-                    b_Result = objPalletBuildingControl.validateBoxTotUsa(toteId);
+                    b_Result = objPalletBuildingControl.validateBoxTotUsa(toteId,objPalletBuildingGlobal.getTotCnt());
                 }
                 if (!b_Result) {
                     okMessage("BinBatchInFragment:bt_pallet_building_scan", objGlobal.getErrorMessage());
