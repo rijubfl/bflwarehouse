@@ -51,7 +51,6 @@
                     android:id="@+id/nav_auto_building_jafza"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_building_box_jafza" />
-
             </menu>
         </item>
 
@@ -116,6 +115,10 @@
         <item android:title="@string/menu_building">
             <menu>
                 <item
+                    android:id="@+id/nav_supplier_box_grn"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_supplier_box_grn" />
+                <item
                     android:id="@+id/nav_build_usa_box"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_building_usa_box" />
@@ -155,7 +158,6 @@
                     android:id="@+id/nav_shuttle_task_create"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_shuttle_task_create" />
-
             </menu>
         </item>
         <item android:title="@string/menu_building_delivery">
@@ -172,10 +174,6 @@
                     android:id="@+id/nav_build_del_pallet"
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_building_del_pallet" />
-<!--                <item-->
-<!--                    android:id="@+id/nav_update_transfers"-->
-<!--                    android:icon="@drawable/ic_menu_send"-->
-<!--                    android:title="@string/menu_update_transfers_from_pallet" />-->
                 <item
                     android:id="@+id/nav_warehouse_gin"
                     android:icon="@drawable/ic_menu_send"
@@ -209,10 +207,6 @@
                     android:icon="@drawable/ic_menu_send"
                     android:title="@string/menu_3pl_grn" />
 
-<!--                <item-->
-<!--                    android:id="@+id/nav_receive_shop_returns"-->
-<!--                    android:icon="@drawable/ic_menu_send"-->
-<!--                    android:title="@string/menu_receive_shop_returns" />-->
             </menu>
         </item>
         <item android:title="@string/menu_rerturns_repair">

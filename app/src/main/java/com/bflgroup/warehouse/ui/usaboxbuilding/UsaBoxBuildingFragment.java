@@ -386,15 +386,11 @@ public class UsaBoxBuildingFragment extends Fragment {
             }
         });
 
-        try {
-            searchflags = false;
-            objSample_Print = new BarcodePrinting();
-            bluetoothPort = BluetoothPort.getInstance();
-            bluetoothPort.SetMacFilter(false);
-            Init_BluetoothSet();
-        } catch (Exception e) {
-            okMessage("UPC Box", e.toString());
-        }
+        searchflags = false;
+        objSample_Print = new BarcodePrinting();
+        bluetoothPort = BluetoothPort.getInstance();
+        bluetoothPort.SetMacFilter(false);
+        Init_BluetoothSet();
 
         return view;
     }
@@ -602,7 +598,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         saredRef.saveGender(sp_usa_box_gender.getSelectedItem().toString());
         saredRef.saveTask(sp_usa_box_task.getSelectedItem().toString());
         saredRef.saveDone(sp_usa_box_done.getSelectedItem().toString());
-       // saredRef.savePrinter(sp_usa_box_printer.getSelectedItem().toString());
+        saredRef.savePrinter(sp_usa_box_printer.getSelectedItem().toString());
         saredRef.savePrintCopy(sp_usa_box_printer_copies.getSelectedItem().toString());
 
         if (rb_usa_box_usa_category.isChecked()) {
@@ -944,6 +940,9 @@ public class UsaBoxBuildingFragment extends Fragment {
         } else {
             arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
             sp_usa_box_printer.setAdapter(arrayAdpYellow);
+            if (saredRef.loadPrinter() != "") {
+                sp_usa_box_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
+            }
         }
 
         List<String> arr4 = objUsaBoxBuildingControl.loadSpinner("SZ");

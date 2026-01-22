@@ -59,13 +59,6 @@
         android:label="@string/menu_building_pallet"
         tools:layout="@layout/fragment_pallet_building" />
 
-<!--    <fragment-->
-<!--        android:id="@+id/nav_receive_shop_returns"-->
-<!--        android:name="com.bflgroup.warehouse.ui.verifyShopreturns.VerifyShopReturnsFragment"-->
-<!--        android:label="@string/menu_receive_shop_returns"-->
-<!--        tools:layout="@layout/fragment_verify_shop_returns" />-->
-
-
     <fragment
         android:id="@+id/nav_rack_in_out"
         android:name="com.bflgroup.warehouse.ui.rack.RackInRackOutFragment"
@@ -83,7 +76,6 @@
         android:name="com.bflgroup.warehouse.ui.boxreconcilation.PalletBoxCountFragment"
         android:label="@string/menu_BoxReconcilation"
         tools:layout="@layout/fragment_pallet_box_count" />
-
 
     <fragment
         android:id="@+id/nav_rack_query"
@@ -173,11 +165,6 @@
         android:name="com.bflgroup.warehouse.ui.Updateboxfrompallet.AddOrRemoveBoxInPalletFragment"
         android:label="@string/menu_update_box_from_pallet"
         tools:layout="@layout/fragment_pallet_box_count" />
-<!--    <fragment-->
-<!--        android:id="@+id/nav_update_transfers"-->
-<!--        android:name="com.bflgroup.warehouse.ui.updateTransfersFromPallet.AddOrRemoveTransferInPalletFragment"-->
-<!--        android:label="@string/menu_update_transfers_from_pallet"-->
-<!--        tools:layout="@layout/fragment_add_or_remove_transfer_in_pallet" />-->
 
     <fragment
         android:id="@+id/nav_department_grn"
@@ -287,11 +274,6 @@
         android:name="com.bflgroup.warehouse.ui.pricecheck.PriceCheckFragment"
         android:label="@string/menu_price_check"
         tools:layout="@layout/fragment_price_check" />
-    <fragment
-        android:id="@+id/nav_item_segregation"
-        android:name="com.bflgroup.warehouse.ui.pricecheck.ItemSegregationFragment"
-        android:label="@string/menu_item_segregation"
-        tools:layout="@layout/fragment_item_seggregation" />
 
     <fragment
         android:id="@+id/nav_item_segregation"
@@ -304,6 +286,12 @@
         android:name="com.bflgroup.warehouse.ui.rfidtagregister.RfidTagRegisterFragment"
         android:label="@string/menu_rfid_tag_register"
         tools:layout="@layout/fragment_rfid_tag_register" />
+
+    <fragment
+        android:id="@+id/nav_supplier_box_grn"
+        android:name="com.bflgroup.warehouse.ui.supplierboxgrn.SupplierBoxGRNFragment"
+        android:label="@string/menu_supplier_box_grn"
+        tools:layout="@layout/fragment_supplier_box_g_r_n" />
 
     <fragment
         android:id="@+id/nav_settings"
