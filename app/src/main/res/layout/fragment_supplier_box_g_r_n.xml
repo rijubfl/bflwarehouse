@@ -12,11 +12,38 @@
         android:layout_height="match_parent"
         android:padding="5dp">
 
+        <Spinner
+            android:id="@+id/sp_usa_box_printer"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/sp_usa_box_printer_copies"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/sp_usa_box_printer_copies"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/sp_usa_box_printer" />
+
         <EditText
             android:id="@+id/et_transfer_pallet_box_no1"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
             android:enabled="false"
             android:gravity="left"
@@ -29,12 +56,14 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/ch_transfer_printer"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/sp_usa_box_printer" />
 
         <EditText
             android:id="@+id/et_transfer_pallet_box_no2"
             android:layout_width="0dp"
             android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:enabled="false"
             android:gravity="left"
@@ -45,6 +74,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_transfer_pallet_box_no1" />
 
@@ -52,7 +82,6 @@
             android:id="@+id/ch_transfer_printer"
             android:layout_width="160dp"
             android:layout_height="40dp"
-            android:textStyle="bold"
             android:textSize="14sp"
             android:background="@drawable/et_custom"
             android:text="Audit Required"
@@ -67,31 +96,33 @@
             android:text="Scan"
             android:textAllCaps="false"
             android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/et_transfer_pallet_box_no2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ch_transfer_printer" />
+            app:layout_constraintTop_toTopOf="@+id/et_transfer_pallet_box_no2" />
 
         <TextView
             android:id="@+id/textView1"
             android:layout_width="0dp"
             android:layout_height="33dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom_total"
-            android:gravity="left|center"
+            android:gravity="center"
             android:hint=""
             android:padding="8dp"
-            android:text="Barcode"
+            android:text="Scanned Cartons"
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bt_transfer_scan" />
+            app:layout_constraintTop_toBottomOf="@+id/et_transfer_pallet_box_no2" />
 
         <TextView
             android:id="@+id/TextView2"
             android:layout_width="0dp"
             android:layout_height="33dp"
             android:background="@drawable/et_custom_total"
-            android:gravity="left|center"
+            android:gravity="center"
             android:hint=""
             android:padding="8dp"
             android:text="Carton ID"
@@ -107,7 +138,7 @@
             android:layout_width="70dp"
             android:layout_height="33dp"
             android:background="@drawable/et_custom_total"
-            android:gravity="right|center"
+            android:gravity="center"
             android:hint=""
             android:padding="8dp"
             android:text="Qty"
@@ -119,12 +150,27 @@
 
         <TextView
             android:id="@+id/TextView3"
-            android:layout_width="70dp"
+            android:layout_width="60dp"
+            android:layout_height="33dp"
+            android:background="@drawable/et_custom_total"
+            android:hint=""
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Audit"
+            android:textColor="@color/coloBlack"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView6"
+            app:layout_constraintTop_toTopOf="@+id/TextView2" />
+
+        <TextView
+            android:id="@+id/TextView6"
+            android:layout_width="50dp"
             android:layout_height="33dp"
             android:background="@drawable/et_custom_total"
             android:hint=""
             android:padding="8dp"
-            android:text="Audit"
+            android:text=""
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             android:textStyle="bold"
@@ -136,11 +182,88 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/et_custom_total"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/TextView10"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/TextView2" />
 
+
+        <Button
+            android:id="@+id/bt_wh_grn_clear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Clear"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <TextView
+            android:id="@+id/TextView10"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="left"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Total Boxes"
+            android:textColor="@color/coloBlack"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/bt_wh_grn_clear"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tv_wh_grn_total_plt_box_scan_count"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:background="@drawable/et_custom_total"
+            android:hint=""
+            android:padding="8dp"
+            android:text="Total Qty"
+            android:textColor="@color/coloBlack"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toTopOf="@+id/TextView10" />
+
+        <Button
+            android:id="@+id/bt_wh_grn_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:background="@drawable/btn_custom1"
+            android:text="GRN Completed"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text=""
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="SpeakableTextPresentCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

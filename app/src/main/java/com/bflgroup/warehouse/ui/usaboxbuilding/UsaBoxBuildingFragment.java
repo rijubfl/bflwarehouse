@@ -598,7 +598,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         saredRef.saveGender(sp_usa_box_gender.getSelectedItem().toString());
         saredRef.saveTask(sp_usa_box_task.getSelectedItem().toString());
         saredRef.saveDone(sp_usa_box_done.getSelectedItem().toString());
-       // saredRef.savePrinter(sp_usa_box_printer.getSelectedItem().toString());
+        saredRef.savePrinter(sp_usa_box_printer.getSelectedItem().toString());
         saredRef.savePrintCopy(sp_usa_box_printer_copies.getSelectedItem().toString());
 
         if (rb_usa_box_usa_category.isChecked()) {
