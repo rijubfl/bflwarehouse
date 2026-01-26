@@ -41,8 +41,9 @@ public class PalletBuildingControl {
         return true;
     }
 
-    public boolean validateBoxTotUsa(String boxTot) {
+    public boolean validateBoxTotUsa(String boxTot, int boxQty) {
         String box = "", tote = "", palletType = "", groupcode = "", qty = "0", remarks = "", boxPrepare = "";
+        String isDutyPaid = "", contNo = "";
         if (!checkConnection()) {
             return false;
         }
@@ -61,10 +62,42 @@ public class PalletBuildingControl {
                 remarks = rs.getString("remarks").toString().toUpperCase();
                 qty = rs.getString("Qty").toString();
                 boxPrepare = rs.getString("PreparedBy").toString();
+
+//                // duty paid check
+//                if (box.startsWith("U")) {
+//                    isDutyPaid = "N";
+//                } else {
+//                    if (box.startsWith("R")) {
+//                        rs = dbConnection.getResultSet("select top 1 RoboContno from usa..vUPCBoxDet where BoxNo = '" + box + "'", objGlobal.getConnection());
+//                        if (rs.next()) {
+//                            if (!rs.getString("RoboContno").equals("") && rs.getString("RoboContno") != null) {
+//                                contNo = rs.getString("RoboContno");
+//                            }
+//                        }
+//                    } else {
+//                        contNo = box.split("-")[0];
+//                    }
+//                    rs = dbConnection.getResultSet("select top 1 DutyPaid from bfldata.dbo.ContColorHeader where Contno = '" + contNo + "'", objGlobal.getConnection());
+//                    if (rs.next()) {
+//                        isDutyPaid = rs.getString("DutyPaid");
+//                    }
+//                }
             } else {
                 objGlobal.setErrorMessage("PalletBuildingControl.validateBoxTot : Invalid Box or Box is closed, " + boxTot);
                 return false;
             }
+//            if (boxQty >= 1) {
+//                rs = dbConnection.getResultSet("select top 1 DutyPaid from tmpPalletBuild where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+//                if (rs.next()) {
+//                    if (!isDutyPaid.equals(rs.getString("DutyPaid"))) {
+//                        if (isDutyPaid.equals("Y"))
+//                            objGlobal.setErrorMessage("Duty Paid box: "+box+"; \nDuty-paid boxes cannot be build with non-duty-paid boxes.");
+//                        else
+//                            objGlobal.setErrorMessage("Non Duty Paid box: "+box+"; \nNon-duty-paid boxes cannot be build with Duty-paid boxes.");
+//                        return false;
+//                    }
+//                }
+//            }
             rs = dbConnection.getResultSet("select * from usa.dbo.BoXPallet where boxno='" + box + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("PalletBuildingControl.validateBoxTot : Box is already found in pallet, " + box);
@@ -85,7 +118,6 @@ public class PalletBuildingControl {
                 }
                 return false;
             }
-
             if (!dbConnection.insertUpdate("delete from tmpPalletBuild where (toteid='" + boxTot + "' or boxno='" + boxTot + "') and " +
                     "deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 return false;
@@ -104,8 +136,8 @@ public class PalletBuildingControl {
                 }
             }
 
-            if (!dbConnection.insertUpdate("insert into tmpPalletBuild (DeviceId,UserId,ToteId,BoxNo,BoxRemarks,Qty,PalletType,GroupCode,BoxPrepare) values ('" + objGlobal.getDeviceName() + "'," +
-                    "" + objGlobal.getUserId() + ",'" + tote + "','" + box + "','" + remarks + "'," + qty + ",'" + palletType + "','" + groupcode + "','" + boxPrepare + "')", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("insert into tmpPalletBuild (DeviceId,UserId,ToteId,BoxNo,BoxRemarks,Qty,PalletType,GroupCode,BoxPrepare,DutyPaid) values ('" + objGlobal.getDeviceName() + "'," +
+                    "" + objGlobal.getUserId() + ",'" + tote + "','" + box + "','" + remarks + "'," + qty + ",'" + palletType + "','" + groupcode + "','" + boxPrepare + "','" + isDutyPaid + "')", objGlobal.getConnection())) {
                 return false;
             }
             rs = dbConnection.getResultSet("select cnt=count(distinct PalletType) from tmpPalletBuild where DeviceId='" + objGlobal.getDeviceName() + "' having " +
@@ -131,7 +163,7 @@ public class PalletBuildingControl {
         }
         try {
             rs = dbConnection.getResultSet("select top 1 * from tmpPalletBuild where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
-            if(!rs.next()) {
+            if (!rs.next()) {
                 objGlobal.setErrorMessage("PalletBuildingControl.validateBoxTot : Please scan the boxes for the build");
                 return false;
             }
@@ -233,7 +265,7 @@ public class PalletBuildingControl {
                 }
                 mTotCnt++;
             }
-            if(mTotCnt==0){
+            if (mTotCnt == 0) {
                 objGlobal.setErrorMessage("PalletBuildingControl.validateSave : Please scan box or tote");
                 return false;
             }
@@ -340,7 +372,7 @@ public class PalletBuildingControl {
     public boolean getPalletNoAutoUsa() {
         int pltSn = 0;
         String palletPrefix = "USA";
-        if(objGlobal.getWorkLocation().equals("UAE")) {
+        if (objGlobal.getWorkLocation().equals("UAE")) {
             palletPrefix = "UAE";
         }
         try {
@@ -370,7 +402,7 @@ public class PalletBuildingControl {
         objPalletBuildingGlobal.setpPreparedby("");
         objPalletBuildingGlobal.setpDate("");
         objPalletBuildingGlobal.setpTime("");
-        String sn="";
+        String sn = "";
         try {
             rs = dbConnection.getResultSet("select sn,PalletNo,Remarks,BoxCnt=isnull((select count(distinct InvNo) from BFLDATA.dbo.USAPalletsDet where Sn=a.Sn),0),preparedby=(select UserName from " +
                     "BFLDATA.dbo.PdaUsers where UserId=a.UserId),dt=convert(varchar,getdate(),103),tm=convert(varchar,getdate(),8) from bfldata.dbo.USAPallets a where palletno='" + palletno + "'", objGlobal.getConnection());
@@ -424,7 +456,7 @@ public class PalletBuildingControl {
             objPalletBuildingGlobal.setTotQty(0);
             objPalletBuildingGlobal.setTotCnt(0);
             rs = dbConnection.getResultSet("select TotQty=sum(qty),TotCnt=count(*) from tmpPalletBuild where deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
-            if(rs.next()){
+            if (rs.next()) {
                 objPalletBuildingGlobal.setTotQty(rs.getInt("TotQty"));
                 objPalletBuildingGlobal.setTotCnt(rs.getInt("TotCnt"));
             }

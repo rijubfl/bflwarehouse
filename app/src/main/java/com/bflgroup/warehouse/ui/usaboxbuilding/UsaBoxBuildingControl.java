@@ -149,6 +149,10 @@ public class UsaBoxBuildingControl {
             }
         }
         try {
+            if (itemcode.startsWith("0"))
+            {
+                itemcode = itemcode.replaceFirst("^0+", "");
+            }
             rs = dbConnection.getResultSet("select top 1 itemcode from bfldata.dbo.ScanWrongItem where (itemcode like '%" + itemcode + "%' or itemcode like '%" + itemcode + "%')", objGlobal.getConnection());
             if (rs.next()){
                 objGlobal.setErrorMessage("Invalid itemcode. Please check" + itemcode);
