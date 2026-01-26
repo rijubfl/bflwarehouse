@@ -13,7 +13,7 @@
         android:padding="5dp">
 
         <Spinner
-            android:id="@+id/sp_usa_box_printer"
+            android:id="@+id/sp_supplier_box_grn_printer"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginRight="5dp"
@@ -22,12 +22,12 @@
             android:hint=""
             android:padding="8dp"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/sp_usa_box_printer_copies"
+            app:layout_constraintEnd_toStartOf="@+id/sp_supplier_box_grn_printer_copies"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/sp_usa_box_printer_copies"
+            android:id="@+id/sp_supplier_box_grn_printer_copies"
             android:layout_width="100dp"
             android:layout_height="40dp"
             android:background="@drawable/et_custom_total"
@@ -36,10 +36,10 @@
             android:padding="8dp"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/sp_usa_box_printer" />
+            app:layout_constraintTop_toTopOf="@+id/sp_supplier_box_grn_printer" />
 
         <EditText
-            android:id="@+id/et_transfer_pallet_box_no1"
+            android:id="@+id/et_supplier_box_grn_container_id"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginRight="5dp"
@@ -54,12 +54,12 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/ch_transfer_printer"
+            app:layout_constraintEnd_toStartOf="@+id/ch_supplier_box_grn_audit_req"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sp_usa_box_printer" />
+            app:layout_constraintTop_toBottomOf="@+id/sp_supplier_box_grn_printer" />
 
         <EditText
-            android:id="@+id/et_transfer_pallet_box_no2"
+            android:id="@+id/et_supplier_box_grn_carton_id"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginTop="5dp"
@@ -74,31 +74,31 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/bt_transfer_scan"
+            app:layout_constraintEnd_toStartOf="@+id/bt_supplier_box_grn_scan"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_transfer_pallet_box_no1" />
+            app:layout_constraintTop_toBottomOf="@+id/et_supplier_box_grn_container_id" />
 
         <CheckBox
-            android:id="@+id/ch_transfer_printer"
+            android:id="@+id/ch_supplier_box_grn_audit_req"
             android:layout_width="160dp"
             android:layout_height="40dp"
             android:textSize="14sp"
             android:background="@drawable/et_custom"
             android:text="Audit Required"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/et_transfer_pallet_box_no1" />
+            app:layout_constraintTop_toTopOf="@+id/et_supplier_box_grn_container_id" />
 
         <Button
-            android:id="@+id/bt_transfer_scan"
+            android:id="@+id/bt_supplier_box_grn_scan"
             android:layout_width="100dp"
             android:layout_height="0dp"
             android:background="@drawable/btn_custom1"
             android:text="Scan"
             android:textAllCaps="false"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/et_transfer_pallet_box_no2"
+            app:layout_constraintBottom_toBottomOf="@+id/et_supplier_box_grn_carton_id"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/et_transfer_pallet_box_no2" />
+            app:layout_constraintTop_toTopOf="@+id/et_supplier_box_grn_carton_id" />
 
         <TextView
             android:id="@+id/textView1"
@@ -115,7 +115,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_transfer_pallet_box_no2" />
+            app:layout_constraintTop_toBottomOf="@+id/et_supplier_box_grn_carton_id" />
 
         <TextView
             android:id="@+id/TextView2"
@@ -178,18 +178,18 @@
             app:layout_constraintTop_toTopOf="@+id/TextView2" />
 
         <ListView
-            android:id="@+id/lv_transfer_items"
+            android:id="@+id/lv_supplier_box_grn"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/et_custom_total"
-            app:layout_constraintBottom_toTopOf="@+id/TextView10"
+            app:layout_constraintBottom_toTopOf="@+id/tv_supplier_box_grn_total_boxes"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/TextView2" />
 
 
         <Button
-            android:id="@+id/bt_wh_grn_clear"
+            android:id="@+id/bt_supplier_box_grn_clear"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="0dp"
@@ -204,7 +204,7 @@
 
 
         <TextView
-            android:id="@+id/TextView10"
+            android:id="@+id/tv_supplier_box_grn_total_boxes"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginBottom="10dp"
@@ -216,13 +216,12 @@
             android:textColor="@color/coloBlack"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/bt_wh_grn_clear"
+            app:layout_constraintBottom_toTopOf="@+id/bt_supplier_box_grn_clear"
             app:layout_constraintEnd_toStartOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="parent" />
 
-
         <TextView
-            android:id="@+id/tv_wh_grn_total_plt_box_scan_count"
+            android:id="@+id/tv_supplier_box_grn_total_qty"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:background="@drawable/et_custom_total"
@@ -234,10 +233,10 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="@+id/TextView10" />
+            app:layout_constraintTop_toTopOf="@+id/tv_supplier_box_grn_total_boxes" />
 
         <Button
-            android:id="@+id/bt_wh_grn_save"
+            android:id="@+id/bt_supplier_box_grn_save"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -264,6 +263,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="SpeakableTextPresentCheck" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp">
+
+    <TextView
+        android:id="@+id/TextView2"
+        android:layout_width="0dp"
+        android:layout_height="33dp"
+        android:background="@drawable/et_custom_total"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Carton ID"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/TextView4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/TextView4"
+        android:layout_width="70dp"
+        android:layout_height="33dp"
+        android:background="@drawable/et_custom_total"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Qty"
+        android:gravity="right"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/TextView3"
+        app:layout_constraintTop_toTopOf="@+id/TextView2" />
+
+    <TextView
+        android:id="@+id/TextView3"
+        android:layout_width="60dp"
+        android:layout_height="33dp"
+        android:background="@drawable/et_custom_total"
+        android:hint=""
+        android:padding="8dp"
+        android:text="Audit"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toStartOf="@+id/bt_grn_transfer_item_scan_Select"
+        app:layout_constraintTop_toTopOf="@+id/TextView2" />
+
+    <Button
+        android:id="@+id/bt_grn_transfer_item_scan_Select"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:layout_weight="1"
+        android:background="@color/colorBtn"
+        android:text="Delete"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="@+id/TextView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
