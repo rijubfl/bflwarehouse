@@ -79,6 +79,14 @@ public class BuildingDeliveryPalletControl {
                             rs.getString("Dataname")
                     ));
                 }
+                rs = dbConnection.getResultSet("SELECT a.ShopName,Dataname FROM BFLDATA..ASISTrfHistory a inner join bfldata..datasettings b on a.ShopName = b.ShopName WHERE TrnNo4 = '" + trfNo + "'", objGlobal.getConnection());
+                while (rs.next()) {
+                    shopNames.add(new ShopInfo(
+                            rs.getString("ShopName"),
+                            rs.getString("Dataname")
+                    ));
+                }
+
             } else {
                 rs = dbConnection.getResultSet("select ShopName,Dataname from " + objGlobal.getCountryDbName() + ".dbo.transferheader a inner join bfldata..datasettings b on a.CostCodeTo = b.CostCodeTo and b.Dataname = '" + objGlobal.getCountryDbName() + "'  where trfno = '" + trfNo + "'", objGlobal.getConnection());
                 if (rs.next()) {
@@ -156,14 +164,19 @@ public class BuildingDeliveryPalletControl {
     public Integer transferCount(String trfno) {
         try {
             if (objGlobal.getCountryCode().equals("UAE")) {
+                int trfCount = 0;
                 rs = dbConnection.getResultSet("select count(*) as trfCount from bfldata..transfernoreturn where trfno = '" + trfno + "'", objGlobal.getConnection());
                 if (rs.next()) {
-                    return rs.getInt("trfCount");
-                } else {
-                    return 0;
+                    trfCount = rs.getInt("trfCount");
                 }
+                rs = dbConnection.getResultSet("select count(*) as trfCount from bfldata..ASISTrfHistory where TrnNo4 = '" + trfno + "'", objGlobal.getConnection());
+                if (rs.next()) {
+                    trfCount = trfCount + rs.getInt("trfCount");
+                }
+                return trfCount;
+
             } else {
-                rs = dbConnection.getResultSet("select sum(Quantity) as Quantity from "+objGlobal.getCountryDbName()+".dbo.transferdetail where trfno = '"+trfno+"'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select sum(Quantity) as Quantity from " + objGlobal.getCountryDbName() + ".dbo.transferdetail where trfno = '" + trfno + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     return rs.getInt("Quantity");
                 } else {
