@@ -8,7 +8,7 @@
     android:padding="0dp">
 
     <TextView
-        android:id="@+id/TextView2"
+        android:id="@+id/tv_ticket_supplier_box_grn_container_id"
         android:layout_width="0dp"
         android:layout_height="33dp"
         android:background="@drawable/et_custom_total"
@@ -17,12 +17,12 @@
         android:text="Carton ID"
         android:textColor="@color/coloBlack"
         android:textSize="14dp"
-        app:layout_constraintEnd_toStartOf="@+id/TextView4"
+        app:layout_constraintEnd_toStartOf="@+id/tv_ticket_supplier_box_grn_carton_qty"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/TextView4"
+        android:id="@+id/tv_ticket_supplier_box_grn_carton_qty"
         android:layout_width="70dp"
         android:layout_height="33dp"
         android:background="@drawable/et_custom_total"
@@ -32,11 +32,11 @@
         android:gravity="right"
         android:textColor="@color/coloBlack"
         android:textSize="14dp"
-        app:layout_constraintEnd_toStartOf="@+id/TextView3"
-        app:layout_constraintTop_toTopOf="@+id/TextView2" />
+        app:layout_constraintEnd_toStartOf="@+id/tv_ticket_supplier_box_grn_audit"
+        app:layout_constraintTop_toTopOf="@+id/tv_ticket_supplier_box_grn_container_id" />
 
     <TextView
-        android:id="@+id/TextView3"
+        android:id="@+id/tv_ticket_supplier_box_grn_audit"
         android:layout_width="60dp"
         android:layout_height="33dp"
         android:background="@drawable/et_custom_total"
@@ -46,18 +46,18 @@
         android:textColor="@color/coloBlack"
         android:textSize="14dp"
         android:gravity="center"
-        app:layout_constraintEnd_toStartOf="@+id/bt_grn_transfer_item_scan_Select"
-        app:layout_constraintTop_toTopOf="@+id/TextView2" />
+        app:layout_constraintEnd_toStartOf="@+id/bt_ticket_supplier_box_grn_delete"
+        app:layout_constraintTop_toTopOf="@+id/tv_ticket_supplier_box_grn_container_id" />
 
     <Button
-        android:id="@+id/bt_grn_transfer_item_scan_Select"
+        android:id="@+id/bt_ticket_supplier_box_grn_delete"
         android:layout_width="50dp"
         android:layout_height="30dp"
         android:layout_weight="1"
         android:background="@color/colorBtn"
         android:text="Delete"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="@+id/TextView2"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_ticket_supplier_box_grn_container_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
