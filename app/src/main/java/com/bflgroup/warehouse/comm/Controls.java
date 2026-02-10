@@ -1,9 +1,11 @@
 package com.bflgroup.warehouse.comm;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
+import android.provider.Settings;
 
 import com.bflgroup.warehouse.db.DBConnection;
 
@@ -45,6 +47,7 @@ public class Controls {
             objGlobal.setCountryCode("");
             objGlobal.setTransferPrefixPda("");
             objGlobal.setTransferPrefixRobo("");
+            objGlobal.setValidateGinCustomsClearance("Y");
             if (objGlobal.getWorkLocation().equals("3PL")) {
                 objGlobal.setWarehouse("3PL");
                 return true;
@@ -97,6 +100,8 @@ public class Controls {
                     objGlobal.setMaxTotInBin(rs.getInt("status"));
                 if (rs.getString("descr").toUpperCase().equals("BOXPREFIX"))
                     objGlobal.setCountryWiseBoxPrefix(rs.getString("status"));
+                if (rs.getString("descr").toUpperCase().equals("GINCUSTOMCLEAR"))
+                    objGlobal.setValidateGinCustomsClearance(rs.getString("status"));
             }
 
             rs = objDBConnection.getResultSet("select distinct Warehouse,TransferPrefix,TransferPrefixPda,TransferPrefixRobo " +

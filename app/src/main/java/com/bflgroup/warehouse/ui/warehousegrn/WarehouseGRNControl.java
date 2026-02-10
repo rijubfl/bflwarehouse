@@ -61,8 +61,8 @@ public class WarehouseGRNControl {
             objGlobal.setErrorMessage("Please enter GIN number.");
             return false;
         }
-        String wmsFromLoc = "", wmsToLoc = "", mfcsFromLoc = "", mfcsToLoc = "";
-        boolean skipSkipGinCustomsClearance = false;
+        String mfcsFromLoc = "", mfcsToLoc = "";
+        boolean skipGinCustomsClearance = false;
         String db = objControls.getCountryDb(country);
         if (!checkConnection()) {
             return false;
@@ -78,23 +78,19 @@ public class WarehouseGRNControl {
                 return false;
             }
             rs = dbConnection.getResultSet("select StoreID,RMSStoreID from BFLDATA.dbo.DataSettings where ShopName='" + objWarehouseGRNNewGlobal.getWarehouseFrom() + "'", objGlobal.getConnection());
-            if (rs.next()) {
-                wmsFromLoc = rs.getString("StoreID");
-                mfcsFromLoc = rs.getString("RMSStoreID");
-            }
+            if (rs.next()) mfcsFromLoc = rs.getString("RMSStoreID");
             rs = dbConnection.getResultSet("select StoreID,RMSStoreID from BFLDATA.dbo.DataSettings where ShopName='" + objWarehouseGRNNewGlobal.getWarehouseTo() + "'", objGlobal.getConnection());
-            if (rs.next()) {
-                wmsToLoc = rs.getString("StoreID");
-                mfcsToLoc = rs.getString("RMSStoreID");
-            }
-            rs = dbConnection.getResultSet("Select * from BFLDATA.dbo.SkipGinCustomsClearance where GinNo='" + ginNo + "' and mfcsFromLoc='" + mfcsFromLoc + "' and mfcsToLoc='" + mfcsToLoc + "'", objGlobal.getConnection());
-            if (rs.next()) skipSkipGinCustomsClearance = true;
+            if (rs.next()) mfcsToLoc = rs.getString("RMSStoreID");
 
-            if (!skipSkipGinCustomsClearance) {
-                rs = dbConnection.getResultSet("Select * from BFLDATA.dbo.GINCUSTOMSCLEARANCE where GinNo='" + ginNo + "' and MFCSFROMLOC_PHY='" + mfcsFromLoc + "' and MFCSTOLOC_PHY='" + mfcsToLoc + "'", objGlobal.getConnection());
-                if (!rs.next()) {
-                    objGlobal.setErrorMessage("Customs clearance has not yet been completed for this GIN.");
-                    return false;
+            if(objGlobal.getValidateGinCustomsClearance().equals("Y")) {
+                rs = dbConnection.getResultSet("Select * from BFLDATA.dbo.SkipGinCustomsClearance where GinNo='" + ginNo + "' and mfcsFromLoc='" + mfcsFromLoc + "' and mfcsToLoc='" + mfcsToLoc + "'", objGlobal.getConnection());
+                if (rs.next()) skipGinCustomsClearance = true;
+                if (!skipGinCustomsClearance) {
+                    rs = dbConnection.getResultSet("Select * from BFLDATA.dbo.GINCUSTOMSCLEARANCE where GinNo='" + ginNo + "' and MFCSFROMLOC_PHY='" + mfcsFromLoc + "' and MFCSTOLOC_PHY='" + mfcsToLoc + "'", objGlobal.getConnection());
+                    if (!rs.next()) {
+                        objGlobal.setErrorMessage("Customs clearance has not yet been completed for this GIN.");
+                        return false;
+                    }
                 }
             }
             rs = dbConnection.getResultSet("select * from " + db + ".dbo.WHGRNDetails where GINNo='" + ginNo + "'", objGlobal.getConnection());
@@ -314,8 +310,10 @@ public class WarehouseGRNControl {
             if (!allowMismatch) {
                 rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=0", objGlobal.getConnection());
                 if (rs.next()) {
-                    objGlobal.setErrorMessage(rs.getString("cnt") + " boxes are not scanned yet. Please scan them before you try to save.");
-                    return false;
+                    if (rs.getInt("cnt") > 0) {
+                        objGlobal.setErrorMessage(rs.getString("cnt") + " boxes are not scanned yet. Please scan them before you try to save.");
+                        return false;
+                    }
                 }
             }
             if (autoPost.equals("Y")) {

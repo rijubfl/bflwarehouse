@@ -177,31 +177,35 @@ public class PalletBoxCountFragment extends Fragment {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                    String pallet = et_rack_in_out_pallettop.getText().toString();
-                    String warehouse = tv_rack_in_out_warehouse.getText().toString();
-                    if(pallet.equals("")){
-                        okMessage("Alert", "Pallet number should not be empty");
-                    }else {
-                        if (isPalletvalid(pallet,warehouse)) {
-                            //isvalidrack = true;
-                            ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.loadBoxespallet(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString());
-                            objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
-                            lv_details.setAdapter(objMyListBoxAdapter);
-                            objMyListBoxAdapter.notifyDataSetChanged();
-
-                            et_rack_in_out_BoxCount.setEnabled(true);
-                            et_rack_in_out_BoxCount.setFocusable(true);
-
-                            String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase(),tv_rack_in_out_warehouse.getText().toString());
-                            box_count_pallet1.setText(BoxCountPallet1);
-
-                            return true;
+                    try {
+                        String pallet = et_rack_in_out_pallettop.getText().toString();
+                        String warehouse = tv_rack_in_out_warehouse.getText().toString();
+                        if (pallet.equals("")) {
+                            okMessage("Alert", "Pallet number should not be empty");
                         } else {
-                            et_rack_in_out_pallettop.setText("");
-                            et_rack_in_out_pallettop.requestFocus();
-                            // isvalidrack = false;
+                            if (isPalletvalid(pallet, warehouse)) {
+                                //isvalidrack = true;
+                                ArrayList<BoxItemList> listBinScanToteId = objPalletBoxCountControl.loadBoxespallet(et_rack_in_out_pallettop.getText().toString(), tv_rack_in_out_warehouse.getText().toString());
+                                objMyListBoxAdapter = new MyListBoxAdapter(listBinScanToteId);
+                                lv_details.setAdapter(objMyListBoxAdapter);
+                                objMyListBoxAdapter.notifyDataSetChanged();
 
+                                et_rack_in_out_BoxCount.setEnabled(true);
+                                et_rack_in_out_BoxCount.setFocusable(true);
+
+                                String BoxCountPallet1 = objPalletBoxCountControl.BoxPalletCount(et_rack_in_out_pallettop.getText().toString().toUpperCase(), tv_rack_in_out_warehouse.getText().toString());
+                                box_count_pallet1.setText(BoxCountPallet1);
+
+                                return true;
+                            } else {
+                                et_rack_in_out_pallettop.setText("");
+                                et_rack_in_out_pallettop.requestFocus();
+                                // isvalidrack = false;
+
+                            }
                         }
+                    } catch(Exception e){
+                        okMessage("",e.toString());
                     }
 
                 } else {
@@ -354,8 +358,8 @@ public class PalletBoxCountFragment extends Fragment {
 //                et_rack_in_out_BoxCount.setFocusable(true);
 //                et_rack_in_out_BoxCount.requestFocus();
 
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                okMessage("",e.toString());
             }
             return true;
         }

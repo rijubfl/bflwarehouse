@@ -30,6 +30,9 @@ public class Global {
     private static String userPrinterName;
     private static String fcCode;
     private static String deviceName;
+    private static String deviceMacId;
+    private static String deviceBluToothId;
+    private static String deviceSerialNo;
     private static boolean enterQty;
     private static boolean hideKeyPad;
 
@@ -59,6 +62,7 @@ public class Global {
     private List<String> bluetoothDevices;
     private static String bluetoothDevicesAvailable;
     private List<String> warehouseCountry;
+    private String validateGinCustomsClearance;
 
     private static String userAllowMixCategoryBuild;
 
@@ -495,5 +499,37 @@ public class Global {
 
     public static void setRoboChuteMapingAPIToken(String roboChuteMapingAPIToken) {
         Global.roboChuteMapingAPIToken = roboChuteMapingAPIToken;
+    }
+
+    public static String getDeviceMacId() {
+        return deviceMacId;
+    }
+
+    public static void setDeviceMacId(String deviceMacId) {
+        Global.deviceMacId = deviceMacId;
+    }
+
+    public static String getDeviceBluToothId() {
+        return deviceBluToothId;
+    }
+
+    public static void setDeviceBluToothId(String deviceBluToothId) {
+        Global.deviceBluToothId = deviceBluToothId;
+    }
+
+    public static String getDeviceSerialNo() {
+        return deviceSerialNo;
+    }
+
+    public static void setDeviceSerialNo(String deviceSerialNo) {
+        Global.deviceSerialNo = deviceSerialNo;
+    }
+
+    public String getValidateGinCustomsClearance() {
+        return validateGinCustomsClearance;
+    }
+
+    public void setValidateGinCustomsClearance(String validateGinCustomsClearance) {
+        this.validateGinCustomsClearance = validateGinCustomsClearance;
     }
 }

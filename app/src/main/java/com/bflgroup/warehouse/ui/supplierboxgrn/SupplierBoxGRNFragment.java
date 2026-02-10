@@ -1,5 +1,6 @@
 package com.bflgroup.warehouse.ui.supplierboxgrn;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -31,6 +33,7 @@ import com.bflgroup.warehouse.R;
 import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.ui.warehousegrn.WarehouseGRNFragment;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +53,11 @@ public class SupplierBoxGRNFragment extends Fragment {
     private TextView tv_supplier_box_grn_total_boxes;
     private TextView tv_supplier_box_grn_total_qty;
     private Button bt_supplier_box_grn_save;
+
+    private Spinner sp_supplier_box_grn_popup_po;
+    private TextInputEditText tv_supplier_box_grn_popup_log_boxno;
+    private Button bt_supplier_box_grn_popup_print;
+    private Button bt_supplier_box_grn_popup_close;
 
     private SupplierBoxGRNSharedRef saredRef;
 
@@ -124,6 +132,13 @@ public class SupplierBoxGRNFragment extends Fragment {
             lv_supplier_box_grn.setAdapter(objMySupplierBoxGRNScannedBoxItemsAdp);
             et_supplier_box_grn_carton_id.requestFocus();
         }
+
+        bt_supplier_box_grn_generate_carton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openPopupGenerateNewBox();
+            }
+        });
 
         bt_supplier_box_grn_load_cont.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -265,7 +280,7 @@ public class SupplierBoxGRNFragment extends Fragment {
                     b_Result = objSupplierBoxGRNControl.validateSupplierBoxGrn(contid);
                     if (!b_Result) return 0;
                 }
-                b_Result = objSupplierBoxGRNControl.scanCarton(loadCont, contid, boxid, audit, po);
+                b_Result = objSupplierBoxGRNControl.scanCarton(loadCont, contid, boxid, audit);
                 if (!b_Result) return 0;
             } catch (Exception e) {
                 objGlobal.setErrorMessage(e.toString());
@@ -347,6 +362,9 @@ public class SupplierBoxGRNFragment extends Fragment {
             TextView tv_ticket_supplier_box_grn_container_id = (TextView) myView.findViewById(R.id.tv_ticket_supplier_box_grn_container_id);
             tv_ticket_supplier_box_grn_container_id.setText(String.valueOf(s.cartonId));
 
+            TextView tv_ticket_supplier_box_grn_po = (TextView) myView.findViewById(R.id.tv_ticket_supplier_box_grn_po);
+            tv_ticket_supplier_box_grn_po.setText(String.valueOf(s.po));
+
             TextView tv_ticket_supplier_box_grn_carton_qty = (TextView) myView.findViewById(R.id.tv_ticket_supplier_box_grn_carton_qty);
             tv_ticket_supplier_box_grn_carton_qty.setText(String.valueOf(s.cartonQty));
 
@@ -411,6 +429,67 @@ public class SupplierBoxGRNFragment extends Fragment {
         }
     }
 
+    private class GenerateNewLogisticBox extends AsyncTask<Void, Void, Integer> {
+        private ProgressDialog dialog;
+        String contid, audit, po;
+
+        public GenerateNewLogisticBox(Context context) {
+            dialog = new ProgressDialog(getContext());
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Please wait...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+            contid = et_supplier_box_grn_container_id.getText().toString();
+            po = sp_supplier_box_grn_popup_po.getSelectedItem().toString();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... args) {
+            audit = "Y";
+            try {
+                b_Result = objSupplierBoxGRNControl.generateLogisticBoxAndPrint(contid, po, audit);
+                if (!b_Result) return 0;
+            } catch (Exception e) {
+                objGlobal.setErrorMessage(e.toString());
+                return 0;
+            }
+            return 1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (result == 0) {
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                okMessage("Supplier Box GRN", objGlobal.getErrorMessage());
+
+                    et_supplier_box_grn_carton_id.setText("");
+                    et_supplier_box_grn_carton_id.requestFocus();
+
+            } else {
+                SupplierBoxGRNGlobal.setTotalScanBoxCnt(0);
+                SupplierBoxGRNGlobal.setTotalScanQty(0);
+
+                listSupplierBoxGRNScannedBoxItems.clear();
+                listSupplierBoxGRNScannedBoxItems = objSupplierBoxGRNControl.loadSupplierBoxGRNScannedBox(contid);
+                objMySupplierBoxGRNScannedBoxItemsAdp = new SupplierBoxGRNFragment.MySupplierBoxGRNScannedBoxItemsAdp(listSupplierBoxGRNScannedBoxItems);
+                lv_supplier_box_grn.setAdapter(objMySupplierBoxGRNScannedBoxItemsAdp);
+
+                tv_supplier_box_grn_total_boxes.setText("Total Boxes : " + SupplierBoxGRNGlobal.getTotalScanBoxCnt());
+                tv_supplier_box_grn_total_qty.setText("Total Qty : " + SupplierBoxGRNGlobal.getTotalScanQty());
+
+                sp_supplier_box_grn_popup_po.setSelection(0);
+
+                if (dialog.isShowing()) dialog.dismiss();
+            }
+        }
+    }
 
     private boolean clearAll() {
         b_Result = objSupplierBoxGRNControl.clearAll();
@@ -440,6 +519,60 @@ public class SupplierBoxGRNFragment extends Fragment {
         return true;
     }
 
+    private void openPopupGenerateNewBox() {
+        Dialog myDialog;
+        myDialog = new Dialog(getContext());
+        myDialog.setCancelable(false);
+        myDialog.setContentView(R.layout.popup_supplier_box_grn_generate_carton);
+
+        sp_supplier_box_grn_popup_po = (Spinner) myDialog.findViewById(R.id.sp_supplier_box_grn_popup_po);
+        tv_supplier_box_grn_popup_log_boxno = (TextInputEditText) myDialog.findViewById(R.id.tv_supplier_box_grn_popup_log_boxno);
+        bt_supplier_box_grn_popup_print = (Button) myDialog.findViewById(R.id.bt_supplier_box_grn_popup_print);
+        bt_supplier_box_grn_popup_close = (Button) myDialog.findViewById(R.id.bt_supplier_box_grn_popup_close);
+
+        List<String> arr1 = objSupplierBoxGRNControl.loadPo(et_supplier_box_grn_container_id.getText().toString());
+        ArrayAdapter<String> arrayAdp5 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
+        sp_supplier_box_grn_popup_po.setAdapter(arrayAdp5);
+
+        sp_supplier_box_grn_popup_po.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                tv_supplier_box_grn_popup_log_boxno.setText("");
+                if (position != 0) {
+                    tv_supplier_box_grn_popup_log_boxno.setText(objSupplierBoxGRNControl.generateLogisticBox(et_supplier_box_grn_container_id.getText().toString(),
+                            sp_supplier_box_grn_popup_po.getSelectedItem().toString()));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
+
+        bt_supplier_box_grn_popup_print.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sp_supplier_box_grn_popup_po.getSelectedItem().toString().isEmpty()) {
+                    okMessage("Supplier Box GRN","Please enter PO");
+                    sp_supplier_box_grn_popup_po.requestFocus();
+                } else {
+                    loadCont="N";
+                    new GenerateNewLogisticBox(getContext()).execute();
+                }
+            }
+        });
+
+        bt_supplier_box_grn_popup_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        });
+
+        myDialog.show();
+        sp_supplier_box_grn_popup_po.requestFocus();
+    }
 
     void vibrate(int duration) {
         Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);

@@ -6,6 +6,7 @@ import com.bflgroup.warehouse.db.DBConnection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SupplierBoxGRNControl {
 
@@ -36,19 +37,19 @@ public class SupplierBoxGRNControl {
         return true;
     }
 
-    public boolean scanCarton(String contscan, String contid,String cartonId, String audit, String po) {
+    public boolean scanCarton(String contscan, String contid,String cartonId, String audit) {
         if (!checkConnection()) {
             return false;
         }
         try {
             if (contscan.equals("Y")) {
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpSupplierBoxGrn select '" + objGlobal.getDeviceName() + "',ContNo,bol,'',itemcode,orgqty,'',null,'N' " +
-                        "from usa.dbo.USAOrgFile where ContNo='" + contid + "'", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpSupplierBoxGrn(DeviceId,ContId,CartonId,PO,LogBox,OrgQty,AuditReq,ScanDtTm,scan) select '" + objGlobal.getDeviceName() + "'," +
+                        "ContNo,bol,ORAPONo,'N',sum(orgqty),'',null,'N' from usa.dbo.USAOrgFile where ContNo='" + contid + "' group by ContNo,bol,ORAPONo", objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
             } else {
-                rs = dbConnection.getResultSet("select top 1 * from bfldata.dbo.tmpSupplierBoxGrn where DeviceId='" + objGlobal.getDeviceName() + "' and ContId='" + contid + "' and " +
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpSupplierBoxGrn where DeviceId='" + objGlobal.getDeviceName() + "' and ContId='" + contid + "' and " +
                         "CartonId='" + cartonId + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     if (rs.getString("scan").equals("Y")) {
@@ -72,17 +73,74 @@ public class SupplierBoxGRNControl {
         }
     }
 
+    List<String> loadPo(String contno) {
+        if (!checkConnection()) {
+            return null;
+        }
+        List<String> arr;
+        arr = new ArrayList<String>();
+        try {
+            rs = dbConnection.getResultSet("select PO='--Select PO--' union all select distinct PO from bfldata.dbo.tmpSupplierBoxGrn where DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                    "ContId='" + contno + "' order by po", objGlobal.getConnection());
+            while (rs.next()) {
+                arr.add(rs.getString("PO"));
+            }
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("SupplierBoxGRNControl:loadPo:" + ex);
+            return null;
+        }
+        return arr;
+    }
+
+    public String generateLogisticBox(String contid, String po) {
+        if (!checkConnection()) {
+            return "";
+        }
+        try {
+            String logPalletNo = "";
+            int autoSn = 0;
+            rs = dbConnection.getResultSet("select en=isnull(max(cast(REPLACE(right(palletno,3),'/','')as int)),0) from usa.dbo.UsaPallets where contno='" + contid + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                autoSn = Integer.parseInt(rs.getString("en"));
+            }
+            logPalletNo = contid + "-" + po + "/" + String.format("%03d", autoSn);
+            return logPalletNo;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("SupplierBoxGRNControl:validateGrn:" + ex);
+            return "";
+        }
+    }
+
+    public boolean generateLogisticBoxAndPrint(String contid, String po,String audit) {
+        if (!checkConnection()) {
+            return false;
+        }
+        try {
+            String logPalletNo = generateLogisticBox(contid, po);
+            if (logPalletNo.isEmpty()) return false;
+            if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpSupplierBoxGrn(DeviceId,ContId,CartonId,PO,LogBox,OrgQty,AuditReq,ScanDtTm,scan) " +
+                    "values ('" + objGlobal.getDeviceName() + "','" + contid + "','" + logPalletNo + "','" + po + "','Y',0,'" + audit + "',getdate(),'Y')", objGlobal.getConnection())) {
+                objGlobal.getConnection().rollback();
+                return false;
+            }
+            return true;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("SupplierBoxGRNControl:validateGrn:" + ex);
+            return false;
+        }
+    }
+
     public ArrayList<SupplierBoxGRNScannedBoxTicket> loadSupplierBoxGRNScannedBox(String ContId) {
         ArrayList<SupplierBoxGRNScannedBoxTicket> listSupplierBoxGRNScannedBoxTicket = new ArrayList<SupplierBoxGRNScannedBoxTicket>();
         try {
             SupplierBoxGRNGlobal.setTotalScanQty(0);
             SupplierBoxGRNGlobal.setTotalScanBoxCnt(0);
-            rs = dbConnection.getResultSet("select ContId,CartonId,PO,OrgQty=sum(OrgQty),AuditReq,ScanDtTm from bfldata.dbo.tmpSupplierBoxGrn where " +
-                    "DeviceId='" + objGlobal.getDeviceName() + "' and scan='Y' and ContId='" + ContId + "' group by ContId,CartonId,PO,AuditReq,ScanDtTm order by ScanDtTm desc", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select ContId,CartonId,PO,LogBox,OrgQty,AuditReq,ScanDtTm from bfldata.dbo.tmpSupplierBoxGrn where " +
+                    "DeviceId='" + objGlobal.getDeviceName() + "' and scan='Y' and ContId='" + ContId + "' order by ScanDtTm desc", objGlobal.getConnection());
             while (rs.next()) {
                 listSupplierBoxGRNScannedBoxTicket.add(new SupplierBoxGRNScannedBoxTicket(rs.getString("CartonId"),rs.getString("PO"),rs.getInt("OrgQty"),rs.getString("AuditReq")));
             }
-            rs = dbConnection.getResultSet("select cnt=count(distinct CartonId),qty=sum(OrgQty) from bfldata.dbo.tmpSupplierBoxGrn where DeviceId='" + objGlobal.getDeviceName() + "' and " +
+            rs = dbConnection.getResultSet("select cnt=count(CartonId),qty=sum(OrgQty) from bfldata.dbo.tmpSupplierBoxGrn where DeviceId='" + objGlobal.getDeviceName() + "' and " +
                     "scan='Y' and ContId='" + ContId + "'", objGlobal.getConnection());
             if (rs.next()) {
                 SupplierBoxGRNGlobal.setTotalScanQty(rs.getInt("qty"));

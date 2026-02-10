@@ -21,7 +21,7 @@ public class GinVerificationControl {
     public GinVerificationControl() {
         objGlobal.setDbName("BFLDATA");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("GinVerificationControl : Connection error");
         }
     }
@@ -29,9 +29,9 @@ public class GinVerificationControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("BFLDATA");
-        if (dbConnection.checkConnectionClosed() == false) {
+        if (!dbConnection.checkConnectionClosed()) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("GinVerificationControl.checkConnection : Connection error");
                 return false;
             }
@@ -40,6 +40,9 @@ public class GinVerificationControl {
     }
 
     public boolean validateGin(String ginNo, boolean forSave) {
+        boolean allowMismatch = false;
+        boolean skipGinCustomsClearance = false;
+        String mfcsFromLoc = "", mfcsToLoc = "";
         if (TextUtils.isEmpty(ginNo)) {
             objGlobal.setErrorMessage("Gin Number is empty");
             return false;
@@ -52,23 +55,52 @@ public class GinVerificationControl {
                 objGlobal.setErrorMessage("saveGinVerification:001:");
                 return false;
             }
-            if (objGlobal.getCountryCode().equals("UAE")) {
-                rs = dbConnection.getResultSet("select * from bfldata.dbo.vgoodsissuePLt where srno=" + ginNo, objGlobal.getConnection());
-            } else {
-                rs = dbConnection.getResultSet("select * from bfldata.dbo.GoodsIssue where Sn=" + ginNo, objGlobal.getCloudCon());
-            }
+            rs = dbConnection.getResultSet("select cnt=count(distinct TrfNo) from bfldata.dbo.tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "' and Verified='Y'", objGlobal.getConnection());
             if (!rs.next()) {
-                objGlobal.setErrorMessage("Invalid GIN Number");
+                objGlobal.setErrorMessage("No record found for Save");
                 return false;
             }
-            if (!objGlobal.getCountryCode().equals("UAE")) {
+            if (objGlobal.getCountryCode().equals("UAE")) {
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.vgoodsissuePLt where srno=" + ginNo, objGlobal.getConnection());
+                if (!rs.next()) {
+                    objGlobal.setErrorMessage("Invalid GIN Number");
+                    return false;
+                }
+            } else {
+                mfcsFromLoc = "JAFZA";
+                rs = dbConnection.getResultSet("select * from bfldata.dbo.GoodsIssue where Sn=" + ginNo, objGlobal.getCloudCon());
+                if (!rs.next()) {
+                    objGlobal.setErrorMessage("Invalid GIN Number");
+                    return false;
+                }
                 rs = dbConnection.getResultSet("select * from BFLDATA.dbo.contreceiptExport where GinNo='" + ginNo + "'", objGlobal.getConnection());
                 if (!rs.next()) {
                     objGlobal.setErrorMessage("Container not received yet");
                     return false;
                 }
+                if (objGlobal.getValidateGinCustomsClearance().equals("Y")) {
+                    rs = dbConnection.getResultSet("Select * from BFLDATA.dbo.SkipGinCustomsClearance where GinNo='" + ginNo + "' and mfcsFromLoc='" + mfcsFromLoc + "'", objGlobal.getConnection());
+                    if (rs.next()) skipGinCustomsClearance = true;
+                    if (!skipGinCustomsClearance) {
+                        rs = dbConnection.getResultSet("Select * from BFLDATA.dbo.GINCUSTOMSCLEARANCE where GinNo='" + ginNo + "' and MFCSFROMLOC_PHY='" + mfcsFromLoc + "'", objGlobal.getConnection());
+                        if (!rs.next()) {
+                            objGlobal.setErrorMessage("Customs clearance has not yet been completed for this GIN.");
+                            return false;
+                        }
+                    }
+                }
             }
-            if (!forSave) {
+            if (forSave) {
+                rs = dbConnection.getResultSet("select * from BFLDATA.dbo.WhGrnAllowMissing where Ginno='" + ginNo + "'", objGlobal.getConnection());
+                if (rs.next()) allowMismatch = true;
+                if (!allowMismatch) {
+                    rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "' and Verified<>'Y'", objGlobal.getConnection());
+                    if (rs.next()) {
+                        objGlobal.setErrorMessage(rs.getString("cnt") + " boxes are not scanned yet. Please scan them before you try to save.");
+                        return false;
+                    }
+                }
+            } else {
                 if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                     return false;
                 }
@@ -96,7 +128,7 @@ public class GinVerificationControl {
                     }
                 }
                 if (!dbConnection.insertUpdate("update bfldata.dbo.tmpGinVerify set Verified=b.Verified from bfldata.dbo.tmpGinVerify a,BFLDATA.dbo.VerifyGin b where a.DeviceId='" + objGlobal.getDeviceName() + "' and " +
-                        "a.TrfNo=b.TrfNo and b.GinNo="+ginNo, objGlobal.getConnection())) {
+                        "a.TrfNo=b.TrfNo and b.GinNo=" + ginNo, objGlobal.getConnection())) {
                     return false;
                 }
             }

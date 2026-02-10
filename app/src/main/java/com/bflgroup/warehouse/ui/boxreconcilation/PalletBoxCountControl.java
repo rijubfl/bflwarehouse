@@ -163,7 +163,7 @@ public class PalletBoxCountControl {
                     "and (b.BoxNo='" + Boxno + "' or TotiD = '" + Boxno + "' )   and a.Closed='N'", objGlobal.getConnection());
             if (rs1.next()) {
                 box = rs1.getString("boxno");
-                toteid = rs1.getString("toteid");
+                toteid = rs1.getString("TotiD");
                 PalletBoxCountGlobal.setBoxNo(box);
                 PalletBoxCountGlobal.setToteId(toteid);
 

@@ -17,13 +17,26 @@
         android:text="Carton ID"
         android:textColor="@color/coloBlack"
         android:textSize="14dp"
-        app:layout_constraintEnd_toStartOf="@+id/tv_ticket_supplier_box_grn_carton_qty"
+        app:layout_constraintEnd_toStartOf="@+id/tv_ticket_supplier_box_grn_po"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tv_ticket_supplier_box_grn_po"
+        android:layout_width="125dp"
+        android:layout_height="33dp"
+        android:background="@drawable/et_custom_total"
+        android:hint=""
+        android:padding="8dp"
+        android:text="PO"
+        android:textColor="@color/coloBlack"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_ticket_supplier_box_grn_carton_qty"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/tv_ticket_supplier_box_grn_carton_qty"
-        android:layout_width="70dp"
+        android:layout_width="60dp"
         android:layout_height="33dp"
         android:background="@drawable/et_custom_total"
         android:hint=""
@@ -37,7 +50,7 @@
 
     <TextView
         android:id="@+id/tv_ticket_supplier_box_grn_audit"
-        android:layout_width="60dp"
+        android:layout_width="50dp"
         android:layout_height="33dp"
         android:background="@drawable/et_custom_total"
         android:hint=""

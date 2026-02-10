@@ -1,12 +1,21 @@
 package com.bflgroup.warehouse;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.app.admin.DeviceAdminInfo;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.net.wifi.aware.WifiAwareChannelInfo;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,14 +28,18 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bflgroup.warehouse.comm.Controls;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.comm.SaredRef;
 import com.bflgroup.warehouse.db.DBConnection;
 
+import java.net.NetworkInterface;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
@@ -179,11 +192,7 @@ public class LoginActivity extends AppCompatActivity {
             signInPasssword.requestFocus();
             return false;
         }
-        objGlobal.setDeviceName(Secure.getString(getContentResolver(), Secure.ANDROID_ID));
-        if (TextUtils.isEmpty(objGlobal.getDeviceName())) {
-            objGlobal.setErrorMessage("Device name is blank");
-            return false;
-        }
+        if (!deviceInfo()) return false;
         try {
             rs = dbConnection.getResultSet("select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'", objGlobal.getCloudCon());
             if (rs.next()) {
@@ -242,9 +251,13 @@ public class LoginActivity extends AppCompatActivity {
                     return false;
                 }
             }
-            if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
-                objGlobal.setErrorNo("transferReceipt:007");
-            }
+            if (!dbConnection.getServerDateTime(objGlobal.getConnection())) return false;
+
+            if(!dbConnection.insertUpdate("insert into bfldata.dbo.WHPdaUserVersion(userid,username,DeviceVersion,loginDate,Logintime,warehouse,devicename,macid,bluetoothid," +
+                    "serialnumber) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + getResources().getString(R.string.app_version) + "','" + objGlobal.getServerDate() + "'," +
+                    "'" + objGlobal.getServerTime() + "','" + objGlobal.getWarehouse() + "','" + objGlobal.getDeviceName() + "','" + Global.getDeviceMacId() + "','" + Global.getDeviceBluToothId() + "'," +
+                    "'" + Global.getDeviceSerialNo() + "')", objGlobal.getConnection())) return false;
+
             query = "select * from bfldata..LoginUserPda where Username = '" + objGlobal.getUserName() + "'  and Active = 'Y' and  CONVERT(DATE, trndate) = CONVERT(DATE, getdate()) ";
             rs1 = dbConnection.getResultSet(query, objGlobal.getConnection());
             if (rs1.next()) {
@@ -252,18 +265,16 @@ public class LoginActivity extends AppCompatActivity {
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                 if (rs.next()) {
                     dbConnection.insertUpdate("delete from bfldata.dbo.LoginUserPda where Username = '" + objGlobal.getUserName() + "'  and Active = 'Y'", objGlobal.getConnection());
-                    dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection());
+                    dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "'," +
+                            "'" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection());
                     return true;
                 }
                 objGlobal.setErrorMessage("User Already logged In to another Device on - " + rs1.getString("Trndate"));
                 return false;
+            } else {
+                if(!dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "'," +
+                        "'" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection())) return false;
             }
-        else {
-                dbConnection.insertUpdate("insert into bfldata.dbo.LoginUserPda (userid, Username, PDADevicename, Trndate, Active) values(" + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "',(select getdate()), 'Y')", objGlobal.getConnection());
-            }
-            dbConnection.insertUpdate("insert into bfldata.dbo.WHPdaUserVersion(userid,username,DeviceVersion,loginDate,Logintime,warehouse)values(" + objGlobal.getUserId() + "," +
-                    "'" + objGlobal.getUserName() + "','" + getResources().getString(R.string.app_version) + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +
-                    "'" + objGlobal.getWarehouse() + "')", objGlobal.getConnection());
             return true;
         } catch (Exception ex) {
             objGlobal.setErrorMessage("LoginActivity:validateUser:" + ex);
@@ -280,8 +291,42 @@ public class LoginActivity extends AppCompatActivity {
             }
             return "";
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("GrnTransferControl:getLatestGrnRf:" + ex.toString());
+            objGlobal.setErrorMessage("LoginActivity:getLatestGrnRf:" + ex);
             return "";
+        }
+    }
+
+    public boolean deviceInfo() {
+        objGlobal.setDeviceName("");
+        Global.setDeviceMacId("");
+        Global.setDeviceBluToothId("");
+        Global.setDeviceSerialNo("");
+        try {
+            objGlobal.setDeviceName(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+            if (objGlobal.getDeviceName().isEmpty()) {
+                objGlobal.setErrorMessage("objGlobal.getDeviceName() is empty");
+                return false;
+            }
+            Global.setDeviceMacId("N/A");
+            if (Global.getDeviceMacId().isEmpty()) {
+                objGlobal.setErrorMessage("objGlobal.getDeviceMacId() is empty");
+                return false;
+            }
+            Global.setDeviceBluToothId("N/A");
+            if (Global.getDeviceBluToothId().isEmpty()) {
+                objGlobal.setErrorMessage("objGlobal.getDeviceBluToothId() is empty");
+                return false;
+            }
+            //original device name
+            Global.setDeviceSerialNo(Settings.Global.getString(this.getContentResolver(),"device_name"));
+            if (Global.getDeviceSerialNo().isEmpty()) {
+                objGlobal.setErrorMessage("objGlobal.getDeviceSerialNo() is empty");
+                return false;
+            }
+            return true;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("LoginActivity:deviceInfo:" + ex);
+            return false;
         }
     }
 

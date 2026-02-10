@@ -135,7 +135,7 @@
             android:padding="8dp"
             android:text="Scanned Cartons"
             android:textColor="@color/coloBlack"
-            android:textSize="14dp"
+            android:textSize="13dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -151,15 +151,30 @@
             android:padding="8dp"
             android:text="Carton ID"
             android:textColor="@color/coloBlack"
-            android:textSize="14dp"
+            android:textSize="13dp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/TextView4"
+            app:layout_constraintEnd_toStartOf="@+id/TextView11"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
         <TextView
+            android:id="@+id/TextView11"
+            android:layout_width="125dp"
+            android:layout_height="33dp"
+            android:background="@drawable/et_custom_total"
+            android:gravity="center"
+            android:hint=""
+            android:padding="8dp"
+            android:text="PO"
+            android:textColor="@color/coloBlack"
+            android:textSize="13dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/TextView4"
+            app:layout_constraintTop_toTopOf="@+id/TextView2" />
+
+        <TextView
             android:id="@+id/TextView4"
-            android:layout_width="70dp"
+            android:layout_width="60dp"
             android:layout_height="33dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"
@@ -167,14 +182,14 @@
             android:padding="8dp"
             android:text="Qty"
             android:textColor="@color/coloBlack"
-            android:textSize="14dp"
+            android:textSize="13dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/TextView3"
             app:layout_constraintTop_toTopOf="@+id/TextView2" />
 
         <TextView
             android:id="@+id/TextView3"
-            android:layout_width="60dp"
+            android:layout_width="50dp"
             android:layout_height="33dp"
             android:background="@drawable/et_custom_total"
             android:hint=""
@@ -182,7 +197,7 @@
             android:padding="8dp"
             android:text="Audit"
             android:textColor="@color/coloBlack"
-            android:textSize="14dp"
+            android:textSize="13dp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/TextView6"
             app:layout_constraintTop_toTopOf="@+id/TextView2" />

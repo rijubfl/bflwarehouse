@@ -218,7 +218,7 @@ public class ChuteCheckInCheckOutControl {
             }
             return rs.next();
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:validateTotidUsed:" + ex.toString());
+            objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:validateTotidUsed:" + ex);
             return false;
         }
     }

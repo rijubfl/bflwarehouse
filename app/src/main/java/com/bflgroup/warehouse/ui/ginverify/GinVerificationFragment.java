@@ -235,9 +235,7 @@ public class GinVerificationFragment extends Fragment {
         protected Integer doInBackground(Void... args) {
             try {
                 b_Result = objGinVerificationControl.validateGin(et_gin_verification_ginno.getText().toString(),false);
-                if (b_Result == false) {
-                    return 0;
-                }
+                if (!b_Result) return 0;
             } catch (Exception e) {
                 return 0;
             }

@@ -3,40 +3,63 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="270dp"
+    android:layout_width="290dp"
     android:padding="4dp"
     android:background="@color/colorBackPopup"
     android:layout_gravity="center"
-    android:layout_height="160dp">
+    android:layout_height="180dp">
 
-    <EditText
-        android:id="@+id/et_supplier_box_grn_popup_po"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/TextView1"
+        android:layout_width="50dp"
         android:layout_height="40dp"
         android:background="@drawable/et_custom"
-        android:hint="PO"
-        android:inputType="textPersonName"
+        android:gravity="left"
+        android:hint=""
         android:padding="10dp"
+        android:text="PO"
         android:textColor="@color/coloBlack"
         android:textSize="14dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/et_supplier_box_grn_popup_supervisor_pwd"
+    <Spinner
+        android:id="@+id/sp_supplier_box_grn_popup_po"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/et_custom"
-        android:hint="Supervisor Password"
-        android:inputType="numberPassword"
-        android:padding="10dp"
-        android:textColor="@color/coloBlack"
-        android:textSize="14dp"
+        android:layout_marginLeft="3dp"
+        android:background="@drawable/et_custom_total"
+        android:gravity="left"
+        android:hint=""
+        android:padding="8dp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_supplier_box_grn_popup_po" />
+        app:layout_constraintStart_toEndOf="@+id/TextView1"
+        app:layout_constraintTop_toTopOf="@+id/TextView1" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:hint="New Logistic Box"
+        app:layout_constraintTop_toBottomOf="@+id/TextView1"
+        tools:layout_editor_absoluteX="4dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tv_supplier_box_grn_popup_log_boxno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/et_custom"
+            android:gravity="left"
+            android:inputType="textPersonName"
+            android:enabled="false"
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/bt_supplier_box_grn_popup_print"
@@ -76,6 +99,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="SpeakableTextPresentCheck" />
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

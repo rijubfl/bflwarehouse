@@ -28,8 +28,13 @@ public class UsaBoxBuildingGlobal {
     private String pPreparedby;
 
 
-    public String getBoxNo() { return boxNo; }
-    public void setBoxNo(String boxNo) { this.boxNo = boxNo; }
+    public String getBoxNo() {
+        return boxNo;
+    }
+
+    public void setBoxNo(String boxNo) {
+        this.boxNo = boxNo;
+    }
 
     public static synchronized UsaBoxBuildingGlobal getInstance() {
         if (instance == null) {

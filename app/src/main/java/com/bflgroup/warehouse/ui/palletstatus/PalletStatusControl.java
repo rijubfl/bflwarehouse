@@ -165,57 +165,23 @@ public class PalletStatusControl {
                 golden = "Y";
             }
 
+            status="";
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.PalletType where PalletType='" + pltType + "' and DirectProduction='Y'", objGlobal.getConnection());
+            if (rs.next()) status = "PRODUCTION - D";
 
-            rs = dbConnection.getResultSet("select boxno,PalletType from usa.dbo.vUPCBoxDet where closed='N' and PalletNo='" + scan + "'", objGlobal.getConnection());
-            while (rs.next()) {
-                boxno = rs.getString("boxno");
-                pltType = rs.getString("PalletType");
-                rs = dbConnection.getResultSet("select * from usa..OverrideMaxQtyHeader where boxno='" + boxno + "' and DATEDIFF(DAY, GETDATE(), EntryDate) BETWEEN -2 AND 0 ", objGlobal.getConnection());
+            if(status.isEmpty()) {
+                rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where (PalletNo='" + palletno + "' or boxno='" + boxno + "')", objGlobal.getConnection());
                 if (rs.next()) {
-                    status = "BOX PICKING ";
-                    break;
+                    status = "PRODUCTION - S";
+                    checkingType = rs.getString("checkingType");
                 }
-                rs = dbConnection.getResultSet("select * from bfldata.dbo.PalletType where PalletType='" + pltType + "' and DirectProduction='Y'", objGlobal.getConnection());
-                if (rs.next()) {
-                    status = "PRODUCTION - D";
-                } else {
-                    rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where boxno='" + boxno + "'", objGlobal.getConnection());
-                    if (rs.next()) {
-                        status = "PRODUCTION - S";
-                    } else {
-                        if (status.contains("PRODUCTION")) {
-                            status = "BOX PICKING ";
-                            break;
-                        }
-                    }
-                }
-
+            }
+            if(status.isEmpty()) {
+                rs = dbConnection.getResultSet("select * from usa.dbo.OverrideMaxQtyHeader where boxno='" + boxno + "' and DATEDIFF(DAY, GETDATE(), EntryDate) BETWEEN -2 AND 0 ", objGlobal.getConnection());
+                if (rs.next())  status = "BOX PICKING";
             }
 
-            if (status.equals("")) {
-                status = "RACK ";
-            }
-
-
-//            rs = dbConnection.getResultSet("select * from bfldata.dbo.PalletType where PalletType='" + pltType + "' and DirectProduction='Y'", objGlobal.getConnection());
-//            if (rs.next()) {
-//                status = "PRODUCTION - D";
-//            } else {
-//                rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where (PalletNo='" + palletno + "' or boxno='" + boxno + "')", objGlobal.getConnection());
-//                if (rs.next()) {
-//                    status = "PRODUCTION - S";
-//                    checkingType = rs.getString("checkingType");
-//                } else {
-//                    rs = dbConnection.getResultSet("select * from usa..OverrideMaxQtyHeader where boxno='"+boxno+"' and DATEDIFF(DAY, GETDATE(), EntryDate) BETWEEN -2 AND 0 ", objGlobal.getConnection());
-//                    if (rs.next()) {
-//                        status = "BOX PICKING ";
-//                    } else {
-//                        status = "RACK ";
-//                    }
-//                   // status = "RACK";
-//                }
-//            }
-
+            if (status.equals("")) status = "RACK ";
 
             if (status.equals("RACK")) {
                 String processNo = "", prodDate = "";
