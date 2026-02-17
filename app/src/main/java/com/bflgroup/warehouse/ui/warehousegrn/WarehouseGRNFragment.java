@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -69,6 +70,7 @@ public class WarehouseGRNFragment extends Fragment {
     private Button bt_warehouse_grn_new_popup_ok;
     MyScanWarehouseGrnTotalCountAdp objMyScanWarehouseGrnTotalCountAdp;
     MyScanWarehouseGrnScanAdp objMyScanWarehouseGrnScanAdp;
+    MyScanWarehouseGrnScanAdp1 objMyScanWarehouseGrnScanAdp1;
 
     WarehouseGRNSharedRef saredRef;
     WarehouseGRNControl objWarehouseGRNNewControl = new WarehouseGRNControl();
@@ -76,6 +78,7 @@ public class WarehouseGRNFragment extends Fragment {
     private boolean b_Result;
     ArrayList<WarehouseGRNScanCountTicket> listWarehouseGRNNewScanCountTicket = new ArrayList<WarehouseGRNScanCountTicket>();
     ArrayList<WarehouseGRNScanTicket> listWarehouseGRNNewScanTicket = new ArrayList<WarehouseGRNScanTicket>();
+    ArrayList<WarehouseGRNViewTicket> listWarehouseGRNNewViewTicket = new ArrayList<WarehouseGRNViewTicket>();
     private Global objGlobal = Global.getInstance();
     WmsApi objWMSApi = new WmsApi();
 
@@ -114,7 +117,7 @@ public class WarehouseGRNFragment extends Fragment {
             et_wh_grn_warehouse_to.setText(saredRef.loadWHTo());
             ch_wh_grn_autopost.setChecked(false);
             ch_wh_grn_autopost.setTextColor(Color.BLACK);
-            if(saredRef.loadAutoPost().equals("Y")) {
+            if (saredRef.loadAutoPost().equals("Y")) {
                 ch_wh_grn_autopost.setTextColor(Color.RED);
                 ch_wh_grn_autopost.setChecked(true);
             }
@@ -245,6 +248,38 @@ public class WarehouseGRNFragment extends Fragment {
         loadScan();
         myDialog.show();
         et_warehouse_grn_new_popup_scan.requestFocus();
+    }
+
+
+    private void openPopupItemsView(String palletno, String ginno) {
+        Dialog myDialog;
+        myDialog = new Dialog(getContext());
+        myDialog.setCancelable(false);
+        myDialog.setContentView(R.layout.warehouse_grn_new_popup_items_view);
+        tv_warehouse_grn_new_popup_last_scan = (TextView) myDialog.findViewById(R.id.tv_warehouse_grn_new_popup_last_scan);
+        lv_warehouse_grn_new_popup_scandetail = (ListView) myDialog.findViewById(R.id.lv_warehouse_grn_new_popup_scandetail);
+        bt_warehouse_grn_new_popup_ok = (Button) myDialog.findViewById(R.id.bt_warehouse_grn_new_popup_ok);
+        CheckBox cb_pending = (CheckBox) myDialog.findViewById(R.id.cb_pending);
+
+        cb_pending.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    loadPalletView(palletno, ginno,true);
+                }
+                else{
+                    loadPalletView(palletno, ginno,false);
+                }
+            }
+        });
+        bt_warehouse_grn_new_popup_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        });
+        loadPalletView(palletno, ginno,false);
+        myDialog.show();
     }
 
     void scanItemcode() {
@@ -415,7 +450,7 @@ public class WarehouseGRNFragment extends Fragment {
                 ch_wh_grn_autopost.setChecked(false);
                 ch_wh_grn_autopost.setTextColor(Color.BLACK);
                 saredRef.saveAutoPost("N");
-                if(objWarehouseGRNNewGlobal.getAutoPost().equals("Y")) {
+                if (objWarehouseGRNNewGlobal.getAutoPost().equals("Y")) {
                     ch_wh_grn_autopost.setTextColor(Color.RED);
                     ch_wh_grn_autopost.setChecked(true);
                     saredRef.saveAutoPost("Y");
@@ -462,7 +497,7 @@ public class WarehouseGRNFragment extends Fragment {
         @Override
         protected Integer doInBackground(Void... args) {
             try {
-                b_Result = objWarehouseGRNNewControl.validateGrn(country, ginNo, auto,whfrom,whto);
+                b_Result = objWarehouseGRNNewControl.validateGrn(country, ginNo, auto, whfrom, whto);
                 if (!b_Result) return 0;
             } catch (Exception e) {
                 objGlobal.setErrorMessage(e.toString());
@@ -496,6 +531,7 @@ public class WarehouseGRNFragment extends Fragment {
     private class ApiCallSaveGRN extends AsyncTask<Void, Void, Integer> {
         private ProgressDialog dialog;
         private Context context;
+
         public ApiCallSaveGRN(Context context) {
             this.context = context;
             dialog = new ProgressDialog(context);
@@ -523,7 +559,7 @@ public class WarehouseGRNFragment extends Fragment {
             objWMSApi.postWMSAPIAuthToken(context, new WmsAuthCallback() {
                 @Override
                 public void onTokenReceived(String token) {
-                    JSONObject jsonRequest = objWarehouseGRNNewControl.loadScanGinForApi("",sp_wh_grn_country.getSelectedItem().toString());
+                    JSONObject jsonRequest = objWarehouseGRNNewControl.loadScanGinForApi("", sp_wh_grn_country.getSelectedItem().toString());
                     if (jsonRequest == null) {
                         if (dialog.isShowing()) dialog.dismiss();
                         okMessage("JSON Error", objGlobal.getErrorMessage());
@@ -598,12 +634,20 @@ public class WarehouseGRNFragment extends Fragment {
         lv_warehouse_grn_new_popup_scandetail.setAdapter(objMyScanWarehouseGrnScanAdp);
     }
 
+    void loadPalletView(String palletno, String ginno,boolean pendingFlag) {
+        listWarehouseGRNNewScanTicket.clear();
+        listWarehouseGRNNewViewTicket = objWarehouseGRNNewControl.loadboxesFromGin(palletno, ginno,pendingFlag);
+        objMyScanWarehouseGrnScanAdp1 = new WarehouseGRNFragment.MyScanWarehouseGrnScanAdp1(listWarehouseGRNNewViewTicket);
+        lv_warehouse_grn_new_popup_scandetail.setAdapter(objMyScanWarehouseGrnScanAdp1);
+    }
+
     private class MyScanWarehouseGrnScanAdp extends BaseAdapter {
         public ArrayList<WarehouseGRNScanTicket> listWarehouseGRNNewScanTicket;
 
         public MyScanWarehouseGrnScanAdp(ArrayList<WarehouseGRNScanTicket> listWarehouseGRNNewScanTicket) {
             this.listWarehouseGRNNewScanTicket = listWarehouseGRNNewScanTicket;
         }
+
 
         @Override
         public int getCount() {
@@ -636,6 +680,9 @@ public class WarehouseGRNFragment extends Fragment {
             tv_ticket_wh_grn_new_scan_toteid.setText(String.valueOf(s.toteID));
 
             Button bt_ticket_wh_grn_new_scan_delete = (Button) myView.findViewById(R.id.bt_ticket_wh_grn_new_scan_delete);
+            TextView tv_status = (TextView) myView.findViewById(R.id.tv_status);
+            bt_ticket_wh_grn_new_scan_delete.setVisibility(View.VISIBLE);
+            tv_status.setVisibility(View.GONE);
             bt_ticket_wh_grn_new_scan_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -664,6 +711,56 @@ public class WarehouseGRNFragment extends Fragment {
                             .show();
                 }
             });
+            return myView;
+        }
+    }
+
+    private class MyScanWarehouseGrnScanAdp1 extends BaseAdapter {
+        public ArrayList<WarehouseGRNViewTicket> listWarehouseGRNNewScanTicket;
+
+        public MyScanWarehouseGrnScanAdp1(ArrayList<WarehouseGRNViewTicket> listWarehouseGRNNewScanTicket) {
+            this.listWarehouseGRNNewScanTicket = listWarehouseGRNNewScanTicket;
+        }
+
+
+        @Override
+        public int getCount() {
+            return listWarehouseGRNNewScanTicket.size();
+        }
+
+        @Override
+        public String getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater mInflater = getLayoutInflater();
+            View myView = mInflater.inflate(R.layout.warehouse_grn_new_load_items_ticket, null);
+            final WarehouseGRNViewTicket s = listWarehouseGRNNewScanTicket.get(position);
+
+            TextView tv_ticket_wh_grn_new_scan_palletno = (TextView) myView.findViewById(R.id.tv_ticket_wh_grn_new_scan_palletno);
+            tv_ticket_wh_grn_new_scan_palletno.setText(String.valueOf(s.palletno));
+
+            TextView tv_ticket_wh_grn_new_scan_boxno = (TextView) myView.findViewById(R.id.tv_ticket_wh_grn_new_scan_boxno);
+            tv_ticket_wh_grn_new_scan_boxno.setText(String.valueOf(s.boxNo));
+
+            TextView tv_ticket_wh_grn_new_scan_toteid = (TextView) myView.findViewById(R.id.tv_ticket_wh_grn_new_scan_toteid);
+            tv_ticket_wh_grn_new_scan_toteid.setText(String.valueOf(s.toteID));
+            TextView tv_status = (TextView) myView.findViewById(R.id.tv_status);
+            if (s.scanCount == 1)
+                tv_status.setText("Y");
+            else
+                tv_status.setText("N");
+
+            Button bt_ticket_wh_grn_new_scan_delete = (Button) myView.findViewById(R.id.bt_ticket_wh_grn_new_scan_delete);
+            bt_ticket_wh_grn_new_scan_delete.setVisibility(View.GONE);
+            tv_status.setVisibility(View.VISIBLE);
             return myView;
         }
     }
@@ -709,7 +806,7 @@ public class WarehouseGRNFragment extends Fragment {
             bt_grn_direct_delivery_item_scan_Select.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    openPopupItemsView(listWarehouseGRNNewScanCountTicket.get(position).palletno, et_wh_grn_ginno.getText().toString());
                 }
             });
             if (s.diff != 0) {

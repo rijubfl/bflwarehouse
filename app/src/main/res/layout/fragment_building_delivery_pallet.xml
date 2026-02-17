@@ -175,12 +175,27 @@
             android:padding="8dp"
             android:textColor="@color/coloBlack"
             android:textSize="13sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ch_reprint"
             app:layout_constraintStart_toEndOf="@+id/tv_plt_shop"
             app:layout_constraintTop_toTopOf="@+id/tv_plt_shop"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
         <!-- Table headers -->
+        <CheckBox
+            android:id="@+id/ch_reprint"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:paddingRight="5dp"
+            android:background="@drawable/et_custom_total"
+            android:text="Reprint"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/tv_plt_shopname"
+            app:layout_constraintTop_toTopOf="@+id/tv_plt_shop"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
         <TextView
             android:id="@+id/TextView8"
             android:layout_width="120dp"

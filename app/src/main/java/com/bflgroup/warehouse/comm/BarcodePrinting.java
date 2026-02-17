@@ -207,7 +207,7 @@ public class BarcodePrinting {
     }
 
 
-    public byte[] getRoutePalletPrint(String palletno,String inCharge,String Routeid,String entryDate,String count, String delDate,String sn,String copy) {
+    public byte[] getRoutePalletPrint(String palletno, String inCharge, String Routeid, String entryDate, String count, String delDate, String sn, String copy, String shopName) {
         String str01 = "\u0002n\r\n";
         String str02 = "\u0002M0986\r\n";
         String str03 = "\u0002KcLW0384;\r\n";
@@ -225,7 +225,7 @@ public class BarcodePrinting {
         String str15 = "1e8409402320022A" + palletno + "\r\n"; //barcode
         String str16 = "1911A2401830023" + palletno + "\r\n"; //palletno
         //String[] inChargeSplit = inCharge.split("-");
-        String str17 = "1911A2401390023Route : " + Routeid + "\n";
+        String str17 = "1911A2401390023Route : " + shopName + "\n";
         String str18 = "1911A1401110025 " + inCharge + "\n";
 
         String str19 =  "1911A1400230025Build Date : " + entryDate + "\n";
