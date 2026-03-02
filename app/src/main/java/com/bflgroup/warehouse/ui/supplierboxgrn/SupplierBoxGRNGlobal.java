@@ -5,6 +5,7 @@ public class SupplierBoxGRNGlobal {
 
     private static double totalScanQty;
     private static int totalScanBoxCnt;
+    private static String logNewBoxNo;
 
     public static synchronized SupplierBoxGRNGlobal getInstance() {
         if (instance == null) {
@@ -27,5 +28,13 @@ public class SupplierBoxGRNGlobal {
 
     public static void setTotalScanBoxCnt(int totalScanBoxCnt) {
         SupplierBoxGRNGlobal.totalScanBoxCnt = totalScanBoxCnt;
+    }
+
+    public static String getLogNewBoxNo() {
+        return logNewBoxNo;
+    }
+
+    public static void setLogNewBoxNo(String logNewBoxNo) {
+        SupplierBoxGRNGlobal.logNewBoxNo = logNewBoxNo;
     }
 }

@@ -100,8 +100,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (result) {
                     result = dbConnection.connectDb();
                     if (result) {
-                        result = dbConnection.connectCloudDb();
-                        if (result) {
+                        //result = dbConnection.connectCloudDb();
+                        //if (result) {
                             result = objControls.getControlMain();//assign global values
                             if (result) {
                                 result = validateUser();//check the user details
@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-                        }
+                        //}
                     }
                 }
                 if (!result) {
@@ -142,6 +142,7 @@ public class LoginActivity extends AppCompatActivity {
             objGlobal.setServerPass("5U83zBc9V$05");
             if (tps.equals("UAE")) {
                 objGlobal.setServerIP("192.168.5.51");
+                //objGlobal.setServerIP("192.168.10.72");
             }
             if (tps.equals("OMAN")) {
                 objGlobal.setServerIP("192.168.5.51");
@@ -194,7 +195,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         if (!deviceInfo()) return false;
         try {
-            rs = dbConnection.getResultSet("select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'", objGlobal.getCloudCon());
+            /*rs = dbConnection.getResultSet("select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'", objGlobal.getCloudCon());
             if (rs.next()) {
                 pdaVerActive = rs.getString("active");
                 pdaVerDb = rs.getString("version");
@@ -204,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
                     objGlobal.setErrorMessage("Pls check the version. The latest version is - " + pdaVerDb);
                     return false;
                 }
-            }
+            }*/
             if (objGlobal.getWorkLocation().equals("3PL")) {
                 query = "select userid,username,SealPrint,FcCode,PrntName,empCode=username,Shop from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());

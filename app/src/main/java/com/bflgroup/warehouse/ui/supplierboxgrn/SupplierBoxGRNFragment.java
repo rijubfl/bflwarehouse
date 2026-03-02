@@ -1,9 +1,15 @@
 package com.bflgroup.warehouse.ui.supplierboxgrn;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,13 +36,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.comm.BarcodePrinting;
 import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Global;
-import com.bflgroup.warehouse.ui.warehousegrn.WarehouseGRNFragment;
 import com.google.android.material.textfield.TextInputEditText;
+import com.sewoo.port.android.BluetoothPort;
+import com.sewoo.request.android.RequestHandler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class SupplierBoxGRNFragment extends Fragment {
 
@@ -63,12 +73,26 @@ public class SupplierBoxGRNFragment extends Fragment {
 
     private Global objGlobal = Global.getInstance();
 
-    private BluetoothDevices objBluetoothDevices = new BluetoothDevices();
     private SupplierBoxGRNControl objSupplierBoxGRNControl = new SupplierBoxGRNControl();
 
     ArrayList<SupplierBoxGRNScannedBoxTicket> listSupplierBoxGRNScannedBoxItems = new ArrayList<SupplierBoxGRNScannedBoxTicket>();
-
     MySupplierBoxGRNScannedBoxItemsAdp objMySupplierBoxGRNScannedBoxItemsAdp;
+
+    private BarcodePrinting objSample_Print;
+    private BluetoothDevices objBluetoothDevices = new BluetoothDevices();
+    private BluetoothPort bluetoothPort;
+    private BroadcastReceiver connectDevice;
+    private Thread btThread;
+    private boolean testPrint = false;
+    private BluetoothAdapter mBluetoothAdapter;
+    private BroadcastReceiver discoveryResult;
+    private BroadcastReceiver searchStart;
+    private BroadcastReceiver searchFinish;
+    private Vector<BluetoothDevice> remoteDevices;
+    private ArrayAdapter<String> adapter;
+    private boolean searchflags;
+    private static final int REQUEST_ENABLE_BT = 2;
+
 
     private boolean b_Result;
     private String loadCont="";
@@ -121,11 +145,24 @@ public class SupplierBoxGRNFragment extends Fragment {
             sp_supplier_box_grn_printer_copies.setSelection(arrayAdp.getPosition(saredRef.loadPrintCopies().toString()));
         }
 
+        et_supplier_box_grn_carton_id.setEnabled(false);
+        bt_supplier_box_grn_scan.setEnabled(false);
+        bt_supplier_box_grn_generate_carton.setEnabled(false);
+        ch_supplier_box_grn_audit_req.setEnabled(true);
+
+        et_supplier_box_grn_container_id.setEnabled(true);
+        bt_supplier_box_grn_load_cont.setEnabled(true);
+
         if (saredRef.loadContainerID() != "") {
             et_supplier_box_grn_container_id.setText(saredRef.loadContainerID());
             et_supplier_box_grn_container_id.setEnabled(false);
-            sp_supplier_box_grn_printer.setEnabled(false);
-            sp_supplier_box_grn_printer_copies.setEnabled(false);
+            bt_supplier_box_grn_load_cont.setEnabled(false);
+
+            et_supplier_box_grn_carton_id.setEnabled(true);
+            bt_supplier_box_grn_scan.setEnabled(true);
+            bt_supplier_box_grn_generate_carton.setEnabled(true);
+            ch_supplier_box_grn_audit_req.setEnabled(true);
+
             listSupplierBoxGRNScannedBoxItems.clear();
             listSupplierBoxGRNScannedBoxItems = objSupplierBoxGRNControl.loadSupplierBoxGRNScannedBox(et_supplier_box_grn_container_id.getText().toString());
             objMySupplierBoxGRNScannedBoxItemsAdp = new SupplierBoxGRNFragment.MySupplierBoxGRNScannedBoxItemsAdp(listSupplierBoxGRNScannedBoxItems);
@@ -211,7 +248,7 @@ public class SupplierBoxGRNFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                b_Result = clearAll();
+                                b_Result = clearAll(true);
                                 et_supplier_box_grn_container_id.requestFocus();
                             }
                         })
@@ -247,6 +284,12 @@ public class SupplierBoxGRNFragment extends Fragment {
                         .show();
             }
         });
+
+        searchflags = false;
+        objSample_Print = new BarcodePrinting();
+        bluetoothPort = BluetoothPort.getInstance();
+        bluetoothPort.SetMacFilter(false);
+        Init_BluetoothSet();
 
         return view;
     }
@@ -318,12 +361,16 @@ public class SupplierBoxGRNFragment extends Fragment {
                 saredRef.saveContainerID(et_supplier_box_grn_container_id.getText().toString());
                 saredRef.savePrinter(sp_supplier_box_grn_printer.getSelectedItem().toString());
                 saredRef.savePrintCopies(sp_supplier_box_grn_printer_copies.getSelectedItem().toString());
-                sp_supplier_box_grn_printer.setEnabled(false);
-                sp_supplier_box_grn_printer_copies.setEnabled(false);
+                et_supplier_box_grn_carton_id.setText("");
+
                 et_supplier_box_grn_container_id.setEnabled(false);
                 bt_supplier_box_grn_load_cont.setEnabled(false);
-                et_supplier_box_grn_carton_id.setText("");
-                ch_supplier_box_grn_audit_req.setChecked(false);
+
+                et_supplier_box_grn_carton_id.setEnabled(true);
+                bt_supplier_box_grn_scan.setEnabled(true);
+                bt_supplier_box_grn_generate_carton.setEnabled(true);
+                ch_supplier_box_grn_audit_req.setEnabled(true);
+
                 et_supplier_box_grn_carton_id.requestFocus();
 
                 if (dialog.isShowing()) dialog.dismiss();
@@ -419,7 +466,7 @@ public class SupplierBoxGRNFragment extends Fragment {
                     okMessage("Supplier Box GRN", objGlobal.getErrorMessage());
                     vibrate(500);
                 } else {
-                    clearAll();
+                    clearAll(false);
                     et_supplier_box_grn_container_id.requestFocus();
                 }
                 if (dialog.isShowing()) {
@@ -453,7 +500,9 @@ public class SupplierBoxGRNFragment extends Fragment {
             audit = "Y";
             try {
                 b_Result = objSupplierBoxGRNControl.generateLogisticBoxAndPrint(contid, po, audit);
-                if (!b_Result) return 0;
+                if (!b_Result) {
+                    return 0;
+                }
             } catch (Exception e) {
                 objGlobal.setErrorMessage(e.toString());
                 return 0;
@@ -468,10 +517,8 @@ public class SupplierBoxGRNFragment extends Fragment {
                     dialog.dismiss();
                 }
                 okMessage("Supplier Box GRN", objGlobal.getErrorMessage());
-
-                    et_supplier_box_grn_carton_id.setText("");
-                    et_supplier_box_grn_carton_id.requestFocus();
-
+                et_supplier_box_grn_carton_id.setText("");
+                et_supplier_box_grn_carton_id.requestFocus();
             } else {
                 SupplierBoxGRNGlobal.setTotalScanBoxCnt(0);
                 SupplierBoxGRNGlobal.setTotalScanQty(0);
@@ -487,12 +534,20 @@ public class SupplierBoxGRNFragment extends Fragment {
                 sp_supplier_box_grn_popup_po.setSelection(0);
 
                 if (dialog.isShowing()) dialog.dismiss();
+
+                if (objGlobal.getBluetoothDevicesAvailable().equals("Y")) {
+                    String printer = sp_supplier_box_grn_printer.getSelectedItem().toString();
+                    if (!printSticker(printer)) {
+                        okMessage("Supplier Box GRN", "Printer Error, Pleasse reprint..");
+                        vibrate(100);
+                    }
+                }
             }
         }
     }
 
-    private boolean clearAll() {
-        b_Result = objSupplierBoxGRNControl.clearAll();
+    private boolean clearAll(boolean includeLogBox) {
+        b_Result = objSupplierBoxGRNControl.clearAll(et_supplier_box_grn_container_id.getText().toString(),includeLogBox);
         if (!b_Result) {
             okMessage("Supplier Box GRN ", objGlobal.getErrorMessage());
             vibrate(500);
@@ -504,9 +559,11 @@ public class SupplierBoxGRNFragment extends Fragment {
 
             et_supplier_box_grn_container_id.setEnabled(true);
             bt_supplier_box_grn_load_cont.setEnabled(true);
-            sp_supplier_box_grn_printer.setEnabled(true);
-            sp_supplier_box_grn_printer_copies.setEnabled(true);
-            ch_supplier_box_grn_audit_req.setChecked(false);
+
+            et_supplier_box_grn_carton_id.setEnabled(false);
+            bt_supplier_box_grn_scan.setEnabled(false);
+            bt_supplier_box_grn_generate_carton.setEnabled(false);
+            ch_supplier_box_grn_audit_req.setEnabled(false);
 
             listSupplierBoxGRNScannedBoxItems.clear();
             listSupplierBoxGRNScannedBoxItems = objSupplierBoxGRNControl.loadSupplierBoxGRNScannedBox(et_supplier_box_grn_container_id.getText().toString());
@@ -553,7 +610,7 @@ public class SupplierBoxGRNFragment extends Fragment {
         bt_supplier_box_grn_popup_print.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (sp_supplier_box_grn_popup_po.getSelectedItem().toString().isEmpty()) {
+                if (sp_supplier_box_grn_popup_po.getSelectedItem().toString().isEmpty() || sp_supplier_box_grn_popup_po.getSelectedItem().toString().equals("--Select PO--") ) {
                     okMessage("Supplier Box GRN","Please enter PO");
                     sp_supplier_box_grn_popup_po.requestFocus();
                 } else {
@@ -572,6 +629,187 @@ public class SupplierBoxGRNFragment extends Fragment {
 
         myDialog.show();
         sp_supplier_box_grn_popup_po.requestFocus();
+    }
+
+    private void clearBtDevData() {
+        remoteDevices = new Vector<BluetoothDevice>();
+    }
+
+    public void Init_BluetoothSet() {
+        bluetoothSetup();
+        connectDevice = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                    //"BlueTooth Connect"
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    try {
+                        if (bluetoothPort.isConnected())
+                            bluetoothPort.disconnect();
+                    } catch (IOException e) {
+                        okMessage("IOException", e.toString());
+                    } catch (InterruptedException e) {
+                        okMessage("InterruptedException", e.toString());
+                    }
+                    if ((btThread != null) && (btThread.isAlive())) {
+                        btThread.interrupt();
+                        btThread = null;
+                    }
+                }
+            }
+        };
+
+        discoveryResult = new BroadcastReceiver() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String key;
+                boolean bFlag = true;
+                BluetoothDevice btDev;
+                BluetoothDevice remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (remoteDevice != null) {
+                    if (remoteDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "]";
+                    } else {
+                        key = remoteDevice.getName() + "\n[" + remoteDevice.getAddress() + "] [Paired]";
+                    }
+                    if (bluetoothPort.isValidAddress(remoteDevice.getAddress())) {
+                        for (int i = 0; i < remoteDevices.size(); i++) {
+                            btDev = remoteDevices.elementAt(i);
+                            if (remoteDevice.getAddress().equals(btDev.getAddress())) {
+                                bFlag = false;
+                                break;
+                            }
+                        }
+                        if (bFlag) {
+                            remoteDevices.add(remoteDevice);
+                            adapter.add(key);
+                        }
+                    }
+                }
+            }
+        };
+        getActivity().registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        searchStart = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+            }
+        };
+        getActivity().registerReceiver(searchStart, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+        searchFinish = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                searchflags = true;
+            }
+        };
+        getActivity().registerReceiver(searchFinish, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+    }
+
+    private void bluetoothSetup() {
+        clearBtDevData();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            return;
+        }
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+
+    private void btConn(final BluetoothDevice btDev) throws IOException {
+        new SupplierBoxGRNFragment.connBT().execute(btDev);
+    }
+
+    class connBT extends AsyncTask<BluetoothDevice, Void, Integer> {
+        private final ProgressDialog dialog = new ProgressDialog(getActivity());
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(getActivity());
+        String str_temp = "";
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Connecting Device...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(BluetoothDevice... params) {
+            Integer retVal = null;
+            try {
+                bluetoothPort.connect(params[0]);
+                str_temp = params[0].getAddress();
+                retVal = Integer.valueOf(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+                retVal = Integer.valueOf(-1);
+            }
+            return retVal;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (dialog.isShowing())
+                dialog.dismiss();
+            if (result.intValue() == 0) {
+                RequestHandler rh = new RequestHandler();
+                btThread = new Thread(rh);
+                btThread.start();
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED));
+                getActivity().registerReceiver(connectDevice, new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED));
+                printBarCode();
+            } else {
+                alert
+                        .setTitle("Error 4")
+                        .setMessage("Failed to connect Bluetooth device.")
+                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+            super.onPostExecute(result);
+        }
+    }
+
+    private boolean printSticker(String device) {
+        if (!bluetoothPort.isConnected()) {
+            try {
+                btConn(mBluetoothAdapter.getRemoteDevice(device));
+            } catch (Exception e) {
+                okMessage("Error 2", e.toString());
+                return false;
+            }
+        }
+        printBarCode();
+        return true;
+    }
+
+    private boolean printBarCode() {
+        try {
+            //testPrint=true;
+            byte[] printData = null;
+            if (testPrint) {
+                printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
+            } else {
+                String contno = et_supplier_box_grn_container_id.getText().toString();
+                String palletno = SupplierBoxGRNGlobal.getLogNewBoxNo();
+                String grpnm = "";
+                String cnt = sp_supplier_box_grn_printer_copies.getSelectedItem().toString();
+                String remrks = "";
+                printData = objSample_Print.getLogisticPalletPrint(contno, palletno, grpnm, cnt, remrks);
+            }
+            return objSample_Print.PrintBarcodeByte(printData);
+        } catch (Exception e) {
+            okMessage("Error 3", e.toString());
+            return false;
+        }
     }
 
     void vibrate(int duration) {
