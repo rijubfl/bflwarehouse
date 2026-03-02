@@ -31,7 +31,6 @@
         android:text="Scan"
         android:textAllCaps="false"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/et_transfer_popup_delete_rfid"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_transfer_popup_delete_rfid" />
 

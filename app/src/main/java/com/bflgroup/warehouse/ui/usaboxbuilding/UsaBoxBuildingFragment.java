@@ -598,8 +598,8 @@ public class UsaBoxBuildingFragment extends Fragment {
         saredRef.saveGender(sp_usa_box_gender.getSelectedItem().toString());
         saredRef.saveTask(sp_usa_box_task.getSelectedItem().toString());
         saredRef.saveDone(sp_usa_box_done.getSelectedItem().toString());
-        saredRef.savePrinter(sp_usa_box_printer.getSelectedItem().toString());
-        saredRef.savePrintCopy(sp_usa_box_printer_copies.getSelectedItem().toString());
+//        saredRef.savePrinter(sp_usa_box_printer.getSelectedItem().toString());
+//        saredRef.savePrintCopy(sp_usa_box_printer_copies.getSelectedItem().toString());
 
         if (rb_usa_box_usa_category.isChecked()) {
             saredRef.saveBuildType("USA");
@@ -934,16 +934,16 @@ public class UsaBoxBuildingFragment extends Fragment {
         ch_usa_box_reprint.setEnabled(true);
 
         ArrayAdapter<String> arrayAdpYellow = null;
-        b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
-        if (!b_Result) {
-            okMessage("USABox Build", objGlobal.getErrorMessage());
-        } else {
-            arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
-            sp_usa_box_printer.setAdapter(arrayAdpYellow);
-            if (saredRef.loadPrinter() != "") {
-                sp_usa_box_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
-            }
-        }
+//        b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
+//        if (!b_Result) {
+//            okMessage("USABox Build", objGlobal.getErrorMessage());
+//        } else {
+//            arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
+//            sp_usa_box_printer.setAdapter(arrayAdpYellow);
+//            if (saredRef.loadPrinter() != "") {
+//                sp_usa_box_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
+//            }
+//        }
 
         List<String> arr4 = objUsaBoxBuildingControl.loadSpinner("SZ");
         ArrayAdapter<String> arrayAdp4 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr4);

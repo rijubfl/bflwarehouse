@@ -279,10 +279,18 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                       shopNamesFromTransfers = new ArrayList<>();
                       for (ShopInfo tempShop : tempShopFromTransfers){
                           int tempRouteId = objbuildingdelPalletControl.loadKsaRoute(tempShop.getShopName());
-                          if (tempRouteId == PalletScanDeliveryItem.get(0).RouteId){
-                              isRouteMatch = true;
-                              shopNamesFromTransfers.add(tempShop);
+                          if (tempRouteId == -1){
+                              objGlobal.setErrorMessage("The shop is not valid, or the transfer has already been built." + transferno);
+                              okMessage("Message", objGlobal.getErrorMessage(), getActivity());
+                              return false;
                           }
+                          else{
+                              if (tempRouteId == PalletScanDeliveryItem.get(0).RouteId){
+                                  isRouteMatch = true;
+                                  shopNamesFromTransfers.add(tempShop);
+                              }
+                          }
+
                       }
                       if (isRouteMatch){
                           if (shopNamesFromTransfers.size() == 1)
@@ -404,9 +412,10 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                         if (tempRouteId == PalletScanDeliveryItem.get(0).RouteId){
                             isRouteMatch = true;
                             shopNamesFromTransfers.add(tempShop);
-
                         }
+
                     }
+
                     if (isRouteMatch){
                         if (shopNamesFromTransfers.size() == 1)
                             trfDetail(shopNamesFromTransfers.get(0));
@@ -629,31 +638,37 @@ public class BuildingDeliveryPalletFragment extends Fragment {
 
     private void trfDetail(ShopInfo selectedShop) {
         get_route_id = objbuildingdelPalletControl.loadKsaRoute(selectedShop.getShopName());
-        PltScanTransferShared.shopNameSave(selectedShop.getShopName());
-        transferno = et_plt_shop_transferno.getText().toString().trim();
-        String shopname = tv_plt_shopname.getText().toString();
-        get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
-        selectedShopName = selectedShop;
-        if (GetScanresult()) {
-            Log.e("Error", "Reached here");
-            et_plt_shop_transferno.requestFocus();
-            PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer2(getActivity(), transferno, get_route_id, android_id, shopname);
-            objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
-            lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
-            if (objTransferStatusPltAdp != null) {
-                if (PalletScanDeliveryItem != null && !PalletScanDeliveryItem.isEmpty()) {
-                    setRouteid(tv_plt_route_id.getText().toString());
-                    tv_plt_route_id.setEnabled(false);
-                    tv_plt_route_id.setClickable(false);
-                    et_plt_shop_transferno.requestFocus();
+        if (get_route_id == -1){
+            objGlobal.setErrorMessage("The shop is not valid, or the transfer has already been built." + transferno);
+            okMessage("Message", objGlobal.getErrorMessage(), getActivity());
+        }
+        else {
+            PltScanTransferShared.shopNameSave(selectedShop.getShopName());
+            transferno = et_plt_shop_transferno.getText().toString().trim();
+            String shopname = tv_plt_shopname.getText().toString();
+            get_shop_names = objbuildingdelPalletControl.LoadShops(get_route_id);
+            selectedShopName = selectedShop;
+            if (GetScanresult()) {
+                Log.e("Error", "Reached here");
+                et_plt_shop_transferno.requestFocus();
+                PalletScanDeliveryItem = objbuildingdelPalletControl.ScanTransfer2(getActivity(), transferno, get_route_id, android_id, shopname);
+                objTransferStatusPltAdp = new MyTransferStatusPltAdp(PalletScanDeliveryItem);
+                lv_div_seperate_details.setAdapter(objTransferStatusPltAdp);
+                if (objTransferStatusPltAdp != null) {
+                    if (PalletScanDeliveryItem != null && !PalletScanDeliveryItem.isEmpty()) {
+                        setRouteid(tv_plt_route_id.getText().toString());
+                        tv_plt_route_id.setEnabled(false);
+                        tv_plt_route_id.setClickable(false);
+                        et_plt_shop_transferno.requestFocus();
+                    }
+
                 }
 
+                count = Integer.valueOf(getPltCount());
+                tv_count.setText(count + "");
+                et_plt_shop_transferno.setText("");
+                et_plt_shop_transferno.requestFocus();
             }
-
-            count = Integer.valueOf(getPltCount());
-            tv_count.setText(count + "");
-            et_plt_shop_transferno.setText("");
-            et_plt_shop_transferno.requestFocus();
         }
     }
 

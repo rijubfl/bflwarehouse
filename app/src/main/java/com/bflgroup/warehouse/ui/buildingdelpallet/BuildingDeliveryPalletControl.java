@@ -123,7 +123,7 @@ public class BuildingDeliveryPalletControl {
     }
 
     public Integer loadKsaRoute(String shopName) {
-        int arr = 0;
+        int arr = -1;
         if (!checkConnection()) {
             return null;
         }

@@ -142,6 +142,7 @@ public class LoginActivity extends AppCompatActivity {
             objGlobal.setServerPass("5U83zBc9V$05");
             if (tps.equals("UAE")) {
                 objGlobal.setServerIP("192.168.5.51");
+               // objGlobal.setServerIP("192.168.10.72");
             }
             if (tps.equals("OMAN")) {
                 objGlobal.setServerIP("192.168.5.51");
