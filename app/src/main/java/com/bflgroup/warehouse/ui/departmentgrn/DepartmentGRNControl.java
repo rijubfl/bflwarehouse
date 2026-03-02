@@ -161,7 +161,7 @@ public class DepartmentGRNControl {
                             if (objGlobal.getCountryCode().equals("UAE"))
                                 query7 = "select * from bfldata..TransferNoReturn where TrfNo='" + Toteid + "'";
                             else
-                                query7 = "select * from bflksa..transferheader where trfno = '" + Toteid + "' and trfno not in (select palletno from bfldata..CloseR1pallet)";
+                                query7 = "select * from " + objGlobal.getCountryDbName() + ".dbo.transferheader where trfno = '" + Toteid + "' and trfno not in (select palletno from bfldata..CloseR1pallet)";
                             rs = dbConnection.getResultSet(query7, objGlobal.getConnection());
                             if (rs.next()) {
                                 String query2 = "";

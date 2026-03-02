@@ -96,8 +96,10 @@ public class GinVerificationControl {
                 if (!allowMismatch) {
                     rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "' and Verified<>'Y'", objGlobal.getConnection());
                     if (rs.next()) {
-                        objGlobal.setErrorMessage(rs.getString("cnt") + " boxes are not scanned yet. Please scan them before you try to save.");
-                        return false;
+                        if (!rs.getString("cnt").equals("0")) {
+                            objGlobal.setErrorMessage(rs.getString("cnt") + " boxes are not scanned yet. Please scan them before you try to save.");
+                            return false;
+                        }
                     }
                 }
             } else {

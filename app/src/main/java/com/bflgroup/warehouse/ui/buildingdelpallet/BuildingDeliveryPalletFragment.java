@@ -449,6 +449,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         });
 
 
+
         bt_status_build_plt.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -828,7 +829,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                 printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
             } else {
                 //okMessage("ALERT - ", "Count= "+objbuildingdelPalletControl.LoadPltDataCount(objpalletbuilding.getPalletNo()).toString()+", Routeid = "+getRouteid().toString()+", PLTSN = "+objpalletbuilding.getPalletSn(), getContext());
-                printData = objSample_Print.getRoutePalletPrint(objpalletbuilding.getPalletNo(), objGlobal.getUserName(), getRouteid().toString(), objGlobal.getServerDate(), objbuildingdelPalletControl.LoadPltDataCount(objpalletbuilding.getPalletNo()).toString(), objGlobal.getServerDate(), objpalletbuilding.getPalletSn().toString(), sp_transfer_print_copies.getSelectedItem().toString());
+                printData = objSample_Print.getRoutePalletPrint(objpalletbuilding.getPalletNo(), objGlobal.getUserName(), getRouteid().toString(), objGlobal.getServerDate(), objbuildingdelPalletControl.LoadPltDataCount(objpalletbuilding.getPalletNo()).toString(), objGlobal.getServerDate(), objpalletbuilding.getPalletSn().toString(), sp_transfer_print_copies.getSelectedItem().toString(),selectedShopName.getShopName());
             }
 
             return objSample_Print.PrintBarcodeByte(printData);
@@ -965,5 +966,19 @@ public class BuildingDeliveryPalletFragment extends Fragment {
         }
         PltScanTransferShared.savePrinter("");
 
+    }
+    private void reprint(){
+        String printer = sp_transfer_printer.getSelectedItem().toString();
+        remark = Remarks.getText().toString();
+//                    if (tv_plt_shopname.getText() != null && !tv_plt_shopname.getText().equals("")) {
+//                        okMessage("Alert", "Pls Select Shopname First", getContext());
+//                    } else {
+        if (printer.isEmpty() || printer.toUpperCase().contains("SELECT")) {
+            okMessage("Message", "Please select printer", getContext());
+            b_Result = false;
+        }
+        else{
+
+        }
     }
 }

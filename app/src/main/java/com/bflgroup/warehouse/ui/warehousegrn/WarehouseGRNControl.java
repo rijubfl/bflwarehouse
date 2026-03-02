@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class WarehouseGRNControl {
 
     private DBConnection dbConnection = new DBConnection();
-    private Controls objControls= new Controls();
+    private Controls objControls = new Controls();
     private Global objGlobal = Global.getInstance();
     private WarehouseGRNGlobal objWarehouseGRNNewGlobal = WarehouseGRNGlobal.getInstance();
 
@@ -82,7 +82,7 @@ public class WarehouseGRNControl {
             rs = dbConnection.getResultSet("select StoreID,RMSStoreID from BFLDATA.dbo.DataSettings where ShopName='" + objWarehouseGRNNewGlobal.getWarehouseTo() + "'", objGlobal.getConnection());
             if (rs.next()) mfcsToLoc = rs.getString("RMSStoreID");
 
-            if(objGlobal.getValidateGinCustomsClearance().equals("Y")) {
+            if (objGlobal.getValidateGinCustomsClearance().equals("Y")) {
                 rs = dbConnection.getResultSet("Select * from BFLDATA.dbo.SkipGinCustomsClearance where GinNo='" + ginNo + "' and mfcsFromLoc='" + mfcsFromLoc + "' and mfcsToLoc='" + mfcsToLoc + "'", objGlobal.getConnection());
                 if (rs.next()) skipGinCustomsClearance = true;
                 if (!skipGinCustomsClearance) {
@@ -123,7 +123,7 @@ public class WarehouseGRNControl {
         }
     }
 
-    public boolean loadGinDetails(String country,String ginNo) {
+    public boolean loadGinDetails(String country, String ginNo) {
         String db = objControls.getCountryDb(country);
         if (!checkConnection()) {
             return false;
@@ -205,7 +205,7 @@ public class WarehouseGRNControl {
         }
     }
 
-    public boolean loadGinDetailsFromAPI(String country,String ginNo,ArrayList<WarehouseGRNDetailAPICallTicket> objWarehouseGRNNewDetailAPICallTicket) {
+    public boolean loadGinDetailsFromAPI(String country, String ginNo, ArrayList<WarehouseGRNDetailAPICallTicket> objWarehouseGRNNewDetailAPICallTicket) {
         if (!checkConnection()) {
             return false;
         }
@@ -279,7 +279,7 @@ public class WarehouseGRNControl {
         }
     }
 
-    public boolean validateGrn(String country,String ginNo, String autoPost, String whFrom,String whTo) {
+    public boolean validateGrn(String country, String ginNo, String autoPost, String whFrom, String whTo) {
         String db = objControls.getCountryDb(country);
         boolean allowMismatch = false;
         if (!checkConnection()) {
@@ -361,7 +361,7 @@ public class WarehouseGRNControl {
         }
     }
 
-    public boolean grnSave(String country, String remarks,String autopost, String whFrom, String whTo) {
+    public boolean grnSave(String country, String remarks, String autopost, String whFrom, String whTo) {
         int grnno = 0;
         String db = objControls.getCountryDb(country);
         if (!checkConnection()) {
@@ -450,6 +450,26 @@ public class WarehouseGRNControl {
         }
     }
 
+    public ArrayList<WarehouseGRNViewTicket> loadboxesFromGin(String palletno, String ginno, boolean pendingFlag) {
+        ArrayList<WarehouseGRNViewTicket> listGinGrnScan = new ArrayList<WarehouseGRNViewTicket>();
+        try {
+            rs = dbConnection.getResultSet("select PalletNo,BoxNo,ToteId,Scount from bfldata.dbo.tmpWarehouseGrnScanNew where PalletNo = '" + palletno + "' and GINNo = '" + ginno + "' and DeviceId = '" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+            while (rs.next()) {
+                if (pendingFlag) {
+                    if (rs.getInt("Scount") == 0)
+                        listGinGrnScan.add(new WarehouseGRNViewTicket(rs.getString("PalletNo"), rs.getString("BoxNo"), rs.getString("ToteId"), rs.getInt("Scount")));
+                } else {
+                    listGinGrnScan.add(new WarehouseGRNViewTicket(rs.getString("PalletNo"), rs.getString("BoxNo"), rs.getString("ToteId"), rs.getInt("Scount")));
+                }
+
+            }
+            return listGinGrnScan;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("WarehouseGRNNewControl:loadboxesFromGin:" + ex.toString());
+            return listGinGrnScan;
+        }
+    }
+
     public ArrayList<WarehouseGRNScanCountTicket> loadGinGrnScanCount() {
         ArrayList<WarehouseGRNScanCountTicket> listGinGrnScan = new ArrayList<WarehouseGRNScanCountTicket>();
         try {
@@ -479,7 +499,7 @@ public class WarehouseGRNControl {
         }
     }
 
-    public JSONObject loadScanGinForApi(String remarks,String gincountry) {
+    public JSONObject loadScanGinForApi(String remarks, String gincountry) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("username", objGlobal.getUserName());
