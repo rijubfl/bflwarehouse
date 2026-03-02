@@ -100,8 +100,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (result) {
                     result = dbConnection.connectDb();
                     if (result) {
-                        result = dbConnection.connectCloudDb();
-                        if (result) {
+                        //result = dbConnection.connectCloudDb();
+                        //if (result) {
                             result = objControls.getControlMain();//assign global values
                             if (result) {
                                 result = validateUser();//check the user details
@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-                        }
+                        //}
                     }
                 }
                 if (!result) {
@@ -142,7 +142,6 @@ public class LoginActivity extends AppCompatActivity {
             objGlobal.setServerPass("5U83zBc9V$05");
             if (tps.equals("UAE")) {
                 objGlobal.setServerIP("192.168.5.51");
-               // objGlobal.setServerIP("192.168.10.72");
             }
             if (tps.equals("OMAN")) {
                 objGlobal.setServerIP("192.168.5.51");

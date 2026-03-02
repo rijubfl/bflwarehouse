@@ -99,7 +99,7 @@ public class SupplierBoxGRNControl {
         try {
             String logPalletNo = "";
             int autoSn = 0;
-            rs = dbConnection.getResultSet("select en=isnull(max(cast(REPLACE(right(palletno,3),'/','')as int)),0) from usa.dbo.UsaPallets where contno='" + contid + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select en=isnull(max(cast(REPLACE(right(palletno,3),'/','')as int)),0)+1 from usa.dbo.UsaPallets where contno='" + contid + "'", objGlobal.getConnection());
             if (rs.next()) {
                 autoSn = Integer.parseInt(rs.getString("en"));
             }
@@ -116,16 +116,38 @@ public class SupplierBoxGRNControl {
             return false;
         }
         try {
+            if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
+                objGlobal.setErrorNo("validateCheckInOut:001:");
+                return false;
+            }
+            SupplierBoxGRNGlobal.setLogNewBoxNo("");
             String logPalletNo = generateLogisticBox(contid, po);
             if (logPalletNo.isEmpty()) return false;
+            SupplierBoxGRNGlobal.setLogNewBoxNo(logPalletNo);
+
+            objGlobal.getConnection().setAutoCommit(false);
             if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpSupplierBoxGrn(DeviceId,ContId,CartonId,PO,LogBox,OrgQty,AuditReq,ScanDtTm,scan) " +
-                    "values ('" + objGlobal.getDeviceName() + "','" + contid + "','" + logPalletNo + "','" + po + "','Y',0,'" + audit + "',getdate(),'Y')", objGlobal.getConnection())) {
+                    "values ('" + objGlobal.getDeviceName() + "','" + contid + "','" + SupplierBoxGRNGlobal.getLogNewBoxNo() + "','" + po + "','Y',0,'" + audit + "',getdate(),'Y')", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
             }
+            if (!dbConnection.insertUpdate("insert into usa.dbo.UsaPallets(Contno,PalletNo,trndate,userid,Closed,GroupName,Remarks,whouse) values ('" + contid + "','"+ SupplierBoxGRNGlobal.getLogNewBoxNo() +"'," +
+                    "'" + objGlobal.getServerDate() + "'," + objGlobal.getUserId() + ",'N','','Auto pallet created from Supplier Box GRN','" + objGlobal.getDeviceName() + "')", objGlobal.getConnection())) {
+                objGlobal.getConnection().rollback();
+                return false;
+            }
+            objGlobal.getConnection().commit();
+            objGlobal.getConnection().setAutoCommit(true);
             return true;
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("SupplierBoxGRNControl:validateGrn:" + ex);
+            try {
+                objGlobal.setErrorMessage("SupplierBoxGRNControl:saveSupplierBoxGrn:ex1:" + ex);
+                objGlobal.getConnection().rollback();
+                objGlobal.getConnection().setAutoCommit(true);
+            } catch (SQLException e) {
+                objGlobal.setErrorMessage("SupplierBoxGRNControl:saveSupplierBoxGrn:ex2:" + e);
+                return false;
+            }
             return false;
         }
     }
@@ -152,18 +174,65 @@ public class SupplierBoxGRNControl {
         return listSupplierBoxGRNScannedBoxTicket;
     }
 
-    public boolean clearAll() {
+    public boolean clearAll(String contid,boolean includeLogBox) {
         if (!checkConnection()) {
             return false;
         }
         try {
+            objGlobal.getConnection().setAutoCommit(false);
             if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpSupplierBoxGrn where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
             }
+            if (includeLogBox) {
+                if (!dbConnection.insertUpdate("delete from usa.dbo.UsaPallets where contno='" + contid + "' and palletno in(select CartonId from bfldata.dbo.tmpSupplierBoxGrn " +
+                        "where ContId='" + contid + "' and DeviceId='" + objGlobal.getDeviceName() + "' and scan='Y' and LogBox='Y')", objGlobal.getConnection())) {
+                    objGlobal.getConnection().rollback();
+                    return false;
+                }
+            }
+            objGlobal.getConnection().commit();
+            objGlobal.getConnection().setAutoCommit(true);
             return true;
         } catch (Exception ex) {
-            objGlobal.setErrorMessage("SupplierBoxGRNControl:grnSave:ex2:" + ex);
+            try {
+                objGlobal.setErrorMessage("SupplierBoxGRNControl:clearAll:ex1:" + ex);
+                objGlobal.getConnection().rollback();
+                objGlobal.getConnection().setAutoCommit(true);
+            } catch (SQLException e) {
+                objGlobal.setErrorMessage("SupplierBoxGRNControl:clearAll:ex2:" + e);
+                return false;
+            }
+            return false;
+        }
+    }
+
+    public boolean deleteCartonID(String contid,String cartonId) {
+        if (!checkConnection()) {
+            return false;
+        }
+        try {
+            objGlobal.getConnection().setAutoCommit(false);
+            if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpSupplierBoxGrn where CartonId='" + cartonId + "' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+                objGlobal.getConnection().rollback();
+                return false;
+            }
+            if (!dbConnection.insertUpdate("delete from usa.dbo.UsaPallets where contno='" + contid + "' and palletno='" + cartonId + "'", objGlobal.getConnection())) {
+                objGlobal.getConnection().rollback();
+                return false;
+            }
+            objGlobal.getConnection().commit();
+            objGlobal.getConnection().setAutoCommit(true);
+            return true;
+        } catch (Exception ex) {
+            try {
+                objGlobal.setErrorMessage("SupplierBoxGRNControl:deleteCartonID:ex1:" + ex);
+                objGlobal.getConnection().rollback();
+                objGlobal.getConnection().setAutoCommit(true);
+            } catch (SQLException e) {
+                objGlobal.setErrorMessage("SupplierBoxGRNControl:deleteCartonID:ex2:" + e);
+                return false;
+            }
             return false;
         }
     }
@@ -174,6 +243,11 @@ public class SupplierBoxGRNControl {
         }
         try {
             rs = dbConnection.getResultSet("select * from bfldata.dbo.SuppBoxGrnHeader where ContainerID='" + contId + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Container ID (" + contId + ") is already saved");
+                return false;
+            }
+            rs = dbConnection.getResultSet("select * from BFLDATA.dbo.ContColorHeader where Contno='" + contId + "' and EDI='Y'", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Container ID (" + contId + ") is already saved");
                 return false;
@@ -196,6 +270,10 @@ public class SupplierBoxGRNControl {
             return false;
         }
         try {
+            if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
+                objGlobal.setErrorNo("validateCheckInOut:001:");
+                return false;
+            }
             rs = dbConnection.getResultSet("select sn=isnull(max(srno),0)+1 from bfldata.dbo.SuppBoxGrnHeader", objGlobal.getConnection());
             if (rs.next()) {
                 srno = rs.getInt("sn");
@@ -218,7 +296,6 @@ public class SupplierBoxGRNControl {
                 objGlobal.getConnection().setAutoCommit(true);
                 return false;
             }
-
             objGlobal.getConnection().commit();
             objGlobal.getConnection().setAutoCommit(true);
             return true;
