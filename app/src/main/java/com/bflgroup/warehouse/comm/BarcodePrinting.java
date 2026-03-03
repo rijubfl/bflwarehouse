@@ -206,12 +206,7 @@ public class BarcodePrinting {
         return printData;
     }
 
-<<<<<<< HEAD
-    public byte[] getRoutePalletPrint(String palletno,String inCharge,String Routeid,String entryDate,String count, String delDate,String sn,String copy) {
-=======
-
     public byte[] getRoutePalletPrint(String palletno, String inCharge, String Routeid, String entryDate, String count, String delDate, String sn, String copy, String shopName) {
->>>>>>> a3c252a88d39fae7f00f1442c80d383a9b4815cf
         String str01 = "\u0002n\r\n";
         String str02 = "\u0002M0986\r\n";
         String str03 = "\u0002KcLW0384;\r\n";

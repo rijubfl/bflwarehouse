@@ -27,10 +27,6 @@ public class WarehouseGRNControl {
         if (!b_Result) {
             objGlobal.setErrorMessage("WarehouseGRNNewControl : Connection error");
         }
-        b_Result = dbConnection.connectCloudDb();
-        if (!b_Result) {
-            objGlobal.setErrorMessage("2 ReceiveShopReturnsControl : Cloud Connection error");
-        }
     }
 
     public boolean checkConnection() {
@@ -41,12 +37,6 @@ public class WarehouseGRNControl {
             if (!b_Result) {
                 objGlobal.setErrorMessage("WarehouseGRNNewControl.checkConnection : Connection error");
                 return false;
-            }
-        }
-        if (!dbConnection.checkCloudConnectionClosed()) {
-            b_Result = dbConnection.connectCloudDb();
-            if (!b_Result) {
-                objGlobal.setErrorMessage("2 ReceiveShopReturnsControl : Cloud Connection error");
             }
         }
         return true;
