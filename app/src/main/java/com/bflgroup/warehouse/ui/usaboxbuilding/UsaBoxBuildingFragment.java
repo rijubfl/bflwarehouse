@@ -934,16 +934,16 @@ public class UsaBoxBuildingFragment extends Fragment {
         ch_usa_box_reprint.setEnabled(true);
 
         ArrayAdapter<String> arrayAdpYellow = null;
-//        b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
-//        if (!b_Result) {
-//            okMessage("USABox Build", objGlobal.getErrorMessage());
-//        } else {
-//            arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
-//            sp_usa_box_printer.setAdapter(arrayAdpYellow);
-//            if (saredRef.loadPrinter() != "") {
-//                sp_usa_box_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
-//            }
-//        }
+        b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
+        if (!b_Result) {
+            okMessage("USABox Build", objGlobal.getErrorMessage());
+        } else {
+            arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
+            sp_usa_box_printer.setAdapter(arrayAdpYellow);
+            if (saredRef.loadPrinter() != "") {
+                sp_usa_box_printer.setSelection(arrayAdpYellow.getPosition(saredRef.loadPrinter()));
+            }
+        }
 
         List<String> arr4 = objUsaBoxBuildingControl.loadSpinner("SZ");
         ArrayAdapter<String> arrayAdp4 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr4);
