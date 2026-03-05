@@ -100,8 +100,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (result) {
                     result = dbConnection.connectDb();
                     if (result) {
-                        //result = dbConnection.connectCloudDb();
-                        //if (result) {
+                        result = dbConnection.connectCloudDb();
+                        if (result) {
                             result = objControls.getControlMain();//assign global values
                             if (result) {
                                 result = validateUser();//check the user details
@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-                        //}
+                        }
                     }
                 }
                 if (!result) {
