@@ -83,7 +83,6 @@ public class ChuteCheckInCheckOutControl {
             return false;
         }
         if (validateTotidUsed(toteId)) {
-            objGlobal.setErrorMessage("Totid is alrady used, Totid: " + toteId + "");
             return false;
         }
         if(!validateChuteScanByUser(chuteId)){
@@ -208,15 +207,13 @@ public class ChuteCheckInCheckOutControl {
 
     public boolean validateTotidUsed(String toteId) {
         try {
-            String reuse = "";
-            rs = dbConnection.getResultSet("select * from TotIdMaster where TotId='" + toteId + "'", conRobo);
-            if (rs.next()) reuse = rs.getString("reuse");
-            if (reuse.equals("Y")) {
-                rs = dbConnection.getResultSet("select * from SortTask where ToteId='" + toteId + "' and TrnDate='" + objGlobal.getServerDate() + "'", conRobo);
+            rs = dbConnection.getResultSet("SELECT * FROM ROBOTICS.dbo.ChuteCheckin WHERE TotId='" + toteId + "' and (CAST(TrnDate AS DATETIME) + CAST(TrnTime AS DATETIME)) >= DATEADD(HOUR, -24, GETDATE())", conRobo);
+            if (rs.next()) {
+                objGlobal.setErrorMessage("Tote ID already checked in for chute " + rs.getString("ChuteId") + ", store " + rs.getString("ShopName") + ".");
+                return true;
             } else {
-                rs = dbConnection.getResultSet("select * from SortTask where ToteId='" + toteId + "'", conRobo);
+                return false;
             }
-            return rs.next();
         } catch (Exception ex) {
             objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:validateTotidUsed:" + ex);
             return false;

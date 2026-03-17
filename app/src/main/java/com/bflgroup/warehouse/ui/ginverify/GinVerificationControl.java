@@ -159,10 +159,10 @@ public class GinVerificationControl {
             return true;
         } catch (Exception ex) {
             try {
-                objGlobal.setErrorMessage("GinVerificationControl:saveGinVerification:ex:" + ex.toString());
+                objGlobal.setErrorMessage("GinVerificationControl:saveGinVerification:ex:" + ex);
                 objGlobal.getConnection().rollback();
             } catch (SQLException e) {
-                objGlobal.setErrorMessage("GinVerificationControl:saveGinVerification:e:" + e.toString());
+                objGlobal.setErrorMessage("GinVerificationControl:saveGinVerification:e:" + e);
                 return false;
             }
             return false;
