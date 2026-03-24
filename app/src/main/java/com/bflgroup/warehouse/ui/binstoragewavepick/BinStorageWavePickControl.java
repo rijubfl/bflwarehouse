@@ -69,17 +69,11 @@ public class BinStorageWavePickControl {
             //01/11/2024
             String query = "";
             if (objGlobal.getWorkLocation().equals("UAE")) {
-//                query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
-//                        "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'') and ISNULL(Zones,'')<>''";
-                query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
-                        "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'') and ISNULL(Zones,'')<>''";
-
-
+                query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList where Rack<>'') and ISNULL(Zones,'')<>''";
             } else {
                 if (type.equals("SKIPPED BOXES")){
                     if (objGlobal.getWorkLocation().equals("KSA")){
                         query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in ( select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList where Rack<>'' and BoxNo in ( select ToteId=BoxNo from racks.dbo.SkipWavePick where Fix='N' AND CAST(trndate AS DATE) = CAST(GETDATE() AS DATE))) and ISNULL(Zones,'')<>''";
-
                     }
                     else{
                         query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
@@ -89,19 +83,15 @@ public class BinStorageWavePickControl {
                 }
                 else if (type.equals("OVERRIDE BOXES")){
                     query = "SELECT DISTINCT ZONES FROM RACKS..BinRackMaster WHERE BARCODE IN " +
-                            "(SELECT LOCATION FROM RACKS..BinRack WHERE BOXNO IN (SELECT BOXNO FROM usa..OverrideMaxQtyHeader a WHERE a.EntryDate >= CAST(DATEADD(DAY, -1, GETDATE()) AS DATE) " +
-                            "AND NOT EXISTS (SELECT 1 FROM bfldata..CloseR1pallet b WHERE b.PalletNo = a.BoxNo)))";
+                            "(SELECT LOCATION FROM RACKS.dbo.BinRack WHERE BOXNO IN (SELECT BOXNO FROM usa..OverrideMaxQtyHeader a WHERE a.EntryDate >= CAST(DATEADD(DAY, -1, GETDATE()) AS DATE) " +
+                            "AND NOT EXISTS (SELECT 1 FROM bfldata.dbo.CloseR1pallet b WHERE b.PalletNo = a.BoxNo)))";
                 }
                 else{
-                    query = "SELECT DISTINCT b.Zones FROM RACKS.dbo.BinRackMaster b with (nolock) WHERE b.Zones IS NOT NULL AND b.Zones <> '' AND EXISTS (SELECT 1" +
-                            "FROM tempdata.dbo.SIMProdReadyPalletsList p with (nolock) WHERE p.Rack <> '' AND p.Rack = b.Barcode AND NOT EXISTS (SELECT 1 FROM RACKS.dbo.SkipWavePick s with (nolock) WHERE s.Fix = 'N' AND (s.ToteId = p.BoxNo OR s.BoxNo = p.BoxNo)))";
-//                    query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
-//                            "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'' and BoxNo not in(select ToteId from racks.dbo.SkipWavePick where Fix='N' union all " +
-//                            "select ToteId=BoxNo from racks.dbo.SkipWavePick where Fix='N')) and ISNULL(Zones,'')<>''";
+                    query = "SELECT DISTINCT b.Zones FROM RACKS.dbo.BinRackMaster b with (nolock) WHERE b.Zones IS NOT NULL AND b.Zones <> '' AND EXISTS (SELECT 1 FROM " +
+                            "tempdata.dbo.SIMProdReadyPalletsList p with (nolock) WHERE p.Rack <> '' AND p.Rack = b.Barcode AND NOT EXISTS (SELECT 1 FROM RACKS.dbo.SkipWavePick s with (nolock) " +
+                            "WHERE s.Fix = 'N' AND (s.ToteId = p.BoxNo OR s.BoxNo = p.BoxNo)))";
                 }
-
             }
-
             rs = dbConnection.getResultSet(query, objGlobal.getConnection());
             while (rs.next()) {
                 arr.add(rs.getString("Zones"));

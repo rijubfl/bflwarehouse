@@ -661,9 +661,8 @@ public class TransferControl {
             objTransferGlobal.setBoxTrfBoxNo("");
             objTransferGlobal.setRegSIMExclude("");
             objTransferGlobal.setBoxTrfBoxNoPalletType("");
-//            rs = dbConnection.getResultSet("select distinct BoxNo,PalletType,contno=(select case when RoboContno<>'' then RoboContno else replace(substring(BoxNo,1, CHARINDEX('-',boxno)),'-','') end)  from " +
-//                    "usa.dbo.vUPCBoxDet where (BoxNo='" + scan + "' or ToteID='" + scan + "') and Closed='N'", objGlobal.getConnection());
-            rs = dbConnection.getResultSet("SELECT DISTINCT BoxNo,PalletType,contno = CASE WHEN RoboContno <> '' THEN RoboContno WHEN CHARINDEX('-', BoxNo) > 0 AND LEN(LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1)) >= 4 THEN LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1) ELSE '' END FROM usa.dbo.vUPCBoxDet WHERE (BoxNo = '"+scan+"' OR ToteID = '"+scan+"') AND Closed = 'N'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("SELECT DISTINCT BoxNo,PalletType,contno=CASE WHEN RoboContno <> '' THEN RoboContno WHEN CHARINDEX('-', BoxNo) > 0 AND LEN(LEFT(BoxNo, " +
+                    "CHARINDEX('-', BoxNo) - 1)) >= 4 THEN LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1) ELSE '' END FROM usa.dbo.vUPCBoxDet WHERE (BoxNo = '"+scan+"' OR ToteID = '"+scan+"') AND Closed = 'N'", objGlobal.getConnection());
             while (rs.next()) {
                 typeUsaTcm = "USABOX";
                 boxOrPalletNo = rs.getString("boxno");
@@ -758,6 +757,9 @@ public class TransferControl {
             }
             if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set description=b.description from bfldata.dbo.tmpRfidPdaTransferItems a,hodata.dbo.itemmaster b where " +
                     "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode", objGlobal.getConnection())) {
+                return false;
+            }
+            if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and qty<=0", objGlobal.getConnection())) {
                 return false;
             }
             String emptyDesc = "", zeroStock = "";

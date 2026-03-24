@@ -207,7 +207,7 @@ public class ChuteCheckInCheckOutControl {
 
     public boolean validateTotidUsed(String toteId) {
         try {
-            rs = dbConnection.getResultSet("SELECT * FROM ROBOTICS.dbo.ChuteCheckin WHERE TotId='" + toteId + "' and (CAST(TrnDate AS DATETIME) + CAST(TrnTime AS DATETIME)) >= DATEADD(HOUR, -24, GETDATE())", conRobo);
+            rs = dbConnection.getResultSet("SELECT * FROM ROBOTICS.dbo.ChuteCheckin WHERE TotId='" + toteId + "' and (CAST(TrnDate AS DATETIME) + CAST(TrnTime AS DATETIME)) >= DATEADD(HOUR,-24, GETDATE())", conRobo);
             if (rs.next()) {
                 objGlobal.setErrorMessage("Tote ID already checked in for chute " + rs.getString("ChuteId") + ", store " + rs.getString("ShopName") + ".");
                 return true;
