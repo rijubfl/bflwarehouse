@@ -170,7 +170,7 @@ public class BinPutAwayControl {
         }
     }
 
-    public boolean saveBinInOutSingle(String toteId, String boxNo, String direction, String location, String dBeep) {
+    public boolean saveBinInOutSingle(String toteId, String boxNo, String direction, String location, String dBeep,String waveId) {
         String rack = "", horizontal = "", vertical = "", fLocation = "";
         b_Result = validateToteid(direction, toteId);
         if (!b_Result) {
@@ -233,6 +233,12 @@ public class BinPutAwayControl {
                         return false;
                     }
                     if (!dbConnection.insertUpdate("update BinRack set location='" + location + "' where Warehouse='" + objGlobal.getWarehouse() + "' and location='" + fLocation + "'", objGlobal.getConnection())) {
+                        objGlobal.getConnection().rollback();
+                        return false;
+                    }
+                }
+                if (!waveId.equals("N/A")) {
+                    if (!dbConnection.insertUpdate("update RACKS.dbo.WavePicking set PickedDate=getdate(),PickedUserName='" + objGlobal.getUserName() + "' where WaveNo='" + waveId + "' and BoxNo='" + boxNo + "'", objGlobal.getConnection())) {
                         objGlobal.getConnection().rollback();
                         return false;
                     }

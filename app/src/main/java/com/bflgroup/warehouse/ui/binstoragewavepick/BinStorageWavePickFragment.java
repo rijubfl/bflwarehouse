@@ -516,6 +516,8 @@ public class BinStorageWavePickFragment extends Fragment {
 
     private Spinner sp_bin_storage_wave_pick_rack;
     private Spinner sp_bin_storage_wave_pick_type;
+    private Spinner sp_bin_storage_wave_pick_wave_id;
+    private TextView tv_bin_storage_wave_pick_wave_id_percentage;
     private Spinner sp_bin_storage_wave_pick_tote_type;
     private Spinner sp_bin_storage_wave_pick_div;
     private Button bt_bin_storage_wave_pick_load;
@@ -547,6 +549,8 @@ public class BinStorageWavePickFragment extends Fragment {
 
         sp_bin_storage_wave_pick_rack = view.findViewById(R.id.sp_bin_storage_wave_pick_rack);
         sp_bin_storage_wave_pick_type = view.findViewById(R.id.sp_bin_storage_wave_pick_type);
+        sp_bin_storage_wave_pick_wave_id= view.findViewById(R.id.sp_bin_storage_wave_pick_wave_id);
+        tv_bin_storage_wave_pick_wave_id_percentage= view.findViewById(R.id.tv_bin_storage_wave_pick_wave_id_percentage);
         sp_bin_storage_wave_pick_tote_type = view.findViewById(R.id.sp_bin_storage_wave_pick_tote_type);
         sp_bin_storage_wave_pick_div = view.findViewById(R.id.sp_bin_storage_wave_pick_div);
         bt_bin_storage_wave_pick_load = view.findViewById(R.id.bt_bin_storage_wave_pick_load);
@@ -574,6 +578,23 @@ public class BinStorageWavePickFragment extends Fragment {
                 // no-op
             }
         });
+
+        sp_bin_storage_wave_pick_wave_id.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString().equals("N/A")){
+                    tv_bin_storage_wave_pick_wave_id_percentage.setText("");
+                } else {
+                    tv_bin_storage_wave_pick_wave_id_percentage.setText(objBinStorageWavePickControl.wavePercentage(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString()));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // no-op
+            }
+        });
+
 
         return view;
     }
@@ -622,6 +643,7 @@ public class BinStorageWavePickFragment extends Fragment {
                 List<String> racks = objBinStorageWavePickControl.loadBinStorageWavePickRack("");
                 List<String> types = objBinStorageWavePickControl.loadPickType();
                 List<String> divs  = objBinStorageWavePickControl.loadPickDivision();
+                List<String> waveids  = objBinStorageWavePickControl.loadWaveID();
 
                 if (!isAdded()) return;
                 requireActivity().runOnUiThread(() -> {
@@ -629,7 +651,9 @@ public class BinStorageWavePickFragment extends Fragment {
                         sp_bin_storage_wave_pick_rack.setAdapter(new ArrayAdapter<>(requireContext(),
                                 android.R.layout.simple_dropdown_item_1line, racks));
                         sp_bin_storage_wave_pick_type.setAdapter(new ArrayAdapter<>(requireContext(),
-                                android.R.layout.simple_dropdown_item_1line, types));
+                                android.R.layout.simple_dropdown_item_1line,types ));
+                        sp_bin_storage_wave_pick_wave_id.setAdapter(new ArrayAdapter<>(requireContext(),
+                                android.R.layout.simple_dropdown_item_1line, waveids));
                         sp_bin_storage_wave_pick_div.setAdapter(new ArrayAdapter<>(requireContext(),
                                 android.R.layout.simple_dropdown_item_1line, divs));
                     } finally {
@@ -709,6 +733,7 @@ public class BinStorageWavePickFragment extends Fragment {
     private void loadDetailsAsync() {
         if (!isAdded()) return;
 
+        String waveid = String.valueOf(sp_bin_storage_wave_pick_wave_id.getSelectedItem()).trim();
         String rack = String.valueOf(sp_bin_storage_wave_pick_rack.getSelectedItem()).trim();
         String pickType = String.valueOf(sp_bin_storage_wave_pick_type.getSelectedItem()).trim();
         String div = String.valueOf(sp_bin_storage_wave_pick_div.getSelectedItem()).trim();
@@ -725,7 +750,7 @@ public class BinStorageWavePickFragment extends Fragment {
 
         ioExecutor.execute(() -> {
             ArrayList<BinStorageWavePickTicket> list =
-                    objBinStorageWavePickControl.loadBinStorageWaveDetails(rack, pickType, div);
+                    objBinStorageWavePickControl.loadBinStorageWaveDetails(rack, pickType, div,waveid);
 
             if (!isAdded()) return;
             requireActivity().runOnUiThread(() -> {
@@ -742,6 +767,11 @@ public class BinStorageWavePickFragment extends Fragment {
                 }
             });
         });
+        if(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString().equals("N/A")){
+            tv_bin_storage_wave_pick_wave_id_percentage.setText("");
+        } else {
+            tv_bin_storage_wave_pick_wave_id_percentage.setText(objBinStorageWavePickControl.wavePercentage(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString()));
+        }
     }
 
     // ----------------------------
@@ -829,7 +859,7 @@ public class BinStorageWavePickFragment extends Fragment {
                                 clearAllAsync(sp_bin_storage_wave_pick_rack.getSelectedItem().toString(),
                                         sp_bin_storage_wave_pick_type.getSelectedItem().toString(),
                                         sp_bin_storage_wave_pick_div.getSelectedItem().toString(),
-                                        (getCount() != 1) ? sp_bin_storage_wave_pick_rack.getSelectedItem().toString() : "");
+                                        (getCount() != 1) ? sp_bin_storage_wave_pick_rack.getSelectedItem().toString() : "",sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString());
                             } else {
                                 okMessage("BinPutAwayFragment", objGlobal.getErrorMessage());
                                 vibrate(250);
@@ -951,15 +981,14 @@ public class BinStorageWavePickFragment extends Fragment {
                     .setTitle("Confirmation")
                     .setCancelable(false)
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        b_Result = objBinPutAwayControl.saveBinInOutSingle(toteId, boxNo, direction, location, dBeep);
+                        b_Result = objBinPutAwayControl.saveBinInOutSingle(toteId, boxNo, direction, location, dBeep,sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString());
                         if (b_Result) {
                             // Refresh list async
                             clearAllAsync(
                                     sp_bin_storage_wave_pick_rack.getSelectedItem().toString(),
                                     sp_bin_storage_wave_pick_type.getSelectedItem().toString(),
                                     sp_bin_storage_wave_pick_div.getSelectedItem().toString(),
-                                    (adapter.getCount() != 1) ? sp_bin_storage_wave_pick_rack.getSelectedItem().toString() : ""
-                            );
+                                    (adapter.getCount() != 1) ? sp_bin_storage_wave_pick_rack.getSelectedItem().toString() : "",sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString());
                             myDialog.dismiss();
                         } else {
                             okMessage("BinPutAwayFragment", objGlobal.getErrorMessage());
@@ -977,13 +1006,13 @@ public class BinStorageWavePickFragment extends Fragment {
     // ----------------------------
     // Refresh list async (instead of blocking UI)
     // ----------------------------
-    private void clearAllAsync(String rack, String pickType, String div, String zoneToSelect) {
+    private void clearAllAsync(String rack, String pickType, String div, String zoneToSelect,String waveid) {
         if (!isAdded()) return;
 
         showLoading("Refreshing...");
         ioExecutor.execute(() -> {
             ArrayList<BinStorageWavePickTicket> list =
-                    objBinStorageWavePickControl.loadBinStorageWaveDetails(rack, pickType, div);
+                    objBinStorageWavePickControl.loadBinStorageWaveDetails(rack, pickType, div,waveid);
 
             List<String> racks = objBinStorageWavePickControl.loadBinStorageWavePickRack("");
 
@@ -1006,6 +1035,11 @@ public class BinStorageWavePickFragment extends Fragment {
                     hideLoading();
                 }
             });
+            if(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString().equals("N/A")){
+                tv_bin_storage_wave_pick_wave_id_percentage.setText("");
+            } else {
+                tv_bin_storage_wave_pick_wave_id_percentage.setText(objBinStorageWavePickControl.wavePercentage(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString()));
+            }
         });
     }
 

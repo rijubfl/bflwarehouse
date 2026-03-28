@@ -204,7 +204,7 @@ public class BinPutAwayFragment extends Fragment {
                                 String boxNo = tv_bin_put_away_boxno.getText().toString().trim();
                                 String location = et_bin_put_away_binlocation.getText().toString().trim();
                                 String dBeep = tv_bin_put_away_doublebeep.getText().toString().trim();
-                                b_Result = objBinPutAwayControl.saveBinInOutSingle(objControls.replaceString(toteId), boxNo, direction, objControls.replaceString(location),dBeep);
+                                b_Result = objBinPutAwayControl.saveBinInOutSingle(objControls.replaceString(toteId), boxNo, direction, objControls.replaceString(location),dBeep,"");
                                 if (b_Result) {
                                     clearAll();
                                     et_bin_put_away_toteid.requestFocus();
