@@ -417,7 +417,7 @@ public class GinScantransferControl {
     }
 
     public boolean InsertPalletDetails(String DelDate, String remark, String Driver, String Carno, String Shipno, String Routeid) throws SQLException, ParseException {
-               try {
+        try {
 
             String pallet = "";
             String queryselect = "select distinct ShopName from bfldata..tmpGinRoute where devicename = '" + objGlobal.getDeviceName() + "'";
@@ -460,6 +460,11 @@ public class GinScantransferControl {
                 String cDate = cDateF.format(rs1.getDate("Trfdate"));
                 Log.e("dateTime", cDate + "");
 
+                ResultSet rsPalletcheck = dbConnection.getResultSet("select * from bfldata..goodsissuedet where sn = " + palletSN + " and ShopName <> '" + rs1.getString("shopname") + "'", objGlobal.getConnection());
+                if (rsPalletcheck.next()) {
+                    objGlobal.setErrorMessage("This pallet is invalid for the shop " + rs1.getString("shopname"));
+                    return false;
+                }
                 String querynew = "insert into bfldata.dbo.GoodsIssueDet  values (" + palletSN + ",'" + rs1.getString("TrfNo") + "'" +
                         ",'" + cDate + "'," + boxno + "," + rs1.getInt("Qty") + ", '" + rs1.getString("PreparedBy") + "','" + rs1.getString("Narration") + "', '" + rs1.getString("shopname") + "')";
                 Log.e("Insert goodsIssuedet", querynew);
@@ -619,11 +624,11 @@ public class GinScantransferControl {
             query2 = "select PalletScan from bfldata..tmpGinRoute where PalletScan = '" + palletno + "' and DeviceName = '" + objGlobal.getDeviceName() + "'";
             ResultSet rs2 = dbConnection.getResultSet(query2, objGlobal.getConnection());
             if (rs2.next()) {
-                okMessage("MESSAGE","Duplicate Pallet", context );
+                okMessage("MESSAGE", "Duplicate Pallet", context);
                 return 0;
             } else {
 
-                String query = "select palletprefix from bfldata..datasettings where routeid = "+ routeid;
+                String query = "select palletprefix from bfldata..datasettings where routeid = " + routeid;
                 ResultSet rs1 = dbConnection.getResultSet(query, objGlobal.getConnection());
                 while (rs1.next()) {
                     arrayList.add(rs1.getString("palletprefix"));
@@ -640,30 +645,29 @@ public class GinScantransferControl {
                         ObjGinScanTransferShared.savePalletno(palletno);
                         ObjGinScanTransferShared.savePalletCount(String.valueOf(getCountno));
                         ObjGinScanTransferShared.saveRouteid(String.valueOf(routeid));
-                        PalletCount= 0;
+                        PalletCount = 0;
                         setPalletCount(PalletCount);
-                    }
-                    else{
+                    } else {
                         vibrate(1000, context);
                         okMessage("ALERT", "This PalletNo is not in the same route - " + palletno, context);
                         return 0;
                     }
 
-                }
-                else {
+                } else {
                     vibrate(1000, context);
                     okMessage("ALERT", "This PalletNo is not in the same route - " + palletno, context);
                     return 0;
                 }
             }
-        }catch(Exception e){
-            vibrate(1000,context);
+        } catch (Exception e) {
+            vibrate(1000, context);
             okMessage("Alert", "Error message gin - " + e.toString(), context);
         }
 
 
         return getCountno;
     }
+
     public PalletScanItem getpallet(Context context, String palletno, int prevRouteId) throws SQLException {
         int getCountno = 0;
         ArrayList arrayList = new ArrayList();
@@ -696,8 +700,7 @@ public class GinScantransferControl {
                                 okMessage("ALERT", "This PalletNo is not in the same route - " + palletno, context);
                                 return palletScanItem;
                             }
-                        }
-                        else{
+                        } else {
                             palletScanItem.setRouteId(routeid);
                         }
                     }
