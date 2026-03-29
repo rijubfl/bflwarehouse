@@ -82,13 +82,13 @@ public class ChuteCheckInCheckOutControl {
             objGlobal.setErrorMessage("ChuteId Error: " + chuteId + ", Please contact IT");
             return false;
         }
-        if (validateTotidUsed(toteId)) {
-            return false;
-        }
         if(!validateChuteScanByUser(chuteId)){
             return false;
         }
         if (Objects.equals(direction, "IN")) {
+            /*if (validateTotidUsed(toteId)) {
+                return false;
+            }*/
             if (!TextUtils.isEmpty(getToteIdFromChuteId(chuteId))) {
                 objGlobal.setErrorMessage("Tot Id is used in another chute, Please check, " + chuteId);
                 return false;
