@@ -110,7 +110,7 @@ public class BinPutAwayMultipleToteControl {
             }
             objBinPutAwayMultipleToteGlobal.setBoxNo(rs.getString("Boxno"));
             objBinPutAwayMultipleToteGlobal.setToteId(rs.getString("toteid"));
-            rs = dbConnection.getResultSet("select top 1 palletno from bfldata.dbo.closer1pallet where palletno='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "')", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select top 1 palletno from bfldata.dbo.closer1pallet where palletno='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("Box / Pallet is already closed - (" + objBinPutAwayMultipleToteGlobal.getBoxNo() + " - " + scan + ")");
                 return false;
