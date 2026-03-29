@@ -73,7 +73,7 @@ public class DBConnection {
         UserName = "BFL";
         Password = "LFBmct1971";
         if (TextUtils.isEmpty(objGlobal.getCloudDbName())) objGlobal.setCloudDbName("BFLDATA");
-        String serverIp = "bfl-db-prod-01.cxavfbgorqyp.me-south-1.rds.amazonaws.com";
+        String serverIp = "bfl-db-prod-im.cy4jmc1yawh1.ap-south-1.rds.amazonaws.com";
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         String connectionString = "";

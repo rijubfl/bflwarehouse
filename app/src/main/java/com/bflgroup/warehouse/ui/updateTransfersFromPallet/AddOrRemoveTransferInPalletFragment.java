@@ -26,8 +26,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.bflgroup.warehouse.R;
-import com.bflgroup.warehouse.ui.Updateboxfrompallet.AddOrRemoveBoxInPalletFragment;
-import com.bflgroup.warehouse.ui.Updateboxfrompallet.BoxInAndOutControl;
 import com.bflgroup.warehouse.ui.Updateboxfrompallet.model.BoxInOutRequestData;
 
 import java.util.ArrayList;

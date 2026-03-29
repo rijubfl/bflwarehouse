@@ -69,17 +69,11 @@ public class BinStorageWavePickControl {
             //01/11/2024
             String query = "";
             if (objGlobal.getWorkLocation().equals("UAE")) {
-//                query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
-//                        "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'') and ISNULL(Zones,'')<>''";
-                query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
-                        "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'') and ISNULL(Zones,'')<>''";
-
-
+                query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList where Rack<>'') and ISNULL(Zones,'')<>''";
             } else {
                 if (type.equals("SKIPPED BOXES")){
                     if (objGlobal.getWorkLocation().equals("KSA")){
                         query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in ( select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList where Rack<>'' and BoxNo in ( select ToteId=BoxNo from racks.dbo.SkipWavePick where Fix='N' AND CAST(trndate AS DATE) = CAST(GETDATE() AS DATE))) and ISNULL(Zones,'')<>''";
-
                     }
                     else{
                         query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
@@ -89,19 +83,15 @@ public class BinStorageWavePickControl {
                 }
                 else if (type.equals("OVERRIDE BOXES")){
                     query = "SELECT DISTINCT ZONES FROM RACKS..BinRackMaster WHERE BARCODE IN " +
-                            "(SELECT LOCATION FROM RACKS..BinRack WHERE BOXNO IN (SELECT BOXNO FROM usa..OverrideMaxQtyHeader a WHERE a.EntryDate >= CAST(DATEADD(DAY, -1, GETDATE()) AS DATE) " +
-                            "AND NOT EXISTS (SELECT 1 FROM bfldata..CloseR1pallet b WHERE b.PalletNo = a.BoxNo)))";
+                            "(SELECT LOCATION FROM RACKS.dbo.BinRack WHERE BOXNO IN (SELECT BOXNO FROM usa..OverrideMaxQtyHeader a WHERE a.EntryDate >= CAST(DATEADD(DAY, -1, GETDATE()) AS DATE) " +
+                            "AND NOT EXISTS (SELECT 1 FROM bfldata.dbo.CloseR1pallet b WHERE b.PalletNo = a.BoxNo)))";
                 }
                 else{
-                    query = "SELECT DISTINCT b.Zones FROM RACKS.dbo.BinRackMaster b with (nolock) WHERE b.Zones IS NOT NULL AND b.Zones <> '' AND EXISTS (SELECT 1" +
-                            "FROM tempdata.dbo.SIMProdReadyPalletsList p with (nolock) WHERE p.Rack <> '' AND p.Rack = b.Barcode AND NOT EXISTS (SELECT 1 FROM RACKS.dbo.SkipWavePick s with (nolock) WHERE s.Fix = 'N' AND (s.ToteId = p.BoxNo OR s.BoxNo = p.BoxNo)))";
-//                    query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
-//                            "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'' and BoxNo not in(select ToteId from racks.dbo.SkipWavePick where Fix='N' union all " +
-//                            "select ToteId=BoxNo from racks.dbo.SkipWavePick where Fix='N')) and ISNULL(Zones,'')<>''";
+                    query = "SELECT DISTINCT b.Zones FROM RACKS.dbo.BinRackMaster b with (nolock) WHERE b.Zones IS NOT NULL AND b.Zones <> '' AND EXISTS (SELECT 1 FROM " +
+                            "tempdata.dbo.SIMProdReadyPalletsList p with (nolock) WHERE p.Rack <> '' AND p.Rack = b.Barcode AND NOT EXISTS (SELECT 1 FROM RACKS.dbo.SkipWavePick s with (nolock) " +
+                            "WHERE s.Fix = 'N' AND (s.ToteId = p.BoxNo OR s.BoxNo = p.BoxNo)))";
                 }
-
             }
-
             rs = dbConnection.getResultSet(query, objGlobal.getConnection());
             while (rs.next()) {
                 arr.add(rs.getString("Zones"));
@@ -113,7 +103,7 @@ public class BinStorageWavePickControl {
         return arr;
     }
 
-    ArrayList<BinStorageWavePickTicket> loadBinStorageWaveDetails(String zoneId, String pickType, String div) {
+    ArrayList<BinStorageWavePickTicket> loadBinStorageWaveDetails(String zoneId, String pickType, String div,String waveid) {
         ArrayList<BinStorageWavePickTicket> listBinStorageWavePickTicket = new ArrayList<BinStorageWavePickTicket>();
         String order = "";
         try {
@@ -138,17 +128,22 @@ public class BinStorageWavePickControl {
                         "ToteId in(select distinct totid from bfldata.dbo.vR1Pallet where closed='N' and pallettype in('RW') and isnull(totid,'')<>'')", objGlobal.getConnection())) {
                     return null;
                 }
-            }
-            else if(pickType.equals("OVERRIDE BOXES")){
+            } else if (pickType.equals("OVERRIDE BOXES")) {
                 if (!dbConnection.insertUpdate("insert into #simBoxPick(BoxNo) " +
-                        "SELECT DISTINCT BoxNo FROM usa..OverrideMaxQtyHeader a WHERE a.EntryDate >= CAST(DATEADD(DAY, -1, GETDATE()) AS DATE) "+
+                        "SELECT DISTINCT BoxNo FROM usa..OverrideMaxQtyHeader a WHERE a.EntryDate >= CAST(DATEADD(DAY, -1, GETDATE()) AS DATE) " +
                         "AND NOT EXISTS (SELECT 1 FROM bfldata..CloseR1pallet b WHERE b.PalletNo = a.BoxNo)", objGlobal.getConnection())) {
                     return null;
                 }
-            }
-            else {
-                if (!dbConnection.insertUpdate("insert into #simBoxPick(BoxNo,BoxPerc,CheckingType,iDepartment) select distinct BoxNo,BoxPerc=CONVERT(DECIMAL(10,2),BoxPerc),CheckingType,iDepartment from tempdata.dbo.SIMProdReadyPalletsList ", objGlobal.getConnection())) {
-                    return null;
+            } else {
+                if (!waveid.equals("N/A")) {
+                    if (!dbConnection.insertUpdate("insert into #simBoxPick(BoxNo,BoxPerc,CheckingType,iDepartment) select distinct BoxNo,0,'','' from RACKS.dbo.WavePicking where WaveNo="+waveid, objGlobal.getConnection())) {
+                        return null;
+                    }
+                } else {
+                    if (!dbConnection.insertUpdate("insert into #simBoxPick(BoxNo,BoxPerc,CheckingType,iDepartment) select distinct BoxNo,BoxPerc=CONVERT(DECIMAL(10,2),BoxPerc),CheckingType,iDepartment from " +
+                            "tempdata.dbo.SIMProdReadyPalletsList ", objGlobal.getConnection())) {
+                        return null;
+                    }
                 }
             }
             if (!dbConnection.insertUpdate("update #simBoxPick set ToteId='',Location='',Text='',Color='',PickOrder='',Zones='',DoubleDeep=''", objGlobal.getConnection())) {
@@ -157,7 +152,8 @@ public class BinStorageWavePickControl {
             if (!dbConnection.insertUpdate("update #simBoxPick set ToteId=b.ToteID from #simBoxPick a,usa.dbo.upcboxhead b where a.BoxNo=b.BoxNo and b.Closed='N'", objGlobal.getConnection())) {
                 return null;
             }
-            if (!dbConnection.insertUpdate("update #simBoxPick set ToteId=c.TotId,CheckingType='TCM' from #simBoxPick a,bfldata.dbo.TCMBoxes b,BFLDATA.dbo.TcmboxesHeader c where a.BoxNo=b.BoxNo and a.BoxNo=c.Boxno and b.Closed='N'", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("update #simBoxPick set ToteId=c.TotId,CheckingType='TCM' from #simBoxPick a,bfldata.dbo.TCMBoxes b,BFLDATA.dbo.TcmboxesHeader c where a.BoxNo=b.BoxNo " +
+                    "and a.BoxNo=c.Boxno and b.Closed='N'", objGlobal.getConnection())) {
                 return null;
             }
             if (!objGlobal.getWorkLocation().equals("UAE")) {
@@ -193,15 +189,14 @@ public class BinStorageWavePickControl {
                     if (!dbConnection.insertUpdate("delete from #simBoxPick where BoxNo in(select BoxNo from SkipWavePick where fix='N')", objGlobal.getConnection())) {
                         return null;
                     }
-                }
-                else{
-                    ResultSet r1 = dbConnection.getResultSet("select * from #simBoxPick where ToteId not in(select ToteId from racks..SkipWavePick where fix='N' AND CAST(trndate AS DATE) = CAST(GETDATE() AS DATE)) and location in(select Rack from racks..SkipWavePick where fix='N' AND CAST(trndate AS DATE) = CAST(GETDATE() AS DATE))",objGlobal.getConnection());
+                } else {
+                    rs = dbConnection.getResultSet("select * from #simBoxPick where ToteId not in(select ToteId from racks..SkipWavePick where fix='N' AND " +
+                            "CAST(trndate AS DATE) = CAST(GETDATE() AS DATE)) and location in(select Rack from racks..SkipWavePick where fix='N' AND CAST(trndate AS DATE) = CAST(GETDATE() AS DATE))", objGlobal.getConnection());
                     if (!rs.next()) {
                         if (!dbConnection.insertUpdate("delete from #simBoxPick where ToteId not in(select ToteId from SkipWavePick where fix='N' AND CAST(trndate AS DATE) = CAST(GETDATE() AS DATE))", objGlobal.getConnection())) {
                             return null;
                         }
-                    }
-                    else{
+                    } else {
                         if (!dbConnection.insertUpdate("delete from #simBoxPick where BoxNo not in(select BoxNo from SkipWavePick where fix='N' AND CAST(trndate AS DATE) = CAST(GETDATE() AS DATE))", objGlobal.getConnection())) {
                             return null;
                         }
@@ -213,12 +208,11 @@ public class BinStorageWavePickControl {
             }
             order = "Vertical,Horizontal,PickOrder,DoubleDeep";
             if (objGlobal.getWorkLocation().equals("KSA")) order = "Location";
-            int rowno = 0;
+
             if (pickType.equals("SKIPPED BOXES") || pickType.equals("OVERRIDE BOXES")) validTy = "";
             rs = dbConnection.getResultSet("select ToteId,BoxNo,BoxPerc,Location,Text,Color,PickOrder,Zones,DoubleDeep,CheckingType,rowNo=(ROW_NUMBER() OVER(ORDER BY " + order + ")) " +
                     "from #simBoxPick where Zones='" + zoneId + "' " + validTy + " order by " + order, objGlobal.getConnection());
             while (rs.next()) {
-                rowno++;
                 listBinStorageWavePickTicket.add(new BinStorageWavePickTicket(rs.getString("ToteId").toString().toUpperCase(),
                         rs.getString("BoxNo"), rs.getString("BoxPerc"),
                         rs.getString("Text"), rs.getString("Color"),
@@ -264,10 +258,10 @@ public class BinStorageWavePickControl {
                 arr.add(rs.getString("CheckingType").toString());
             }
             arr.add("ALL WINTER");
-            if (objGlobal.getCountryCode().equals("KSA")) {
-                arr.add("SKIPPED BOXES");
-                arr.add("OVERRIDE BOXES");
-            }
+            //if (objGlobal.getCountryCode().equals("KSA")) {
+            arr.add("SKIPPED BOXES");
+            arr.add("OVERRIDE BOXES");
+            //}
         } catch (Exception ex) {
             objGlobal.setErrorMessage("BinStorageWavePickControl:loadPickType:" + ex.toString());
             return null;
@@ -294,5 +288,38 @@ public class BinStorageWavePickControl {
         return arr;
     }
 
+    List<String> loadWaveID() {
+        List<String> arr;
+        arr = new ArrayList<String>();
+        if (!checkConnection()) {
+            return null;
+        }
+        try {
+            arr.add("N/A");
+            rs = dbConnection.getResultSet("select distinct WaveNo from RACKS.dbo.WavePicking where isnull(closed,'N')='N' order by WaveNo", objGlobal.getConnection());
+            while (rs.next()) {
+                arr.add(rs.getString("WaveNo").toString());
+            }
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("BinStorageWavePickControl:loadWaveID:" + ex.toString());
+            return null;
+        }
+        return arr;
+    }
+
+    public String wavePercentage(String waveId) {
+        String wavePer = "0%";
+        try {
+            rs = dbConnection.getResultSet("SELECT perc=CAST((SELECT COUNT(DISTINCT boxno)FROM RACKS.dbo.WavePicking WHERE WaveNo = a.WaveNo AND PickedDate IS NOT NULL)*100.0/COUNT(DISTINCT boxno) AS DECIMAL(10,2)) " +
+                    "FROM RACKS.dbo.WavePicking a WHERE WaveNo=" + waveId + " GROUP BY WaveNo", objGlobal.getConnection());
+            if (rs.next()) {
+                wavePer = rs.getString("perc") + "%";
+            }
+            return wavePer;
+        } catch (Exception ex) {
+            objGlobal.setErrorMessage("BinBatchInControl:saveBatchIn:ex:" + ex);
+            return wavePer;
+        }
+    }
 
 }

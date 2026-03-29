@@ -298,14 +298,15 @@ public class UsaBoxBuildingControl {
                     }
                 }
             }
-            if (selPalletype.equals("RW") || selPalletype.equals("YH") || selPalletype.equals("BX") || selPalletype.equals("BZ")) {
+
+            if (selPalletype.equals("RW") || selPalletype.equals("YH") || selPalletype.equals("BX") || selPalletype.equals("BZ") || selPalletype.equals("OW")) {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and season<>'W'", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("Some items found Season Summer, itemcode: " + itemcode);
                     valid = false;
                 }
             }
-            if (selPalletype.equals("R1") || selPalletype.equals("YG") || selPalletype.equals("AX") || selPalletype.equals("BZ")) {
+            if (selPalletype.equals("R1") || selPalletype.equals("YG") || selPalletype.equals("AX") || selPalletype.equals("BZ") || selPalletype.equals("OH")) {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and season='W'", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("Some items found Season Winter, itemcode: " + itemcode);

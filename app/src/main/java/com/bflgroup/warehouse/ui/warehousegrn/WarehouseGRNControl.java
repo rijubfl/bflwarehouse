@@ -137,11 +137,18 @@ public class WarehouseGRNControl {
                         "Boxno in(select palletno from BFLDATA.dbo.PLTDeliveryDetails where SrNo=" + ginNo + ") group by palletno,isnull(boxno,''),isnull(ToteID,'')", objGlobal.getConnection())) {
                     return false;
                 }
-                //BFLDATA.dbo.vR1Pallet
+                //BFLDATA.dbo.vR1Pallet (BOX)
                 if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpWarehouseGrnScanNew(DeviceId,GINNo,GINDate,WareHouseFrom,WareHouseTo,PalletNo,BoxNo,ToteId,TCount,SCount) " +
                         "select '" + objGlobal.getDeviceName() + "','" + ginNo + "','" + objWarehouseGRNNewGlobal.getGinDate() + "','" + objWarehouseGRNNewGlobal.getWarehouseFrom() + "'," +
-                        "'" + objWarehouseGRNNewGlobal.getWarehouseTo() + "',palletno,isnull(boxno,''),isnull(TotID,''),1,0 from BFLDATA.dbo.vR1Pallet where closed='N' and " +
+                        "'" + objWarehouseGRNNewGlobal.getWarehouseTo() + "',palletno,isnull(boxno,''),isnull(TotID,''),1,0 from BFLDATA.dbo.vR1Pallet where isnull(boxno,'')<>'' and closed='N' and " +
                         "palletno in(select palletno from BFLDATA.dbo.PLTDeliveryDetails where SrNo=" + ginNo + ") group by palletno,isnull(boxno,''),isnull(TotID,'')", objGlobal.getConnection())) {
+                    return false;
+                }
+                //BFLDATA.dbo.vR1Pallet (PALLET)
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpWarehouseGrnScanNew(DeviceId,GINNo,GINDate,WareHouseFrom,WareHouseTo,PalletNo,BoxNo,ToteId,TCount,SCount) " +
+                        "select '" + objGlobal.getDeviceName() + "','" + ginNo + "','" + objWarehouseGRNNewGlobal.getGinDate() + "','" + objWarehouseGRNNewGlobal.getWarehouseFrom() + "'," +
+                        "'" + objWarehouseGRNNewGlobal.getWarehouseTo() + "',palletno,palletno,isnull(TotID,''),1,0 from BFLDATA.dbo.vR1Pallet where isnull(boxno,'')='' and closed='N' and " +
+                        "palletno in(select palletno from BFLDATA.dbo.PLTDeliveryDetails where SrNo=" + ginNo + ") group by palletno,isnull(TotID,'')", objGlobal.getConnection())) {
                     return false;
                 }
                 //abudata.dbo.tcmitemsall
