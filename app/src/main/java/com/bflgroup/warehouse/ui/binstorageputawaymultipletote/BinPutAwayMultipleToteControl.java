@@ -117,8 +117,8 @@ public class BinPutAwayMultipleToteControl {
             }
             if (!objGlobal.getWorkLocation().equals("UAE")) {
                 if (objBinPutAwayMultipleToteGlobal.getBoxNo().startsWith("F")) {
-                    rs = dbConnection.getResultSet("select top 1 sn,Trndate from bflksa.dbo.VerifyGin where TrfNo='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "'", objGlobal.getConnection());
-                    if (rs.next()) {
+                    rs = dbConnection.getResultSet("select top 1 sn,Trndate from bfldata.dbo.VerifyGin where TrfNo='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "'", objGlobal.getConnection());
+                    if (!rs.next()) {
                         objGlobal.setErrorMessage("The GRN has not been completed yet for box (" + objBinPutAwayMultipleToteGlobal.getBoxNo() + " - " + scan + ")");
                         return false;
                     }

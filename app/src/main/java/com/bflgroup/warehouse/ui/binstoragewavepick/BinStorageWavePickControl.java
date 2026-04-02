@@ -71,22 +71,19 @@ public class BinStorageWavePickControl {
             if (objGlobal.getWorkLocation().equals("UAE")) {
                 query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList where Rack<>'') and ISNULL(Zones,'')<>''";
             } else {
-                if (type.equals("SKIPPED BOXES")){
-                    if (objGlobal.getWorkLocation().equals("KSA")){
+                if (type.equals("SKIPPED BOXES")) {
+                    if (objGlobal.getWorkLocation().equals("KSA")) {
                         query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in ( select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList where Rack<>'' and BoxNo in ( select ToteId=BoxNo from racks.dbo.SkipWavePick where Fix='N' AND CAST(trndate AS DATE) = CAST(GETDATE() AS DATE))) and ISNULL(Zones,'')<>''";
-                    }
-                    else{
+                    } else {
                         query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from " +
                                 "tempdata.dbo.SIMProdReadyPalletsList where Rack<>'' and BoxNo not in(select ToteId from racks.dbo.SkipWavePick where Fix='N' union all " +
                                 "select ToteId=BoxNo from racks.dbo.SkipWavePick where Fix='N')) and ISNULL(Zones,'')<>''";
                     }
-                }
-                else if (type.equals("OVERRIDE BOXES")){
+                } else if (type.equals("OVERRIDE BOXES")) {
                     query = "SELECT DISTINCT ZONES FROM RACKS..BinRackMaster WHERE BARCODE IN " +
                             "(SELECT LOCATION FROM RACKS.dbo.BinRack WHERE BOXNO IN (SELECT BOXNO FROM usa..OverrideMaxQtyHeader a WHERE a.EntryDate >= CAST(DATEADD(DAY, -1, GETDATE()) AS DATE) " +
                             "AND NOT EXISTS (SELECT 1 FROM bfldata.dbo.CloseR1pallet b WHERE b.PalletNo = a.BoxNo)))";
-                }
-                else{
+                } else {
                     query = "SELECT DISTINCT b.Zones FROM RACKS.dbo.BinRackMaster b with (nolock) WHERE b.Zones IS NOT NULL AND b.Zones <> '' AND EXISTS (SELECT 1 FROM " +
                             "tempdata.dbo.SIMProdReadyPalletsList p with (nolock) WHERE p.Rack <> '' AND p.Rack = b.Barcode AND NOT EXISTS (SELECT 1 FROM RACKS.dbo.SkipWavePick s with (nolock) " +
                             "WHERE s.Fix = 'N' AND (s.ToteId = p.BoxNo OR s.BoxNo = p.BoxNo)))";
@@ -103,7 +100,7 @@ public class BinStorageWavePickControl {
         return arr;
     }
 
-    ArrayList<BinStorageWavePickTicket> loadBinStorageWaveDetails(String zoneId, String pickType, String div,String waveid) {
+    ArrayList<BinStorageWavePickTicket> loadBinStorageWaveDetails(String zoneId, String pickType, String div, String waveid) {
         ArrayList<BinStorageWavePickTicket> listBinStorageWavePickTicket = new ArrayList<BinStorageWavePickTicket>();
         String order = "";
         try {
@@ -136,7 +133,7 @@ public class BinStorageWavePickControl {
                 }
             } else {
                 if (!waveid.equals("N/A")) {
-                    if (!dbConnection.insertUpdate("insert into #simBoxPick(BoxNo,BoxPerc,CheckingType,iDepartment) select distinct BoxNo,0,'','' from RACKS.dbo.WavePicking where WaveNo="+waveid, objGlobal.getConnection())) {
+                    if (!dbConnection.insertUpdate("insert into #simBoxPick(BoxNo,BoxPerc,CheckingType,iDepartment) select distinct BoxNo,0,'','' from RACKS.dbo.WavePicking where WaveNo=" + waveid, objGlobal.getConnection())) {
                         return null;
                     }
                 } else {
@@ -307,18 +304,18 @@ public class BinStorageWavePickControl {
         return arr;
     }
 
-    public String wavePercentage(String waveId) {
-        String wavePer = "0%";
+    public boolean wavePercentage(String waveId) {
         try {
-            rs = dbConnection.getResultSet("SELECT perc=CAST((SELECT COUNT(DISTINCT boxno)FROM RACKS.dbo.WavePicking WHERE WaveNo = a.WaveNo AND PickedDate IS NOT NULL)*100.0/COUNT(DISTINCT boxno) AS DECIMAL(10,2)) " +
-                    "FROM RACKS.dbo.WavePicking a WHERE WaveNo=" + waveId + " GROUP BY WaveNo", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("SELECT remarks,perc=CAST((SELECT COUNT(DISTINCT boxno) FROM RACKS.dbo.WavePicking WHERE WaveNo = a.WaveNo AND PickedDate IS NOT NULL)*100.0/COUNT(DISTINCT boxno) AS DECIMAL(10,2)) " +
+                    "FROM RACKS.dbo.WavePicking a WHERE WaveNo=" + waveId + " GROUP BY remarks,WaveNo", objGlobal.getConnection());
             if (rs.next()) {
-                wavePer = rs.getString("perc") + "%";
+                BinStorageWavePickGlobal.setWavePercentage( rs.getString("perc") + "%");
+                BinStorageWavePickGlobal.setWaveRemarks( rs.getString("remarks"));
             }
-            return wavePer;
+            return true;
         } catch (Exception ex) {
             objGlobal.setErrorMessage("BinBatchInControl:saveBatchIn:ex:" + ex);
-            return wavePer;
+            return false;
         }
     }
 

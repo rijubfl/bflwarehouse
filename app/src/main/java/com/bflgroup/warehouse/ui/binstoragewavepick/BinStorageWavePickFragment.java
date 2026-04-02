@@ -518,6 +518,7 @@ public class BinStorageWavePickFragment extends Fragment {
     private Spinner sp_bin_storage_wave_pick_type;
     private Spinner sp_bin_storage_wave_pick_wave_id;
     private TextView tv_bin_storage_wave_pick_wave_id_percentage;
+    private TextView tv_bin_storage_wave_pick_wave_remarks;
     private Spinner sp_bin_storage_wave_pick_tote_type;
     private Spinner sp_bin_storage_wave_pick_div;
     private Button bt_bin_storage_wave_pick_load;
@@ -549,8 +550,9 @@ public class BinStorageWavePickFragment extends Fragment {
 
         sp_bin_storage_wave_pick_rack = view.findViewById(R.id.sp_bin_storage_wave_pick_rack);
         sp_bin_storage_wave_pick_type = view.findViewById(R.id.sp_bin_storage_wave_pick_type);
-        sp_bin_storage_wave_pick_wave_id= view.findViewById(R.id.sp_bin_storage_wave_pick_wave_id);
-        tv_bin_storage_wave_pick_wave_id_percentage= view.findViewById(R.id.tv_bin_storage_wave_pick_wave_id_percentage);
+        sp_bin_storage_wave_pick_wave_id = view.findViewById(R.id.sp_bin_storage_wave_pick_wave_id);
+        tv_bin_storage_wave_pick_wave_id_percentage = view.findViewById(R.id.tv_bin_storage_wave_pick_wave_id_percentage);
+        tv_bin_storage_wave_pick_wave_remarks = view.findViewById(R.id.tv_bin_storage_wave_pick_wave_remarks);
         sp_bin_storage_wave_pick_tote_type = view.findViewById(R.id.sp_bin_storage_wave_pick_tote_type);
         sp_bin_storage_wave_pick_div = view.findViewById(R.id.sp_bin_storage_wave_pick_div);
         bt_bin_storage_wave_pick_load = view.findViewById(R.id.bt_bin_storage_wave_pick_load);
@@ -582,10 +584,14 @@ public class BinStorageWavePickFragment extends Fragment {
         sp_bin_storage_wave_pick_wave_id.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString().equals("N/A")){
+                if (sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString().equals("N/A")) {
                     tv_bin_storage_wave_pick_wave_id_percentage.setText("");
                 } else {
-                    tv_bin_storage_wave_pick_wave_id_percentage.setText(objBinStorageWavePickControl.wavePercentage(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString()));
+                    b_Result=objBinStorageWavePickControl.wavePercentage(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString());
+                    if(b_Result) {
+                        tv_bin_storage_wave_pick_wave_id_percentage.setText(BinStorageWavePickGlobal.getWavePercentage());
+                        tv_bin_storage_wave_pick_wave_remarks.setText(BinStorageWavePickGlobal.getWaveRemarks());
+                    }
                 }
             }
 
@@ -594,8 +600,6 @@ public class BinStorageWavePickFragment extends Fragment {
                 // no-op
             }
         });
-
-
         return view;
     }
 
@@ -770,7 +774,11 @@ public class BinStorageWavePickFragment extends Fragment {
         if(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString().equals("N/A")){
             tv_bin_storage_wave_pick_wave_id_percentage.setText("");
         } else {
-            tv_bin_storage_wave_pick_wave_id_percentage.setText(objBinStorageWavePickControl.wavePercentage(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString()));
+            b_Result=objBinStorageWavePickControl.wavePercentage(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString());
+            if(b_Result) {
+                tv_bin_storage_wave_pick_wave_id_percentage.setText(BinStorageWavePickGlobal.getWavePercentage());
+                tv_bin_storage_wave_pick_wave_remarks.setText(BinStorageWavePickGlobal.getWaveRemarks());
+            }
         }
     }
 
@@ -1038,7 +1046,11 @@ public class BinStorageWavePickFragment extends Fragment {
             if(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString().equals("N/A")){
                 tv_bin_storage_wave_pick_wave_id_percentage.setText("");
             } else {
-                tv_bin_storage_wave_pick_wave_id_percentage.setText(objBinStorageWavePickControl.wavePercentage(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString()));
+                b_Result=objBinStorageWavePickControl.wavePercentage(sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString());
+                if(b_Result) {
+                    tv_bin_storage_wave_pick_wave_id_percentage.setText(BinStorageWavePickGlobal.getWavePercentage());
+                    tv_bin_storage_wave_pick_wave_remarks.setText(BinStorageWavePickGlobal.getWaveRemarks());
+                }
             }
         });
     }

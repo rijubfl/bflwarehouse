@@ -86,9 +86,9 @@ public class ChuteCheckInCheckOutControl {
             return false;
         }
         if (Objects.equals(direction, "IN")) {
-            /*if (validateTotidUsed(toteId)) {
+            if (validateTotidUsed(toteId)) {
                 return false;
-            }*/
+            }
             if (!TextUtils.isEmpty(getToteIdFromChuteId(chuteId))) {
                 objGlobal.setErrorMessage("Tot Id is used in another chute, Please check, " + chuteId);
                 return false;
