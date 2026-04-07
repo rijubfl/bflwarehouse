@@ -370,7 +370,7 @@ public class BoxInAndOutControl {
                 else status = true;
             }
 
-            if(status == true) {
+            if(status) {
                 String query3 = "insert into  bfldata..VerifyPalletDetail  (SNo, PalletNo, BoxNo, Build, Scan) select SNo, PalletNo, '" + boxNo + "',1,1 from BFLDATA..VerifyPalletHeader where PalletNo='" + palletNo + "'";
                 status = dbConnection.insertUpdate(query3, objGlobal.getConnection());
                 if (status) {

@@ -1,22 +1,13 @@
 package com.bflgroup.warehouse;
 
-import android.Manifest;
 import android.app.ProgressDialog;
-import android.app.admin.DeviceAdminInfo;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.net.wifi.aware.WifiAwareChannelInfo;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
-import android.provider.Settings.Secure;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -28,18 +19,14 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.bflgroup.warehouse.comm.Controls;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.comm.SaredRef;
 import com.bflgroup.warehouse.db.DBConnection;
 
-import java.net.NetworkInterface;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {

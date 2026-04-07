@@ -21,7 +21,7 @@ public class BinStorageWavePickControl {
     public BinStorageWavePickControl() {
         objGlobal.setDbName("RACKS");
         b_Result = dbConnection.connectDb();
-        if (b_Result == false) {
+        if (!b_Result) {
             objGlobal.setErrorMessage("BinStorageWavePickControl : Connection error");
         }
     }
@@ -29,9 +29,9 @@ public class BinStorageWavePickControl {
     public boolean checkConnection() {
         objGlobal.setErrorMessage("");
         objGlobal.setDbName("RACKS");
-        if (dbConnection.checkConnectionClosed() == false) {
+        if (!dbConnection.checkConnectionClosed()) {
             b_Result = dbConnection.connectDb();
-            if (b_Result == false) {
+            if (!b_Result) {
                 objGlobal.setErrorMessage("BinStorageWavePickControl.checkConnection : Connection error");
                 return false;
             }
@@ -127,8 +127,8 @@ public class BinStorageWavePickControl {
                 }
             } else if (pickType.equals("OVERRIDE BOXES")) {
                 if (!dbConnection.insertUpdate("insert into #simBoxPick(BoxNo) " +
-                        "SELECT DISTINCT BoxNo FROM usa..OverrideMaxQtyHeader a WHERE a.EntryDate >= CAST(DATEADD(DAY, -1, GETDATE()) AS DATE) " +
-                        "AND NOT EXISTS (SELECT 1 FROM bfldata..CloseR1pallet b WHERE b.PalletNo = a.BoxNo)", objGlobal.getConnection())) {
+                        "SELECT DISTINCT BoxNo FROM usa.dbo.OverrideMaxQtyHeader a WHERE a.EntryDate >= CAST(DATEADD(DAY, -1, GETDATE()) AS DATE) " +
+                        "AND NOT EXISTS (SELECT 1 FROM bfldata.dbo.CloseR1pallet b WHERE b.PalletNo = a.BoxNo)", objGlobal.getConnection())) {
                     return null;
                 }
             } else {

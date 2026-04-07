@@ -7,7 +7,7 @@
     android:padding="5dp"
     android:background="@color/colorBackPopup"
     android:layout_gravity="center"
-    android:layout_height="220dp">
+    android:layout_height="200dp">
 
     <TextView
         android:id="@+id/TextView1"

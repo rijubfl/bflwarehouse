@@ -88,28 +88,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <Spinner
             android:id="@+id/sp_rack_in_out_warehouse"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:textColor="@color/coloBlack"
-            android:layout_marginEnd="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
-            android:text="[Select Warehouse]"
             android:padding="10dp"
+            android:text="[Select Warehouse]"
+            android:textColor="@color/coloBlack"
             android:textSize="14dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/TextView1"
             app:layout_constraintTop_toTopOf="parent" />
-
 
         <EditText
             android:id="@+id/et_pallet_status_palletno"
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/et_custom"
             android:hint="Scan Pallet / Box / Tote"

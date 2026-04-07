@@ -214,7 +214,7 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
         bt_chute_status_inout_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
+                try {
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     alert.setMessage("Are You sure to save?")
                             .setTitle("Conformation")
@@ -224,10 +224,9 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                                 public void onClick(DialogInterface dialog, int which) {
                                     try {
                                         new ChuteCheckInCheckOutFragment.ApiChuteCheckIn(getContext()).execute();
-                                    }
-                                    catch (Exception e){
+                                    } catch (Exception e) {
                                         objGlobal.setErrorMessage(e.getMessage());
-                                        okMessage("Error",objGlobal.getErrorMessage());
+                                        okMessage("Error", objGlobal.getErrorMessage());
                                     }
                                 }
                             })
@@ -238,10 +237,9 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                                 }
                             })
                             .show();
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     objGlobal.setErrorMessage(e.getMessage());
-                    okMessage("Error",objGlobal.getErrorMessage());
+                    okMessage("Error", objGlobal.getErrorMessage());
                 }
 
             }
@@ -257,7 +255,11 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                new ChuteCheckInCheckOutFragment.ApiChuteCheckOut(getContext()).execute();
+                                try {
+                                    new ChuteCheckInCheckOutFragment.ApiChuteCheckOut(getContext()).execute();
+                                } catch (Exception ex) {
+                                    okMessage("", ex.toString());
+                                }
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {

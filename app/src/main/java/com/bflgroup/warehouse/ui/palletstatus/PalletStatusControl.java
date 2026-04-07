@@ -55,6 +55,16 @@ public class PalletStatusControl {
                 objGlobal.setErrorMessage("getPalletStatus:Datetime Error");
                 return false;
             }
+            rs = dbConnection.getResultSet("select top 1 * from bfldata.dbo.PalletStatus where warehouse='" + warehouse + "' and (palletno='" + scan + "' or boxno='" + scan + "' or ToteId='" + scan + "')", objGlobal.getConnection());
+            if (rs.next()) {
+                boxno = rs.getString("boxno");
+                toteid = rs.getString("toteid");
+                palletno = rs.getString("palletno");
+                pltType = rs.getString("PalletType");
+                status =  rs.getString("Status");
+                type = "UBOX";
+                found = true;
+            }
             if (!found) {
                 rs = dbConnection.getResultSet("select top 1 boxno,toteid=isnull(toteid,''),palletno=isnull(palletno,''),PalletType=isnull(PalletType,'') from usa.dbo.vupcboxdet where closed='N' and Toteid='" + scan + "'", objGlobal.getConnection());
                 if (rs.next()) {
@@ -165,7 +175,6 @@ public class PalletStatusControl {
                 golden = "Y";
             }
 
-            status="";
             rs = dbConnection.getResultSet("select * from bfldata.dbo.PalletType where PalletType='" + pltType + "' and DirectProduction='Y'", objGlobal.getConnection());
             if (rs.next()) status = "PRODUCTION - D";
 
