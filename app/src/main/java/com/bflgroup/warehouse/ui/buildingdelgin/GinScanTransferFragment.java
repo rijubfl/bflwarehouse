@@ -158,8 +158,18 @@ public class GinScanTransferFragment extends Fragment {
         et_g_pallet.setFocusable(true);
 
 
+
+
+
+
         objGinScanTransferControl = new GinScantransferControl(getContext());
         GinScanTransferShared = new GinScanTransferShared(getContext());
+        if (objGlobal.getCountryCode().equals("KSA")){
+            List<String> vehicleVendorList = objGinScanTransferControl.loadVehicleVendorForKsa();
+            ArrayAdapter<String> arrayAdp1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, vehicleVendorList);
+            sp_vendor.setAdapter(arrayAdp1);
+        }
+
         List<Integer> arr1 = objGinScanTransferControl.loadRoute();
         ArrayAdapter<Integer> arrayAdp1 = new ArrayAdapter<Integer>(getContext(), android.R.layout.simple_dropdown_item_1line, arr1);
         sp_gin_route_id.setAdapter(arrayAdp1);

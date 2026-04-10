@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -247,7 +248,7 @@ public class BinPutAwayMultipleToteControl {
         }
     }
 
-    public boolean clearScaned(){
+    public boolean clearScaned() {
         if (!checkConnection()) {
             return false;
         }
@@ -255,73 +256,199 @@ public class BinPutAwayMultipleToteControl {
             if (!dbConnection.insertUpdate("delete from tmpToteScan where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 return false;
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             objGlobal.setErrorMessage("BinPutAwayMultipleToteControl:clearScaned:" + ex.toString());
             return false;
         }
         return true;
     }
 
-    public boolean saveBinInOutMultiple(String warehouse, String direction, String location,String toteid) {
-        b_Result = validateLocation(warehouse, location, direction);
+//    public boolean saveBinInOutMultiple(String warehouse, String direction, String location, String toteid) {
+//        b_Result = validateLocation(warehouse, location, direction);
+//        if (!b_Result) {
+//            return false;
+//        }
+//        try {
+//            if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
+//                objGlobal.setErrorNo("saveBinInOut:001:");
+//                return false;
+//            }
+//
+//            objGlobal.getConnection().setAutoCommit(false);
+//            if (!dbConnection.insertUpdate("insert into BinPutAwayHistory(Warehouse,TrnDate,TrnTime,ToteId,BoxNo,Direction,Location,UserId,UserName,DeviceId) " +
+//                    "select '" + warehouse + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "',ToteId," +
+//                    "BoxNo,Direction,Location," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "' from tmpToteScan where " +
+//                    "DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+//                objGlobal.getConnection().rollback();
+//                return false;
+//            }
+//            if (direction.equals("IN")) {
+//                if (!dbConnection.insertUpdate("insert into BinRack(Warehouse,Location,ToteId,BoxNo) select '" + warehouse + "',Location,ToteId,BoxNo from tmpToteScan " +
+//                        "where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+//                    objGlobal.getConnection().rollback();
+//                    return false;
+//                }
+//            }
+//            if (direction.equals("OUT")) {
+//                if (toteid.isEmpty()) {
+//                    if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and Location='" + location + "' and (toteid in(select ToteId from tmpToteScan where " +
+//                            "DeviceId='" + objGlobal.getDeviceName() + "') or  boxno in(select BoxNo from tmpToteScan where DeviceId='" + objGlobal.getDeviceName() + "'))", objGlobal.getConnection())) {
+//                        objGlobal.getConnection().rollback();
+//                        return false;
+//                    }
+//                } else {
+//                    if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and Location='" + location + "' and (toteid='" + toteid + "' or boxno='" + toteid + "')", objGlobal.getConnection())) {
+//                        objGlobal.getConnection().rollback();
+//                        return false;
+//                    }
+//                }
+//            }
+//            objGlobal.getConnection().commit();
+//            objGlobal.getConnection().setAutoCommit(true);
+//            return true;
+//        } catch (Exception ex) {
+//            try {
+//                objGlobal.setErrorMessage("BinPutAwayMultipleToteControl:saveBatchIn:ex:" + ex.toString());
+//                objGlobal.getConnection().rollback();
+//            } catch (SQLException e) {
+//                objGlobal.setErrorMessage("BinPutAwayMultipleToteControl:saveBatchIn:e:" + e.toString());
+//                return false;
+//            }
+//            return false;
+//        }
+//    }
+
+
+
+
+
+
+
+    public boolean saveBinInOutMultiple(String warehouse, String direction, String location, String toteid) {
+        boolean b_Result = validateLocation(warehouse, location, direction);
         if (!b_Result) {
             return false;
         }
+
+        Connection con = objGlobal.getConnection();
+        String dir = direction == null ? "" : direction.trim();
+        String tote = toteid == null ? "" : toteid.trim();
+
         try {
-            if (!dbConnection.getServerDateTime(objGlobal.getConnection())) {
+            if (!dbConnection.getServerDateTime(con)) {
                 objGlobal.setErrorNo("saveBinInOut:001:");
                 return false;
             }
 
-            objGlobal.getConnection().setAutoCommit(false);
-            if (!dbConnection.insertUpdate("insert into BinPutAwayHistory(Warehouse,TrnDate,TrnTime,ToteId,BoxNo,Direction,Location,UserId,UserName,DeviceId) " +
-                    "select '" + warehouse + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "',ToteId," +
-                    "BoxNo,Direction,Location," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "' from tmpToteScan where " +
-                    "DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
-                objGlobal.getConnection().rollback();
+            con.setAutoCommit(false);
+
+            String historyQry =
+                    "insert into BinPutAwayHistory " +
+                            "(Warehouse, TrnDate, TrnTime, ToteId, BoxNo, Direction, Location, UserId, UserName, DeviceId) " +
+                            "select '" + warehouse + "', '" + objGlobal.getServerDate() + "', '" + objGlobal.getServerTime() + "', " +
+                            "ToteId, BoxNo, Direction, Location, " + objGlobal.getUserId() + ", '" + objGlobal.getUserName() + "', '" + objGlobal.getDeviceName() + "' " +
+                            "from tmpToteScan " +
+                            "where DeviceId = '" + objGlobal.getDeviceName() + "'";
+
+            if (!dbConnection.insertUpdate(historyQry, con)) {
+                con.rollback();
+                objGlobal.setErrorMessage("Failed to insert into BinPutAwayHistory");
                 return false;
             }
-            if (direction.equals("IN")) {
-                if (!dbConnection.insertUpdate("insert into BinRack(Warehouse,Location,ToteId,BoxNo) select '" + warehouse + "',Location,ToteId,BoxNo from tmpToteScan " +
-                        "where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
-                    objGlobal.getConnection().rollback();
+
+            if ("IN".equalsIgnoreCase(dir)) {
+
+                String binRackInsertQry =
+                        "insert into BinRack (Warehouse, Location, ToteId, BoxNo) " +
+                                "select '" + warehouse + "', Location, ToteId, BoxNo " +
+                                "from tmpToteScan " +
+                                "where DeviceId = '" + objGlobal.getDeviceName() + "'";
+
+                if (!dbConnection.insertUpdate(binRackInsertQry, con)) {
+                    con.rollback();
+                    objGlobal.setErrorMessage("Failed to insert into BinRack");
                     return false;
                 }
-            }
-            if (direction.equals("OUT")) {
-                if(toteid.isEmpty()) {
-                    if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and Location='" + location + "' and (toteid in(select ToteId from tmpToteScan where " +
-                            "DeviceId='" + objGlobal.getDeviceName() + "') or  boxno in(select BoxNo from tmpToteScan where DeviceId='" + objGlobal.getDeviceName() + "'))", objGlobal.getConnection())) {
-                        objGlobal.getConnection().rollback();
-                        return false;
-                    }
+
+            } else if ("OUT".equalsIgnoreCase(dir)) {
+
+                String deleteQry;
+
+                if (tote.isEmpty()) {
+                    deleteQry =
+                            "delete from BinRack " +
+                                    "where Warehouse = '" + warehouse + "' " +
+                                    "and Location = '" + location + "' " +
+                                    "and (ToteId in (select ToteId from tmpToteScan where DeviceId = '" + objGlobal.getDeviceName() + "') " +
+                                    "or BoxNo in (select BoxNo from tmpToteScan where DeviceId = '" + objGlobal.getDeviceName() + "'))";
                 } else {
-                    if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and Location='" + location + "' and (toteid='" + toteid + "' or boxno='" + toteid + "')", objGlobal.getConnection())) {
-                        objGlobal.getConnection().rollback();
-                        return false;
-                    }
+                    deleteQry =
+                            "delete from BinRack " +
+                                    "where Warehouse = '" + warehouse + "' " +
+                                    "and Location = '" + location + "' " +
+                                    "and (ToteId = '" + tote + "' or BoxNo = '" + tote + "')";
                 }
-            }
-            objGlobal.getConnection().commit();
-            objGlobal.getConnection().setAutoCommit(true);
-            return true;
-        } catch (Exception ex) {
-            try {
-                objGlobal.setErrorMessage("BinPutAwayMultipleToteControl:saveBatchIn:ex:" + ex.toString());
-                objGlobal.getConnection().rollback();
-            } catch (SQLException e) {
-                objGlobal.setErrorMessage("BinPutAwayMultipleToteControl:saveBatchIn:e:" + e.toString());
+
+                if (!dbConnection.insertUpdate(deleteQry, con)) {
+                    con.rollback();
+                    objGlobal.setErrorMessage("Failed to delete from BinRack");
+                    return false;
+                }
+
+            } else {
+                con.rollback();
+                objGlobal.setErrorMessage("Invalid direction value: " + direction);
                 return false;
             }
+
+            con.commit();
+            return true;
+
+        } catch (Exception ex) {
+            try {
+                con.rollback();
+            } catch (SQLException e) {
+                objGlobal.setErrorMessage("Rollback failed: " + e.toString());
+            }
+
+            objGlobal.setErrorMessage("BinPutAwayMultipleToteControl:saveBinInOutMultiple: " + ex.toString());
             return false;
+
+        } finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                objGlobal.setErrorMessage("Failed to reset auto-commit: " + e.toString());
+            }
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     ArrayList<BinPutAwayMultipleTotePendingSaveTicket> loadBinPutAwayMultipleTotePendingSave() {
         if (!checkConnection()) {
             return null;
         }
-        int tCount=0;
+        int tCount = 0;
         ArrayList<BinPutAwayMultipleTotePendingSaveTicket> listBinPutAwayMultipleTotePendingSave = new ArrayList<BinPutAwayMultipleTotePendingSaveTicket>();
         try {
             listBinPutAwayMultipleTotePendingSave.clear();

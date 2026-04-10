@@ -64,6 +64,24 @@ public class GinScantransferControl {
         }
         return true;
     }
+    public List<String> loadVehicleVendorForKsa() {
+        List<String> arr;
+        if (!checkConnection()) {
+            return null;
+        }
+        try {
+            arr = new ArrayList<String>();
+            arr.add("--select--");
+            rs = dbConnection.getResultSet("select VendorName from bflksa.dbo.VehicleVendor where status = '1'", objGlobal.getConnection());
+            while (rs.next()) {
+                arr.add(rs.getString("VendorName"));
+            }
+            return arr;
+        } catch (Exception e) {
+            objGlobal.setErrorMessage("" + e.toString());
+            return null;
+        }
+    }
 
     public List<Integer> loadRoute() {
         List<Integer> arr;
@@ -460,10 +478,16 @@ public class GinScantransferControl {
                 String cDate = cDateF.format(rs1.getDate("Trfdate"));
                 Log.e("dateTime", cDate + "");
 
-                ResultSet rsPalletcheck = dbConnection.getResultSet("select * from bfldata..goodsissuedet where sn = " + palletSN + " and ShopName <> '" + rs1.getString("shopname") + "'", objGlobal.getConnection());
-                if (rsPalletcheck.next()) {
-                    objGlobal.setErrorMessage("This pallet is invalid for the shop " + rs1.getString("shopname"));
-                    return false;
+
+             //   (ShopName <> '" + rs1.getString("shopname") + "' or ShopName <> 'MUY" + rs1.getString("shopname") + "')
+
+
+                if (objGlobal.getCountryCode().equals("KSA")) {
+                    ResultSet rsPalletcheck = dbConnection.getResultSet("select * from bfldata..goodsissuedet where sn = " + palletSN + " and ShopName <> '" + rs1.getString("shopname") + "'", objGlobal.getConnection());
+                    if (rsPalletcheck.next()) {
+                        objGlobal.setErrorMessage("This pallet is invalid for the shop " + rs1.getString("shopname"));
+                        return false;
+                    }
                 }
                 String querynew = "insert into bfldata.dbo.GoodsIssueDet  values (" + palletSN + ",'" + rs1.getString("TrfNo") + "'" +
                         ",'" + cDate + "'," + boxno + "," + rs1.getInt("Qty") + ", '" + rs1.getString("PreparedBy") + "','" + rs1.getString("Narration") + "', '" + rs1.getString("shopname") + "')";
