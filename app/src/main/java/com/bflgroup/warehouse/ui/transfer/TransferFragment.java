@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -38,8 +37,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -49,15 +46,13 @@ import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Controls;
 import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.ui.building.jafza.BuildingJafzaGLobal;
-import com.bflgroup.warehouse.ui.palletbuilding.PalletBuildingBoxTicket;
-import com.bflgroup.warehouse.ui.palletbuilding.PalletBuildingFragment;
-import com.sewoo.jpos.command.ZPLConst;
 import com.sewoo.port.android.BluetoothPort;
 import com.sewoo.request.android.RequestHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 public class TransferFragment extends Fragment {
@@ -162,12 +157,11 @@ public class TransferFragment extends Fragment {
 
         List<String> arr;
         arr = new ArrayList<String>();
-        arr.add("RFID");//0 R
-        arr.add("Barcode");//1 B
-        arr.add("Itemcode");//2 I
-        arr.add("Box");//3 P
-        arr.add("ROBO Direct");//4 D
-        arr.add("Transfer");//5 T
+        arr.add("RFID / Barcode");//0 R
+        arr.add("Itemcode");//1 I
+        arr.add("Box");//2 P
+        arr.add("ROBO Direct");//3 D
+        arr.add("Transfer");//4 T
         ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
         sp_transfer_type.setAdapter(arrayAdp);
 
@@ -190,13 +184,12 @@ public class TransferFragment extends Fragment {
         tv_transfer_total.setText(String.valueOf(objTransferGlobal.getTotalScan()));
 
         et_transfer_pallet_box_no.setEnabled(false);
-        if (saredRef.loadShopName() != "") {
+        if (!Objects.equals(saredRef.loadShopName(), "")) {
             if (saredRef.loadScanType().equals("R")) sp_transfer_type.setSelection(0);
-            if (saredRef.loadScanType().equals("B")) sp_transfer_type.setSelection(1);
-            if (saredRef.loadScanType().equals("I")) sp_transfer_type.setSelection(2);
-            if (saredRef.loadScanType().equals("P")) sp_transfer_type.setSelection(3);
-            if (saredRef.loadScanType().equals("D")) sp_transfer_type.setSelection(4);
-            if (saredRef.loadScanType().equals("T")) sp_transfer_type.setSelection(5);
+            if (saredRef.loadScanType().equals("I")) sp_transfer_type.setSelection(1);
+            if (saredRef.loadScanType().equals("P")) sp_transfer_type.setSelection(2);
+            if (saredRef.loadScanType().equals("D")) sp_transfer_type.setSelection(3);
+            if (saredRef.loadScanType().equals("T")) sp_transfer_type.setSelection(4);
             sp_transfer_type.setEnabled(false);
             tv_transfer_shopname.setText(saredRef.loadShopName());
             et_transfer_pallet_box_no.setText(saredRef.loadPallet());
@@ -208,11 +201,11 @@ public class TransferFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 tv_transfer_shopname.setText("");
-                if (position == 3) {
+                if (position == 2) {
                     et_transfer_pallet_box_no.setHint("Box Number / Tote Id");
                     et_transfer_pallet_box_no.setEnabled(true);
                     tv_transfer_shopname.setEnabled(false);
-                } else if (position == 5) {
+                } else if (position == 4) {
                     et_transfer_pallet_box_no.setHint("Transfer Number.");
                     et_transfer_pallet_box_no.setEnabled(true);
                 } else {
@@ -239,17 +232,17 @@ public class TransferFragment extends Fragment {
                 } else {
                     saredRef.savePrintCopies(sp_transfer_print_copies.getSelectedItem().toString());
                     saredRef.savePrinter(sp_transfer_printer.getSelectedItem().toString());
-                    if (sp_transfer_type.getSelectedItemId() == 0 || sp_transfer_type.getSelectedItemId() == 1) {
+                    if (sp_transfer_type.getSelectedItemId() == 0) {
                         openPopupScanBarcodeRfid();
-                    } else if (sp_transfer_type.getSelectedItemId() == 2) {
+                    } else if (sp_transfer_type.getSelectedItemId() == 1) {
                         b_Result = scanItemcode(shop);
                         if (b_Result) openPopupScanBarcodeRfid();
-                    } else if (sp_transfer_type.getSelectedItemId() == 3) {
+                    } else if (sp_transfer_type.getSelectedItemId() == 2) {
                         b_Result = scanBoxPallet(boxPallet);
-                    } else if (sp_transfer_type.getSelectedItemId() == 4) {
+                    } else if (sp_transfer_type.getSelectedItemId() == 3) {
                         b_Result = scanRoboDc(shop);
                         if (b_Result) openPopupScanBarcodeRfid();
-                    } else if (sp_transfer_type.getSelectedItemId() == 5) {
+                    } else if (sp_transfer_type.getSelectedItemId() == 4) {
                         b_Result = scanTransfer(shop, boxPallet);
                     }
                 }
@@ -319,11 +312,11 @@ public class TransferFragment extends Fragment {
                 if (allowChangeShop) {
                     Dialog dialog;
                     ArrayList<String> arraylist;
-                    if (sp_transfer_type.getSelectedItemId() == 3) {
+                    if (sp_transfer_type.getSelectedItemId() == 2) {
                         arraylist = objTransferControl.loadShops("E");
-                    } else if (sp_transfer_type.getSelectedItemId() == 4) {
+                    } else if (sp_transfer_type.getSelectedItemId() == 3) {
                         arraylist = objTransferControl.loadShops("D");
-                    } else if (sp_transfer_type.getSelectedItemId() == 5) {
+                    } else if (sp_transfer_type.getSelectedItemId() == 4) {
                         arraylist = objTransferControl.loadShops("T");
                     } else {
                         arraylist = objTransferControl.loadShops("");
@@ -450,11 +443,10 @@ public class TransferFragment extends Fragment {
         objTransferGlobal.setTrfRecNo("");
         try {
             if (sp_transfer_type.getSelectedItemId() == 0) selType = "R";
-            if (sp_transfer_type.getSelectedItemId() == 1) selType = "B";
-            if (sp_transfer_type.getSelectedItemId() == 2) selType = "I";
-            if (sp_transfer_type.getSelectedItemId() == 3) selType = "P";
-            if (sp_transfer_type.getSelectedItemId() == 4) selType = "D";
-            if (sp_transfer_type.getSelectedItemId() == 5) selType = "T";
+            if (sp_transfer_type.getSelectedItemId() == 1) selType = "I";
+            if (sp_transfer_type.getSelectedItemId() == 2) selType = "P";
+            if (sp_transfer_type.getSelectedItemId() == 3) selType = "D";
+            if (sp_transfer_type.getSelectedItemId() == 4) selType = "T";
             if (shopname.isEmpty()) {
                 okMessage("Transfer", "Shop Name is empty");
                 return false;
@@ -680,16 +672,15 @@ public class TransferFragment extends Fragment {
         bt_transfer_popup_clear_robo_dc.setEnabled(false);
 
         if (sp_transfer_type.getSelectedItemId() == 0) saredRef.saveScanType("R");
-        if (sp_transfer_type.getSelectedItemId() == 1) saredRef.saveScanType("B");
-        if (sp_transfer_type.getSelectedItemId() == 2) saredRef.saveScanType("I");
-        if (sp_transfer_type.getSelectedItemId() == 3) saredRef.saveScanType("P");
-        if (sp_transfer_type.getSelectedItemId() == 4) {
+        if (sp_transfer_type.getSelectedItemId() == 1) saredRef.saveScanType("I");
+        if (sp_transfer_type.getSelectedItemId() == 2) saredRef.saveScanType("P");
+        if (sp_transfer_type.getSelectedItemId() == 3) {
             tv_transfer_popup_robo_dc_palletno.setEnabled(true);
             bt_transfer_popup_clear_robo_dc.setEnabled(true);
             tv_transfer_popup_robo_dc_palletno.setHint("ROBO DC Cont.No. / Pallet No.");
             saredRef.saveScanType("D");
         }
-        if (sp_transfer_type.getSelectedItemId() == 5) saredRef.saveScanType("T");
+        if (sp_transfer_type.getSelectedItemId() == 4) saredRef.saveScanType("T");
         tv_transfer_popup_barcode_rfid.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -748,7 +739,7 @@ public class TransferFragment extends Fragment {
             }
         });
         tv_transfer_popup_barcode_rfid_last_scan_totqty.setText(String.valueOf(objTransferGlobal.getTotalScan()));
-        if (sp_transfer_type.getSelectedItemId() == 4)
+        if (sp_transfer_type.getSelectedItemId() == 3)
             tv_transfer_popup_robo_dc_palletno.requestFocus();
         else
             tv_transfer_popup_barcode_rfid.requestFocus();
@@ -846,11 +837,10 @@ public class TransferFragment extends Fragment {
         String contno = tv_transfer_popup_robo_dc_palletno.getText().toString();
         String scanType = "";
         if (sp_transfer_type.getSelectedItemId() == 0) scanType = "R";
-        if (sp_transfer_type.getSelectedItemId() == 1) scanType = "B";
-        if (sp_transfer_type.getSelectedItemId() == 2) scanType = "I";
-        if (sp_transfer_type.getSelectedItemId() == 3) scanType = "P";
-        if (sp_transfer_type.getSelectedItemId() == 4) scanType = "D";
-        if (sp_transfer_type.getSelectedItemId() == 5) scanType = "T";
+        if (sp_transfer_type.getSelectedItemId() == 1) scanType = "I";
+        if (sp_transfer_type.getSelectedItemId() == 2) scanType = "P";
+        if (sp_transfer_type.getSelectedItemId() == 3) scanType = "D";
+        if (sp_transfer_type.getSelectedItemId() == 4) scanType = "T";
         saredRef.savePrinter(sp_transfer_printer.getSelectedItem().toString());
         saredRef.saveShopName(shop);
         int qty = 1;
@@ -882,9 +872,10 @@ public class TransferFragment extends Fragment {
         }
         tv_transfer_popup_barcode_rfid_last_scan.setText(scan);
         if (scanType.equals("R"))
-            b_Result = objTransferControl.validateRfid(false, scan, qty, shop);
-        if (scanType.equals("B"))
-            b_Result = objTransferControl.validateBarcode(false, scan, qty, shop);
+            if (scan.contains("/"))
+                b_Result = objTransferControl.validateBarcode(false, scan, qty, shop);
+            else
+                b_Result = objTransferControl.validateRfid(false, scan, qty, shop);
         if (scanType.equals("I"))
             b_Result = objTransferControl.validateItemcode(false, scan, qty, shop, scanType);
         if (scanType.equals("D"))
@@ -933,11 +924,11 @@ public class TransferFragment extends Fragment {
         allowChangeShop = true;
         sp_transfer_type.setEnabled(true);
         tv_transfer_shopname.setEnabled(true);
-        if ((sp_transfer_type.getSelectedItemId() == 3) || (sp_transfer_type.getSelectedItemId() == 5)) {
+        if ((sp_transfer_type.getSelectedItemId() == 2) || (sp_transfer_type.getSelectedItemId() == 4)) {
             tv_transfer_shopname.setEnabled(false);
         }
         et_transfer_pallet_box_no.setEnabled(false);
-        if (sp_transfer_type.getSelectedItemId() == 3 || sp_transfer_type.getSelectedItemId() == 5) et_transfer_pallet_box_no.setEnabled(true);
+        if (sp_transfer_type.getSelectedItemId() == 2 || sp_transfer_type.getSelectedItemId() == 4) et_transfer_pallet_box_no.setEnabled(true);
         saredRef.saveScanType("");
         saredRef.saveShopName("");
         saredRef.savePallet("");
