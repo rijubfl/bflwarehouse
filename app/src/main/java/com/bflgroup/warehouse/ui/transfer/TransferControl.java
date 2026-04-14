@@ -67,7 +67,7 @@ public class TransferControl {
                 rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Dataname<>'' and ExportActive='Y' order by ShopName", objGlobal.getConnection());
             } else if (shopType.equals("D")) {
                 rs = dbConnection.getResultSet("select ShopName=Result from bfldata.dbo.robodcresult order by ShopName", objGlobal.getConnection());
-            } else if(shopType.equals("T")) {
+            } else if (shopType.equals("T")) {
                 rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Concept='P2EXP' order by ShopName", objGlobal.getConnection());
             } else {
                 rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Dataname<>'' order by ShopName", objGlobal.getConnection());
@@ -87,16 +87,21 @@ public class TransferControl {
             return false;
         }
         try {
+            if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and qty<=0", objGlobal.getConnection())) {
+                return false;
+            }
             boolean rcFound = false;
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
             while (rs.next()) {
                 rcFound = true;
-                if (scanType.equals("B"))
-                    if (!validateBarcode(true, rs.getString("barcode"), rs.getInt("qty"), selShop))
-                        return false;
-                if (scanType.equals("R"))
-                    if (!validateRfid(true, rs.getString("rfid"), rs.getInt("qty"), selShop))
-                        return false;
+                if (scanType.equals("R")) //RFID and BARCODE
+                    if (rs.getString("rfid").isEmpty()) {
+                        if (!validateBarcode(true, rs.getString("barcode"), rs.getInt("qty"), selShop))
+                            return false;
+                    } else {
+                        if (!validateRfid(true, rs.getString("rfid"), rs.getInt("qty"), selShop))
+                            return false;
+                    }
                 if (scanType.equals("I"))
                     if (!validateItemcode(true, rs.getString("itemcode"), rs.getInt("qty"), selShop, scanType))
                         return false;
@@ -104,7 +109,7 @@ public class TransferControl {
                     return true;
                 if (scanType.equals("P"))
                     return true;
-                if(scanType.equals("T"))
+                if (scanType.equals("T"))
                     return true;
             }
             if (!rcFound) {
@@ -193,7 +198,7 @@ public class TransferControl {
             if (rs.next()) {
                 dataname = rs.getString("dataname");
             }
-            if(dataname.equals("")) {
+            if (dataname.equals("")) {
                 rs = dbConnection.getResultSet("select * from BFLDATA.dbo.DataSettings where ShopName in(select MainShop from BFLDATA.dbo.ShopinShop where SubShop='" + shopName + "')", conRob);
                 if (rs.next()) {
                     dataname = rs.getString("dataname");
@@ -662,7 +667,7 @@ public class TransferControl {
             objTransferGlobal.setRegSIMExclude("");
             objTransferGlobal.setBoxTrfBoxNoPalletType("");
             rs = dbConnection.getResultSet("SELECT DISTINCT BoxNo,PalletType,contno=CASE WHEN RoboContno <> '' THEN RoboContno WHEN CHARINDEX('-', BoxNo) > 0 AND LEN(LEFT(BoxNo, " +
-                    "CHARINDEX('-', BoxNo) - 1)) >= 4 THEN LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1) ELSE '' END FROM usa.dbo.vUPCBoxDet WHERE (BoxNo = '"+scan+"' OR ToteID = '"+scan+"') AND Closed = 'N'", objGlobal.getConnection());
+                    "CHARINDEX('-', BoxNo) - 1)) >= 4 THEN LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1) ELSE '' END FROM usa.dbo.vUPCBoxDet WHERE (BoxNo = '" + scan + "' OR ToteID = '" + scan + "') AND Closed = 'N'", objGlobal.getConnection());
             while (rs.next()) {
                 typeUsaTcm = "USABOX";
                 boxOrPalletNo = rs.getString("boxno");
@@ -671,10 +676,10 @@ public class TransferControl {
                 if (!contno.isEmpty()) {
                     rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='" + contno + "' or BOLNO= '" + contno + "'", objGlobal.getConnection());
                     if (!rs.next()) {
-                        rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='KN"+contno+"' or contno='W"+contno+"'", objGlobal.getConnection());
-                        if (!rs.next()){
-                        objGlobal.setErrorMessage("Please Purchase the container (" + contno + ") to proceed");
-                        return false;
+                        rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='KN" + contno + "' or contno='W" + contno + "'", objGlobal.getConnection());
+                        if (!rs.next()) {
+                            objGlobal.setErrorMessage("Please Purchase the container (" + contno + ") to proceed");
+                            return false;
                         }
                     }
                 }
@@ -797,8 +802,8 @@ public class TransferControl {
         }
     }
 
-    public boolean validateTransferToExp(String selshop,String scan) {
-        String trfno="";
+    public boolean validateTransferToExp(String selshop, String scan) {
+        String trfno = "";
         if (!checkConnection()) {
             return false;
         }
@@ -807,11 +812,11 @@ public class TransferControl {
             objTransferGlobal.setBoxTrfBoxNo("");
             rs = dbConnection.getResultSet("select top 1 trfno from " + objGlobal.getCountryDbName() + ".dbo.TransferHeader where (TrfNo='" + scan + "' or storeissue='" + scan + "') and " +
                     "CostCodeTo='" + objGlobal.getExportCountryCostCode() + "' and LocCodeTo='" + objGlobal.getExportCountryLocCode() + "' order by trfdate desc", objGlobal.getConnection());
-            if (!rs.next()) {
+            if (rs.next()) {
+                trfno = rs.getString("trfno");
+            } else {
                 objGlobal.setErrorMessage("Invalid Transfer");
                 return false;
-            } else {
-                trfno=rs.getString("trfno");
             }
             rs = dbConnection.getResultSet("select top 1 * from BFLDATA.dbo.CloseR1pallet where Palletno='" + trfno + "'", objGlobal.getConnection());
             if (rs.next()) {
@@ -836,7 +841,7 @@ public class TransferControl {
                     return false;
                 }
             } else {
-                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set HoQty=b.quantity from bfldata.dbo.tmpRfidPdaTransferItems a,"+ objGlobal.getCountryDbName() +".dbo.locstock b where " +
+                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpRfidPdaTransferItems set HoQty=b.quantity from bfldata.dbo.tmpRfidPdaTransferItems a," + objGlobal.getCountryDbName() + ".dbo.locstock b where " +
                         "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode and b.costcode='" + objGlobal.getExportCountryCostCode() + "' and loccode='" + objGlobal.getExportCountryLocCode() + "'", objGlobal.getConnection())) {
                     return false;
                 }
@@ -845,7 +850,7 @@ public class TransferControl {
                     "a.DeviceName='" + objGlobal.getDeviceName() + "' and a.itemcode=b.itemcode", objGlobal.getConnection())) {
                 return false;
             }
-            String emptyDesc="",zeroStock="";
+            String emptyDesc = "", zeroStock = "";
             rs = dbConnection.getResultSet("select itemcode,Description=isnull(Description,''),diffqty=isnull(HoQty,0)-qty,HoQty=isnull(HoQty,0) from bfldata.dbo.tmpRfidPdaTransferItems " +
                     "where (isnull(Description,'')='' or isnull(HoQty,0)<qty) and DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
             while (rs.next()) {
@@ -862,12 +867,12 @@ public class TransferControl {
                         zeroStock = zeroStock + ", " + rs.getString("itemcode") + " (" + rs.getString("HoQty") + ")";
                 }
             }
-            if(!emptyDesc.equals("")) {
-                objGlobal.setErrorMessage("Can't Proceed, Some items are invalid " + System.lineSeparator() + "("+ emptyDesc +")");
+            if (!emptyDesc.equals("")) {
+                objGlobal.setErrorMessage("Can't Proceed, Some items are invalid " + System.lineSeparator() + "(" + emptyDesc + ")");
                 return false;
             }
-            if(!zeroStock.equals("")) {
-                objGlobal.setErrorMessage("Can't Proceed, HO Stock not available " + System.lineSeparator() + "("+ zeroStock +")");
+            if (!zeroStock.equals("")) {
+                objGlobal.setErrorMessage("Can't Proceed, HO Stock not available " + System.lineSeparator() + "(" + zeroStock + ")");
                 return false;
             }
             objTransferGlobal.setShopName(selshop);

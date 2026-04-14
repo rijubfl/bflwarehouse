@@ -181,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         if (!deviceInfo()) return false;
         try {
-            /*rs = dbConnection.getResultSet("select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'", objGlobal.getCloudCon());
+            rs = dbConnection.getResultSet("select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'", objGlobal.getCloudCon());
             if (rs.next()) {
                 pdaVerActive = rs.getString("active");
                 pdaVerDb = rs.getString("version");
@@ -191,7 +191,7 @@ public class LoginActivity extends AppCompatActivity {
                     objGlobal.setErrorMessage("Pls check the version. The latest version is - " + pdaVerDb);
                     return false;
                 }
-            }*/
+            }
             if (objGlobal.getWorkLocation().equals("3PL")) {
                 query = "select userid,username,SealPrint,FcCode,PrntName,empCode=username,Shop from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());

@@ -241,7 +241,6 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
                     objGlobal.setErrorMessage(e.getMessage());
                     okMessage("Error", objGlobal.getErrorMessage());
                 }
-
             }
         });
 
@@ -565,7 +564,6 @@ public class ChuteCheckInCheckOutFragment extends Fragment {
             vibrate(300);
             showMessage("Chute Status", "Tote type is not updated, Shop name is : " + tv_chute_status_inout_shopname.getText().toString());
         }
-
     }
 
     void vibrate(int duration) {
