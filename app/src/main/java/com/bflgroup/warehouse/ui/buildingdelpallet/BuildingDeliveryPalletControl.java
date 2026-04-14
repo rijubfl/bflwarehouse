@@ -468,6 +468,14 @@ public class BuildingDeliveryPalletControl {
                 }
 
 
+                if (objGlobal.getCountryCode().equals("KSA")) {
+                    ResultSet rsPalletcheck = dbConnection.getResultSet("select * from bfldata.dbo.goodsissuedet where sn = " + palletSN + " and ShopName <> '" + rs1.getString("shopname") + "'", objGlobal.getConnection());
+                    if (rsPalletcheck.next()) {
+                        objGlobal.setErrorMessage("This pallet is invalid for the shop " + rs1.getString("shopname"));
+                        return false;
+                    }
+                }
+
                 SimpleDateFormat cDateF = new SimpleDateFormat("dd/MM/yyyy");
                 String cDate = cDateF.format(rs1.getDate("Trfdate"));
                 Log.e("dateTime", cDate + "");
