@@ -216,6 +216,31 @@ public class TransferControl {
                 objTransferGlobal.setPtoteid(rs.getString("StoreIssue"));
                 objTransferGlobal.setPremarks(rs.getString("Narration"));
                 objTransferGlobal.setPpreparedby(rs.getString("PreparedBy"));
+
+                StringBuilder trfItemList = new StringBuilder();
+
+                ResultSet rs1 = dbConnection.getResultSet("select itemcode from " + dataname + ".dbo.transferdetail where trfno = '" + rs.getString("TrfNo") + "'", conRob);
+                while (rs1.next()) {
+                    if (trfItemList.length() > 0) {
+                        trfItemList.append(",");
+                    }
+                    trfItemList.append("'").append(rs1.getString("itemcode")).append("'");
+                }
+                String itemType = null;
+                int count = 0;
+                rs1 = dbConnection.getResultSet("select ItemType from usa.dbo.upcbarcodes where itemcode in (" + trfItemList + ")",objGlobal.getConnection());
+                while(rs1.next()){
+                    itemType = rs1.getString("itemtype");
+                    count++;
+
+                    if (count > 1) {
+                        itemType = "Mix";
+                        break;
+                    }
+                }
+                if (itemType == null)
+                    itemType = "";
+                objTransferGlobal.setpSeason(itemType);
             } else {
                 objGlobal.setErrorMessage("TransferControl : Invalid transfer number or toteid (" + trfno + ")");
                 return false;

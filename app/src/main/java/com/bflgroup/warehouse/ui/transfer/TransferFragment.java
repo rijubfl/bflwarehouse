@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -1203,7 +1205,7 @@ public class TransferFragment extends Fragment {
                 printData = objSample_Print.getTransferPrint(
                         objTransferGlobal.getPshopname(), objTransferGlobal.getPtrfno(), objTransferGlobal.getPboxno(), objTransferGlobal.getPqty(),
                         objTransferGlobal.getPdeldate(), objTransferGlobal.getPtrfdate(), objTransferGlobal.getPtoteid(), objTransferGlobal.getPremarks(),
-                        objTransferGlobal.getPpreparedby(), sp_transfer_print_copies.getSelectedItem().toString());
+                        objTransferGlobal.getPpreparedby(), sp_transfer_print_copies.getSelectedItem().toString(),objTransferGlobal.getpSeason());
             }
             return objSample_Print.PrintBarcodeByte(printData);
         } catch (Exception e) {

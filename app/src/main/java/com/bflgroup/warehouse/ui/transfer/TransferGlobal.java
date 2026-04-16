@@ -11,6 +11,7 @@ public class TransferGlobal {
     private static String ptrfno;
     private static String pboxno;
     private static String pshopname;
+    private static String pSeason;
     private static String pqty;
     private static String pdeldate;
     private static String ptrfdate;
@@ -55,6 +56,13 @@ public class TransferGlobal {
 
     public static void setShopName(String shopName) {
         TransferGlobal.shopName = shopName;
+    }
+    public static String getpSeason() {
+        return pSeason;
+    }
+
+    public static void setpSeason(String pSeason) {
+        TransferGlobal.pSeason = pSeason;
     }
 
     public static String getRobooDcBuild() {

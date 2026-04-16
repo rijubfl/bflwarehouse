@@ -229,8 +229,10 @@ public class PalletBuildingControl {
             while (rs.next()) {
                 boxno = rs.getString("boxno").toString().toUpperCase();
                 pallettype = rs.getString("pallettype").toString().toUpperCase();
-                season = rs.getString("season").toString().toUpperCase();
-                cShopEligible = rs.getString("ShopEligible").toString().toUpperCase();
+                season = rs.getString("season");
+                season = (season != null) ? season.toUpperCase() : "";
+                cShopEligible = rs.getString("ShopEligible");
+                cShopEligible = (cShopEligible != null) ? cShopEligible.toUpperCase() : "";
                 rsDet = dbConnection.getResultSet("select * from usa.dbo.BoXPallet where boxno='" + boxno + "'", objGlobal.getConnection());
                 if (rsDet.next()) {
                     objGlobal.setErrorMessage("PalletBuildingControl.validateBoxTot : Box is already found in pallet, " + boxno);
