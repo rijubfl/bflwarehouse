@@ -992,7 +992,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                 printData = objSample_Print.getTransferPrint(
                         objInOutJafzaGlobal.getPshopname(), objInOutJafzaGlobal.getPtrfno(), objInOutJafzaGlobal.getPboxno(),
                         objInOutJafzaGlobal.getPqty(), objInOutJafzaGlobal.getPdeldate(), objInOutJafzaGlobal.getPtrfdate(),
-                        objInOutJafzaGlobal.getPtoteid(), objInOutJafzaGlobal.getPremarks(), objInOutJafzaGlobal.getPpreparedby(),"2");
+                        objInOutJafzaGlobal.getPtoteid(), objInOutJafzaGlobal.getPremarks(), objInOutJafzaGlobal.getPpreparedby(),"2","");
             }
             return objSample_Print.PrintBarcodeByte(printData);
         } catch (Exception e) {

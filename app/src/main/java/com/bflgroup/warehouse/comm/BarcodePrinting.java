@@ -1,6 +1,7 @@
 package com.bflgroup.warehouse.comm;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.sewoo.jpos.printer.CPCLPrinter;
 
@@ -43,7 +44,9 @@ public class BarcodePrinting {
         }
     }
 
-    public byte[] getTransferPrint(String shop,String trfno,String boxno, String qty,String deldate, String trfdate,String toteid,String remarks,String preparedby, String copy) {
+    public byte[] getTransferPrint(String shop,String trfno,String boxno, String qty,String deldate, String trfdate,String toteid,String remarks,String preparedby, String copy, String season) {
+       if (season != "")
+           shop = shop + " - "+season;
         String str01="\u0002n\r\n";
         String str02="\u0002M1000\r\n";
         String str03="\u0002KcLW0400;\r\n";

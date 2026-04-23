@@ -7,8 +7,8 @@ android {
         applicationId "com.bflgroup.warehouse"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 80
-        versionName "13.25"
+        versionCode 95
+        versionName "13.30"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
