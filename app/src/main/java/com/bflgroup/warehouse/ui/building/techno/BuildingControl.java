@@ -225,8 +225,7 @@ public class BuildingControl {
                 objGlobal.setErrorNo("saveChuteBuilding:004");
                 return false;
             }
-            if(div.equals("TCM")) buildtype="TCM";
-            if(objGlobal.getWarehouseCountry().equals("KSA")) buildtype="USA";
+            buildtype="USA";
             objBuildingGlobal.setBoxNo("");
             objBuildingGlobal.setBoxNo(getBoxNumber(buildtype));
             if (TextUtils.isEmpty(objBuildingGlobal.getBoxNo())) {

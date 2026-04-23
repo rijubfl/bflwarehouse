@@ -373,7 +373,7 @@ public class BoxBuildingAutoJafzaFragment extends Fragment {
                             if (dialog.isShowing()) dialog.dismiss();
                             okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApi:onSuccess:" + objGlobal.getErrorMessage());
                         } else {
-                            tv_chute_status_building_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objBuildingJafzaGLobal.getBoxNo() + "  ;  " + String.valueOf(objBuildingJafzaGLobal.getTotBuildQty()));
+                            tv_chute_status_building_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objBuildingJafzaGLobal.getBoxNo() + "  ;  " + objBuildingJafzaGLobal.getTotBuildQty());
                             clearAll();
                             if (dialog.isShowing()) dialog.dismiss();
                             et_building_chuteid.requestFocus();

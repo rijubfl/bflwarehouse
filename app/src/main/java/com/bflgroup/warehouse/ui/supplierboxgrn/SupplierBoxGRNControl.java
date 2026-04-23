@@ -43,8 +43,13 @@ public class SupplierBoxGRNControl {
         }
         try {
             if (contscan.equals("Y")) {
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpSupplierBoxGrn(DeviceId,ContId,CartonId,PO,LogBox,OrgQty,AuditReq,ScanDtTm,scan) select '" + objGlobal.getDeviceName() + "'," +
-                        "ContNo,bol,ORAPONo,'N',sum(orgqty),'',null,'N' from usa.dbo.USAOrgFile where ContNo='" + contid + "' group by ContNo,bol,ORAPONo", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpSupplierBoxGrn(DeviceId,ContId,CartonId,PO,LogBox,OrgQty,AuditReq,ScanDtTm,scan,saveScan) select '" + objGlobal.getDeviceName() + "'," +
+                        "ContNo,bol,ORAPONo,'N',sum(orgqty),'',null,'N','N' from usa.dbo.USAOrgFile where ContNo='" + contid + "' group by ContNo,bol,ORAPONo", objGlobal.getConnection())) {
+                    objGlobal.getConnection().rollback();
+                    return false;
+                }
+                if (!dbConnection.insertUpdate("update bfldata.dbo.tmpSupplierBoxGrn set AuditReq=b.AuditRequired,ScanDtTm=getdate(),saveScan='Y' from bfldata.dbo.tmpSupplierBoxGrn a," +
+                        "bfldata.dbo.SuppBoxGrnDetail b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.ContId='" + contid + "' and b.ContainerID='" + contid + "' and a.CartonId=b.CartonID", objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
@@ -126,13 +131,13 @@ public class SupplierBoxGRNControl {
             SupplierBoxGRNGlobal.setLogNewBoxNo(logPalletNo);
 
             objGlobal.getConnection().setAutoCommit(false);
-            if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpSupplierBoxGrn(DeviceId,ContId,CartonId,PO,LogBox,OrgQty,AuditReq,ScanDtTm,scan) " +
-                    "values ('" + objGlobal.getDeviceName() + "','" + contid + "','" + SupplierBoxGRNGlobal.getLogNewBoxNo() + "','" + po + "','Y',0,'" + audit + "',getdate(),'Y')", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpSupplierBoxGrn(DeviceId,ContId,CartonId,PO,LogBox,OrgQty,AuditReq,ScanDtTm,scan,saveScan) " +
+                    "values ('" + objGlobal.getDeviceName() + "','" + contid + "','" + SupplierBoxGRNGlobal.getLogNewBoxNo() + "','" + po + "','Y',0,'" + audit + "',getdate(),'Y','N')", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
             }
             if (!dbConnection.insertUpdate("insert into usa.dbo.UsaPallets(Contno,PalletNo,trndate,userid,Closed,GroupName,Remarks,whouse) values ('" + contid + "','"+ SupplierBoxGRNGlobal.getLogNewBoxNo() +"'," +
-                    "'" + objGlobal.getServerDate() + "'," + objGlobal.getUserId() + ",'N','','Auto pallet created from Supplier Box GRN','" + objGlobal.getDeviceName() + "')", objGlobal.getConnection())) {
+                    "'" + objGlobal.getServerDate() + "'," + objGlobal.getUserId() + ",'N','','Auto pallet created from Supplier Box GRN','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
             }
@@ -158,12 +163,12 @@ public class SupplierBoxGRNControl {
             SupplierBoxGRNGlobal.setTotalScanQty(0);
             SupplierBoxGRNGlobal.setTotalScanBoxCnt(0);
             rs = dbConnection.getResultSet("select ContId,CartonId,PO,LogBox,OrgQty,AuditReq,ScanDtTm from bfldata.dbo.tmpSupplierBoxGrn where " +
-                    "DeviceId='" + objGlobal.getDeviceName() + "' and scan='Y' and ContId='" + ContId + "' order by ScanDtTm desc", objGlobal.getConnection());
+                    "DeviceId='" + objGlobal.getDeviceName() + "' and (scan='Y' or saveScan='Y') and ContId='" + ContId + "' order by ScanDtTm desc", objGlobal.getConnection());
             while (rs.next()) {
                 listSupplierBoxGRNScannedBoxTicket.add(new SupplierBoxGRNScannedBoxTicket(rs.getString("CartonId"),rs.getString("PO"),rs.getInt("OrgQty"),rs.getString("AuditReq")));
             }
             rs = dbConnection.getResultSet("select cnt=count(CartonId),qty=sum(OrgQty) from bfldata.dbo.tmpSupplierBoxGrn where DeviceId='" + objGlobal.getDeviceName() + "' and " +
-                    "scan='Y' and ContId='" + ContId + "'", objGlobal.getConnection());
+                    "(scan='Y' or saveScan='Y') and ContId='" + ContId + "'", objGlobal.getConnection());
             if (rs.next()) {
                 SupplierBoxGRNGlobal.setTotalScanQty(rs.getInt("qty"));
                 SupplierBoxGRNGlobal.setTotalScanBoxCnt(rs.getInt("cnt"));
@@ -213,7 +218,7 @@ public class SupplierBoxGRNControl {
         }
         try {
             objGlobal.getConnection().setAutoCommit(false);
-            if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpSupplierBoxGrn where CartonId='" + cartonId + "' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("update bfldata.dbo.tmpSupplierBoxGrn set AuditReq='',scan='N',ScanDtTm=null where DeviceId='9a2b32eaba20abe1' and CartonId='2475198282'", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
             }
@@ -242,19 +247,19 @@ public class SupplierBoxGRNControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.SuppBoxGrnHeader where ContainerID='" + contId + "'", objGlobal.getConnection());
-            if (rs.next()) {
-                objGlobal.setErrorMessage("Container ID (" + contId + ") is already saved");
-                return false;
-            }
             rs = dbConnection.getResultSet("select * from BFLDATA.dbo.ContColorHeader where Contno='" + contId + "' and EDI='Y'", objGlobal.getConnection());
-            if (rs.next()) {
-                objGlobal.setErrorMessage("Container ID (" + contId + ") is already saved");
+            if (!rs.next()) {
+                objGlobal.setErrorMessage("Container ID (" + contId + ") EDI not enabled");
                 return false;
             }
             rs = dbConnection.getResultSet("select top 1 contno from usa.dbo.usaorgfile where contno='" + contId + "'", objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Container ID (" + contId + ") is Invalid");
+                return false;
+            }
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.SuppBoxGrnHeader where GrnCompleted is not null and ContainerID='" + contId + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                objGlobal.setErrorMessage("GRN for Container ID (" + contId + ") has already been completed");
                 return false;
             }
             return true;

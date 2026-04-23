@@ -39,6 +39,7 @@ import com.bflgroup.warehouse.R;
 import com.bflgroup.warehouse.comm.BarcodePrinting;
 import com.bflgroup.warehouse.comm.BluetoothDevices;
 import com.bflgroup.warehouse.comm.Global;
+import com.bflgroup.warehouse.ui.ageingstocktaking.AgeingStockTakingFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.sewoo.port.android.BluetoothPort;
 import com.sewoo.request.android.RequestHandler;
@@ -92,7 +93,6 @@ public class SupplierBoxGRNFragment extends Fragment {
     private ArrayAdapter<String> adapter;
     private boolean searchflags;
     private static final int REQUEST_ENABLE_BT = 2;
-
 
     private boolean b_Result;
     private String loadCont="";
@@ -410,13 +410,42 @@ public class SupplierBoxGRNFragment extends Fragment {
             tv_ticket_supplier_box_grn_container_id.setText(String.valueOf(s.cartonId));
 
             TextView tv_ticket_supplier_box_grn_po = (TextView) myView.findViewById(R.id.tv_ticket_supplier_box_grn_po);
-            tv_ticket_supplier_box_grn_po.setText(String.valueOf(s.po));
+            tv_ticket_supplier_box_grn_po.setText("PO : " + s.po);
 
             TextView tv_ticket_supplier_box_grn_carton_qty = (TextView) myView.findViewById(R.id.tv_ticket_supplier_box_grn_carton_qty);
-            tv_ticket_supplier_box_grn_carton_qty.setText(String.valueOf(s.cartonQty));
+            tv_ticket_supplier_box_grn_carton_qty.setText("Qty : " + s.cartonQty);
 
             TextView tv_ticket_supplier_box_grn_audit = (TextView) myView.findViewById(R.id.tv_ticket_supplier_box_grn_audit);
-            tv_ticket_supplier_box_grn_audit.setText(String.valueOf(s.auditReq));
+            tv_ticket_supplier_box_grn_audit.setText("QC : " + s.auditReq);
+
+            Button bt_ticket_supplier_box_grn_delete = (Button) myView.findViewById(R.id.bt_ticket_supplier_box_grn_delete);
+            bt_ticket_supplier_box_grn_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setMessage("Are you sure to delete the selected item?")
+                            .setTitle("Conformation")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //b_Result = objSupplierBoxGRNControl.deleteMainServer(getContext(), s.srid);
+                                    if (!b_Result) {
+                                        okMessage("Stock Taking", objGlobal.getErrorMessage());
+                                    } else {
+
+                                    }
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .show();
+                }
+            });
 
             return myView;
         }

@@ -157,11 +157,6 @@ public class GinScanTransferFragment extends Fragment {
         et_g_pallet.requestFocus();
         et_g_pallet.setFocusable(true);
 
-
-
-
-
-
         objGinScanTransferControl = new GinScantransferControl(getContext());
         GinScanTransferShared = new GinScanTransferShared(getContext());
         if (objGlobal.getCountryCode().equals("KSA")){

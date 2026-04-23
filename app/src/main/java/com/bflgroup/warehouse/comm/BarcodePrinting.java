@@ -260,7 +260,6 @@ public class BarcodePrinting {
         printData = addToDataVault(printData, str22.getBytes());
         printData = addToDataVault(printData, str23.getBytes());
         printData = addToDataVault(printData, str24.getBytes());
-
         return printData;
     }
 

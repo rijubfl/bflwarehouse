@@ -80,12 +80,13 @@
             android:id="@+id/bt_supplier_box_grn_generate_carton"
             android:layout_width="0dp"
             android:layout_height="40dp"
+            android:layout_marginLeft="2dp"
             android:background="@drawable/btn_custom1"
             android:text="Generate Carton"
             android:textAllCaps="false"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/bt_supplier_box_grn_save"
+            app:layout_constraintStart_toStartOf="@+id/textView2"
             app:layout_constraintTop_toTopOf="@+id/bt_supplier_box_grn_scan" />
 
         <Button
@@ -116,11 +117,12 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginTop="8dp"
+            android:layout_marginRight="2dp"
             android:background="@drawable/btn_custom1"
             android:text="Scan"
             android:textAllCaps="false"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/bt_supplier_box_grn_clear"
+            app:layout_constraintEnd_toEndOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_supplier_box_grn_carton_id" />
 
@@ -141,81 +143,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bt_supplier_box_grn_scan" />
 
-        <TextView
-            android:id="@+id/TextView2"
-            android:layout_width="0dp"
-            android:layout_height="33dp"
-            android:background="@drawable/et_custom_total"
-            android:gravity="center"
-            android:hint=""
-            android:padding="8dp"
-            android:text="Carton ID"
-            android:textColor="@color/coloBlack"
-            android:textSize="13dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/TextView11"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView1" />
-
-        <TextView
-            android:id="@+id/TextView11"
-            android:layout_width="125dp"
-            android:layout_height="33dp"
-            android:background="@drawable/et_custom_total"
-            android:gravity="center"
-            android:hint=""
-            android:padding="8dp"
-            android:text="PO"
-            android:textColor="@color/coloBlack"
-            android:textSize="13dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/TextView4"
-            app:layout_constraintTop_toTopOf="@+id/TextView2" />
-
-        <TextView
-            android:id="@+id/TextView4"
-            android:layout_width="60dp"
-            android:layout_height="33dp"
-            android:background="@drawable/et_custom_total"
-            android:gravity="center"
-            android:hint=""
-            android:padding="8dp"
-            android:text="Qty"
-            android:textColor="@color/coloBlack"
-            android:textSize="13dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/TextView3"
-            app:layout_constraintTop_toTopOf="@+id/TextView2" />
-
-        <TextView
-            android:id="@+id/TextView3"
-            android:layout_width="50dp"
-            android:layout_height="33dp"
-            android:background="@drawable/et_custom_total"
-            android:hint=""
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="Audit"
-            android:textColor="@color/coloBlack"
-            android:textSize="13dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/TextView6"
-            app:layout_constraintTop_toTopOf="@+id/TextView2" />
-
-        <TextView
-            android:id="@+id/TextView6"
-            android:layout_width="50dp"
-            android:layout_height="33dp"
-            android:background="@drawable/et_custom_total"
-            android:hint=""
-            android:padding="8dp"
-            android:text=""
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/TextView2" />
-
         <ListView
             android:id="@+id/lv_supplier_box_grn"
             android:layout_width="0dp"
@@ -224,29 +151,27 @@
             app:layout_constraintBottom_toTopOf="@+id/tv_supplier_box_grn_total_boxes"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView2" />
+            app:layout_constraintTop_toBottomOf="@+id/textView1" />
 
 
         <Button
             android:id="@+id/bt_supplier_box_grn_clear"
             android:layout_width="0dp"
+            android:layout_marginRight="5dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="0dp"
-            android:layout_marginRight="4dp"
             android:background="@drawable/btn_custom1"
             android:text="Clear"
             android:textAllCaps="false"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintEnd_toStartOf="@+id/bt_supplier_box_grn_completed"
             app:layout_constraintStart_toStartOf="parent" />
-
 
         <TextView
             android:id="@+id/tv_supplier_box_grn_total_boxes"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/et_custom_total"
             android:gravity="left"
             android:hint=""
@@ -255,7 +180,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/bt_supplier_box_grn_clear"
+            app:layout_constraintBottom_toTopOf="@+id/bt_supplier_box_grn_completed"
             app:layout_constraintEnd_toStartOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -275,18 +200,29 @@
             app:layout_constraintTop_toTopOf="@+id/tv_supplier_box_grn_total_boxes" />
 
         <Button
-            android:id="@+id/bt_supplier_box_grn_save"
-            android:layout_width="0dp"
+            android:id="@+id/bt_supplier_box_grn_completed"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
             android:background="@drawable/btn_custom1"
             android:text="GRN Completed"
             android:textAllCaps="false"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView2" />
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/bt_supplier_box_grn_save"
+            android:layout_width="0dp"
+            android:layout_marginLeft="5dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_custom1"
+            android:text="Save"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bt_supplier_box_grn_completed" />
 
         <TextView
             android:id="@+id/textView2"

@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp">
+        android:padding="5dp">
 
         <RadioGroup
             android:id="@+id/rg_rfid_tag_register"
@@ -107,7 +107,7 @@
             android:id="@+id/lv_rfid_tag_register_rfids"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/et_custom_total"
             app:layout_constraintBottom_toTopOf="@+id/bt_rfid_tag_register_clear"
             app:layout_constraintEnd_toEndOf="parent"
@@ -115,13 +115,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
-
         <Button
             android:id="@+id/bt_rfid_tag_register_save"
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:background="@drawable/btn_custom1"
-            android:text="Close"
+            android:text="Save"
             android:textAllCaps="false"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"

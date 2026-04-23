@@ -168,17 +168,17 @@ public class BoxBuildingAutoJafzaControl {
             try {
                 conRobo.rollback();
             } catch (SQLException sqlException) {
-                objGlobal.setErrorMessage("inChuteStatus:sqlException: " + sqlException.toString());
+                objGlobal.setErrorMessage("inChuteStatus:sqlException: " + sqlException);
                 return false;
             }
-            objGlobal.setErrorMessage("inChuteStatus: exception: " + exception.toString());
+            objGlobal.setErrorMessage("inChuteStatus: exception: " + exception);
             return false;
         }
         return true;
     }
 
     public boolean saveChuteBuilding(String chuteId, String toteId, String shopId, String shopName) {
-        String palletTyp = "", div = "";
+        String palletTyp = "", div = "", buildtype = "";
         try {
             if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpBoxBuild where DeviceName='" + objGlobal.getDeviceName() + "'", conRobo)) {
                 objGlobal.setErrorNo("saveChuteBuilding:001");
@@ -218,15 +218,16 @@ public class BoxBuildingAutoJafzaControl {
                 objGlobal.setErrorNo("saveChuteBuilding:004");
                 return false;
             }
+            buildtype = "USA";
             objBuildingJafzaGLobal.setBoxNo("");
-            objBuildingJafzaGLobal.setBoxNo(getBoxNumber("USA"));
+            objBuildingJafzaGLobal.setBoxNo(getBoxNumber(buildtype));
             if (TextUtils.isEmpty(objBuildingJafzaGLobal.getBoxNo())) {
                 objGlobal.setErrorMessage(getBoxNumber(div));
                 objGlobal.setErrorNo("saveChuteBuilding:005");
                 return false;
             }
             conRobo.setAutoCommit(false);
-            /*if (div.equals("TCM")) {
+            if (buildtype.equals("TCM")) {
                 if (!dbConnection.insertUpdate("insert into bfldata.dbo.TcmboxesHeader (Boxno,TrnDate,Time1,UserId,TotId,Whouse) values ('" + objBuildingJafzaGLobal.getBoxNo() + "','" + objGlobal.getServerDate() + "'," +
                         "'" + objGlobal.getServerTime() + "'," + objGlobal.getUserId() + ",'" + toteId + "','" + objGlobal.getWarehouse() + "')", conRobo)) {
                     conRobo.rollback();
@@ -240,7 +241,7 @@ public class BoxBuildingAutoJafzaControl {
                     objGlobal.setErrorNo("saveChuteBuilding:009");
                     return false;
                 }
-            } else {*/
+            } else {
                 if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead(BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
                         "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) values ('" + objBuildingJafzaGLobal.getBoxNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +
                         "'','" + objGlobal.getUserName() + "','" + shopName + "'," + objGlobal.getUserId() + ",'" + palletTyp + "','N','','AUTO','','','" + objGlobal.getWarehouse() + "','" + palletTyp + "','" + objGlobal.getUserName() + "','" + palletTyp + "'," +
@@ -255,7 +256,7 @@ public class BoxBuildingAutoJafzaControl {
                     objGlobal.setErrorNo("saveChuteBuilding:009");
                     return false;
                 }
-            /*}*/
+            }
             //insert chute status *****************************************
             if (!dbConnection.insertUpdate("insert into ChuteCheckout values('" + chuteId + "','" + toteId + "','" + shopId + "','" + shopName + "','" + objGlobal.getServerDate() + "'," +
                     "'" + objGlobal.getServerTime() + "','" + objBuildingJafzaGLobal.getBoxNo() + "'," + objGlobal.getUserId() + ")", conRobo)) {
@@ -312,7 +313,7 @@ public class BoxBuildingAutoJafzaControl {
         }
     }
 
-    private String getBoxNumber(String div) {
+    private String getBoxNumber(String buildtype) {
         try {
             int autoSn = 0;
             String suff = "";
@@ -320,7 +321,7 @@ public class BoxBuildingAutoJafzaControl {
             SimpleDateFormat df = new SimpleDateFormat("yyyy");
             String year = df.format(d);
             String yr = String.valueOf(year.substring(2, 4));
-            if (div.equals("TCM")) {
+            if (buildtype.equals("TCM")) {
                 suff = "R" + yr + "/";
                 rs = dbConnection.getResultSet("select en=isnull(max(substring(boxno,5,6)),0)+1 from bfldata.dbo.TcmboxesHeader where left(boxno,4)='" + suff + "'", conRobo);
                 if (rs.next()) {
@@ -398,10 +399,7 @@ public class BoxBuildingAutoJafzaControl {
     public boolean validateTotidUsed(String toteId) {
         try {
             rs = dbConnection.getResultSet("select * from SortTask where ToteId='" + toteId + "' and TrnDate='" + objGlobal.getServerDate() + "'", conRobo);
-            if (rs.next()) {
-                return true;
-            } else
-                return false;
+            return rs.next();
         } catch (Exception ex) {
             objGlobal.setErrorMessage("BuildingControl:validateTotidUsed:" + ex.toString());
             return false;

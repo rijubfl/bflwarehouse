@@ -148,7 +148,6 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
         });
 
         et_bin_put_away_multiple_toteid.setOnKeyListener(new View.OnKeyListener() {
-
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
                     String toteId = et_bin_put_away_multiple_toteid.getText().toString().trim().toUpperCase();

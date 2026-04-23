@@ -386,12 +386,15 @@ public class UsaBoxBuildingFragment extends Fragment {
             }
         });
 
-        searchflags = false;
-        objSample_Print = new BarcodePrinting();
-        bluetoothPort = BluetoothPort.getInstance();
-        bluetoothPort.SetMacFilter(false);
-        Init_BluetoothSet();
-
+        try {
+            searchflags = false;
+            objSample_Print = new BarcodePrinting();
+            bluetoothPort = BluetoothPort.getInstance();
+            bluetoothPort.SetMacFilter(false);
+            Init_BluetoothSet();
+        } catch (Exception e) {
+            okMessage("Error",e.toString());
+        }
         return view;
     }
 
@@ -582,7 +585,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         sp_usa_box_task.setEnabled(false);
         sp_usa_box_done.setEnabled(false);
         rb_usa_box_usa_category.setEnabled(false);
-        rb_usa_box_tcm_category.setEnabled(false);
+        //rb_usa_box_tcm_category.setEnabled(false);
         ch_usa_box_euro.setEnabled(false);
         sp_usa_box_printer.setEnabled(false);
         sp_usa_box_printer_copies.setEnabled(false);
@@ -929,7 +932,7 @@ public class UsaBoxBuildingFragment extends Fragment {
         sp_usa_box_task.setEnabled(true);
         sp_usa_box_done.setEnabled(true);
         rb_usa_box_usa_category.setEnabled(true);
-        rb_usa_box_tcm_category.setEnabled(true);
+        //rb_usa_box_tcm_category.setEnabled(true);
         ch_usa_box_euro.setEnabled(true);
         ch_usa_box_reprint.setEnabled(true);
 

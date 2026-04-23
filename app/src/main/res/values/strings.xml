@@ -10,11 +10,7 @@
     <string name="menu_file">File</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
-<<<<<<< HEAD
-    <string name="app_version">13.25</string>
-=======
     <string name="app_version">13.27</string>
->>>>>>> 114ae93cdc37b67452ebb64583bfea01e77bc65f
     <string name="menu_update_box_from_pallet">Update Box from Pallet </string>
     <string name="menu_chute_status_techno">Chute Status (Techno)</string>
     <string name="menu_chute_status_jafza">Chute Status (Jafza)</string>

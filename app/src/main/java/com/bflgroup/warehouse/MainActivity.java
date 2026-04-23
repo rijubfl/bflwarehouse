@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_build_del_gin, R.id.nav_transfer, R.id.nav_update_box_quantity, R.id.nav_blue_to_euro_box, R.id.nav_stock_taking, R.id.nav_generate_barcode,R.id.nav_shuttle_git,
                 R.id.nav_stocktake, R.id.nav_pallet_box_count, R.id.nav_rack_query, R.id.nav_show_pallets, R.id.nav_warehouse_grn,R.id.nav_shuttle_task_create, R.id.nav_pallets_verification,
                 R.id.nav_jafza_racks, R.id.nav_update_box_from_pallet,R.id.nav_receive_production, R.id.nav_item_pullout,R.id.nav_warehouse_gin,R.id.nav_validate_toteid,R.id.nav_item_segregation,
-                R.id.nav_supplier_box_grn)
+                R.id.nav_supplier_box_grn,R.id.nav_rfid_tag_register)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
