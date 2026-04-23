@@ -64,6 +64,8 @@ public class SupplierBoxGRNFragment extends Fragment {
     private TextView tv_supplier_box_grn_total_boxes;
     private TextView tv_supplier_box_grn_total_qty;
     private Button bt_supplier_box_grn_save;
+    private Button bt_supplier_box_grn_completed;
+
 
     private Spinner sp_supplier_box_grn_popup_po;
     private TextInputEditText tv_supplier_box_grn_popup_log_boxno;
@@ -119,6 +121,7 @@ public class SupplierBoxGRNFragment extends Fragment {
         tv_supplier_box_grn_total_boxes = (TextView) view.findViewById(R.id.tv_supplier_box_grn_total_boxes);
         tv_supplier_box_grn_total_qty = (TextView) view.findViewById(R.id.tv_supplier_box_grn_total_qty);
         bt_supplier_box_grn_save = (Button) view.findViewById(R.id.bt_supplier_box_grn_save);
+        bt_supplier_box_grn_completed = (Button) view.findViewById(R.id.bt_supplier_box_grn_completed);
 
         saredRef = new SupplierBoxGRNSharedRef(getContext());
 
@@ -279,6 +282,29 @@ public class SupplierBoxGRNFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 bt_supplier_box_grn_save.requestFocus();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        bt_supplier_box_grn_completed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setMessage("Are You sure to save?")
+                        .setTitle("Conformation")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                bt_supplier_box_grn_completed.requestFocus();
                             }
                         })
                         .show();

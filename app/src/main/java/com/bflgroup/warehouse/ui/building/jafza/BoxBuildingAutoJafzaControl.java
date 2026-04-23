@@ -178,7 +178,7 @@ public class BoxBuildingAutoJafzaControl {
     }
 
     public boolean saveChuteBuilding(String chuteId, String toteId, String shopId, String shopName) {
-        String palletTyp = "", div = "", buildtype = "";
+        String palletTyp = "", div = "", buildtype = "", LPMDt, LPMDtValue = "NULL";
         try {
             if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpBoxBuild where DeviceName='" + objGlobal.getDeviceName() + "'", conRobo)) {
                 objGlobal.setErrorNo("saveChuteBuilding:001");
@@ -204,10 +204,12 @@ public class BoxBuildingAutoJafzaControl {
                 objGlobal.setErrorNo("saveChuteBuilding:003");
                 return false;
             }
-            rs = dbConnection.getResultSet("select PalletType,Division from BFLDATA.dbo.ShopinShop where SubShop='" + shopName + "'", conRobo);
+            rs = dbConnection.getResultSet("select PalletType,Division,LPMDt=convert(varchar,LPMDt,103) from BFLDATA.dbo.ShopinShop where SubShop='" + shopName + "'", conRobo);
             if (rs.next()) {
                 palletTyp = rs.getString("PalletType");
                 div = rs.getString("Division");
+                LPMDt = rs.getString("LPMDt");
+                if (LPMDt != null && !LPMDt.trim().equals("")) LPMDtValue = "'" + LPMDt + "'";
             } else {
                 objGlobal.setErrorMessage("Invalid Dataname");
                 objGlobal.setErrorNo("saveChuteBuilding:012");
@@ -243,9 +245,9 @@ public class BoxBuildingAutoJafzaControl {
                 }
             } else {
                 if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxHead(BoxNo,TrnDate,Time1,NewPallet,PreparedBy,Remarks,Userid,PalletType,Closed,GroupCode,OldBoxNo,Prepared1,Prepared2," +
-                        "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID) values ('" + objBuildingJafzaGLobal.getBoxNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +
-                        "'','" + objGlobal.getUserName() + "','" + shopName + "'," + objGlobal.getUserId() + ",'" + palletTyp + "','N','','AUTO','','','" + objGlobal.getWarehouse() + "','" + palletTyp + "','" + objGlobal.getUserName() + "','" + palletTyp + "'," +
-                        "'','" + shopName + "','" + toteId + "')", conRobo)) {
+                        "WHouse,FWType,FPreparedBy,FPalletType,ISize,Gender,ToteID,LPMDt) values ('" + objBuildingJafzaGLobal.getBoxNo() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +
+                        "'','" + objGlobal.getUserName() + "','" + shopName + "'," + objGlobal.getUserId() + ",'" + palletTyp + "','N','','AUTO','','','" + objGlobal.getWarehouse() + "'," +
+                        "'" + palletTyp + "','" + objGlobal.getUserName() + "','" + palletTyp + "','','" + shopName + "','" + toteId + "'," + LPMDtValue + ")", conRobo)) {
                     conRobo.rollback();
                     objGlobal.setErrorNo("saveChuteBuilding:008");
                     return false;

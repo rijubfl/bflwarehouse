@@ -218,7 +218,8 @@ public class SupplierBoxGRNControl {
         }
         try {
             objGlobal.getConnection().setAutoCommit(false);
-            if (!dbConnection.insertUpdate("update bfldata.dbo.tmpSupplierBoxGrn set AuditReq='',scan='N',ScanDtTm=null where DeviceId='9a2b32eaba20abe1' and CartonId='2475198282'", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("update bfldata.dbo.tmpSupplierBoxGrn set AuditReq='',scan='N',ScanDtTm=null where DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                    "CartonId='" + cartonId + "' and ContId='" + contid + "'", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
             }
