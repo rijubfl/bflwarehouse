@@ -170,6 +170,10 @@ public class SupplierBoxGRNFragment extends Fragment {
             listSupplierBoxGRNScannedBoxItems = objSupplierBoxGRNControl.loadSupplierBoxGRNScannedBox(et_supplier_box_grn_container_id.getText().toString());
             objMySupplierBoxGRNScannedBoxItemsAdp = new SupplierBoxGRNFragment.MySupplierBoxGRNScannedBoxItemsAdp(listSupplierBoxGRNScannedBoxItems);
             lv_supplier_box_grn.setAdapter(objMySupplierBoxGRNScannedBoxItemsAdp);
+
+            tv_supplier_box_grn_total_boxes.setText("Total Boxes : " + SupplierBoxGRNGlobal.getTotalScanBoxCnt());
+            tv_supplier_box_grn_total_qty.setText("Total Qty : " + SupplierBoxGRNGlobal.getTotalScanQty());
+
             et_supplier_box_grn_carton_id.requestFocus();
         }
 
@@ -291,6 +295,8 @@ public class SupplierBoxGRNFragment extends Fragment {
         bt_supplier_box_grn_completed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                 alert.setMessage("Are You sure to save?")
                         .setTitle("Conformation")
@@ -298,7 +304,11 @@ public class SupplierBoxGRNFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                b_Result = objSupplierBoxGRNControl.saveSupplierBoxGrnCompleted(et_supplier_box_grn_container_id.getText().toString());
+                                if (!b_Result) {
+                                    okMessage("Supplier Box GRN", objGlobal.getErrorMessage());
+                                    vibrate(500);
+                                }
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -432,8 +442,8 @@ public class SupplierBoxGRNFragment extends Fragment {
             View myView = mInflater.inflate(R.layout.supplier_box_g_r_n_list_ticket, null);
             final SupplierBoxGRNScannedBoxTicket s = listSupplierBoxGRNScannedBoxItems.get(position);
 
-            TextView tv_ticket_supplier_box_grn_container_id = (TextView) myView.findViewById(R.id.tv_ticket_supplier_box_grn_container_id);
-            tv_ticket_supplier_box_grn_container_id.setText(String.valueOf(s.cartonId));
+            TextView tv_ticket_supplier_box_grn_carton_id = (TextView) myView.findViewById(R.id.tv_ticket_supplier_box_grn_carton_id);
+            tv_ticket_supplier_box_grn_carton_id.setText(String.valueOf(s.cartonId));
 
             TextView tv_ticket_supplier_box_grn_po = (TextView) myView.findViewById(R.id.tv_ticket_supplier_box_grn_po);
             tv_ticket_supplier_box_grn_po.setText("PO : " + s.po);
@@ -455,11 +465,17 @@ public class SupplierBoxGRNFragment extends Fragment {
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    //b_Result = objSupplierBoxGRNControl.deleteMainServer(getContext(), s.srid);
+                                    b_Result = objSupplierBoxGRNControl.deleteCartonID(et_supplier_box_grn_container_id.getText().toString(), s.cartonId, s.logBox);
                                     if (!b_Result) {
-                                        okMessage("Stock Taking", objGlobal.getErrorMessage());
+                                        okMessage("Supplier Box GRN", objGlobal.getErrorMessage());
                                     } else {
+                                        listSupplierBoxGRNScannedBoxItems.clear();
+                                        listSupplierBoxGRNScannedBoxItems = objSupplierBoxGRNControl.loadSupplierBoxGRNScannedBox(et_supplier_box_grn_container_id.getText().toString());
+                                        objMySupplierBoxGRNScannedBoxItemsAdp = new SupplierBoxGRNFragment.MySupplierBoxGRNScannedBoxItemsAdp(listSupplierBoxGRNScannedBoxItems);
+                                        lv_supplier_box_grn.setAdapter(objMySupplierBoxGRNScannedBoxItemsAdp);
 
+                                        tv_supplier_box_grn_total_boxes.setText("Total Boxes : " + SupplierBoxGRNGlobal.getTotalScanBoxCnt());
+                                        tv_supplier_box_grn_total_qty.setText("Total Qty : " + SupplierBoxGRNGlobal.getTotalScanQty());
                                     }
                                 }
                             })
@@ -472,6 +488,11 @@ public class SupplierBoxGRNFragment extends Fragment {
                             .show();
                 }
             });
+
+            bt_ticket_supplier_box_grn_delete.setEnabled(true);
+            if (s.saveScan.equals("Y")) {
+                bt_ticket_supplier_box_grn_delete.setEnabled(false);
+            }
 
             return myView;
         }
@@ -651,7 +672,7 @@ public class SupplierBoxGRNFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 tv_supplier_box_grn_popup_log_boxno.setText("");
                 if (position != 0) {
-                    tv_supplier_box_grn_popup_log_boxno.setText(objSupplierBoxGRNControl.generateLogisticBox(et_supplier_box_grn_container_id.getText().toString(),
+                    tv_supplier_box_grn_popup_log_boxno.setText(objSupplierBoxGRNControl.latestLogisticBox(et_supplier_box_grn_container_id.getText().toString(),
                             sp_supplier_box_grn_popup_po.getSelectedItem().toString()));
                 }
             }

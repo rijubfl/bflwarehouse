@@ -237,46 +237,46 @@ public class PalletBuildingFragment extends Fragment {
                 if (!b_Result) {
                     okMessage("bt_bin_batch_in_save11", objGlobal.getErrorMessage());
                 } else {
-//                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-//                    alert.setMessage("Are You sure to save?")
-//                            .setTitle("Conformation")
-//                            .setCancelable(false)
-//                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    if (sp_pallet_building_category.getSelectedItem().toString().equals("TCM")) { }
-//                                    if (sp_pallet_building_category.getSelectedItem().toString().equals("USA")) {
-//                                        b_Result = objPalletBuildingControl.savePalletUsa(et_pallet_building_remarks.getText().toString().trim().toUpperCase());
-//                                    }
-//                                    if (!b_Result) {
-//                                        okMessage("Pallet", objGlobal.getErrorMessage());
-//                                    } else {
-//                                        b_Result = clearAll();
-//                                        if (!b_Result) {
-//                                            okMessage("Pallet:clearAll", objGlobal.getErrorMessage());
-//                                        } else {
-//                                            b_Result = objPalletBuildingControl.forPrint(objPalletBuildingGlobal.getPalletNo());
-//                                            if (!b_Result) {
-//                                                okMessage("Pallet", "transferReceipt: " + objGlobal.getErrorMessage());
-//                                            } else {
-//                                                if (!printSticker(sp_pallet_building_printer.getSelectedItem().toString())) {
-//                                                    okMessage("Pallet", "Printer Error, Pleasse reprint..");
-//                                                    vibrate(100);
-//                                                }
-//                                            }
-//                                            tv_pallet_building_lastsave.setText(objPalletBuildingGlobal.getPalletNo());
-//                                            et_pallet_building_box_toteid.requestFocus();
-//                                        }
-//                                    }
-//                                }
-//                            })
-//                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//
-//                                }
-//                            })
-//                            .show();
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                    alert.setMessage("Are You sure to save?")
+                            .setTitle("Conformation")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (sp_pallet_building_category.getSelectedItem().toString().equals("TCM")) { }
+                                    if (sp_pallet_building_category.getSelectedItem().toString().equals("USA")) {
+                                        b_Result = objPalletBuildingControl.savePalletUsa(et_pallet_building_remarks.getText().toString().trim().toUpperCase());
+                                    }
+                                    if (!b_Result) {
+                                        okMessage("Pallet", objGlobal.getErrorMessage());
+                                    } else {
+                                        b_Result = clearAll();
+                                        if (!b_Result) {
+                                            okMessage("Pallet:clearAll", objGlobal.getErrorMessage());
+                                        } else {
+                                            b_Result = objPalletBuildingControl.forPrint(objPalletBuildingGlobal.getPalletNo());
+                                            if (!b_Result) {
+                                                okMessage("Pallet", "transferReceipt: " + objGlobal.getErrorMessage());
+                                            } else {
+                                                if (!printSticker(sp_pallet_building_printer.getSelectedItem().toString())) {
+                                                    okMessage("Pallet", "Printer Error, Pleasse reprint..");
+                                                    vibrate(100);
+                                                }
+                                            }
+                                            tv_pallet_building_lastsave.setText(objPalletBuildingGlobal.getPalletNo());
+                                            et_pallet_building_box_toteid.requestFocus();
+                                        }
+                                    }
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .show();
                 }
             }
         });

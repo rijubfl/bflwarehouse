@@ -181,8 +181,7 @@ public class BuildingControl {
     }
 
     public boolean saveChuteBuilding(String chuteId, String toteId, String shopId, String shopName) {
-        int totalBuildQty = 0;
-        String shopInShop = "", palletTyp = "", div = "", buildtype="";
+        String palletTyp = "", div = "", buildtype="";
         if (!checkConnection()) {
             return false;
         }
