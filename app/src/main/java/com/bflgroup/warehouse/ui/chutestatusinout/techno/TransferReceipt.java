@@ -35,7 +35,7 @@ public class TransferReceipt {
         return true;
     }
 
-    public boolean transferReceipt(String chuteId, String toteId, String shopId, String shopName) {
+    public boolean transferReceipt(String chuteId, String toteId, String shopId, String shopName,String lpmDt) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", storeIssue = toteId, trfType = "R", palletNo = "", cartonNo = "1", empName = "", labelInfo="";
         int totalQty = 0;
@@ -94,6 +94,12 @@ public class TransferReceipt {
                 objGlobal.setErrorMessage("Invalid Dataname");
                 objGlobal.setErrorNo("transferReceipt:008");
                 return false;
+            }
+            if(lpmDt.isEmpty()){
+                rs = dbConnection.getResultSet("SELECT LpmDt=CONVERT(varchar(10),DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0),103)", objGlobal.getConnection());
+                if (rs.next()) {
+                    lpmDt = rs.getString("LpmDt");
+                }
             }
             objInOutGlobal.setChuteNo(getChuteNo(shopId));
             cartonNo = getCartonNo(dataName, objGlobal.getServerDate(), costCodeTo, locCodeTo);

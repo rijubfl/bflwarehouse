@@ -25,6 +25,7 @@ public class TransferGlobal {
     private static String boxTrfBoxNoPalletType;
     private static String regSIMExclude;
     private static String typeUsaTcm;
+    private static String lpmDt;
 
     public static String getScanBarcode() {
         return scanBarcode;
@@ -199,6 +200,14 @@ public class TransferGlobal {
 
     public static void setTypeUsaTcm(String typeUsaTcm) {
         TransferGlobal.typeUsaTcm = typeUsaTcm;
+    }
+
+    public static String getLpmDt() {
+        return lpmDt;
+    }
+
+    public static void setLpmDt(String lpmDt) {
+        TransferGlobal.lpmDt = lpmDt;
     }
 
     public static TransferGlobal instance;

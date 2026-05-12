@@ -170,7 +170,7 @@ public class ChuteCheckInCheckOutJafzaControl {
     }
 
     public boolean saveChuteOut(String chuteId, String toteId, String shopId, String shopName) {
-        return objTransferReceiptJafza.transferReceipt(chuteId, toteId, shopId, shopName);
+        return objTransferReceiptJafza.transferReceipt(chuteId, toteId, shopId, shopName,"");
     }
 
     public boolean checkValidChuteId(String chuteId) {

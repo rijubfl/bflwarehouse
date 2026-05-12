@@ -85,6 +85,12 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:005");
                 return false;
             }
+            if (lpmDt.isEmpty()) {
+                rs = dbConnection.getResultSet("SELECT LpmDt=CONVERT(varchar(10),DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0),103)", objGlobal.getConnection());
+                if (rs.next()) {
+                    lpmDt = rs.getString("LpmDt");
+                }
+            }
             cartonNo = getCartonNo(conRob, dataName, objGlobal.getServerDate(), costCodeTo, locCodeTo);
             if (TextUtils.isEmpty(cartonNo)) {
                 objGlobal.setErrorMessage("Box Number is wrong");
@@ -96,12 +102,6 @@ public class TransferReceipt {
                 objGlobal.setErrorMessage("Transfer Receipt number is wrong");
                 objGlobal.setErrorNo("transferReceipt:007");
                 return false;
-            }
-            if(lpmDt.isEmpty()){
-                rs = dbConnection.getResultSet("SELECT LpmDt=CONVERT(varchar(10),DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0),103)", objGlobal.getConnection());
-                if (rs.next()) {
-                    lpmDt = rs.getString("LpmDt");
-                }
             }
         } catch (Exception e) {
             objGlobal.setErrorMessage(":transferReceipt:exception:1: " + e.toString());
@@ -209,7 +209,7 @@ public class TransferReceipt {
                     objGlobal.setErrorNo("transferReceipt:020");
                     return false;
                 }
-                if(typeUsaTcm.equals("USABOX")) {
+                if (typeUsaTcm.equals("USABOX")) {
                     if (!dbConnection.insertUpdate("update usa.dbo.UPCBoxHead set Closed='Y' where boxno='" + palletBoxNo + "'", conLoc)) {
                         conRob.rollback();
                         conLoc.rollback();
@@ -219,7 +219,7 @@ public class TransferReceipt {
                         return false;
                     }
                 }
-                if(typeUsaTcm.equals("TCMBOX")) {
+                if (typeUsaTcm.equals("TCMBOX")) {
                     if (!dbConnection.insertUpdate("update BFLDATA.dbo.TCMBoxes set Closed='Y' WHERE BoxNo='" + palletBoxNo + "'", conLoc)) {
                         conRob.rollback();
                         conLoc.rollback();
@@ -229,7 +229,7 @@ public class TransferReceipt {
                         return false;
                     }
                 }
-                if(typeUsaTcm.equals("TCMPLT")) {
+                if (typeUsaTcm.equals("TCMPLT")) {
                     if (!dbConnection.insertUpdate("update BFLDATA.dbo.R1PalletHead set Closed='Y' WHERE PalletNo='" + palletBoxNo + "'", conLoc)) {
                         conRob.rollback();
                         conLoc.rollback();
@@ -253,7 +253,7 @@ public class TransferReceipt {
             }
             if (regSIMExclude.equals("Y")) {
                 if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.Exclude_Transfers_Sim(Trfno,Trndate,Userid,Remarks) values ('" + trfRecNo + "'," +
-                        "'" + objGlobal.getServerDate() + "'," + objGlobal.getUserId() + ",'SIM Exclude Transfer, Pallet Type("+objTransferGlobal.getBoxTrfBoxNoPalletType()+")')", conLoc)) {
+                        "'" + objGlobal.getServerDate() + "'," + objGlobal.getUserId() + ",'SIM Exclude Transfer, Pallet Type(" + objTransferGlobal.getBoxTrfBoxNoPalletType() + ")')", conLoc)) {
                     conRob.rollback();
                     conLoc.rollback();
                     conRob.setAutoCommit(true);
@@ -282,10 +282,10 @@ public class TransferReceipt {
                 conRob.rollback();
                 conLoc.rollback();
             } catch (SQLException sqlException) {
-                objGlobal.setErrorMessage(objGlobal.getErrorNo()+":transferReceipt:sqlException:2: " + sqlException);
+                objGlobal.setErrorMessage(objGlobal.getErrorNo() + ":transferReceipt:sqlException:2: " + sqlException);
                 return false;
             }
-            objGlobal.setErrorMessage(objGlobal.getErrorNo()+":transferReceipt:exception:3: " + exception);
+            objGlobal.setErrorMessage(objGlobal.getErrorNo() + ":transferReceipt:exception:3: " + exception);
             return false;
         }
     }
