@@ -78,7 +78,7 @@ public class WarehouseGRNControl {
                 if (!skipGinCustomsClearance) {
                     rs = dbConnection.getResultSet("Select * from BFLDATA.dbo.GINCUSTOMSCLEARANCE where GinNo='" + ginNo + "' and MFCSFROMLOC_PHY='" + mfcsFromLoc + "' and MFCSTOLOC_PHY='" + mfcsToLoc + "'", objGlobal.getConnection());
                     if (!rs.next()) {
-                        objGlobal.setErrorMessage("Customs clearance has not yet been completed for this GIN.");
+                        objGlobal.setErrorMessage("Customs clearance has not yet been completed / GIN not consumed.");
                         return false;
                     }
                 }

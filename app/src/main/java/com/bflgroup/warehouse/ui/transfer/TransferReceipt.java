@@ -15,7 +15,7 @@ public class TransferReceipt {
     private TransferGlobal objTransferGlobal = TransferGlobal.getInstance();
     private ResultSet rs;
 
-    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype, String regSIMExclude,String typeUsaTcm) {
+    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype, String regSIMExclude,String typeUsaTcm,String lpmDt) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", trfType = "R", trfPalletNo = "", cartonNo = "1", empName = "", storeIssue = palletBoxNo, firstScanTime = "";
         if (!objGlobal.getWorkLocation().equals("UAE")) preparedBy = objGlobal.getUserName();
@@ -97,6 +97,12 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:007");
                 return false;
             }
+            if(lpmDt.isEmpty()){
+                rs = dbConnection.getResultSet("SELECT LpmDt=CONVERT(varchar(10),DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0),103)", objGlobal.getConnection());
+                if (rs.next()) {
+                    lpmDt = rs.getString("LpmDt");
+                }
+            }
         } catch (Exception e) {
             objGlobal.setErrorMessage(":transferReceipt:exception:1: " + e.toString());
             return false;
@@ -117,10 +123,10 @@ public class TransferReceipt {
             }
             //insert into transferheader *****************************************
             if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferheader (TrfNo,TrfDate,CostCodeFrom,LocCodeFrom,CostCodeTo,LocCodeTo,Accode,Narration,NetAmount,UserId,TrfType,FCCode,FCRate," +
-                    "ApprovedBy,PreparedBy,ConsumeReturn,JobNo,StoreIssue,StoreReceipt,EntryMode,ShipNo,CartonNo,PalletNo,Starttime) values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "'," +
+                    "ApprovedBy,PreparedBy,ConsumeReturn,JobNo,StoreIssue,StoreReceipt,EntryMode,ShipNo,CartonNo,PalletNo,Starttime,LPMDt) values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "'," +
                     "'" + locCodeFrom + "','" + costCodeTo + "','" + locCodeTo + "','" + debitAc + "','" + narration + "'," + totalAmt + "," + objGlobal.getUserId() + ",'" + trfType + "','" + fcCode + "'," + fcRate + "," +
                     "'" + approvedBy + "','" + preparedBy + "','P',convert(varchar(15),getdate(),108),'" + storeIssue + "','" + objGlobal.getEmpName() + "','A','" + objGlobal.getDelDate() + "','" + cartonNo + "'," +
-                    "'" + trfPalletNo + "','" + firstScanTime + "')", conRob)) {
+                    "'" + trfPalletNo + "','" + firstScanTime + "','" + lpmDt + "')", conRob)) {
                 conRob.rollback();
                 conLoc.rollback();
                 conRob.setAutoCommit(true);
