@@ -233,7 +233,7 @@ public class UsaBoxBuildingControl {
                     return false;
                 }
                 if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set season=isnull(b.itemtype,'') from bfldata.dbo.tmpScanItemsBox a," +
-                        "usa.dbo.upcbarcodes b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.upc and isnull(a.season,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        "usa.dbo.upcbarcodes b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.itemcode=b.Itemcode and isnull(a.season,'')='' and a.itemcode='" + itemcode + "'", objGlobal.getConnection())) {
                     return false;
                 }
                 if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set season=isnull(b.itemtype,'') from bfldata.dbo.tmpScanItemsBox a," +
