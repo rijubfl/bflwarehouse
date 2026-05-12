@@ -488,7 +488,7 @@ public class TransferControl {
             if (objTransferGlobal.getRobooDcBuild().equals("Y")) {
                 return objBoxBuildingAutoJafzaControl.saveChuteBuilding(objGlobal.getDeviceName(), toteid, shopId, mainshop);
             } else {
-                return objTransferReceiptJafza.transferReceipt(objGlobal.getDeviceName(), toteid, shopId, mainshop);
+                return objTransferReceiptJafza.transferReceipt(objGlobal.getDeviceName(), toteid, shopId, mainshop,"");
             }
         } catch (Exception e) {
             objGlobal.setErrorMessage("TransferControl.saveChuteOut : " + e);
@@ -682,7 +682,7 @@ public class TransferControl {
     }
 
     public boolean validateBoxPallet(String scan) {
-        String shopName = "", boxOrPalletNo = "", contno = "", pallettype = "", typeUsaTcm = "";
+        String shopName = "", boxOrPalletNo = "", contno = "", pallettype = "", typeUsaTcm = "", lpmDt = "";
         if (!checkConnection()) {
             return false;
         }
@@ -691,13 +691,15 @@ public class TransferControl {
             objTransferGlobal.setBoxTrfBoxNo("");
             objTransferGlobal.setRegSIMExclude("");
             objTransferGlobal.setBoxTrfBoxNoPalletType("");
+            objTransferGlobal.setLpmDt("");
             rs = dbConnection.getResultSet("SELECT DISTINCT BoxNo,PalletType,contno=CASE WHEN RoboContno <> '' THEN RoboContno WHEN CHARINDEX('-', BoxNo) > 0 AND LEN(LEFT(BoxNo, " +
-                    "CHARINDEX('-', BoxNo) - 1)) >= 4 THEN LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1) ELSE '' END FROM usa.dbo.vUPCBoxDet WHERE (BoxNo = '" + scan + "' OR ToteID = '" + scan + "') AND Closed = 'N'", objGlobal.getConnection());
+                    "CHARINDEX('-', BoxNo) - 1)) >= 4 THEN LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1) ELSE '' END,LPMDt=isnull(convert(varchar,LPMDt,103),'') FROM usa.dbo.vUPCBoxDet WHERE (BoxNo = '" + scan + "' OR ToteID = '" + scan + "') AND Closed = 'N'", objGlobal.getConnection());
             while (rs.next()) {
                 typeUsaTcm = "USABOX";
                 boxOrPalletNo = rs.getString("boxno");
                 contno = rs.getString("contno");
                 pallettype = rs.getString("PalletType");
+                lpmDt = rs.getString("LPMDt");
                 if (!contno.isEmpty()) {
                     rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='" + contno + "' or BOLNO= '" + contno + "'", objGlobal.getConnection());
                     if (!rs.next()) {
@@ -710,8 +712,7 @@ public class TransferControl {
                 }
             }
             if (typeUsaTcm.isEmpty()) {
-                rs = dbConnection.getResultSet("select distinct BoxNo,PalletType,contno='' from bfldata.dbo.vR1Pallet where " +
-                        "(BoxNo='" + scan + "' or TotId='" + scan + "') and Closed='N'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select distinct BoxNo,PalletType,contno='' from bfldata.dbo.vR1Pallet where (BoxNo='" + scan + "' or TotId='" + scan + "') and Closed='N'", objGlobal.getConnection());
                 while (rs.next()) {
                     typeUsaTcm = "TCMBOX";
                     boxOrPalletNo = rs.getString("boxno");
@@ -720,8 +721,7 @@ public class TransferControl {
                 }
             }
             if (typeUsaTcm.isEmpty()) {
-                rs = dbConnection.getResultSet("select distinct BoxNo=palletno,PalletType,contno='' from bfldata.dbo.vR1Pallet where " +
-                        "palletno='" + scan + "' and Closed='N'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select distinct BoxNo=palletno,PalletType,contno='' from bfldata.dbo.vR1Pallet where palletno='" + scan + "' and Closed='N'", objGlobal.getConnection());
                 while (rs.next()) {
                     typeUsaTcm = "TCMPLT";
                     boxOrPalletNo = rs.getString("boxno");
@@ -820,6 +820,7 @@ public class TransferControl {
             objTransferGlobal.setShopName(shopName);
             objTransferGlobal.setBoxTrfBoxNo(boxOrPalletNo);
             objTransferGlobal.setTypeUsaTcm(typeUsaTcm);
+            objTransferGlobal.setLpmDt(lpmDt);
             return true;
         } catch (Exception e) {
             objGlobal.setErrorMessage("TransferControl.validateBoxPallet : " + e);

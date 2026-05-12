@@ -474,7 +474,7 @@ public class TransferFragment extends Fragment {
                     return false;
                 }
             } else {
-                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid,selType,objTransferGlobal.getRegSIMExclude(),objTransferGlobal.getTypeUsaTcm());
+                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid, selType, objTransferGlobal.getRegSIMExclude(), objTransferGlobal.getTypeUsaTcm(), objTransferGlobal.getLpmDt());
                 if (!b_Result) {
                     okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
                     return false;

@@ -195,15 +195,15 @@ public class Controls {
         return str;
     }
 
-    public String seperateBarcode(String barcode){
+    public String seperateBarcode(String barcode) {
         String[] parts;
         String part1;
         int i;
-        if(barcode.contains("/")) {
+        if (barcode.contains("/")) {
             parts = barcode.split("/");
-            part1=parts[0];
+            part1 = parts[0];
         } else {
-            part1=barcode;
+            part1 = barcode;
         }
         for (i = 0; i < part1.length() - 1; i++) {
             if (part1.charAt(i) != '0') {

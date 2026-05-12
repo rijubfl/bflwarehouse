@@ -15,7 +15,7 @@ public class TransferReceipt {
     private TransferGlobal objTransferGlobal = TransferGlobal.getInstance();
     private ResultSet rs;
 
-    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype, String regSIMExclude,String typeUsaTcm) {
+    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype, String regSIMExclude,String typeUsaTcm,String lpmDt) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", trfType = "R", trfPalletNo = "", cartonNo = "1", empName = "", storeIssue = palletBoxNo, firstScanTime = "";
         if (!objGlobal.getWorkLocation().equals("UAE")) preparedBy = objGlobal.getUserName();
@@ -85,6 +85,12 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:005");
                 return false;
             }
+            if (lpmDt.isEmpty()) {
+                rs = dbConnection.getResultSet("SELECT LpmDt=CONVERT(varchar(10),DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0),103)", objGlobal.getConnection());
+                if (rs.next()) {
+                    lpmDt = rs.getString("LpmDt");
+                }
+            }
             cartonNo = getCartonNo(conRob, dataName, objGlobal.getServerDate(), costCodeTo, locCodeTo);
             if (TextUtils.isEmpty(cartonNo)) {
                 objGlobal.setErrorMessage("Box Number is wrong");
@@ -117,10 +123,10 @@ public class TransferReceipt {
             }
             //insert into transferheader *****************************************
             if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferheader (TrfNo,TrfDate,CostCodeFrom,LocCodeFrom,CostCodeTo,LocCodeTo,Accode,Narration,NetAmount,UserId,TrfType,FCCode,FCRate," +
-                    "ApprovedBy,PreparedBy,ConsumeReturn,JobNo,StoreIssue,StoreReceipt,EntryMode,ShipNo,CartonNo,PalletNo,Starttime) values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "'," +
+                    "ApprovedBy,PreparedBy,ConsumeReturn,JobNo,StoreIssue,StoreReceipt,EntryMode,ShipNo,CartonNo,PalletNo,Starttime,LPMDt) values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "'," +
                     "'" + locCodeFrom + "','" + costCodeTo + "','" + locCodeTo + "','" + debitAc + "','" + narration + "'," + totalAmt + "," + objGlobal.getUserId() + ",'" + trfType + "','" + fcCode + "'," + fcRate + "," +
                     "'" + approvedBy + "','" + preparedBy + "','P',convert(varchar(15),getdate(),108),'" + storeIssue + "','" + objGlobal.getEmpName() + "','A','" + objGlobal.getDelDate() + "','" + cartonNo + "'," +
-                    "'" + trfPalletNo + "','" + firstScanTime + "')", conRob)) {
+                    "'" + trfPalletNo + "','" + firstScanTime + "','" + lpmDt + "')", conRob)) {
                 conRob.rollback();
                 conLoc.rollback();
                 conRob.setAutoCommit(true);
@@ -203,7 +209,7 @@ public class TransferReceipt {
                     objGlobal.setErrorNo("transferReceipt:020");
                     return false;
                 }
-                if(typeUsaTcm.equals("USABOX")) {
+                if (typeUsaTcm.equals("USABOX")) {
                     if (!dbConnection.insertUpdate("update usa.dbo.UPCBoxHead set Closed='Y' where boxno='" + palletBoxNo + "'", conLoc)) {
                         conRob.rollback();
                         conLoc.rollback();
@@ -213,7 +219,7 @@ public class TransferReceipt {
                         return false;
                     }
                 }
-                if(typeUsaTcm.equals("TCMBOX")) {
+                if (typeUsaTcm.equals("TCMBOX")) {
                     if (!dbConnection.insertUpdate("update BFLDATA.dbo.TCMBoxes set Closed='Y' WHERE BoxNo='" + palletBoxNo + "'", conLoc)) {
                         conRob.rollback();
                         conLoc.rollback();
@@ -223,7 +229,7 @@ public class TransferReceipt {
                         return false;
                     }
                 }
-                if(typeUsaTcm.equals("TCMPLT")) {
+                if (typeUsaTcm.equals("TCMPLT")) {
                     if (!dbConnection.insertUpdate("update BFLDATA.dbo.R1PalletHead set Closed='Y' WHERE PalletNo='" + palletBoxNo + "'", conLoc)) {
                         conRob.rollback();
                         conLoc.rollback();
@@ -247,7 +253,7 @@ public class TransferReceipt {
             }
             if (regSIMExclude.equals("Y")) {
                 if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.Exclude_Transfers_Sim(Trfno,Trndate,Userid,Remarks) values ('" + trfRecNo + "'," +
-                        "'" + objGlobal.getServerDate() + "'," + objGlobal.getUserId() + ",'SIM Exclude Transfer, Pallet Type("+objTransferGlobal.getBoxTrfBoxNoPalletType()+")')", conLoc)) {
+                        "'" + objGlobal.getServerDate() + "'," + objGlobal.getUserId() + ",'SIM Exclude Transfer, Pallet Type(" + objTransferGlobal.getBoxTrfBoxNoPalletType() + ")')", conLoc)) {
                     conRob.rollback();
                     conLoc.rollback();
                     conRob.setAutoCommit(true);
@@ -276,10 +282,10 @@ public class TransferReceipt {
                 conRob.rollback();
                 conLoc.rollback();
             } catch (SQLException sqlException) {
-                objGlobal.setErrorMessage(objGlobal.getErrorNo()+":transferReceipt:sqlException:2: " + sqlException);
+                objGlobal.setErrorMessage(objGlobal.getErrorNo() + ":transferReceipt:sqlException:2: " + sqlException);
                 return false;
             }
-            objGlobal.setErrorMessage(objGlobal.getErrorNo()+":transferReceipt:exception:3: " + exception);
+            objGlobal.setErrorMessage(objGlobal.getErrorNo() + ":transferReceipt:exception:3: " + exception);
             return false;
         }
     }
