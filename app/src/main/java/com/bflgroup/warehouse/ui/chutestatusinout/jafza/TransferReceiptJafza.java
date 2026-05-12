@@ -131,10 +131,10 @@ public class TransferReceiptJafza {
             //insert into transferheader *****************************************
             if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferheader (TrfNo,TrfDate,CostCodeFrom,LocCodeFrom,CostCodeTo,LocCodeTo,Accode,Narration," +
                     "NetAmount,UserId,TrfType,FCCode,FCRate,ApprovedBy,PreparedBy,ConsumeReturn,JobNo,StoreIssue,StoreReceipt,EntryMode,ShipNo,CartonNo," +
-                    "PalletNo,Starttime) values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "','" + locCodeFrom + "','" + costCodeTo + "','" + locCodeTo + "','" + debitAc + "'," +
+                    "PalletNo,Starttime,LpmDt) values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "','" + locCodeFrom + "','" + costCodeTo + "','" + locCodeTo + "','" + debitAc + "'," +
                     "'" + narration + "'," + totalAmt + "," + objGlobal.getUserId() + ",'" + trfType + "','" + fcCode + "'," + fcRate + ",'" + approvedBy + "','" + preparedBy + "'," +
                     "'N',convert(varchar(15),getdate(),108),'" + storeIssue + "','" + objGlobal.getEmpName() + "','A','" + objGlobal.getDelDate() + "','" + cartonNo + "','" + palletNo + "'," +
-                    "'" + objGlobal.getServerTime() + "')", con)) {
+                    "'" + objGlobal.getServerTime() + "','" + lpmDt + "')", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:018");
                 return false;
