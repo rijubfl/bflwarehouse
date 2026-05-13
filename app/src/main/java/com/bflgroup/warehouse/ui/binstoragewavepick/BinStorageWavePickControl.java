@@ -180,10 +180,10 @@ public class BinStorageWavePickControl {
                 }
             } else {
                 if (!pickType.equals("SKIPPED BOXES")) {
-                    if (!dbConnection.insertUpdate("delete from #simBoxPick where ToteId in(select ToteId from SkipWavePick where fix='N')", objGlobal.getConnection())) {
+                    if (!dbConnection.insertUpdate("delete from #simBoxPick where ToteId in(select ToteId from SkipWavePick where fix='N' and CAST(trndate AS DATE) = CAST(GETDATE() AS DATE))", objGlobal.getConnection())) {
                         return null;
                     }
-                    if (!dbConnection.insertUpdate("delete from #simBoxPick where BoxNo in(select BoxNo from SkipWavePick where fix='N')", objGlobal.getConnection())) {
+                    if (!dbConnection.insertUpdate("delete from #simBoxPick where BoxNo in(select BoxNo from SkipWavePick where fix='N'and CAST(trndate AS DATE) = CAST(GETDATE() AS DATE))", objGlobal.getConnection())) {
                         return null;
                     }
                 } else {
