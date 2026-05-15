@@ -87,6 +87,7 @@ public class TransferControl {
             return false;
         }
         try {
+
             if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and qty<=0", objGlobal.getConnection())) {
                 return false;
             }

@@ -229,6 +229,7 @@ public class TransferFragment extends Fragment {
                 String boxPallet = et_transfer_pallet_box_no.getText().toString();
                 String shop = tv_transfer_shopname.getText().toString();
                 String printer = sp_transfer_printer.getSelectedItem().toString();
+                objTransferGlobal.setLpmDt("");
                 if (printer.isEmpty() || printer.toUpperCase().contains("SELECT")) {
                     okMessage("Transfer", "Please select printer");
                 } else {
@@ -394,8 +395,8 @@ public class TransferFragment extends Fragment {
         @Override
         protected Integer doInBackground(Void... args) {
             try {
-                b_Result =transfer();
-                if(!b_Result) {
+                b_Result = transfer();
+                if (!b_Result) {
                     return 0;
                 }
             } catch (Exception e) {
