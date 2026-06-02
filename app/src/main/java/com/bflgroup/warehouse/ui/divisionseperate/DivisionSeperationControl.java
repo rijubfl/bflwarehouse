@@ -108,13 +108,13 @@ public class DivisionSeperationControl {
             }
             if (!save) {
                 if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopName + "',ItemCode," +
-                        "(select distinct division from deptstock where Department in(select Department from usa.dbo.USAPriority where groupcode=a.groupcode)),0,Quantity," +
+                        "(select top 1 division from deptstock where Department in(select top 1 Department from usa.dbo.USAPriority where groupcode=a.groupcode)),0,Quantity," +
                         "'N' from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a where TrfNo='" + trfno + "'", objGlobal.getConnection())) {
                     return false;
                 }
                 if (delAll) {
                     if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopName + "',ItemCode," +
-                            "(select distinct division from deptstock where Department in(select Department from usa.dbo.USAPriority where groupcode=a.groupcode)),Quantity,0," +
+                            "(select top 1 division from deptstock where Department in(select top 1 Department from usa.dbo.USAPriority where groupcode=a.groupcode)),Quantity,0," +
                             "'N' from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a where TrfNo='" + trfno + "'", objGlobal.getConnection())) {
                         return false;
                     }

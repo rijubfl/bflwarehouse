@@ -3,6 +3,7 @@ package com.bflgroup.warehouse.ui.addorremoveboxfrompallet;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.opengl.EGLObjectHandle;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +27,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.bflgroup.warehouse.R;
+import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.ui.addorremoveboxfrompallet.model.BoxInOutRequestData;
 
 import java.util.ArrayList;
@@ -55,6 +57,7 @@ public class AddOrRemoveBoxInPalletFragment extends Fragment implements View.OnC
     private TextView tvTotalQty;
     private int totalQty;
     private ListView lvBoxUpdate;
+    private Global objGlobal = Global.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -210,13 +213,6 @@ public class AddOrRemoveBoxInPalletFragment extends Fragment implements View.OnC
                                 etBoxNo.setText("");
                                 requestFocusForEditText(etBoxNo);
                             }
-
-
-
-
-
-
-
 //                        showAlert("Warning!!", "Are you sure you want to add the box " + etBoxNo.getText().toString()
 //                                + " to the pallet" + etPalletNo.getText().toString() + " ?", 1);
 
@@ -386,8 +382,12 @@ public class AddOrRemoveBoxInPalletFragment extends Fragment implements View.OnC
             vibrate(500);
         } else if (boxInAndOutControl.palletChecking(etPalletNo.getText().toString()) == null) {
             status = false;
-
             okMessage("Error!!", "Invalid Pallet or Pallet is already closed");
+            etPalletNo.setText("");
+            requestFocusForEditText(etPalletNo);
+            vibrate(500);
+        } else if (!boxInAndOutControl.validateBoxPalletIsPendingGIN("", etPalletNo.getText().toString())) {
+            okMessage("Error!!", objGlobal.getErrorMessage());
             etPalletNo.setText("");
             requestFocusForEditText(etPalletNo);
             vibrate(500);
