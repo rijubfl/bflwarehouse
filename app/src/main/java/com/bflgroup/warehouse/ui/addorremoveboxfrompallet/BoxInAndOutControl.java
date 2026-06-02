@@ -64,17 +64,6 @@ public class BoxInAndOutControl {
         return num;
     }
 
-
-    void okMessage(Activity activity, String title, String message) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(activity);
-        alert.setMessage(message);
-        alert.setTitle(title);
-        alert.setPositiveButton("OK", null);
-        alert.setCancelable(true);
-        alert.create().show();
-    }
-
-
     public boolean boxChecking(String boxNo) {
         String query = "select * from usa.dbo.upcboxhead where (boxno='" + boxNo + "' or toteid='" + boxNo + "') and closed='N'";
         ResultSet rs = dbConnection.getResultSet(query, objGlobal.getConnection());
@@ -349,6 +338,26 @@ public class BoxInAndOutControl {
         return status;
     }
 
+    public boolean validateBoxPalletIsPendingGIN(String boxNo, String palletNo) {
+        String ginno="";
+        try {
+            rs = dbConnection.getResultSet("select top 1 SrNo from BFLDATA.dbo.PLTDeliveryDetails where PalletNo='" + palletNo + "' order by SrNo desc", objGlobal.getConnection());
+            if (rs.next()) {
+                ginno = rs.getString("srno");
+            }
+            if(!ginno.isEmpty()) {
+                rs = dbConnection.getResultSet("select top 1 palletno from BFLDATA.dbo.WHGRNDetails where GINNo='" + ginno + "' and PalletNo='" + palletNo + "'", objGlobal.getConnection());
+                if (!rs.next()) {
+                    objGlobal.setErrorNo("The pallet cannot be modified as the GIN-" + ginno + " is still pending");
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
     public boolean saveAddedBoxToDB(String boxNo, String palletNo) {
         boolean status = true;
         String query = "select sn from bfldata.dbo.USAPallets where (closed='N' or sn = 285999) and sn in(select sn from bfldata.dbo.USAPalletsDet where InvNo='" + boxNo + "')";
@@ -356,7 +365,7 @@ public class BoxInAndOutControl {
         try {
             if (rs.next()) {
                 int eSn = rs.getInt("sn");
-                String query1 = "insert into bfldata..usapalletsdet_bck (Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details) select Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details from bfldata.dbo.USAPalletsDet where InvNo='" + boxNo + "' and sn=" + eSn;
+                String query1 = "insert into bfldata..usapalletsdet_bck (Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details,username) select Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details,'" + objGlobal.getUserName() + "' from bfldata.dbo.USAPalletsDet where InvNo='" + boxNo + "' and sn=" + eSn;
                 if (!dbConnection.insertUpdate(query1, objGlobal.getConnection()))  status = false;
                 else {
                     String query2 = "update bfldata..USAPalletsDet set sn=" + sn + " where invno='" + boxNo + "' and sn=" + eSn;
@@ -371,7 +380,7 @@ public class BoxInAndOutControl {
             }
 
             if(status) {
-                String query3 = "insert into  bfldata..VerifyPalletDetail  (SNo, PalletNo, BoxNo, Build, Scan) select SNo, PalletNo, '" + boxNo + "',1,1 from BFLDATA..VerifyPalletHeader where PalletNo='" + palletNo + "'";
+                String query3 = "insert into  bfldata..VerifyPalletDetail  (SNo, PalletNo, BoxNo, Build, Scan,username) select SNo, PalletNo, '" + boxNo + "',1,1,'" + objGlobal.getUserName() + "' from BFLDATA..VerifyPalletHeader where PalletNo='" + palletNo + "'";
                 status = dbConnection.insertUpdate(query3, objGlobal.getConnection());
                 if (status) {
                     String query4 = "Delete from usa..BoXPallet where boxno ='" + boxNo + "'";

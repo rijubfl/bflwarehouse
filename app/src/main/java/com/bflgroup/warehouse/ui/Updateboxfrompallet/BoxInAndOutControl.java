@@ -356,7 +356,7 @@ public class BoxInAndOutControl {
         try {
             if (rs.next()) {
                 int eSn = rs.getInt("sn");
-                String query1 = "insert into bfldata..usapalletsdet_bck (Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details) select Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details from bfldata.dbo.USAPalletsDet where InvNo='" + boxNo + "' and sn=" + eSn;
+                String query1 = "insert into bfldata..usapalletsdet_bck (Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details,username) select Sn,InvNo,JobNo,ItemCategory,Qty,CountedBy,ItemType,Details,'" + objGlobal.getUserName() + "' from bfldata.dbo.USAPalletsDet where InvNo='" + boxNo + "' and sn=" + eSn;
                 if (!dbConnection.insertUpdate(query1, objGlobal.getConnection()))  status = false;
                 else {
                     String query2 = "update bfldata..USAPalletsDet set sn=" + sn + " where invno='" + boxNo + "' and sn=" + eSn;
@@ -371,7 +371,7 @@ public class BoxInAndOutControl {
             }
 
             if(status == true) {
-                String query3 = "insert into  bfldata..VerifyPalletDetail  (SNo, PalletNo, BoxNo, Build, Scan) select SNo, PalletNo, '" + boxNo + "',1,1 from BFLDATA..VerifyPalletHeader where PalletNo='" + palletNo + "'";
+                String query3 = "insert into  bfldata..VerifyPalletDetail  (SNo, PalletNo, BoxNo, Build, Scan,username) select SNo, PalletNo, '" + boxNo + "',1,1,'" + objGlobal.getUserName() + "' from BFLDATA..VerifyPalletHeader where PalletNo='" + palletNo + "'";
                 status = dbConnection.insertUpdate(query3, objGlobal.getConnection());
                 if (status) {
                     String query4 = "Delete from usa..BoXPallet where boxno ='" + boxNo + "'";

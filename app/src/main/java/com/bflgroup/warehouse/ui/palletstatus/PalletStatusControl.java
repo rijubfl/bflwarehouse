@@ -179,7 +179,7 @@ public class PalletStatusControl {
             if (rs.next()) status = "PRODUCTION - D";
 
             if(status.isEmpty()) {
-                rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where (PalletNo='" + palletno + "' or boxno='" + boxno + "')", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from tempdata.dbo.SIMProdReadyPalletsList where (boxno='" + boxno + "')", objGlobal.getConnection());
                 if (rs.next()) {
                     status = "PRODUCTION - S";
                     checkingType = rs.getString("checkingType");
@@ -199,11 +199,11 @@ public class PalletStatusControl {
                     processNo = rs.getString("processNo");
                     prodDate = rs.getString("ProdDate");
                 }
-                rs = dbConnection.getResultSet("select * from TEMPDATA.dbo.DelSIMProdReadyPalletsList where ProdDate>=cast(getdate()-1 as date) and (BoxNo='" + boxno + "' or PalletNo='" + palletno + "')", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from TEMPDATA.dbo.DelSIMProdReadyPalletsList where ProdDate>=cast(getdate()-1 as date) and (BoxNo='" + boxno + "')", objGlobal.getConnection());
                 if (rs.next()) {
                     if (!dbConnection.insertUpdate("insert into TEMPDATA.dbo.SIMProdReadyPalletsList select " + processNo + ",'" + prodDate + "',PalletNo,BoxNo,PalletType,iDepartment,0,0,0,0,0,0,PLTItemType," +
                             "CheckingType,Warehouse,Rack,convert(varchar,getdate(),103),convert(varchar,getdate(),8),Active from TEMPDATA.dbo.DelSIMProdReadyPalletsList where " +
-                            "ProdDate>=cast(getdate()-1 as date) and (BoxNo='" + boxno + "' or PalletNo='" + palletno + "')", objGlobal.getConnection())) {
+                            "ProdDate>=cast(getdate()-1 as date) and (BoxNo='" + boxno + "')", objGlobal.getConnection())) {
                         return false;
                     }
                     checkingType = rs.getString("checkingType");
