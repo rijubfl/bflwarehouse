@@ -293,16 +293,31 @@ public class TransferControl {
                     return false;
                 }
             }
-            rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                    "rfid='" + rfid + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
-            if (rs.next()) {
-                shopName = rs.getString("shopname");
-                itemCode = rs.getString("ItemCode");
-                barcode = rs.getString("Barcode");
-                trfNo = rs.getString("TrfNo");
-                trfDate = rs.getString("entrydate");
-                description = rs.getString("descr");
+            if (objGlobal.getWorkLocation().equals("UAE")) {
+                rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
+                        "rfid='" + rfid + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
+                if (rs.next()) {
+                    shopName = rs.getString("shopname");
+                    itemCode = rs.getString("ItemCode");
+                    barcode = rs.getString("Barcode");
+                    trfNo = rs.getString("TrfNo");
+                    trfDate = rs.getString("entrydate");
+                    description = rs.getString("descr");
+                }
             }
+            else{
+                rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from "+objGlobal.getCountryDbName()+".dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
+                        "rfid='" + rfid + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
+                if (rs.next()) {
+                    shopName = rs.getString("shopname");
+                    itemCode = rs.getString("ItemCode");
+                    barcode = rs.getString("Barcode");
+                    trfNo = rs.getString("TrfNo");
+                    trfDate = rs.getString("entrydate");
+                    description = rs.getString("descr");
+                }
+            }
+
 
             if (shopName.isEmpty() || itemCode.isEmpty() || barcode.isEmpty() || trfDate.isEmpty() || description.isEmpty()) {
                 objGlobal.setErrorMessage("Pair information is not found, rfid:" + rfid);
@@ -650,14 +665,27 @@ public class TransferControl {
                     return false;
                 }
             }
-            rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFIDPBarcodeLog a where " +
-                    "barcode='" + barcode + "' order by TrnDate desc,trntime desc", objGlobal.getConnection());
-            if (rs.next()) {
-                shopName = rs.getString("shopname");
-                itemCode = rs.getString("ItemCode");
-                trfNo = rs.getString("TrfNo");
-                trfDate = rs.getString("TrnDate");
-                description = rs.getString("descr");
+            if (objGlobal.getWorkLocation().equals("UAE")) {
+                rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFIDPBarcodeLog a where " +
+                        "barcode='" + barcode + "' order by TrnDate desc,trntime desc", objGlobal.getConnection());
+                if (rs.next()) {
+                    shopName = rs.getString("shopname");
+                    itemCode = rs.getString("ItemCode");
+                    trfNo = rs.getString("TrfNo");
+                    trfDate = rs.getString("TrnDate");
+                    description = rs.getString("descr");
+                }
+            }
+            else{
+                rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from "+objGlobal.getCountryDbName()+".dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFIDPBarcodeLog a where " +
+                        "barcode='" + barcode + "' order by TrnDate desc,trntime desc", objGlobal.getConnection());
+                if (rs.next()) {
+                    shopName = rs.getString("shopname");
+                    itemCode = rs.getString("ItemCode");
+                    trfNo = rs.getString("TrfNo");
+                    trfDate = rs.getString("TrnDate");
+                    description = rs.getString("descr");
+                }
             }
             if (shopName.isEmpty() || itemCode.isEmpty() || trfDate.isEmpty() || description.isEmpty()) {
                 objGlobal.setErrorMessage("Barcode information is not found (B), barcode:" + barcode);

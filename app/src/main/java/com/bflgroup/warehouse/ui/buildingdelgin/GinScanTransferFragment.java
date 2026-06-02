@@ -468,7 +468,7 @@ public class GinScanTransferFragment extends Fragment {
                                                     vibrate(500, getContext());
                                                     int Ginno = Math.round(Float.parseFloat(String.valueOf(GinScanTransferGlobal.getGinno())));
                                                     if (objGlobal.getCountryCode().equals("KSA")) {
-                                                        String vendor = sp_vehicle_type.getSelectedItem().toString();
+                                                        String vendor = sp_vendor.getSelectedItem().toString();
                                                         String subVendor = vendor.length() >= 3 ? vendor.substring(0, 3) : vendor;
                                                         if (!objGinScanTransferControl.waySlipsPost(Ginno, subVendor+et_way_slips.getText().toString(), sp_vehicle_type.getSelectedItem().toString(),
                                                                 sp_vendor.getSelectedItem().toString())) {
