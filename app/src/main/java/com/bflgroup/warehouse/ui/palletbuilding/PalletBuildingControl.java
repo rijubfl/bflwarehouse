@@ -42,7 +42,7 @@ public class PalletBuildingControl {
     }
 
     public boolean validateBoxTotUsa(String boxTot, int boxQty) {
-        String box = "", tote = "", palletType = "", groupcode = "", qty = "0", remarks = "", boxPrepare = "";
+        String box = "", tote = "", palletType = "", groupcode = "", qty = "0", remarks = "", boxPrepare = "",lpmDate = "";
         String isDutyPaid = "", contNo = "";
         if (!checkConnection()) {
             return false;
@@ -52,6 +52,13 @@ public class PalletBuildingControl {
             return false;
         }
         try {
+
+
+
+
+
+
+
             rs = dbConnection.getResultSet("select *,Qty=(select sum(qty) from usa.dbo.UPCBoxDet where BoxNo=a.boxno) from usa.dbo.upcboxhead a " +
                     "where (boxno='" + boxTot + "' or toteid='" + boxTot + "') and closed='N'", objGlobal.getConnection());
             if (rs.next()) {
@@ -62,6 +69,7 @@ public class PalletBuildingControl {
                 remarks = rs.getString("remarks").toString().toUpperCase();
                 qty = rs.getString("Qty").toString();
                 boxPrepare = rs.getString("PreparedBy").toString();
+                lpmDate = rs.getString("LPMDt");
 
 //                // duty paid check
 //                if (box.startsWith("U")) {
@@ -98,6 +106,14 @@ public class PalletBuildingControl {
 //                    }
 //                }
 //            }
+            rs = dbConnection.getResultSet("select top 1 LPMDt from bfldata..tmpPalletBuild where DeviceId = '"+objGlobal.getDeviceName()+"' and LPMDt is not null",objGlobal.getConnection());
+            if (rs.next()){
+                if (!lpmDate.equals(rs.getString("LPMDt"))) {
+                    objGlobal.setErrorMessage("The LPM date for this box is different: " + rs.getString("LPMDt") + ". Please use another box with an LPM date of " + lpmDate + ".");
+                    return false;
+                }
+            }
+
             rs = dbConnection.getResultSet("select * from usa.dbo.BoXPallet where boxno='" + box + "'", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setErrorMessage("PalletBuildingControl.validateBoxTot : Box is already found in pallet, " + box);
@@ -136,8 +152,8 @@ public class PalletBuildingControl {
                 }
             }
 
-            if (!dbConnection.insertUpdate("insert into tmpPalletBuild (DeviceId,UserId,ToteId,BoxNo,BoxRemarks,Qty,PalletType,GroupCode,BoxPrepare,DutyPaid) values ('" + objGlobal.getDeviceName() + "'," +
-                    "" + objGlobal.getUserId() + ",'" + tote + "','" + box + "','" + remarks + "'," + qty + ",'" + palletType + "','" + groupcode + "','" + boxPrepare + "','" + isDutyPaid + "')", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("insert into tmpPalletBuild (DeviceId,UserId,ToteId,BoxNo,BoxRemarks,Qty,PalletType,GroupCode,BoxPrepare,DutyPaid,LPMDt) values ('" + objGlobal.getDeviceName() + "'," +
+                    "" + objGlobal.getUserId() + ",'" + tote + "','" + box + "','" + remarks + "'," + qty + ",'" + palletType + "','" + groupcode + "','" + boxPrepare + "','" + isDutyPaid + "','"+lpmDate+"')", objGlobal.getConnection())) {
                 return false;
             }
             rs = dbConnection.getResultSet("select cnt=count(distinct PalletType) from tmpPalletBuild where DeviceId='" + objGlobal.getDeviceName() + "' having " +
