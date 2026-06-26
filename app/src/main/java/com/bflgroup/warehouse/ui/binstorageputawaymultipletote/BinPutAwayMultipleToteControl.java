@@ -128,6 +128,17 @@ public class BinPutAwayMultipleToteControl {
                 }
             }
             if (direction.equals("IN")) {
+                rs = dbConnection.getResultSet("SELECT TOP 1 Direction, SourceLocation FROM (SELECT Direction,TrnDate,TrnTime, Location AS SourceLocation FROM " +
+                        "racks..BinPutAwayHistory WHERE BoxNo ='"+scan+"' UNION ALL SELECT Direction,TrnDate,TrnTime, RackNo AS SourceLocation FROM " +
+                        "racks..TechnoRacksHistory WHERE PalletNo1 ='"+scan+"'  OR PalletNo2 ='"+scan+"' UNION ALL SELECT Direction," +
+                        "TrnDate,TrnTime,RackNo AS SourceLocation FROM racks..WarehouseRackHistory WHERE PalletNo1 ='"+scan+"' OR PalletNo2 = " +
+                        "'"+scan+"') X ORDER BY TrnDate DESC, TrnTime DESC", objGlobal.getConnection());
+                if (rs.next()) {
+                    if (rs.getString("Direction").equals("IN")) {
+                        objGlobal.setErrorMessage("The box/pallet is already found in "+rs.getString("SourceLocation"));
+                        return false;
+                    }
+                }
                 rs = dbConnection.getResultSet("select * from tmpwhracks where (palletno1='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "' or palletno2='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "')", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("ToteID/Pallet found in location, " + rs.getString("rowno") + "-" + rs.getString("cellno"));

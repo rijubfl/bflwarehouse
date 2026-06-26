@@ -66,6 +66,8 @@ public class Global {
 
     private static String userAllowMixCategoryBuild;
 
+    private static String lpmOrapoChecking;
+
     public static void setInstance(Global instance) {
         Global.instance = instance;
     }
@@ -100,6 +102,15 @@ public class Global {
     public static void setSkipBatchIn(boolean skipBatchIn) {
         Global.skipBatchIn = skipBatchIn;
     }
+
+    public static String getLpmOrapoChecking() {
+        return lpmOrapoChecking;
+    }
+
+    public static void setLpmOrapoChecking(String lpmOrapoChecking) {
+        Global.lpmOrapoChecking = lpmOrapoChecking;
+    }
+
 
     public String getWarehouse() {
         return warehouse;

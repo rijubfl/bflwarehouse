@@ -24,8 +24,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class GinScantransferControl {
 
@@ -64,6 +69,7 @@ public class GinScantransferControl {
         }
         return true;
     }
+
     public List<String> loadVehicleVendorForKsa() {
         List<String> arr;
         if (!checkConnection()) {
@@ -179,6 +185,21 @@ public class GinScantransferControl {
         }
     }
 
+    public boolean isBlockingGin(Context context){
+        rs = dbConnection.getResultSet("SELECT * FROM bfldata..GinCreationBlockTime WHERE blockday = DATENAME(WEEKDAY, GETDATE()) AND blockactive = 1 AND CAST(GETDATE() AS TIME) BETWEEN CAST(starttime AS TIME) AND CAST(endtime AS TIME);", objGlobal.getConnection());
+        try {
+            if (rs.next()){
+                vibrate(1000, context);
+                objGlobal.setErrorMessage("GIN cannot be created on "+rs.getString("blockday")+" between "+rs.getString("starttime")+" and "+rs.getString("endtime")+". Please try again after this time.");
+                return true;
+            }
+            else{
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public ArrayList<GinScanItem> ScanTransfer(Context context, String transferno, int get_route_id, String android_id, String palletno) {
         ArrayList<GinScanItem> arr = new ArrayList<GinScanItem>();
         ArrayList<GinScanItem> arrayList = new ArrayList<>();
@@ -190,12 +211,12 @@ public class GinScantransferControl {
         }
 
         try {
-
             String query = "";
 
             String[] arrOfStr = palletno.split("/");
             String query2 = "";
             try {
+
                 query2 = "select Shopname, dataname from bfldata..datasettings where routeid = '" + get_route_id + "'";
                 rs = dbConnection.getResultSet(query2, objGlobal.getConnection());
                 while (rs.next()) {
@@ -479,7 +500,7 @@ public class GinScantransferControl {
                 Log.e("dateTime", cDate + "");
 
 
-             //   (ShopName <> '" + rs1.getString("shopname") + "' or ShopName <> 'MUY" + rs1.getString("shopname") + "')
+                //   (ShopName <> '" + rs1.getString("shopname") + "' or ShopName <> 'MUY" + rs1.getString("shopname") + "')
 
 
                 if (objGlobal.getCountryCode().equals("KSA")) {

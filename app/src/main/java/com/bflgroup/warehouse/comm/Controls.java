@@ -47,6 +47,7 @@ public class Controls {
             objGlobal.setCountryCode("");
             objGlobal.setTransferPrefixPda("");
             objGlobal.setTransferPrefixRobo("");
+            objGlobal.setLpmOrapoChecking("N");
             objGlobal.setValidateGinCustomsClearance("Y");
             if (objGlobal.getWorkLocation().equals("3PL")) {
                 objGlobal.setWarehouse("3PL");
@@ -102,6 +103,8 @@ public class Controls {
                     objGlobal.setCountryWiseBoxPrefix(rs.getString("status"));
                 if (rs.getString("descr").toUpperCase().equals("GINCUSTOMCLEAR"))
                     objGlobal.setValidateGinCustomsClearance(rs.getString("status"));
+                if (rs.getString("descr").toUpperCase().equals("LPMORAPOPALLETBUILD"))
+                    objGlobal.setLpmOrapoChecking(rs.getString("status"));
             }
 
             rs = objDBConnection.getResultSet("select distinct Warehouse,TransferPrefix,TransferPrefixPda,TransferPrefixRobo " +
@@ -160,6 +163,7 @@ public class Controls {
                 //KSA ROBO
                 roboServerIP = "10.70.240.223";
                 roboChuteStatusAPI = "http://bflksawh1.fortiddns.com:3001/api/v1/wms/chute/";
+               // roboChuteStatusAPI = "http://185.203.108.42:3001/api/v1/wms/chute/"; //temporarily suggested by shyju for 1 device only
                 roboChuteMapingAPI = "https://api.iqhybrid.com/api/v3/wes/bfl/chutes/mapping/";
                 roboSortTaskAPI = "http://10.70.8.13:3001/api/v1/wms/tote/details/";
                 roboLabelInfoAPI = "http://10.70.8.13:3001/api/v1/wms/print/";

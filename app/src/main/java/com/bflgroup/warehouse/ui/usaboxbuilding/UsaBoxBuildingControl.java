@@ -298,6 +298,13 @@ public class UsaBoxBuildingControl {
                     }
                 }
             }
+            if (selPalletype.equals("PC")){
+                rs = dbConnection.getResultSet("select * from usa..USAPriceChange where itemcode = '"+itemcode+"' and NewPrice > 1",objGlobal.getConnection());
+                if (rs.next()){
+                    objGlobal.setErrorMessage("Cannot build with Price Checking(PC) type. The item " + itemcode + " already has a selling price.");
+                    valid = false;
+                }
+            }
 
             if (selPalletype.equals("RW") || selPalletype.equals("YH") || selPalletype.equals("BX") || selPalletype.equals("BZ") || selPalletype.equals("OW")) {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and season<>'W'", objGlobal.getConnection());

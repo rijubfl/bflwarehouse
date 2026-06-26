@@ -372,22 +372,29 @@ public class GinScanTransferFragment extends Fragment {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                    boolean resultStatus;
-                    if (objGlobal.getCountryCode().equals("KSA"))
-                        resultStatus = GetScanresultKSA();
-                    else
-                        resultStatus = GetScanresult();
-
-                    if (resultStatus) {
-                        et_shop_transferno.requestFocus();
-                        et_shop_transferno.setFocusable(true);
-                        strflg = true;
-                        return true;
-                    } else {
-                        et_shop_transferno.requestFocus();
-                        et_shop_transferno.setFocusable(true);
-                        return true;
+                    if (objGinScanTransferControl.isBlockingGin(getContext())){
+                        okMessage("",objGlobal.getErrorMessage(),getContext());
+                        return false;
                     }
+                    else{
+                        boolean resultStatus;
+                        if (objGlobal.getCountryCode().equals("KSA"))
+                            resultStatus = GetScanresultKSA();
+                        else
+                            resultStatus = GetScanresult();
+
+                        if (resultStatus) {
+                            et_shop_transferno.requestFocus();
+                            et_shop_transferno.setFocusable(true);
+                            strflg = true;
+                            return true;
+                        } else {
+                            et_shop_transferno.requestFocus();
+                            et_shop_transferno.setFocusable(true);
+                            return true;
+                        }
+                    }
+
                 } else {
                     if (strflg) {
                         strflg = false;
@@ -420,17 +427,23 @@ public class GinScanTransferFragment extends Fragment {
         bt_transfer_return_scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                transferno = et_shop_transferno.getText().toString();
-                boolean resultStatus;
-                if (objGlobal.getCountryCode().equals("KSA"))
-                    resultStatus = GetScanresultKSA();
-                else
-                    resultStatus = GetScanresult();
-
-                if (resultStatus) {
-                    Log.e("Error", "Reached here");
-                    et_shop_transferno.requestFocus();
+                if (objGinScanTransferControl.isBlockingGin(getContext())){
+                    okMessage("",objGlobal.getErrorMessage(),getContext());
                 }
+                else{
+                    transferno = et_shop_transferno.getText().toString();
+                    boolean resultStatus;
+                    if (objGlobal.getCountryCode().equals("KSA"))
+                        resultStatus = GetScanresultKSA();
+                    else
+                        resultStatus = GetScanresult();
+
+                    if (resultStatus) {
+                        Log.e("Error", "Reached here");
+                        et_shop_transferno.requestFocus();
+                    }
+                }
+
             }
         });
 
@@ -440,78 +453,83 @@ public class GinScanTransferFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (palletcount == Integer.parseInt(GinScanTransferShared.loadPalletCount())) {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                    alert.setMessage("Are you sure you want to Build GIN?")
-                            .setTitle("Confirmation")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                if (objGinScanTransferControl.isBlockingGin(getContext())){
+                    okMessage("",objGlobal.getErrorMessage(),getContext());
+                }
+                else{
+                    if (palletcount == Integer.parseInt(GinScanTransferShared.loadPalletCount())) {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                        alert.setMessage("Are you sure you want to Build GIN?")
+                                .setTitle("Confirmation")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
-                                    try {
-                                        remark = Remarks.getText().toString();
-                                        driver = driver_name.getText().toString();
-                                        car_no = et_car_no.getText().toString();
-                                        ship_no = et_Ship_no.getText().toString();
-                                        etDate = et_date.getText().toString();
-                                        if (GinScanItemStatus.size() >= 1) {
+                                        try {
+                                            remark = Remarks.getText().toString();
+                                            driver = driver_name.getText().toString();
+                                            car_no = et_car_no.getText().toString();
+                                            ship_no = et_Ship_no.getText().toString();
+                                            etDate = et_date.getText().toString();
+                                            if (GinScanItemStatus.size() >= 1) {
 
-                                            try {
-                                                String routeId;
-                                                if (objGlobal.getCountryCode().equals("KSA"))
-                                                 routeId  = tv_gin_route_id.getText().toString();
-                                                else
-                                                    routeId  = sp_gin_route_id.getSelectedItem().toString();
-                                                if (objGinScanTransferControl.InsertPalletDetails(etDate, remark, driver, car_no, ship_no,routeId )) {
-                                                    Log.e("return", "Build");
-                                                    vibrate(500, getContext());
-                                                    int Ginno = Math.round(Float.parseFloat(String.valueOf(GinScanTransferGlobal.getGinno())));
-                                                    if (objGlobal.getCountryCode().equals("KSA")) {
-                                                        String vendor = sp_vendor.getSelectedItem().toString();
-                                                        String subVendor = vendor.length() >= 3 ? vendor.substring(0, 3) : vendor;
-                                                        if (!objGinScanTransferControl.waySlipsPost(Ginno, subVendor+et_way_slips.getText().toString(), sp_vehicle_type.getSelectedItem().toString(),
-                                                                sp_vendor.getSelectedItem().toString())) {
-                                                            okMessage("Alert", "Way slips, vehicle type, vendor is not updated. Please contact IT", getContext());
+                                                try {
+                                                    String routeId;
+                                                    if (objGlobal.getCountryCode().equals("KSA"))
+                                                        routeId  = tv_gin_route_id.getText().toString();
+                                                    else
+                                                        routeId  = sp_gin_route_id.getSelectedItem().toString();
+                                                    if (objGinScanTransferControl.InsertPalletDetails(etDate, remark, driver, car_no, ship_no,routeId )) {
+                                                        Log.e("return", "Build");
+                                                        vibrate(500, getContext());
+                                                        int Ginno = Math.round(Float.parseFloat(String.valueOf(GinScanTransferGlobal.getGinno())));
+                                                        if (objGlobal.getCountryCode().equals("KSA")) {
+                                                            String vendor = sp_vendor.getSelectedItem().toString();
+                                                            String subVendor = vendor.length() >= 3 ? vendor.substring(0, 3) : vendor;
+                                                            if (!objGinScanTransferControl.waySlipsPost(Ginno, subVendor+et_way_slips.getText().toString(), sp_vehicle_type.getSelectedItem().toString(),
+                                                                    sp_vendor.getSelectedItem().toString())) {
+                                                                okMessage("Alert", "Way slips, vehicle type, vendor is not updated. Please contact IT", getContext());
+                                                            }
                                                         }
+                                                        okMessage("SUCCESS", "Build Pallet and Gin Successfully Gin Number is - " + Math.round(Float.parseFloat(String.valueOf(GinScanTransferGlobal.getGinno()))), getContext());
+                                                        objGinScanTransferControl.GinReminderDetails(Ginno);
+
+                                                        //AlertDialog(getContext(), "Build Pallet and Gin Successfully Gin Number is - "+ Math.round(Float.parseFloat(String.valueOf(GinScanTransferGlobal.getGinno()))));
+                                                        clear();
+                                                        lv_div_seperate_details.setAdapter(null);
+                                                        // Toast.makeText(getContext(), "Value 0325    Inserted", Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        vibrate(500, getContext());
+                                                        AlertDialog(getContext(), objGlobal.getErrorMessage());
                                                     }
-                                                    okMessage("SUCCESS", "Build Pallet and Gin Successfully Gin Number is - " + Math.round(Float.parseFloat(String.valueOf(GinScanTransferGlobal.getGinno()))), getContext());
-                                                    objGinScanTransferControl.GinReminderDetails(Ginno);
 
-                                                    //AlertDialog(getContext(), "Build Pallet and Gin Successfully Gin Number is - "+ Math.round(Float.parseFloat(String.valueOf(GinScanTransferGlobal.getGinno()))));
-                                                    clear();
-                                                    lv_div_seperate_details.setAdapter(null);
-                                                    // Toast.makeText(getContext(), "Value 0325    Inserted", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    vibrate(500, getContext());
-                                                    AlertDialog(getContext(), objGlobal.getErrorMessage());
+
+                                                } catch (ParseException e) {
+                                                    Log.e("Error message", e.toString());
                                                 }
-
-
-                                            } catch (ParseException e) {
-                                                Log.e("Error message", e.toString());
+                                            } else {
+                                                Log.e("return", "Not Build");
+                                                AlertDialog(getContext(), "Please Scan Trf No/Tote id before building Gin");
                                             }
-                                        } else {
-                                            Log.e("return", "Not Build");
-                                            AlertDialog(getContext(), "Please Scan Trf No/Tote id before building Gin");
+                                        } catch (SQLException e) {
+                                            e.printStackTrace();
                                         }
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
+
+
                                     }
 
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
-                                }
-
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            })
-                            .show();
-                } else {
-                    okMessage("Alert", "Please scan all transfers in this Pallet - " + palletno, getContext());
+                                    }
+                                })
+                                .show();
+                    } else {
+                        okMessage("Alert", "Please scan all transfers in this Pallet - " + palletno, getContext());
+                    }
                 }
 
             }

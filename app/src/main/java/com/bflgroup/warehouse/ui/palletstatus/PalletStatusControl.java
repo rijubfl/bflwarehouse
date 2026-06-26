@@ -164,11 +164,14 @@ public class PalletStatusControl {
             }
             rs = dbConnection.getResultSet("select distinct BuildingCategory from #showcategory", objGlobal.getConnection());
             while (rs.next()) {
-                if (buildCategory.isEmpty()) {
-                    buildCategory = rs.getString("BuildingCategory");
-                } else {
-                    buildCategory = buildCategory + " | " + rs.getString("BuildingCategory");
+                if (rs.getString("BuildingCategory")!= null){
+                    if (buildCategory.isEmpty()) {
+                        buildCategory = rs.getString("BuildingCategory");
+                    } else {
+                        buildCategory = buildCategory + " | " + rs.getString("BuildingCategory");
+                    }
                 }
+
             }
             rs = dbConnection.getResultSet("select * from #showcategory where upper(department) like '%LFL%' or upper(department) like '%HIGH%'", objGlobal.getConnection());
             if (rs.next()) {

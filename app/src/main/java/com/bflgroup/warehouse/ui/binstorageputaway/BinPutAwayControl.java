@@ -134,6 +134,17 @@ public class BinPutAwayControl {
                 vertical = rs.getString("vertical").toString();
             }
             if (direction.equals("IN")) {
+                rs = dbConnection.getResultSet("SELECT TOP 1 Direction, SourceLocation FROM (SELECT Direction,TrnDate,TrnTime, Location AS SourceLocation FROM " +
+                        "racks..BinPutAwayHistory WHERE BoxNo ='"+boxNo+"' UNION ALL SELECT Direction,TrnDate,TrnTime, RackNo AS SourceLocation FROM " +
+                        "racks..TechnoRacksHistory WHERE PalletNo1 ='"+boxNo+"'  OR PalletNo2 ='"+boxNo+"' UNION ALL SELECT Direction," +
+                        "TrnDate,TrnTime,RackNo AS SourceLocation FROM racks..WarehouseRackHistory WHERE PalletNo1 ='"+boxNo+"' OR PalletNo2 = " +
+                        "'"+boxNo+"') X ORDER BY TrnDate DESC, TrnTime DESC", objGlobal.getConnection());
+                if (rs.next()) {
+                    if (rs.getString("Direction").equals("IN")) {
+                        objGlobal.setErrorMessage("The box/pallet is already found in "+rs.getString("SourceLocation"));
+                        return false;
+                    }
+                }
                 if (objBinPutAwayGlobal.getDoubleDeep().equals("0")) {
                     rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and location in(select barcode from BinRackMaster where rack='" + rack + "' and " +
                             "horizontal='" + horizontal + "' and vertical='" + vertical + "' and doubledeep='1')", objGlobal.getConnection());
