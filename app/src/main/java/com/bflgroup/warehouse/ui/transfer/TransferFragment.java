@@ -230,6 +230,7 @@ public class TransferFragment extends Fragment {
                 String shop = tv_transfer_shopname.getText().toString();
                 String printer = sp_transfer_printer.getSelectedItem().toString();
                 objTransferGlobal.setLpmDt("");
+                objTransferGlobal.setOraPoNo("");
                 if (printer.isEmpty() || printer.toUpperCase().contains("SELECT")) {
                     okMessage("Transfer", "Please select printer");
                 } else {
@@ -475,7 +476,8 @@ public class TransferFragment extends Fragment {
                     return false;
                 }
             } else {
-                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid, selType, objTransferGlobal.getRegSIMExclude(), objTransferGlobal.getTypeUsaTcm(), objTransferGlobal.getLpmDt());
+                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid, selType, objTransferGlobal.getRegSIMExclude(), objTransferGlobal.getTypeUsaTcm(),
+                        objTransferGlobal.getLpmDt(), objTransferGlobal.getOraPoNo());
                 if (!b_Result) {
                     okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
                     return false;

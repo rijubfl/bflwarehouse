@@ -26,6 +26,7 @@ public class TransferGlobal {
     private static String regSIMExclude;
     private static String typeUsaTcm;
     private static String lpmDt;
+    private static String oraPoNo;
 
     public static String getScanBarcode() {
         return scanBarcode;
@@ -208,6 +209,14 @@ public class TransferGlobal {
 
     public static void setLpmDt(String lpmDt) {
         TransferGlobal.lpmDt = lpmDt;
+    }
+
+    public static String getOraPoNo() {
+        return oraPoNo;
+    }
+
+    public static void setOraPoNo(String oraPoNo) {
+        TransferGlobal.oraPoNo = oraPoNo;
     }
 
     public static TransferGlobal instance;
