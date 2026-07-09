@@ -164,6 +164,11 @@ public class UsaBoxBuildingControl {
             } else {
                 itemcode = objControls.seperateBarcode(objControls.replaceString(itemcode));
             }
+
+
+
+
+
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 if (edit) {
