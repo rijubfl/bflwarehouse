@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dr_wave_list_main"
+    android:orientation="horizontal">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_bin_storage_wave_pick_ticket_boxno"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:text="Location id and Name"
+            android:textColor="@color/coloBlack"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/bt_bin_storage_wave_pick_ticket_modify"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_bin_storage_wave_pick_ticket_chutes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:text="Chutes"
+            android:textColor="@color/coloBlack"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_bin_storage_wave_pick_ticket_modify"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_bin_storage_wave_pick_ticket_boxno" />
+
+
+        <Button
+            android:id="@+id/bt_bin_storage_wave_pick_ticket_modify"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Edit"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_bin_storage_wave_pick_ticket_chutes"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_bin_storage_wave_pick_ticket_boxno" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

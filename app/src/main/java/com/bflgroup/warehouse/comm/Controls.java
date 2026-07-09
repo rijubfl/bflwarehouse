@@ -63,7 +63,6 @@ public class Controls {
                 objGlobal.setErrorMessage("Warehouse / IP Changed, Contact IT");
                 return false;
             }
-
             rs = objDBConnection.getResultSet("select BFLDATA.dbo.getClientlocdetails('Country')", objGlobal.getConnection());
             if (rs.next()) {
                 objGlobal.setCountryCode(rs.getString(1));
@@ -122,7 +121,6 @@ public class Controls {
             if (objGlobal.getCountryCode().equals("UAE")) {
                 if (objGlobal.getWarehouse().equals("TECHNO")) {
                     //TECHNO ROBO
-                    roboServerIP = "192.168.11.67";
                     roboChuteStatusAPI = "http://192.168.8.13:8511/api/wms-send-chute-status-to-wcs/";
                     roboChuteMapingAPI = "http://192.168.8.13:8511/api/wms-sort-plan/";
                     roboSortTaskAPI = "http://192.168.8.14:18151/Conveyor/WCS151/";

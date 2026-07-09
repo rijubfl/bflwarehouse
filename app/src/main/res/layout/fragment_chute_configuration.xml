@@ -10,27 +10,12 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp">
-
-        <TextView
-            android:id="@+id/textView17"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="Warehouse"
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/tv_chute_status_config_warehouse"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
             android:hint=""
@@ -39,167 +24,98 @@
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView17"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/TextView1"
-            android:layout_width="100dp"
+            android:id="@+id/tv_chute_status_config_shopid"
+            android:layout_width="90dp"
             android:layout_height="40dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
+            android:hint="ShopID"
             android:padding="10dp"
-            android:text="Chute ID"
             android:textColor="@color/coloBlack"
-            android:textSize="14dp"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView17" />
-
-        <EditText
-            android:id="@+id/et_chute_status_config_chuteid"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text=""
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/TextView1"
-            app:layout_constraintTop_toTopOf="@+id/TextView1" />
-
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="Shop Name"
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView1" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_chute_status_config_warehouse" />
 
         <TextView
             android:id="@+id/tv_chute_status_config_shopname"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/et_custom_total"
-            android:gravity="center"
-            android:hint=""
-            android:padding="8dp"
+            android:background="@drawable/et_custom"
+            android:hint="Container Number"
+            android:padding="10dp"
+            android:textColor="@color/coloBlack"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView8"
-            app:layout_constraintTop_toTopOf="@+id/textView8"/>
-
-        <TextView
-            android:id="@+id/TextView2"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="Status"
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView8" />
-
-        <Spinner
-            android:id="@+id/sp_chute_status_config_status"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/et_custom_total"
-            android:gravity="center"
-            android:hint=""
-            android:padding="8dp"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/TextView2"
-            app:layout_constraintTop_toTopOf="@+id/TextView2"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-        <TextView
-            android:id="@+id/TextView8"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:padding="10dp"
-            android:text="Tote ID"
-            android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView2" />
+            app:layout_constraintStart_toEndOf="@+id/tv_chute_status_config_shopid"
+            app:layout_constraintTop_toTopOf="@+id/tv_chute_status_config_shopid" />
 
         <EditText
-            android:id="@+id/et_chute_status_config_totid"
+            android:id="@+id/et_chute_status_config_contno"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
-            android:gravity="left"
-            android:hint=""
-            android:inputType="text"
+            android:hint="Container Number"
             android:padding="10dp"
             android:textColor="@color/coloBlack"
-            android:textSize="14dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/TextView8"
-            app:layout_constraintTop_toTopOf="@+id/TextView8" />
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/bt_chute_status_config_load_contno"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_chute_status_config_shopid" />
 
         <Button
-            android:id="@+id/bt_chute_status_techno_config_clear"
+            android:id="@+id/bt_chute_status_config_load_contno"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@drawable/btn_custom1"
+            android:text="Load"
+            android:textAllCaps="false"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/et_chute_status_config_contno" />
+
+        <ListView
+            android:id="@+id/lv_chute_status_config_chute_list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/et_custom_total"
+            app:layout_constraintBottom_toTopOf="@+id/bt_chute_status_config_clear"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_chute_status_config_contno" />
+
+        <Button
+            android:id="@+id/bt_chute_status_config_clear"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:background="@drawable/btn_custom1"
             android:text="Clear"
             android:textAllCaps="false"
             android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/TextView8" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/bt_chute_status_techno_config_update"
+            android:id="@+id/bt_chute_status_config_update"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_custom1"
-            android:text="Update"
+            android:text="Save"
             android:textAllCaps="false"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="@+id/bt_chute_status_techno_config_clear" />
-
-        <ListView
-            android:id="@+id/lv_chute_status_techno_config_update"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/et_custom_total"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bt_chute_status_techno_config_clear" />
+            app:layout_constraintStart_toEndOf="@+id/textView2" />
 
         <TextView
             android:id="@+id/textView2"
