@@ -74,7 +74,7 @@ public class UsaBoxBuildingControl {
         return arr;
     }
 
-    public boolean validateMain(String printer,String palletType, String groupCode, String catCode, String remarks, String taskType, String doneBy, String fSize, String gender, String toteID, String allowMix, String buildType, String euro, String spcitems) {
+    public boolean validateMain(String printer, String palletType, String groupCode, String catCode, String remarks, String taskType, String doneBy, String fSize, String gender, String toteID, String allowMix, String buildType, String euro, String spcitems) {
         if (TextUtils.isEmpty(objGlobal.getWarehouse())) {
             objGlobal.setErrorNo("savePallet:Warehouse is empty");
             return false;
@@ -96,7 +96,7 @@ public class UsaBoxBuildingControl {
                 objGlobal.setErrorMessage("Please Scan Item");
                 return false;
             }
-            boolean blueBox=false;
+            boolean blueBox = false;
             if (objUsaBoxBuildingGlobal.getNeedBlueBox().equals("Y")) blueBox = true;
             if (euro.equals("Y")) blueBox = false;
             if (blueBox) {
@@ -137,7 +137,7 @@ public class UsaBoxBuildingControl {
         }
     }
 
-    public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType, String selitems,String contno) {
+    public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType, String selitems, String contno) {
         if (itemcode.trim().equals("")) {
             objGlobal.setErrorMessage("Empty itemcode, please rescan");
             return false;
@@ -149,35 +149,45 @@ public class UsaBoxBuildingControl {
             }
         }
         try {
-            if (itemcode.startsWith("0"))
-            {
+            if (itemcode.startsWith("0")) {
                 itemcode = itemcode.replaceFirst("^0+", "");
             }
             rs = dbConnection.getResultSet("select top 1 itemcode from bfldata.dbo.ScanWrongItem where (itemcode like '%" + itemcode + "%' or itemcode like '%" + itemcode + "%')", objGlobal.getConnection());
-            if (rs.next()){
+            if (rs.next()) {
                 objGlobal.setErrorMessage("Invalid itemcode. Please check" + itemcode);
                 return false;
             }
-            rs = dbConnection.getResultSet("select top 1 itemcode from usa.dbo.upcbarcodes where upc='" + itemcode + "' order by trndate desc", objGlobal.getConnection());
+            String groupCode = "", division = "";
+            rs = dbConnection.getResultSet("select top 1 itemcode,groupcode from usa.dbo.upcbarcodes where upc='" + itemcode + "' order by trndate desc", objGlobal.getConnection());
             if (rs.next()) {
                 itemcode = rs.getString("itemcode").toString();
+                groupCode = rs.getString("groupcode");
             } else {
                 itemcode = objControls.seperateBarcode(objControls.replaceString(itemcode));
             }
-
-
-
-
-
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select top 1 divisionY from usa..usapriority where groupcode = '" + groupCode + "'", objGlobal.getConnection());
             if (rs.next()) {
-                if (edit) {
-                    if (qty == 0){
-                        if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                division = rs.getString("divisionY");
+                    rs = dbConnection.getResultSet("select top 1 division from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+                    if (rs.next()) {
+                        if (!rs.getString("Division").equals("LFL") && division.equals("LFL")) {
+                            objGlobal.setErrorMessage("The scanned item " + itemcode + " is LFL item. Please build with LFL items only");
+                            return false;
+                        }
+                        if (rs.getString("Division").equals("LFL") && !division.equals("LFL")) {
+                            objGlobal.setErrorMessage("The scanned item " + itemcode + " is not LFL item. Please build with non-LFL items");
                             return false;
                         }
                     }
-                    else {
+            }
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                if (edit) {
+                    if (qty == 0) {
+                        if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                            return false;
+                        }
+                    } else {
                         if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
                             return false;
                         }
@@ -276,14 +286,14 @@ public class UsaBoxBuildingControl {
                     valid = false;
                 }
             }
-            if (!allowMix.equals("Y")) {
-                rs = dbConnection.getResultSet("select cnt=count(distinct BuildingCategory) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' having " +
-                        "count(distinct BuildingCategory)>1", objGlobal.getConnection());
-                if (rs.next()) {
-                    objGlobal.setErrorMessage("Multiple Building Category is not allowed - " + itemcode);
-                    valid = false;
-                }
-            }
+//            if (!allowMix.equals("Y")) {
+//                rs = dbConnection.getResultSet("select cnt=count(distinct BuildingCategory) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' having " +
+//                        "count(distinct BuildingCategory)>1", objGlobal.getConnection());
+//                if (rs.next()) {
+//                    objGlobal.setErrorMessage("Multiple Building Category is not allowed - " + itemcode);
+//                    valid = false;
+//                }
+//            }
             if (boxType.equals("TCM")) {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Division<>'TCM'", objGlobal.getConnection());
                 if (rs.next()) {
@@ -303,9 +313,9 @@ public class UsaBoxBuildingControl {
                     }
                 }
             }
-            if (selPalletype.equals("PC")){
-                rs = dbConnection.getResultSet("select * from usa..USAPriceChange where itemcode = '"+itemcode+"' and NewPrice > 1",objGlobal.getConnection());
-                if (rs.next()){
+            if (selPalletype.equals("PC")) {
+                rs = dbConnection.getResultSet("select * from usa..USAPriceChange where itemcode = '" + itemcode + "' and NewPrice > 1", objGlobal.getConnection());
+                if (rs.next()) {
                     objGlobal.setErrorMessage("Cannot build with Price Checking(PC) type. The item " + itemcode + " already has a selling price.");
                     valid = false;
                 }
@@ -357,7 +367,7 @@ public class UsaBoxBuildingControl {
                 }
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "' and qty>" + hoQty, objGlobal.getConnection());
                 if (rs.next()) {
-                    objGlobal.setErrorMessage("Cannot proceed, itemcode(" + itemcode + "). Scanned quantity is "+ rs.getString("qty") +", but only " + hoQty + " are available in HO.");
+                    objGlobal.setErrorMessage("Cannot proceed, itemcode(" + itemcode + "). Scanned quantity is " + rs.getString("qty") + ", but only " + hoQty + " are available in HO.");
                     valid = false;
                 }
             }
@@ -705,7 +715,7 @@ public class UsaBoxBuildingControl {
         if (!checkConnection()) {
             return false;
         }
-        if(scan.isEmpty()){
+        if (scan.isEmpty()) {
             objGlobal.setErrorMessage("Please scan box number or toteid");
             return false;
         }
