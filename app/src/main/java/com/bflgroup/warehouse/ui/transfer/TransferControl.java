@@ -605,16 +605,31 @@ public class TransferControl {
                     size = rs.getString("size");
                 }
                 if (itemcode.isEmpty() || description.isEmpty()) {
-                    rs = dbConnection.getResultSet("select top 1 *,size = isnull((select top 1 isnull(size1,'') from usa..UPCBarCodes where a.itemcode = itemcode and size1 in ('S','XS','XXS','XXXS')),'') from usa..UPCBarCodes a, HODATA..ItemMaster b where " +
-                            " (upc='" + itemcode + "' or a.itemcode = '" + itemcode + "') and a.itemcode = b.itemcode ", objGlobal.getConnection());
-                    if (rs.next()) {
-                        shopName = selShop;
-                        itemCode = rs.getString("ItemCode");
-                        // trfNo = rs.getString("TrfNo");
-                        barcode = rs.getString("ItemCode");
-                        //trfDate = rs.getString("TrnDate");
-                        description = rs.getString("Description");
-                        size = rs.getString("size");
+                    if (!objGlobal.getCountryCode().equals("UAE")) {
+                        rs = dbConnection.getResultSet("select top 1 *,size = isnull((select top 1 isnull(size1,'') from usa..UPCBarCodes where a.itemcode = itemcode and size1 in ('S','XS','XXS','XXXS')),'') from usa..UPCBarCodes a, "+objGlobal.getCountryDbName() +"..ItemMaster b where " +
+                                " (upc='" + itemcode + "' or a.itemcode = '" + itemcode + "') and a.itemcode = b.itemcode ", objGlobal.getConnection());
+                        if (rs.next()) {
+                            shopName = selShop;
+                            itemCode = rs.getString("ItemCode");
+                            // trfNo = rs.getString("TrfNo");
+                            barcode = rs.getString("ItemCode");
+                            //trfDate = rs.getString("TrnDate");
+                            description = rs.getString("Description");
+                            size = rs.getString("size");
+                        }
+                    }
+                    else {
+                        rs = dbConnection.getResultSet("select top 1 *,size = isnull((select top 1 isnull(size1,'') from usa..UPCBarCodes where a.itemcode = itemcode and size1 in ('S','XS','XXS','XXXS')),'') from usa..UPCBarCodes a, HODATA..ItemMaster b where " +
+                                " (upc='" + itemcode + "' or a.itemcode = '" + itemcode + "') and a.itemcode = b.itemcode ", objGlobal.getConnection());
+                        if (rs.next()) {
+                            shopName = selShop;
+                            itemCode = rs.getString("ItemCode");
+                            // trfNo = rs.getString("TrfNo");
+                            barcode = rs.getString("ItemCode");
+                            //trfDate = rs.getString("TrnDate");
+                            description = rs.getString("Description");
+                            size = rs.getString("size");
+                        }
                     }
                 }
                 if (selShop.equals("P2KSA")) {
