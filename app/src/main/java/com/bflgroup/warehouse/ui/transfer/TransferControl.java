@@ -857,10 +857,10 @@ public class TransferControl {
                 objGlobal.setErrorMessage("Can't Proceed, Some items are invalid " + System.lineSeparator() + "(" + emptyDesc + ")");
                 return false;
             }
-            if (!zeroStock.equals("")) {
-                objGlobal.setErrorMessage("Can't Proceed, HO Stock not available " + System.lineSeparator() + "(" + zeroStock + ")");
-                return false;
-            }
+//            if (!zeroStock.equals("")) {
+//                objGlobal.setErrorMessage("Can't Proceed, HO Stock not available " + System.lineSeparator() + "(" + zeroStock + ")");
+//                return false;
+//            }
             objTransferGlobal.setShopName(shopName);
             objTransferGlobal.setBoxTrfBoxNo(boxOrPalletNo);
             objTransferGlobal.setTypeUsaTcm(typeUsaTcm);
@@ -941,10 +941,10 @@ public class TransferControl {
                 objGlobal.setErrorMessage("Can't Proceed, Some items are invalid " + System.lineSeparator() + "(" + emptyDesc + ")");
                 return false;
             }
-            if (!zeroStock.equals("")) {
-                objGlobal.setErrorMessage("Can't Proceed, HO Stock not available " + System.lineSeparator() + "(" + zeroStock + ")");
-                return false;
-            }
+//            if (!zeroStock.equals("")) {
+//                objGlobal.setErrorMessage("Can't Proceed, HO Stock not available " + System.lineSeparator() + "(" + zeroStock + ")");
+//                return false;
+//            }
             objTransferGlobal.setShopName(selshop);
             objTransferGlobal.setBoxTrfBoxNo(trfno);
             return true;

@@ -51,7 +51,7 @@ public class ChuteConfigurationControl {
         }
     }
 
-    public boolean loadChuteLocations(String contno,) {
+    public boolean loadChuteLocations(String contno) {
         if (!checkConnection()) {
             return false;
         }

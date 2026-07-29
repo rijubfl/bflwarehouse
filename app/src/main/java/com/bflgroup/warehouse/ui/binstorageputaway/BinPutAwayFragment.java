@@ -39,7 +39,8 @@ public class BinPutAwayFragment extends Fragment {
     private TextView tv_bin_put_away_boxno;
     private EditText et_bin_put_away_binlocation;
     private TextView tv_bin_put_away_doublebeep;
-    private TextView tv_bin_put_away_warehouse;
+  //  private TextView tv_bin_put_away_warehouse;
+  private Spinner tv_bin_put_away_multiple_warehouse;
     private Spinner sp_bin_put_away_inout;
     private Button bt_bin_put_away_save;
     private Button bt_bin_put_away_clear;
@@ -69,7 +70,8 @@ public class BinPutAwayFragment extends Fragment {
 
         et_bin_put_away_toteid = (EditText) view.findViewById(R.id.et_bin_put_away_toteid);
         tv_bin_put_away_boxno = (TextView) view.findViewById(R.id.tv_bin_put_away_boxno);
-        tv_bin_put_away_warehouse = (TextView) view.findViewById(R.id.tv_bin_put_away_warehouse);
+      //  tv_bin_put_away_warehouse = (TextView) view.findViewById(R.id.tv_bin_put_away_warehouse);
+        tv_bin_put_away_multiple_warehouse = (Spinner) view.findViewById(R.id.sp_bin_put_away_warehouse);
         et_bin_put_away_binlocation = (EditText) view.findViewById(R.id.et_bin_put_away_binlocation);
         tv_bin_put_away_doublebeep = (TextView) view.findViewById(R.id.tv_bin_put_away_doublebeep);
         sp_bin_put_away_inout = (Spinner) view.findViewById(R.id.sp_bin_put_away_inout);
@@ -87,8 +89,27 @@ public class BinPutAwayFragment extends Fragment {
         sp_bin_put_away_inout.setAdapter(arrayAdp);
 
         clearAll();
+//        et_bin_put_away_toteid.requestFocus();
+//        tv_bin_put_away_warehouse.setText(objGlobal.getWarehouse());
+
+        List<String> location;
+        location = new ArrayList<String>();
+        String warehouse = objGlobal.getWarehouse();
+        //warehouse = "JAFZA";
+        location.add(warehouse);
+
         et_bin_put_away_toteid.requestFocus();
-        tv_bin_put_away_warehouse.setText(objGlobal.getWarehouse());
+
+        if (objGlobal.getWarehouse().equals("TECHNO")) {
+            location.add("TECHNO-E");
+            location.add("LFL-WH");
+        }
+        if(objGlobal.getWarehouse().equals("BFLKSA")){
+            location.add("RUKOON");
+        }
+        ArrayAdapter<String> array = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, location);
+        tv_bin_put_away_multiple_warehouse.setAdapter(array);
+
 
         et_bin_put_away_toteid.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -122,7 +143,7 @@ public class BinPutAwayFragment extends Fragment {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
                     String toteId = et_bin_put_away_toteid.getText().toString().trim().toUpperCase();
                     toteId=objControls.replaceString(toteId);
-                    b_Result = objBinPutAwayControl.validateToteid(sp_bin_put_away_inout.getSelectedItem().toString(), toteId);
+                    b_Result = objBinPutAwayControl.validateToteid(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(), sp_bin_put_away_inout.getSelectedItem().toString(), toteId);
                     if (!b_Result) {
                         okMessage("BinPutAwayFragment:et_bin_put_away_toteid", objGlobal.getErrorMessage());
                         vibrate(250);
@@ -147,7 +168,7 @@ public class BinPutAwayFragment extends Fragment {
                     String toteId=et_bin_put_away_toteid.getText().toString().trim().toUpperCase();
                     location=objControls.replaceString(location);
                     toteId=objControls.replaceString(toteId);
-                    b_Result = objBinPutAwayControl.validateLocation(location, sp_bin_put_away_inout.getSelectedItem().toString(),toteId,
+                    b_Result = objBinPutAwayControl.validateLocation(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(),location, sp_bin_put_away_inout.getSelectedItem().toString(),toteId,
                             tv_bin_put_away_boxno.getText().toString());
                     if (!b_Result) {
                         okMessage("BinPutAwayFragment:et_bin_put_away_binlocation", objGlobal.getErrorMessage());
@@ -204,7 +225,7 @@ public class BinPutAwayFragment extends Fragment {
                                 String boxNo = tv_bin_put_away_boxno.getText().toString().trim();
                                 String location = et_bin_put_away_binlocation.getText().toString().trim();
                                 String dBeep = tv_bin_put_away_doublebeep.getText().toString().trim();
-                                b_Result = objBinPutAwayControl.saveBinInOutSingle(objControls.replaceString(toteId), boxNo, direction, objControls.replaceString(location),dBeep,"");
+                                b_Result = objBinPutAwayControl.saveBinInOutSingle(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(),objControls.replaceString(toteId), boxNo, direction, objControls.replaceString(location),dBeep,"");
                                 if (b_Result) {
                                     clearAll();
                                     et_bin_put_away_toteid.requestFocus();

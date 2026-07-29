@@ -40,7 +40,7 @@ public class BinPutAwayControl {
         return true;
     }
 
-    public boolean validateToteid(String direction, String toteId) {
+    public boolean validateToteid(String warehouse,String direction, String toteId) {
         if (!checkConnection()) {
             return false;
         }
@@ -81,14 +81,14 @@ public class BinPutAwayControl {
                         return false;
                     }
                 }
-                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and Toteid='" + toteId + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and Toteid='" + toteId + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("ToteID found in location, " + rs.getString("location").toString());
                     return false;
                 }
             }
             if (direction.equals("OUT")) {
-                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and Toteid='" + toteId + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and Toteid='" + toteId + "'", objGlobal.getConnection());
                 if (!rs.next()) {
                     objGlobal.setErrorMessage("Location is empty for this");
                     return false;
@@ -101,7 +101,7 @@ public class BinPutAwayControl {
         }
     }
 
-    public boolean validateLocation(String location, String direction, String toteId, String boxNo) {
+    public boolean validateLocation(String warehouse,String location, String direction, String toteId, String boxNo) {
         String rack = "", horizontal = "", vertical = "", fLocation = "";
         if (!checkConnection()) {
             return false;
@@ -123,7 +123,7 @@ public class BinPutAwayControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from BinRackMaster where Warehouse='" + objGlobal.getWarehouse() + "' and Barcode='" + location + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from BinRackMaster where Warehouse='" + warehouse + "' and Barcode='" + location + "'", objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Invalid Location, " + location);
                 return false;
@@ -146,7 +146,7 @@ public class BinPutAwayControl {
                     }
                 }
                 if (objBinPutAwayGlobal.getDoubleDeep().equals("0")) {
-                    rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and location in(select barcode from BinRackMaster where rack='" + rack + "' and " +
+                    rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and location in(select barcode from BinRackMaster where rack='" + rack + "' and " +
                             "horizontal='" + horizontal + "' and vertical='" + vertical + "' and doubledeep='1')", objGlobal.getConnection());
                     if (!rs.next()) {
                         objGlobal.setErrorMessage("Double deep Location is empty");
@@ -156,19 +156,19 @@ public class BinPutAwayControl {
                 if (objBinPutAwayGlobal.getDoubleDeep().equals("1")) {
                     //add
                 }
-                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and location='" + location + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and location='" + location + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("Location is used, ToteID:" + rs.getString("toteid").toString());
                     return false;
                 }
             }
             if (direction.equals("OUT")) {
-                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and location='" + location + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and location='" + location + "'", objGlobal.getConnection());
                 if (!rs.next()) {
                     objGlobal.setErrorMessage("Location is empty");
                     return false;
                 }
-                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and location='" + location + "' and toteid='" + toteId + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and location='" + location + "' and toteid='" + toteId + "'", objGlobal.getConnection());
                 if (!rs.next()) {
                     objGlobal.setErrorMessage("Location and tote id is not match");
                     return false;
@@ -181,13 +181,13 @@ public class BinPutAwayControl {
         }
     }
 
-    public boolean saveBinInOutSingle(String toteId, String boxNo, String direction, String location, String dBeep,String waveId) {
+    public boolean saveBinInOutSingle(String warehouse,String toteId, String boxNo, String direction, String location, String dBeep,String waveId) {
         String rack = "", horizontal = "", vertical = "", fLocation = "";
-        b_Result = validateToteid(direction, toteId);
+        b_Result = validateToteid(warehouse,direction, toteId);
         if (!b_Result) {
             return false;
         }
-        b_Result = validateLocation(location, direction, toteId, boxNo);
+        b_Result = validateLocation(warehouse,location, direction, toteId, boxNo);
         if (!b_Result) {
             return false;
         }
@@ -209,7 +209,7 @@ public class BinPutAwayControl {
             }
             objGlobal.getConnection().setAutoCommit(false);
             if (!dbConnection.insertUpdate("insert into BinPutAwayHistory(Warehouse,TrnDate,TrnTime,ToteId,BoxNo,Direction,Location,UserId,UserName," +
-                    "DeviceId) values ('" + objGlobal.getWarehouse() + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + toteId + "','" + boxNo + "'," +
+                    "DeviceId) values ('" + warehouse + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','" + toteId + "','" + boxNo + "'," +
                     "'" + direction + "','" + location + "'," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "'," +
                     "'" + objGlobal.getDeviceName() + "')", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
@@ -221,7 +221,7 @@ public class BinPutAwayControl {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
-                if (!dbConnection.insertUpdate("insert into BinRack(Warehouse,Location,ToteId,BoxNo) values ('" + objGlobal.getWarehouse() + "','" + location + "','" + toteId + "'," +
+                if (!dbConnection.insertUpdate("insert into BinRack(Warehouse,Location,ToteId,BoxNo) values ('" + warehouse + "','" + location + "','" + toteId + "'," +
                         "'" + boxNo + "')", objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;
@@ -229,21 +229,21 @@ public class BinPutAwayControl {
             }
             if (direction.equals("OUT")) {
                 if (!dbConnection.insertUpdate("insert into BinRackBck(Trndate,UserId,Warehouse,Location,ToteId,BoxNo,aut) select getdate()," + objGlobal.getUserId() + ",*,'' from " +
-                        "BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and location='" + location + "' and ToteId='" + toteId + "'", objGlobal.getConnection())) {
+                        "BinRack where Warehouse='" + warehouse + "' and location='" + location + "' and ToteId='" + toteId + "'", objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
-                if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and Location='" + location + "' and ToteId='" + toteId + "'", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and Location='" + location + "' and ToteId='" + toteId + "'", objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
                 if (dBeep.equals("1")) {
                     if (!dbConnection.insertUpdate("insert into BinRackBck(Trndate,UserId,Warehouse,Location,ToteId,BoxNo,aut) select getdate()," + objGlobal.getUserId() + ",*,'AUTO' from " +
-                            "BinRack where Warehouse='" + objGlobal.getWarehouse() + "' and location='" + fLocation + "'", objGlobal.getConnection())) {
+                            "BinRack where Warehouse='" + warehouse + "' and location='" + fLocation + "'", objGlobal.getConnection())) {
                         objGlobal.getConnection().rollback();
                         return false;
                     }
-                    if (!dbConnection.insertUpdate("update BinRack set location='" + location + "' where Warehouse='" + objGlobal.getWarehouse() + "' and location='" + fLocation + "'", objGlobal.getConnection())) {
+                    if (!dbConnection.insertUpdate("update BinRack set location='" + location + "' where Warehouse='" + warehouse + "' and location='" + fLocation + "'", objGlobal.getConnection())) {
                         objGlobal.getConnection().rollback();
                         return false;
                     }
