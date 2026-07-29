@@ -19,9 +19,9 @@
 
     <fragment
         android:id="@+id/nav_chute_configuration_jafza"
-        android:name="com.bflgroup.warehouse.ui.chuteconfiguration.jafza.ChuteConfigurationJafzaFragment"
+        android:name="com.bflgroup.warehouse.ui.chuteconfiguration.ChuteConfigurationFragment"
         android:label="@string/menu_chute_configuraion_jafza"
-        tools:layout="@layout/fragment_chute_configuration_jafza" />
+        tools:layout="@layout/fragment_chute_configuration" />
 
     <fragment
         android:id="@+id/nav_chute_check_in_check_out"

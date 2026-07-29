@@ -15,7 +15,7 @@ public class TransferReceipt {
     private TransferGlobal objTransferGlobal = TransferGlobal.getInstance();
     private ResultSet rs;
 
-    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype, String regSIMExclude,String typeUsaTcm,String lpmDt) {
+    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype, String regSIMExclude,String typeUsaTcm,String lpmDt,String oraPoNo) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", trfType = "R", trfPalletNo = "", cartonNo = "1", empName = "", storeIssue = palletBoxNo, firstScanTime = "";
         if (!objGlobal.getWorkLocation().equals("UAE")) preparedBy = objGlobal.getUserName();
@@ -123,10 +123,10 @@ public class TransferReceipt {
             }
             //insert into transferheader *****************************************
             if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferheader (TrfNo,TrfDate,CostCodeFrom,LocCodeFrom,CostCodeTo,LocCodeTo,Accode,Narration,NetAmount,UserId,TrfType,FCCode,FCRate," +
-                    "ApprovedBy,PreparedBy,ConsumeReturn,JobNo,StoreIssue,StoreReceipt,EntryMode,ShipNo,CartonNo,PalletNo,Starttime,LPMDt) values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "'," +
+                    "ApprovedBy,PreparedBy,ConsumeReturn,JobNo,StoreIssue,StoreReceipt,EntryMode,ShipNo,CartonNo,PalletNo,Starttime,LPMDt,oraPoNo) values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "'," +
                     "'" + locCodeFrom + "','" + costCodeTo + "','" + locCodeTo + "','" + debitAc + "','" + narration + "'," + totalAmt + "," + objGlobal.getUserId() + ",'" + trfType + "','" + fcCode + "'," + fcRate + "," +
                     "'" + approvedBy + "','" + preparedBy + "','P',convert(varchar(15),getdate(),108),'" + storeIssue + "','" + objGlobal.getEmpName() + "','A','" + objGlobal.getDelDate() + "','" + cartonNo + "'," +
-                    "'" + trfPalletNo + "','" + firstScanTime + "','" + lpmDt + "')", conRob)) {
+                    "'" + trfPalletNo + "','" + firstScanTime + "','" + lpmDt + "','" + oraPoNo + "')", conRob)) {
                 conRob.rollback();
                 conLoc.rollback();
                 conRob.setAutoCommit(true);

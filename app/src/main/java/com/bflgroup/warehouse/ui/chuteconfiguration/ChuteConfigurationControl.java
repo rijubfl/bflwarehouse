@@ -28,10 +28,10 @@ public class ChuteConfigurationControl {
         conRobo = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(),"ROBOTICS");
         if (!b_Result) {
             objGlobal.setErrorMessage("ChuteCheckInCheckOutControl:tmpConnectDb : "+ objGlobal.getRoboServerIP());
+            return false;
         }
         return true;
     }
-
 
     public List<String> loadShops() {
         List<String> arr;
@@ -40,9 +40,9 @@ public class ChuteConfigurationControl {
         }
         try {
             arr = new ArrayList<String>();
-            rs = dbConnection.getResultSet("select ShopName=' ' union all select ShopName from bfldata.dbo.DataSettings order by ShopName", conRobo);
+            rs = dbConnection.getResultSet("select val=cast(RoboShopId as varchar)+'/'+shopname from bfldata.dbo.DataSettings where active='Y' order by ShopName", conRobo);
             while (rs.next()) {
-                arr.add(rs.getString("ShopName"));
+                arr.add(rs.getString("val"));
             }
             return arr;
         } catch (Exception e) {
@@ -51,5 +51,23 @@ public class ChuteConfigurationControl {
         }
     }
 
+    public boolean loadChuteLocations(String contno,) {
+        if (!checkConnection()) {
+            return false;
+        }
+        try {
+            rs = dbConnection.getResultSet("select val=cast(RoboShopId as varchar)+'/'+shopname from bfldata.dbo.DataSettings order by ShopName", conRobo);
+            if(rs.next()){
 
+            }
+            rs = dbConnection.getResultSet("select val=cast(RoboShopId as varchar)+'/'+shopname from bfldata.dbo.DataSettings order by ShopName", conRobo);
+            while (rs.next()) {
+
+            }
+            return true;
+        } catch (Exception e) {
+            objGlobal.setErrorMessage("" + e);
+            return false;
+        }
+    }
 }
