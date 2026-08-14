@@ -127,6 +127,12 @@ public class BinPutAwayMultipleToteControl {
                     }
                 }
             }
+            if (objGlobal.getWorkLocation().equals("KSA")) {
+                if (objBinPutAwayMultipleToteGlobal.getToteId().startsWith("SG")) {
+                    objGlobal.setErrorMessage("This transfer is for the shop, so bin rack put-away is not allowed.");
+                    return false;
+                }
+            }
             if (direction.equals("IN")) {
                 rs = dbConnection.getResultSet("SELECT TOP 1 Direction, SourceLocation FROM (SELECT Direction,TrnDate,TrnTime, Location AS SourceLocation FROM " +
                         "racks..BinPutAwayHistory WHERE BoxNo ='"+scan+"' UNION ALL SELECT Direction,TrnDate,TrnTime, RackNo AS SourceLocation FROM " +

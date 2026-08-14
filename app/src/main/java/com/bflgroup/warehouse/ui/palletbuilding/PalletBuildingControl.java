@@ -42,7 +42,7 @@ public class PalletBuildingControl {
     }
 
     public boolean validateBoxTotUsa(String boxTot, int boxQty) {
-        String box = "", tote = "", palletType = "", groupcode = "", qty = "0", remarks = "", boxPrepare = "",lpmDate = "",orapoNo;
+        String box = "", tote = "", palletType = "", groupcode = "", qty = "0", remarks = "", boxPrepare = "", lpmDate = "", orapoNo;
         String isDutyPaid = "", contNo = "";
         if (!checkConnection()) {
             return false;
@@ -100,49 +100,74 @@ public class PalletBuildingControl {
 //                    }
 //                }
 //            }
-            rs = dbConnection.getResultSet("select Location from racks..BinRack where boxno = '"+box+"'",objGlobal.getConnection());
-            if (rs.next()){
+            rs = dbConnection.getResultSet("select Location from racks..BinRack where boxno = '" + box + "'", objGlobal.getConnection());
+            if (rs.next()) {
                 String location = rs.getString("Location");
-                objGlobal.setErrorMessage("The box is located in "+location+". Please rack it out.");
+                objGlobal.setErrorMessage("The box is located in " + location + ". Please rack it out.");
                 return false;
             }
-            if (Global.getLpmOrapoChecking().equals("Y")){
+//                NH	NO
+//                KR	TW
+//                QR	QW
+//                KS	KW
+//                YD	YF
 
-                rs = dbConnection.getResultSet("select top 1 LPMDt,OrapoNo from bfldata..tmpPalletBuild where DeviceId = '"+objGlobal.getDeviceName()+"'",objGlobal.getConnection());
-                if (rs.next()){
-                    String palletLPMDate = rs.getString("LPMDt");
-                    String palletOrapoNo = rs.getString("OrapoNo");
-                    if (lpmDate != null && palletLPMDate !=null) {
-                        if (!lpmDate.equals(palletLPMDate)) {
-                            objGlobal.setErrorMessage("The LPM date for this box is different: " +lpmDate+ ". Please use another box with an LPM date of " + palletLPMDate + ".");
+
+            rs = dbConnection.getResultSet("select top 1 LPMDt,OrapoNo from bfldata..tmpPalletBuild where DeviceId = '" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+            if (rs.next()) {
+                String palletLPMDate = rs.getString("LPMDt");
+                String palletOrapoNo = rs.getString("OrapoNo");
+
+                ResultSet rs1 = dbConnection.getResultSet("select * from bfldata..pallettype where pallettype = '" + palletType+"'", objGlobal.getConnection());
+                if (rs1.next()){
+                    int lpmVal = rs1.getInt("LpmVal");
+                    int oraponoVal = rs1.getInt("OraponoVal");
+                    int contnoVal = rs1.getInt("ContnoVal");
+                    if (lpmVal == 1) {
+                        if (lpmDate != null && palletLPMDate != null) {
+                            if (!lpmDate.equals(palletLPMDate)) {
+                                objGlobal.setErrorMessage("The LPM date for this box is different: " + lpmDate + ". Please use another box with an LPM date of " + palletLPMDate + ".");
+                                return false;
+                            }
+                        } else if (lpmDate != null && palletLPMDate == null) {
+                            objGlobal.setErrorMessage("The LPM date for this box is different: " + lpmDate + ". Please build it using boxes that do not have an LPM date.");
+                            return false;
+                        } else if (lpmDate == null && palletLPMDate != null) {
+                            objGlobal.setErrorMessage("This box does not have an LPM date. Please use another box with an LPM date of " + palletLPMDate + ".");
                             return false;
                         }
                     }
-                    else if (lpmDate != null && palletLPMDate ==null){
-                        objGlobal.setErrorMessage("The LPM date for this box is different: " + lpmDate + ". Please build it using boxes that do not have an LPM date.");
-                        return false;
-                    }
-                    else if (lpmDate == null && palletLPMDate !=null){
-                        objGlobal.setErrorMessage("This box does not have an LPM date. Please use another box with an LPM date of " + palletLPMDate + ".");
-                        return false;
-                    }
-
-
-                    if (orapoNo != null && palletOrapoNo !=null) {
-                        if (!orapoNo.equals(palletOrapoNo)) {
-                            objGlobal.setErrorMessage("The Po Number for this box is different: " +orapoNo+ ". Please use another box with Po " + palletOrapoNo + ".");
-                            return false;
+                    if (oraponoVal == 1) {
+                        if (!palletType.equals("R1")) {
+                            if (orapoNo != null && palletOrapoNo != null) {
+                                if (!orapoNo.equals(palletOrapoNo)) {
+                                    objGlobal.setErrorMessage("The Po Number for this box is different: " + orapoNo + ". Please use another box with Po " + palletOrapoNo + ".");
+                                    return false;
+                                }
+                            } else if (orapoNo != null && palletOrapoNo == null) {
+                                objGlobal.setErrorMessage("The Po number for this box is different: " + orapoNo + ". Please build it using boxes that do not have Po number.");
+                                return false;
+                            } else if (orapoNo == null && palletOrapoNo != null) {
+                                objGlobal.setErrorMessage("This box does not have Po Number. Please use another box with Po number " + palletOrapoNo + ".");
+                                return false;
+                            }
                         }
                     }
-                    else if (orapoNo != null && palletOrapoNo ==null){
-                        objGlobal.setErrorMessage("The Po number for this box is different: " + orapoNo + ". Please build it using boxes that do not have Po number.");
-                        return false;
-                    }
-                    else if (orapoNo == null && palletOrapoNo !=null){
-                        objGlobal.setErrorMessage("This box does not have Po Number. Please use another box with Po number" + palletOrapoNo + ".");
-                        return false;
+                    if (contnoVal == 1) {
+                        rs = dbConnection.getResultSet("select Boxno1 = LEFT(BoxNo, LEN(BoxNo) - CHARINDEX('-', REVERSE(BoxNo))) from bfldata.dbo.tmpPalletBuild where  BoxNo like '%AEINT%' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+                        String[] box1 = box.split("-");
+                        Log.e("Box", box1[0]);
+                        if (rs.next()) {
+                            Log.e("tmpBuildBox", rs.getString("Boxno1"));
+                            if (!box1[0].equals(rs.getString("Boxno1"))) {
+                                objGlobal.setErrorMessage("Multiple Container is not allowed  for PB PalletType- " + box);
+                                return false;
+                            }
+                        }
+
                     }
                 }
+
 
             }
             rs = dbConnection.getResultSet("select * from usa.dbo.BoXPallet where boxno='" + box + "'", objGlobal.getConnection());
@@ -169,16 +194,20 @@ public class PalletBuildingControl {
                     "deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 return false;
             }
+
+
             rs = dbConnection.getResultSet("select * from bfldata.dbo.palletType where report like '%online%' and pallettype = '" + palletType + "'", objGlobal.getConnection());
             if (rs.next()) {
-                rs = dbConnection.getResultSet("select Boxno1 = LEFT(BoxNo, LEN(BoxNo) - CHARINDEX('-', REVERSE(BoxNo))) from bfldata.dbo.tmpPalletBuild where  BoxNo like '%AEINT%' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
-                String[] box1 = box.split("-");
-                Log.e("Box", box1[0]);
-                if (rs.next()) {
-                    Log.e("tmpBuildBox", rs.getString("Boxno1"));
-                    if (!box1[0].equals(rs.getString("Boxno1"))) {
-                        objGlobal.setErrorMessage("Multiple Container is not allowed  for PB PalletType- " + box);
-                        return false;
+                if (rs.getInt("ContnoVal") == 1) {
+                    rs = dbConnection.getResultSet("select Boxno1 = LEFT(BoxNo, LEN(BoxNo) - CHARINDEX('-', REVERSE(BoxNo))) from bfldata.dbo.tmpPalletBuild where  BoxNo like '%AEINT%' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+                    String[] box1 = box.split("-");
+                    Log.e("Box", box1[0]);
+                    if (rs.next()) {
+                        Log.e("tmpBuildBox", rs.getString("Boxno1"));
+                        if (!box1[0].equals(rs.getString("Boxno1"))) {
+                            objGlobal.setErrorMessage("Multiple Container is not allowed  for PB PalletType- " + box);
+                            return false;
+                        }
                     }
                 }
             }

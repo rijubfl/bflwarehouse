@@ -48,7 +48,7 @@ public class ChuteConfigurationJafzaFragment extends Fragment {
     private ChuteConfigurationJafzaGlobal objChuteConfigurationJafzaGlobal=ChuteConfigurationJafzaGlobal.getInstance();
     private ChuteConfigurationJafzaControl objChuteConfigurationJafzaControl = new ChuteConfigurationJafzaControl();
 
-    ChuteConfigurationJafzaFragment.MyChuteConfigurationJafzaHistoryTicketAdp objMyChuteConfigurationJafzaHistoryTicketAdp;
+    MyChuteConfigurationJafzaHistoryTicketAdp objMyChuteConfigurationJafzaHistoryTicketAdp;
 
     private EditText et_chute_status_config_chuteid;
     private Spinner sp_chute_status_config_shopname;

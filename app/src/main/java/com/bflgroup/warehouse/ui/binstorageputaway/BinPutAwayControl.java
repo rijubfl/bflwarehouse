@@ -174,6 +174,12 @@ public class BinPutAwayControl {
                     return false;
                 }
             }
+            if (objGlobal.getWorkLocation().equals("KSA")) {
+                if (toteId.startsWith("SG")) {
+                    objGlobal.setErrorMessage("This transfer is for the shop, so bin rack put-away is not allowed.");
+                    return false;
+                }
+            }
             return true;
         } catch (Exception ex) {
             objGlobal.setErrorMessage("BinBatchInControl:validateLocation:" + ex.toString());

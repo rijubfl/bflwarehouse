@@ -286,14 +286,14 @@ public class UsaBoxBuildingControl {
                     valid = false;
                 }
             }
-//            if (!allowMix.equals("Y")) {
-//                rs = dbConnection.getResultSet("select cnt=count(distinct BuildingCategory) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' having " +
-//                        "count(distinct BuildingCategory)>1", objGlobal.getConnection());
-//                if (rs.next()) {
-//                    objGlobal.setErrorMessage("Multiple Building Category is not allowed - " + itemcode);
-//                    valid = false;
-//                }
-//            }
+            if (!allowMix.equals("Y")) {
+                rs = dbConnection.getResultSet("select cnt=count(distinct BuildingCategory) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' having " +
+                        "count(distinct BuildingCategory)>1", objGlobal.getConnection());
+                if (rs.next()) {
+                    objGlobal.setErrorMessage("Multiple Building Category is not allowed - " + itemcode);
+                    valid = false;
+                }
+            }
             if (boxType.equals("TCM")) {
                 rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Division<>'TCM'", objGlobal.getConnection());
                 if (rs.next()) {

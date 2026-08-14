@@ -185,21 +185,21 @@ public class GinScantransferControl {
         }
     }
 
-    public boolean isBlockingGin(Context context){
+    public boolean isBlockingGin(Context context) {
         rs = dbConnection.getResultSet("SELECT * FROM bfldata..GinCreationBlockTime WHERE blockday = DATENAME(WEEKDAY, GETDATE()) AND blockactive = 1 AND CAST(GETDATE() AS TIME) BETWEEN CAST(starttime AS TIME) AND CAST(endtime AS TIME);", objGlobal.getConnection());
         try {
-            if (rs.next()){
+            if (rs.next()) {
                 vibrate(1000, context);
-                objGlobal.setErrorMessage("GIN cannot be created on "+rs.getString("blockday")+" between "+rs.getString("starttime")+" and "+rs.getString("endtime")+". Please try again after this time.");
+                objGlobal.setErrorMessage("GIN cannot be created on " + rs.getString("blockday") + " between " + rs.getString("starttime") + " and " + rs.getString("endtime") + ". Please try again after this time.");
                 return true;
-            }
-            else{
+            } else {
                 return false;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
     public ArrayList<GinScanItem> ScanTransfer(Context context, String transferno, int get_route_id, String android_id, String palletno) {
         ArrayList<GinScanItem> arr = new ArrayList<GinScanItem>();
         ArrayList<GinScanItem> arrayList = new ArrayList<>();
@@ -503,6 +503,13 @@ public class GinScantransferControl {
                 //   (ShopName <> '" + rs1.getString("shopname") + "' or ShopName <> 'MUY" + rs1.getString("shopname") + "')
 
 
+                ResultSet rst = dbConnection.getResultSet("select * from bfldata..goodsissuehead a, bfldata..goodsissuedet b,bfldata..datasettings c  " +
+                        "where a.sn = b.sn and b.ShopName = c.shopname and trfno = '" + rs1.getString("TrfNo") + "' and Dataname in " +
+                        "(select dataname from bfldata..datasettings where c.shopname = '" + rs1.getString("shopname") + "') and InCharge like 'ANDRGIN%'", objGlobal.getConnection());
+                if (rst.next()) {
+                    objGlobal.setErrorMessage("The transfer found on another shop : " + rs1.getString("TrfNo"));
+                    return false;
+                }
                 if (objGlobal.getCountryCode().equals("KSA")) {
                     ResultSet rsPalletcheck = dbConnection.getResultSet("select * from bfldata..goodsissuedet where sn = " + palletSN + " and ShopName <> '" + rs1.getString("shopname") + "'", objGlobal.getConnection());
                     if (rsPalletcheck.next()) {
