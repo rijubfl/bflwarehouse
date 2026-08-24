@@ -213,6 +213,17 @@ public class JafzaRackInOutControl {
                 return false;
             }
             if (inOutItem.equalsIgnoreCase("in")) {
+                rs = dbConnection.getResultSet("SELECT TOP 1 Direction, SourceLocation FROM (SELECT Direction,TrnDate,TrnTime, Location AS SourceLocation FROM " +
+                        "racks..BinPutAwayHistory WHERE BoxNo IN ('" + palletUp + "', '" + palletDown + "') UNION ALL SELECT Direction,TrnDate,TrnTime, RackNo AS SourceLocation FROM " +
+                        "racks..TechnoRacksHistory WHERE PalletNo1 IN ('" + palletUp + "', '" + palletDown + "') OR PalletNo2 IN ('" + palletUp + "', '" + palletDown + "') UNION ALL SELECT Direction," +
+                        "TrnDate,TrnTime,RackNo AS SourceLocation FROM racks..WarehouseRackHistory WHERE PalletNo1 IN ('" + palletUp + "', '" + palletDown + "') OR PalletNo2 IN " +
+                        "('" + palletUp + "', '" + palletDown + "')) X ORDER BY TrnDate DESC, TrnTime DESC", objGlobal.getConnection());
+                if (rs.next()) {
+                    if (rs.getString("Direction").equals("IN")) {
+                        objGlobal.setErrorMessage("The box/pallet is already found in "+rs.getString("SourceLocation"));
+                        return false;
+                    }
+                }
                 rs = dbConnection.getResultSet("select * from racks.dbo.TechnoRackDet where palletno1='" + palletUp + "' or palletno2='" + palletUp + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("Can not Proceed Pallet2, is already found in warehouse:TECHNO, Rack: " + rs.getString("RowNo") + "-" + rs.getInt("CellNo"));
@@ -324,6 +335,17 @@ public class JafzaRackInOutControl {
                 return false;
             }
             if (inOutItem.equalsIgnoreCase("in")) {
+                rs = dbConnection.getResultSet("SELECT TOP 1 Direction, SourceLocation FROM (SELECT Direction,TrnDate,TrnTime, Location AS SourceLocation FROM " +
+                        "racks..BinPutAwayHistory WHERE BoxNo IN ('" + palletUp + "', '" + palletDown + "') UNION ALL SELECT Direction,TrnDate,TrnTime, RackNo AS SourceLocation FROM " +
+                        "racks..TechnoRacksHistory WHERE PalletNo1 IN ('" + palletUp + "', '" + palletDown + "') OR PalletNo2 IN ('" + palletUp + "', '" + palletDown + "') UNION ALL SELECT Direction," +
+                        "TrnDate,TrnTime,RackNo AS SourceLocation FROM racks..WarehouseRackHistory WHERE PalletNo1 IN ('" + palletUp + "', '" + palletDown + "') OR PalletNo2 IN " +
+                        "('" + palletUp + "', '" + palletDown + "')) X ORDER BY TrnDate DESC, TrnTime DESC", objGlobal.getConnection());
+                if (rs.next()) {
+                    if (rs.getString("Direction").equals("IN")) {
+                        objGlobal.setErrorMessage("The box/pallet is already found in "+rs.getString("SourceLocation"));
+                        return false;
+                    }
+                }
                 rs = dbConnection.getResultSet("select * from racks.dbo.WarehouseRackDet where warehouse='" + warehouse + "' and palletno1='" + palletUp + "' or palletno2='" + palletUp + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("Can not Proceed Pallet2, is already found in warehouse:" + rs.getString("warehouse") + ", Rack: " + rs.getString("RowNo") + "-" + rs.getInt("CellNo"));

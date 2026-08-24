@@ -415,6 +415,9 @@ public class TransferFragment extends Fragment {
             } else {
                 String shopname = tv_transfer_shopname.getText().toString();
                 String printer = sp_transfer_printer.getSelectedItem().toString();
+                if (!objBuildingJafzaGLobal.getBoxNo().isEmpty()) {
+                    tv_transfer_last_transfer.setText("Box.No.: " + objBuildingJafzaGLobal.getBoxNo() + ", Shop Name.: " + shopname);
+                }
                 if (!objTransferGlobal.getTrfRecNo().isEmpty()) {
                     tv_transfer_last_transfer.setText("Trf.No.: " + objTransferGlobal.getTrfRecNo() + ", Shop Name.: " + shopname);
                     b_Result = objTransferControl.forPrint(shopname, objTransferGlobal.getTrfRecNo());
@@ -452,7 +455,7 @@ public class TransferFragment extends Fragment {
             if (sp_transfer_type.getSelectedItemId() == 3) selType = "D";
             if (sp_transfer_type.getSelectedItemId() == 4) selType = "T";
             if (shopname.isEmpty()) {
-                okMessage("Transfer", "Shop Name is empty");
+                objGlobal.setErrorMessage("Shop Name is empty");
                 return false;
             }
             if (printer.isEmpty() || printer.toUpperCase().contains("SELECT")) {
@@ -461,34 +464,31 @@ public class TransferFragment extends Fragment {
             }
             b_Result = objTransferControl.validateTransfer(selType, shopname);
             if (!b_Result) {
-                okMessage("Transfer", "validateTransfer: " + objGlobal.getErrorMessage());
+                objGlobal.setErrorMessage("validateTransfer: " + objGlobal.getErrorMessage());
                 return false;
             }
             if (selType.equals("D")) {
                 b_Result = objTransferControl.transferCreatePairingSorting();
                 if (!b_Result) {
-                    okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+                    objGlobal.setErrorMessage("transferReceipt: " + objGlobal.getErrorMessage());
                     return false;
                 }
                 b_Result = objTransferControl.createTransfer(shopname, toteid);
                 if (!b_Result) {
-                    okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+                    objGlobal.setErrorMessage("transferReceipt: " + objGlobal.getErrorMessage());
                     return false;
                 }
             } else {
                 b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid, selType, objTransferGlobal.getRegSIMExclude(), objTransferGlobal.getTypeUsaTcm(),
                         objTransferGlobal.getLpmDt(), objTransferGlobal.getOraPoNo());
                 if (!b_Result) {
-                    okMessage("Transfer", "transferReceipt: " + objGlobal.getErrorMessage());
+                    objGlobal.setErrorMessage("transferReceipt: " + objGlobal.getErrorMessage());
                     return false;
                 }
             }
-            if (!objBuildingJafzaGLobal.getBoxNo().isEmpty()) {
-                tv_transfer_last_transfer.setText("Box.No.: " + objBuildingJafzaGLobal.getBoxNo() + ", Shop Name.: " + shopname);
-            }
             return true;
         } catch (Exception e) {
-            okMessage("Transfer", e.toString());
+            objGlobal.setErrorMessage(e.toString());
             return false;
         }
     }

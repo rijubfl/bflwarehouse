@@ -147,7 +147,7 @@ public class BinBatchInControl {
         }
     }
 
-    public boolean saveBatchIn(String pltNo) {
+    public boolean saveBatchIn(String warehouse,String pltNo) {
         String batchId = "";
         b_Result = validateBatchIn(pltNo);
         if (!b_Result) {
@@ -164,7 +164,7 @@ public class BinBatchInControl {
             }
             //objGlobal.getConnection().setAutoCommit(false);
             if (!dbConnection.insertUpdate("insert into BinBatchIn(BatchID,Warehouse,TrnDate,TrnTime,ToteId,BoxId,UserId,DeviceId,Status,InDateTime,PalletNo) " +
-                    "select '" + batchId + "','" + objGlobal.getWarehouse() + "','" + objGlobal.getServerDate() + "',time1,ToteId,boxno,UserId,DeviceId,'',null,PalletNo from " +
+                    "select '" + batchId + "','" + warehouse + "','" + objGlobal.getServerDate() + "',time1,ToteId,boxno,UserId,DeviceId,'',null,PalletNo from " +
                     "tmpBatchInTote where userid=" + objGlobal.getUserId(), objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;

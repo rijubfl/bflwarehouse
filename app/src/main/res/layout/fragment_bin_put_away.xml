@@ -41,9 +41,8 @@
             app:layout_constraintStart_toEndOf="@+id/TextView1"
             app:layout_constraintTop_toTopOf="@+id/TextView1"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-        <TextView
-            android:id="@+id/tv_bin_put_away_warehouse"
+        <Spinner
+            android:id="@+id/sp_bin_put_away_warehouse"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginStart="5dp"
@@ -55,7 +54,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/sp_bin_put_away_inout"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck"/>
+
+<!--        <TextView-->
+<!--            android:id="@+id/tv_bin_put_away_warehouse"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginStart="5dp"-->
+<!--            android:layout_marginLeft="5dp"-->
+<!--            android:background="@drawable/et_custom"-->
+<!--            android:padding="10dp"-->
+<!--            android:textColor="@color/coloBlack"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/sp_bin_put_away_inout"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />-->
 
         <TextView
             android:id="@+id/tv_bin_put_away_boxno"

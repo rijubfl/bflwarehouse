@@ -69,7 +69,7 @@ public class BinStorageWavePickControl {
             //01/11/2024
             String query = "";
             if (objGlobal.getWorkLocation().equals("UAE")) {
-                query = "select distinct Zones from RACKS.dbo.BinRackMaster where Barcode in(select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList where Rack<>'') and ISNULL(Zones,'')<>''";
+                query = "select distinct Zones from RACKS.dbo.BinRackMaster where Text in(select distinct Rack from tempdata.dbo.SIMProdReadyPalletsList where Rack<>'') and ISNULL(Zones,'')<>''";
             } else {
                 if (type.equals("SKIPPED BOXES")) {
                     if (objGlobal.getWorkLocation().equals("KSA")) {

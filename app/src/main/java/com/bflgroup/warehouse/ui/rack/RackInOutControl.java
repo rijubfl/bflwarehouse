@@ -98,7 +98,7 @@ public class RackInOutControl {
         return true;
     }
 
-    public String getPalletDetails(String pallettop, String palletDown, String wareHouse){
+    public String getPalletDetails(String pallettop, String palletDown, String wareHouse) {
 
         String rowno = "";
         String cellno = "";
@@ -106,17 +106,17 @@ public class RackInOutControl {
 
 //        ArrayList<String> arraylist = new ArrayList<String>();
         try {
-            if(wareHouse.equals("JAFZA")) {
+            if (wareHouse.equals("JAFZA")) {
 
                 //  rackNumber[1] = Integer.valueOf(rackNumber[1]).toString();
-                rs = dbConnection.getResultSet("select * from racks.dbo.tmpwhracks where  (PalletNo1 = '" + pallettop +"' or  palletNo2 = '"+palletDown +"') and (palletno1 <> '' or palletno2 <> '')", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from racks.dbo.tmpwhracks where  (PalletNo1 = '" + pallettop + "' or  palletNo2 = '" + palletDown + "') and (palletno1 <> '' or palletno2 <> '')", objGlobal.getConnection());
 
                 if (rs.next()) {
                     rowno = rs.getString("rowno");
                     cellno = rs.getString("cellno");
 
 
-                    if (rowno.equals("")  || rowno == "" ) {
+                    if (rowno.equals("") || rowno == "") {
                         objGlobal.setErrorMessage("Can not Proceed, Selected Rack is empty");
                         return rackno;
                     }
@@ -125,7 +125,7 @@ public class RackInOutControl {
                     return rackno;
                 }
 
-                rackno = rowno + "-"+ cellno;
+                rackno = rowno + "-" + cellno;
 
             }
 
@@ -136,7 +136,7 @@ public class RackInOutControl {
         return rackno;
     }
 
-    public ArrayList<String> getRackOutPallet(String rackNum, String warehouse){
+    public ArrayList<String> getRackOutPallet(String rackNum, String warehouse) {
 
         String sRackRowNo = "";
         String iRackCellNo = "";
@@ -151,7 +151,7 @@ public class RackInOutControl {
             aRackNumber = rackNum.split("-");
             Log.e("Racknum", aRackNumber.toString());
             sRackRowNo = aRackNumber[0];
-           // aRackNumber[1] = Integer.valueOf(aRackNumber[1]).toString();
+            // aRackNumber[1] = Integer.valueOf(aRackNumber[1]).toString();
             iRackCellNo = Integer.valueOf(aRackNumber[1]).toString();
             ColName = "Cell" + iRackCellNo;
         }
@@ -161,7 +161,7 @@ public class RackInOutControl {
         ArrayList<String> arraylist = new ArrayList<String>();
         try {
 
-                if(warehouse.equals("TECHNO")){
+            if (warehouse.equals("TECHNO")) {
 
                 rs = dbConnection.getResultSet("select * from racks.dbo.TechnoRackDet where rowno='" + sRackRowNo + "' and cellno= '" + Integer.valueOf(aRackNumber[1]) + "'", objGlobal.getConnection());
                 if (rs.next()) {
@@ -174,18 +174,16 @@ public class RackInOutControl {
                         return arraylist;
                     }
 
-                }
-                else{
+                } else {
                     objGlobal.setErrorMessage("Can not Proceed, Invalid pallet or invalid rack");
                     return arraylist;
                 }
                 arraylist.add(palletNo1);
                 arraylist.add(palletNo2);
-            }else{
+            } else {
 
 
-
-                rs = dbConnection.getResultSet("select * from racks.dbo.WarehouseRackDet where warehouse='"+warehouse+"' and rowno='" + sRackRowNo + "' and cellno= '" + iRackCellNo + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from racks.dbo.WarehouseRackDet where warehouse='" + warehouse + "' and rowno='" + sRackRowNo + "' and cellno= '" + iRackCellNo + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     palletNo1 = rs.getString("PalletNo1");
                     palletNo2 = rs.getString("PalletNo2");
@@ -197,8 +195,7 @@ public class RackInOutControl {
                     } else {
 
                     }
-                }
-                else{
+                } else {
                     objGlobal.setErrorMessage("Can not Proceed, Invalid pallet or invalid rack");
                     return arraylist;
                 }
@@ -213,7 +210,7 @@ public class RackInOutControl {
         return arraylist;
     }
 
-    public boolean saveRackDetails(String rackNum,String warehouse, String palletUp, String palletDown, String inOutItem) {
+    public boolean saveRackDetails(String rackNum, String warehouse, String palletUp, String palletDown, String inOutItem) {
         String sRackRowNo = "";
         int iRackCellNo = 0;
         String[] aRackNumber = null;
@@ -279,7 +276,6 @@ public class RackInOutControl {
     }
 
 
-
     public boolean isValidRackTechno(String rackNum, String palletUp, String palletDown, String inOutItem) {
         if (!checkConnection()) {
             return false;
@@ -329,6 +325,17 @@ public class RackInOutControl {
                 return false;
             }
             if (inOutItem.equalsIgnoreCase("in")) {
+                rs = dbConnection.getResultSet("SELECT TOP 1 Direction, SourceLocation FROM (SELECT Direction,TrnDate,TrnTime, Location AS SourceLocation FROM " +
+                        "racks..BinPutAwayHistory WHERE BoxNo IN ('" + palletUp + "', '" + palletDown + "') UNION ALL SELECT Direction,TrnDate,TrnTime, RackNo AS SourceLocation FROM " +
+                        "racks..TechnoRacksHistory WHERE PalletNo1 IN ('" + palletUp + "', '" + palletDown + "') OR PalletNo2 IN ('" + palletUp + "', '" + palletDown + "') UNION ALL SELECT Direction," +
+                        "TrnDate,TrnTime,RackNo AS SourceLocation FROM racks..WarehouseRackHistory WHERE PalletNo1 IN ('" + palletUp + "', '" + palletDown + "') OR PalletNo2 IN " +
+                        "('" + palletUp + "', '" + palletDown + "')) X ORDER BY TrnDate DESC, TrnTime DESC", objGlobal.getConnection());
+                if (rs.next()) {
+                    if (rs.getString("Direction").equals("IN")) {
+                        objGlobal.setErrorMessage("The box/pallet is already found in "+rs.getString("SourceLocation"));
+                        return false;
+                    }
+                }
                 rs = dbConnection.getResultSet("select * from racks.dbo.warehouserackdet where (palletno1='" + palletUp + "' or palletno2='" + palletUp + "' or palletno1='" + palletDown + "' or palletno2='" + palletDown + "') ", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("Can not Proceed, Pallets found in warehouse: TECHNO-E, Rack: " + rs.getString("RowNo") + "-" + rs.getInt("CellNo"));
@@ -385,7 +392,7 @@ public class RackInOutControl {
         return true;
     }
 
-    public boolean isValidRack(String rackNum,String warehouse, String palletUp, String palletDown, String inOutItem) {
+    public boolean isValidRack(String rackNum, String warehouse, String palletUp, String palletDown, String inOutItem) {
         if (!checkConnection()) {
             return false;
         }
@@ -446,6 +453,19 @@ public class RackInOutControl {
                 return false;
             }
             if (inOutItem.equalsIgnoreCase("in")) {
+                rs = dbConnection.getResultSet("SELECT TOP 1 Direction, SourceLocation FROM (SELECT Direction,TrnDate,TrnTime, Location AS SourceLocation FROM " +
+                        "racks..BinPutAwayHistory WHERE BoxNo IN ('" + palletUp + "', '" + palletDown + "') UNION ALL SELECT Direction,TrnDate,TrnTime, RackNo AS SourceLocation FROM " +
+                        "racks..TechnoRacksHistory WHERE PalletNo1 IN ('" + palletUp + "', '" + palletDown + "') OR PalletNo2 IN ('" + palletUp + "', '" + palletDown + "') UNION ALL SELECT Direction," +
+                        "TrnDate,TrnTime,RackNo AS SourceLocation FROM racks..WarehouseRackHistory WHERE PalletNo1 IN ('" + palletUp + "', '" + palletDown + "') OR PalletNo2 IN " +
+                        "('" + palletUp + "', '" + palletDown + "')) X ORDER BY TrnDate DESC, TrnTime DESC", objGlobal.getConnection());
+                if (rs.next()) {
+                    if (rs.getString("Direction").equals("IN")) {
+                        objGlobal.setErrorMessage("The box/pallet is already found in "+rs.getString("SourceLocation"));
+                        return false;
+                    }
+                }
+
+
                 rs = dbConnection.getResultSet("select * from racks.dbo.technorackdet where ( palletno1='" + palletUp + "' or palletno2='" + palletUp + "' or palletno1='" + palletDown + "' or palletno2='" + palletDown + "')", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("Can not Proceed Pallet2, is already found in warehouse:TECHNO, Rack: " + rs.getString("RowNo") + "-" + rs.getInt("CellNo"));
@@ -479,7 +499,7 @@ public class RackInOutControl {
                     objGlobal.setErrorMessage("Can not Proceed, Invalid pallet or invalid rack");
                     return false;
                 }
-                rs = dbConnection.getResultSet("select * from racks.dbo.WarehouseRacks where warehouse='" + warehouse + "' and RowNo='" + sRackRowNo + "' and '"+ iRackCellNo + "'<>''", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from racks.dbo.WarehouseRacks where warehouse='" + warehouse + "' and RowNo='" + sRackRowNo + "' and '" + iRackCellNo + "'<>''", objGlobal.getConnection());
                 if (!rs.next()) {
                     objGlobal.setErrorMessage("Can not Proceed, Selected Rack is empty");
                     return false;

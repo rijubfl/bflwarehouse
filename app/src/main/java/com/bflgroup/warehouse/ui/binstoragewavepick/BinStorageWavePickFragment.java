@@ -528,7 +528,7 @@ public class BinStorageWavePickFragment extends Fragment {
                     .setTitle("Confirmation")
                     .setCancelable(false)
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        b_Result = objBinPutAwayControl.saveBinInOutSingle(toteId, boxNo, direction, location, dBeep,sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString());
+                        b_Result = objBinPutAwayControl.saveBinInOutSingle(objGlobal.getWarehouse(),toteId, boxNo, direction, location, dBeep,sp_bin_storage_wave_pick_wave_id.getSelectedItem().toString());
                         if (b_Result) {
                             // Refresh list async
                             clearAllAsync(

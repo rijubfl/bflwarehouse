@@ -39,7 +39,7 @@ public class BinBatchInFragment extends Fragment {
     private ListView lv_bin_batch_in_details;
     private Button bt_bin_batch_in_clear;
     private Button bt_bin_batch_in_save;
-    private TextView tv_bin_batch_in_warehouse;
+    private Spinner tv_bin_batch_in_warehouse;
     private TextView tv_bin_batch_in_palletno;
     private Spinner sp_bin_batch_in_zone;
 
@@ -68,7 +68,7 @@ public class BinBatchInFragment extends Fragment {
         lv_bin_batch_in_details = (ListView) view.findViewById(R.id.lv_bin_batch_in_details);
         bt_bin_batch_in_clear = (Button) view.findViewById(R.id.bt_bin_batch_in_clear);
         bt_bin_batch_in_save = (Button) view.findViewById(R.id.bt_bin_batch_in_save);
-        tv_bin_batch_in_warehouse = (TextView) view.findViewById(R.id.tv_bin_batch_in_warehouse);
+        tv_bin_batch_in_warehouse = (Spinner) view.findViewById(R.id.tv_bin_batch_in_warehouse);
         sp_bin_batch_in_zone = (Spinner) view.findViewById(R.id.sp_bin_batch_in_zone);
         tv_bin_batch_in_palletno = (TextView) view.findViewById(R.id.tv_bin_batch_in_palletno);
         saredRef = new BinBatchInShared(getContext());
@@ -76,9 +76,23 @@ public class BinBatchInFragment extends Fragment {
         if (saredRef.loadPltNo() != "") {
             tv_bin_batch_in_palletno.setText(saredRef.loadPltNo());
         }
+        List<String> location;
+        location = new ArrayList<String>();
+        String warehouse = objGlobal.getWarehouse();
+        //warehouse = "JAFZA";
+        location.add(warehouse);
 
         et_bin_batch_in_toteid.requestFocus();
-        tv_bin_batch_in_warehouse.setText(objGlobal.getWarehouse());
+
+        if (objGlobal.getWarehouse().equals("TECHNO")) {
+            location.add("TECHNO-E");
+            location.add("LFL-WH");
+        }
+        if(objGlobal.getWarehouse().equals("BFLKSA")){
+            location.add("RUKOON");
+        }
+        ArrayAdapter<String> array = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, location);
+        tv_bin_batch_in_warehouse.setAdapter(array);
 
         List<String> arr = objBinBatchInControl.loadZone();
         ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
@@ -191,7 +205,7 @@ public class BinBatchInFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                b_Result = objBinBatchInControl.saveBatchIn(tv_bin_batch_in_palletno.getText().toString());
+                                b_Result = objBinBatchInControl.saveBatchIn(tv_bin_batch_in_warehouse.getSelectedItem().toString(),tv_bin_batch_in_palletno.getText().toString());
                                 if (!b_Result) {
                                     okMessage("bt_bin_batch_in_save", objGlobal.getErrorMessage());
                                 } else {
