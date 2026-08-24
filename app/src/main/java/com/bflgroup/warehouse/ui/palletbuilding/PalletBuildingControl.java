@@ -111,8 +111,6 @@ public class PalletBuildingControl {
 //                QR	QW
 //                KS	KW
 //                YD	YF
-
-
             rs = dbConnection.getResultSet("select top 1 LPMDt,OrapoNo from bfldata..tmpPalletBuild where DeviceId = '" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
             if (rs.next()) {
                 String palletLPMDate = rs.getString("LPMDt");

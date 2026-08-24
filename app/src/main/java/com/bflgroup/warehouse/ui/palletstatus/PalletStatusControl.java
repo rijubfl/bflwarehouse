@@ -217,9 +217,11 @@ public class PalletStatusControl {
             if (!toteid.isEmpty()) {
                 if (!dbConnection.insertUpdate("insert into racks.dbo.BinPutAwayHistory select Warehouse,convert(varchar,getdate(),103),convert(varchar,getdate(),8),ToteId,BoxNo,'OUT',Location,0,'STS-PDA','BLACKBOX' from " +
                         "RACKS.dbo.BinRack where Warehouse='BLACKBOX' and ToteId='" + toteid + "'", objGlobal.getConnection())) {
+                    objGlobal.getConnection().rollback();
                     return false;
                 }
                 if (!dbConnection.insertUpdate("delete from RACKS.dbo.BinRack where Warehouse='BLACKBOX' and ToteId='" + toteid + "'", objGlobal.getConnection())) {
+                    objGlobal.getConnection().rollback();
                     return false;
                 }
             }
