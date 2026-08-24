@@ -33,7 +33,7 @@ public class TransferReceiptJafza {
         return true;
     }
 
-    public boolean transferReceipt(String chuteId, String toteId, String shopId, String shopName,String lpmDt) {
+    public boolean transferReceipt(String chuteId, String toteId, String shopId, String shopName,String lpmDt, String oraPoNo) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "",mainShopName="";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", storeIssue = toteId, trfType = "R", palletNo = "", cartonNo = "1", empName = "";
         int totalQty = 0, mainShopId = 0;
@@ -46,9 +46,9 @@ public class TransferReceiptJafza {
                 objGlobal.setErrorNo("transferReceipt:001");
                 return false;
             }
-            if (!dbConnection.insertUpdate("insert into ROBOTICS.dbo.tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName) " +
-                    "select itemcode,sum(qty),0.01,'','',''," + objGlobal.getUserId() + ",'',0,'','','" + objGlobal.getDeviceName() + "' from SortingConformationDetail where TransferNo='' " +
-                    "and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode", con)) {
+            if (!dbConnection.insertUpdate("insert into ROBOTICS.dbo.tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName,StoreId,LpmDt,oraPoNo) " +
+                    "select itemcode,sum(qty),0.01,'','',''," + objGlobal.getUserId() + ",'',0,'','','" + objGlobal.getDeviceName() + "',StoreId,LpmDt,oraPoNo from SortingConformationDetail where TransferNo='' " +
+                    "and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode,StoreId,LpmDt,oraPoNo", con)) {
                 objGlobal.setErrorNo("transferReceipt:002");
                 return false;
             }
@@ -96,10 +96,16 @@ public class TransferReceiptJafza {
                 objGlobal.setErrorNo("transferReceipt:008");
                 return false;
             }
-            if(lpmDt.isEmpty()){
+            if(lpmDt.isEmpty()) {
                 rs = dbConnection.getResultSet("SELECT LpmDt=CONVERT(varchar(10),DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0),103)", objGlobal.getConnection());
                 if (rs.next()) {
                     lpmDt = rs.getString("LpmDt");
+                }
+            }
+            if(oraPoNo.isEmpty()) {
+                rs = dbConnection.getResultSet("select top 1 LpmDt,oraPoNo from ROBOTICS.dbo.tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+                if (rs.next()) {
+                    oraPoNo = rs.getString("oraPoNo");
                 }
             }
             objInOutJafzaGlobal.setChuteNo(getChuteNo(shopId));
@@ -122,7 +128,7 @@ public class TransferReceiptJafza {
             con.setAutoCommit(false);
             //insert transfer detail start *****************************************
             if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferdetail (trfno,itemcode,unitcode,quantity,rate,batchno,basicqty,basicrate,srno,upc," +
-                    "ItemType) select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'' from ROBOTICS.dbo.tmpTransfer " +
+                    "ItemType,StoreId) select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'',StoreId from ROBOTICS.dbo.tmpTransfer " +
                     "where DeviceName='" + objGlobal.getDeviceName() + "'", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:015");
@@ -130,33 +136,46 @@ public class TransferReceiptJafza {
             }
             //insert into transferheader *****************************************
             if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferheader (TrfNo,TrfDate,CostCodeFrom,LocCodeFrom,CostCodeTo,LocCodeTo,Accode,Narration," +
-                    "NetAmount,UserId,TrfType,FCCode,FCRate,ApprovedBy,PreparedBy,ConsumeReturn,JobNo,StoreIssue,StoreReceipt,EntryMode,ShipNo,CartonNo," +
-                    "PalletNo,Starttime,LpmDt) values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "','" + locCodeFrom + "','" + costCodeTo + "','" + locCodeTo + "','" + debitAc + "'," +
+                    "NetAmount,UserId,TrfType,FCCode,FCRate,ApprovedBy,PreparedBy,ConsumeReturn,JobNo,StoreIssue,StoreReceipt,EntryMode,ShipNo,CartonNo,PalletNo,Starttime,LpmDt,oraPoNo) " +
+                    "values ('" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + costCodeFrom + "','" + locCodeFrom + "','" + costCodeTo + "','" + locCodeTo + "','" + debitAc + "'," +
                     "'" + narration + "'," + totalAmt + "," + objGlobal.getUserId() + ",'" + trfType + "','" + fcCode + "'," + fcRate + ",'" + approvedBy + "','" + preparedBy + "'," +
                     "'N',convert(varchar(15),getdate(),108),'" + storeIssue + "','" + objGlobal.getEmpName() + "','A','" + objGlobal.getDelDate() + "','" + cartonNo + "','" + palletNo + "'," +
-                    "'" + objGlobal.getServerTime() + "','" + lpmDt + "')", con)) {
+                    "'" + objGlobal.getServerTime() + "','" + lpmDt + "','" + oraPoNo + "')", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:018");
                 return false;
             }
             //Rfpair
-            if (!dbConnection.insertUpdate("update " + dataName + ".dbo.rfpair set TrfNo='" + trfRecNo + "' where rfid in(select Rfid from SortingConformationDetail where " +
-                    "TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' and rfid<>'')", con)) {
+            if (!dbConnection.insertUpdate("delete from " + dataName + ".dbo.rfpair where rfid in(select rfid from ROBOTICS.dbo.SortingConformationDetail where TransferNo='' and " +
+                    "ChuiteId='' and ShopId='" + shopId + "' and rfid<>'')", con)) {
+                con.rollback();
+                objGlobal.setErrorNo("transferReceipt:022");
+                return false;
+            }
+            if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.rfpair select 0,'" + shopName + "','" + trfRecNo + "',Itemcode,RFID,'" + objGlobal.getServerDate() + "',Barcode,'N'," +
+                    "'" + objGlobal.getServerTime() + "','N' from ROBOTICS.dbo.SortingConformationDetail where TransferNo='' and ChuiteId='' and ShopId='" + shopId + "' and rfid<>''", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:022");
                 return false;
             }
             //rfpairdetail
-            if (!dbConnection.insertUpdate("update bfldata.dbo.RFPairDetail set TrfNo='" + trfRecNo + "',trfdate='" + objGlobal.getServerDate() + "',PairSn=0 where TrfNo='' and " +
-                    "ShopName='" + mainShopName + "' and rfid in(select Rfid from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
-                    "ShopId='" + shopId + "' and rfid<>'')", con)) {
+            if (!dbConnection.insertUpdate("delete from BFLDATA.dbo.RFPairDetail where rfid in(select RFID from ROBOTICS.dbo.SortingConformationDetail where TransferNo='' and " +
+                    "ChuiteId='' and ShopId='" + shopId + "' and rfid<>'')", con)) {
+                con.rollback();
+                objGlobal.setErrorNo("transferReceipt:023");
+                return false;
+            }
+            if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.RFPairDetail select '" + shopName + "','" + trfRecNo + "',Itemcode,RFID,'" + objGlobal.getServerDate() + "',Barcode,'N'," +
+                    "'" + objGlobal.getServerTime() + "','N',0,'',0,0,ChuiteId,0,'','" + objGlobal.getServerDate() + "',TotId,ContNo from ROBOTICS.dbo.SortingConformationDetail where TransferNo='' " +
+                    "and ChuiteId='' and ShopId='" + shopId + "' and rfid<>''", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:023");
                 return false;
             }
             //insert transfer no return************************************
             if (!dbConnection.insertUpdate("insert into bfldata.dbo.TransferNoReturn (TrnDate,ShopName,TrfNo,RetNo,Quantity,UserId,Dept,Dataname,isImport,ImpDateTime,isCountUpdate,CountUpdateDateTime,TrnTime) " +
-                    "values ('" + objGlobal.getServerDate() + "','" + shopName + "','" + trfRecNo + "',''," + totalQty + "," + objGlobal.getUserId() + ",'USA','" + dataName + "','N',null,'N',null,'" + objGlobal.getServerTime() + "')", con)) {
+                    "values ('" + objGlobal.getServerDate() + "','" + shopName + "','" + trfRecNo + "',''," + totalQty + "," + objGlobal.getUserId() + ",'USA','" + dataName + "','N',null,'N'," +
+                    "null,'" + objGlobal.getServerTime() + "')", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:025");
                 return false;

@@ -504,7 +504,7 @@ public class TransferControl {
             if (objTransferGlobal.getRobooDcBuild().equals("Y")) {
                 return objBoxBuildingAutoJafzaControl.saveChuteBuilding(objGlobal.getDeviceName(), toteid, shopId, mainshop);
             } else {
-                return objTransferReceiptJafza.transferReceipt(objGlobal.getDeviceName(), toteid, shopId, mainshop,"");
+                return objTransferReceiptJafza.transferReceipt(objGlobal.getDeviceName(), toteid, shopId, mainshop,"", "");
             }
         } catch (Exception e) {
             objGlobal.setErrorMessage("TransferControl.saveChuteOut : " + e);
