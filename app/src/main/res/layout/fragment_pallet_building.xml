@@ -253,7 +253,7 @@
 
         <TextView
             android:id="@+id/TextView8"
-            android:layout_width="50dp"
+            android:layout_width="55dp"
             android:layout_height="30dp"
             android:background="@drawable/et_custom_total"
             android:gravity="left"
@@ -289,7 +289,7 @@
             android:gravity="left"
             android:hint=""
             android:padding="6dp"
-            android:text="Remarks"
+            android:text="LPM Date"
             android:textColor="@color/coloBlack"
             android:textSize="14dp"
             android:textStyle="bold"
@@ -299,7 +299,7 @@
 
         <TextView
             android:id="@+id/TextView7"
-            android:layout_width="50dp"
+            android:layout_width="65dp"
             android:layout_height="30dp"
             android:background="@drawable/et_custom_total"
             android:gravity="center"

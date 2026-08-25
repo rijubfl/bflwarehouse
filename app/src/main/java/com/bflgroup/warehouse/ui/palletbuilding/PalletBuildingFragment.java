@@ -434,6 +434,13 @@ public class PalletBuildingFragment extends Fragment {
 
             TextView tv_building_pallet_ticket_qty = (TextView) myView.findViewById(R.id.tv_building_pallet_ticket_qty);
             tv_building_pallet_ticket_qty.setText(String.valueOf(s.qty));
+
+            TextView tv_building_pallet_ticket_lpmdate= (TextView) myView.findViewById(R.id.tv_building_pallet_ticket_lpmdate);
+            tv_building_pallet_ticket_lpmdate.setText(String.valueOf(s.lpmdt));
+
+            TextView tv_building_pallet_ticket_orapono= (TextView) myView.findViewById(R.id.tv_building_pallet_ticket_orapono);
+            tv_building_pallet_ticket_orapono.setText(String.valueOf(s.orapono));
+
             return myView;
         }
     }
@@ -605,10 +612,9 @@ public class PalletBuildingFragment extends Fragment {
             if (testPrint) {
                 printData = objSample_Print.getLabelWasNowHoneyWellTestPrint();
             } else {
-                printData = objSample_Print.getUsaPalletPrint(objPalletBuildingGlobal.getpPalletno(), objPalletBuildingGlobal.getpBoxcnt(),
-                        objPalletBuildingGlobal.getpRemarks(), objPalletBuildingGlobal.getpPallettype(),objPalletBuildingGlobal.getpTypename(),
-                        objPalletBuildingGlobal.getpGroupname(),objPalletBuildingGlobal.getpPreparedby(), objPalletBuildingGlobal.getpDate(),
-                        objPalletBuildingGlobal.getpTime(),sp_pallet_building_print_copies.getSelectedItem().toString());
+                printData = objSample_Print.getUsaPalletPrint(objPalletBuildingGlobal.getpPalletno(), objPalletBuildingGlobal.getpBoxcnt(), objPalletBuildingGlobal.getpRemarks(),
+                        objPalletBuildingGlobal.getpPallettype(), objPalletBuildingGlobal.getpTypename(), objPalletBuildingGlobal.getpGroupname(), objPalletBuildingGlobal.getpPreparedby(),
+                        objPalletBuildingGlobal.getpDate(), objPalletBuildingGlobal.getpTime(), sp_pallet_building_print_copies.getSelectedItem().toString(), objPalletBuildingGlobal.getpLpmDt());
             }
             return objSample_Print.PrintBarcodeByte(printData);
         } catch (Exception e) {

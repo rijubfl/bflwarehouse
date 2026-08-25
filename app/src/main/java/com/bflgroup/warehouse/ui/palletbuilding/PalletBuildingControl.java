@@ -478,6 +478,8 @@ public class PalletBuildingControl {
         objPalletBuildingGlobal.setpPreparedby("");
         objPalletBuildingGlobal.setpDate("");
         objPalletBuildingGlobal.setpTime("");
+        objPalletBuildingGlobal.setpLpmDt("");
+        objPalletBuildingGlobal.setpOraPono("");
         String sn = "";
         try {
             rs = dbConnection.getResultSet("select sn,PalletNo,Remarks,BoxCnt=isnull((select count(distinct InvNo) from BFLDATA.dbo.USAPalletsDet where Sn=a.Sn),0),preparedby=(select UserName from " +
@@ -492,10 +494,12 @@ public class PalletBuildingControl {
                 objPalletBuildingGlobal.setpTime(rs.getString("tm"));
             }
             rs = dbConnection.getResultSet("select groupnm=isnull((select Description from HODATA.dbo.ItemGroup where GroupCode=a.GroupCode),''),typename=isnull((select typename from " +
-                    "BFLDATA.dbo.PalletType where PalletType=a.pallettype),'') from USA.dbo.UPCBoxHead a where BoxNo in(select top 1 InvNo from BFLDATA.dbo.USAPalletsDet where Sn=" + sn + ")", objGlobal.getConnection());
+                    "BFLDATA.dbo.PalletType where PalletType=a.pallettype),''),strLPMDt=CONVERT(VARCHAR(10), a.LPMDt, 103),orapono=isnull(orapono,'') from USA.dbo.UPCBoxHead a where BoxNo in(select top 1 InvNo from BFLDATA.dbo.USAPalletsDet where Sn=" + sn + ")", objGlobal.getConnection());
             if (rs.next()) {
                 objPalletBuildingGlobal.setpTypename(rs.getString("typename"));
                 objPalletBuildingGlobal.setpGroupname(rs.getString("groupnm"));
+                objPalletBuildingGlobal.setpLpmDt(rs.getString("strLPMDt"));
+                objPalletBuildingGlobal.setpOraPono(rs.getString("orapono"));
             }
             return true;
         } catch (Exception ex) {
@@ -523,11 +527,12 @@ public class PalletBuildingControl {
         ArrayList<PalletBuildingBoxTicket> listPalletBuildBoxDetail = new ArrayList<PalletBuildingBoxTicket>();
         try {
             listPalletBuildBoxDetail.clear();
-            rs = dbConnection.getResultSet("select * from tmpPalletBuild where deviceid='" + objGlobal.getDeviceName() + "' order by id desc", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select *,strLPMDt=CONVERT(VARCHAR(10), LPMDt, 103) from tmpPalletBuild where deviceid='" + objGlobal.getDeviceName() + "' order by id desc", objGlobal.getConnection());
             while (rs.next()) {
                 listPalletBuildBoxDetail.add(new PalletBuildingBoxTicket(rs.getString("toteId").toString(),
                         rs.getString("boxNo").toString(), rs.getString("palletType").toString(),
-                        rs.getString("boxRemarks").toString(), rs.getString("qty").toString()));
+                        rs.getString("boxRemarks").toString(), rs.getString("qty").toString(),
+                        rs.getString("strLPMDt").toString(),rs.getString("orapono").toString()));
             }
             objPalletBuildingGlobal.setTotQty(0);
             objPalletBuildingGlobal.setTotCnt(0);

@@ -150,7 +150,7 @@ public class BarcodePrinting {
         return printData;
     }
 
-    public byte[] getUsaPalletPrint(String palletno,String boxcnt,String remarks,String pallettype, String typename,String groupname,String preparedby,String trndate,String trntime, String copy) {
+    public byte[] getUsaPalletPrint(String palletno,String boxcnt,String remarks,String pallettype, String typename,String groupname,String preparedby,String trndate,String trntime, String copy, String lpmDt) {
         String str01 = "\u0002n\r\n";
         String str02 = "\u0002M0986\r\n";
         String str03 = "\u0002KcLW0384;\r\n";
@@ -168,7 +168,7 @@ public class BarcodePrinting {
         String str15 = "1911A1400530012Prepared By : " + preparedby + "\r\n";
         String str16 = "1911A1400230012" + trndate + "\r\n";
         String str17 = "1911A1400230150" + trntime + "\r\n";
-        String str18 = "1911A1401900012Box Cnt: " + boxcnt + "\r\n";
+        String str18 = "1911A1401900012Box Cnt: " + boxcnt + " , LPM Date : " + lpmDt + "\r\n";
         String str19 = "1911A2401450012Pallet No: " + palletno + "\r\n";
         String str20 = "1e8409402320022A" + palletno     + "\r\n";
         String str21 = "1911A1401110012Pallet Type : " + typename + "\r\n";

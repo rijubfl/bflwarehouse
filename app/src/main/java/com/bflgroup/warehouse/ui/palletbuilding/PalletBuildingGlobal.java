@@ -16,6 +16,8 @@ public class PalletBuildingGlobal {
     private static String pPreparedby;
     private static String pDate;
     private static String pTime;
+    private static String pLpmDt;
+    private static String pOraPono;
 
     public String getPalletNo() {
         return palletNo;
@@ -119,6 +121,22 @@ public class PalletBuildingGlobal {
 
     public static void setpTime(String pTime) {
         PalletBuildingGlobal.pTime = pTime;
+    }
+
+    public static String getpLpmDt() {
+        return pLpmDt;
+    }
+
+    public static void setpLpmDt(String pLpmDt) {
+        PalletBuildingGlobal.pLpmDt = pLpmDt;
+    }
+
+    public static String getpOraPono() {
+        return pOraPono;
+    }
+
+    public static void setpOraPono(String pOraPono) {
+        PalletBuildingGlobal.pOraPono = pOraPono;
     }
 
     public static synchronized PalletBuildingGlobal getInstance() {
