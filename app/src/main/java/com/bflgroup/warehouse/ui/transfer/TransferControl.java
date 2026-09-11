@@ -726,7 +726,7 @@ public class TransferControl {
     }
 
     public boolean validateBoxPallet(String scan) {
-        String shopName = "", boxOrPalletNo = "", contno = "", pallettype = "", typeUsaTcm = "", lpmDt = "";
+        String shopName = "", boxOrPalletNo = "", contno = "", pallettype = "", typeUsaTcm = "", lpmDt = "", oraPono="";
         if (!checkConnection()) {
             return false;
         }
@@ -736,14 +736,16 @@ public class TransferControl {
             objTransferGlobal.setRegSIMExclude("");
             objTransferGlobal.setBoxTrfBoxNoPalletType("");
             objTransferGlobal.setLpmDt("");
+            objTransferGlobal.setOraPoNo("");
             rs = dbConnection.getResultSet("SELECT DISTINCT BoxNo,PalletType,contno=CASE WHEN RoboContno <> '' THEN RoboContno WHEN CHARINDEX('-', BoxNo) > 0 AND LEN(LEFT(BoxNo, " +
-                    "CHARINDEX('-', BoxNo) - 1)) >= 4 THEN LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1) ELSE '' END,LPMDt=isnull(convert(varchar,LPMDt,103),'') FROM usa.dbo.vUPCBoxDet WHERE (BoxNo = '" + scan + "' OR ToteID = '" + scan + "') AND Closed = 'N'", objGlobal.getConnection());
+                    "CHARINDEX('-', BoxNo) - 1)) >= 4 THEN LEFT(BoxNo, CHARINDEX('-', BoxNo) - 1) ELSE '' END,LPMDt=isnull(convert(varchar,LPMDt,103),''),OraPoNo=isnull(OraPoNo,'') FROM usa.dbo.vUPCBoxDet WHERE (BoxNo = '" + scan + "' OR ToteID = '" + scan + "') AND Closed = 'N'", objGlobal.getConnection());
             while (rs.next()) {
                 typeUsaTcm = "USABOX";
                 boxOrPalletNo = rs.getString("boxno");
                 contno = rs.getString("contno");
                 pallettype = rs.getString("PalletType");
                 lpmDt = rs.getString("LPMDt");
+                oraPono = rs.getString("OraPoNo");
                 if (!contno.isEmpty()) {
                     rs = dbConnection.getResultSet("select top 1 * from usa.dbo.usapurchase where contno='" + contno + "' or BOLNO= '" + contno + "'", objGlobal.getConnection());
                     if (!rs.next()) {
@@ -865,6 +867,7 @@ public class TransferControl {
             objTransferGlobal.setBoxTrfBoxNo(boxOrPalletNo);
             objTransferGlobal.setTypeUsaTcm(typeUsaTcm);
             objTransferGlobal.setLpmDt(lpmDt);
+            objTransferGlobal.setOraPoNo(oraPono);
             return true;
         } catch (Exception e) {
             objGlobal.setErrorMessage("TransferControl.validateBoxPallet : " + e);
