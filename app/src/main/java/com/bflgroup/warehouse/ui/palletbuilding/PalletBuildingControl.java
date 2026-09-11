@@ -527,7 +527,10 @@ public class PalletBuildingControl {
         ArrayList<PalletBuildingBoxTicket> listPalletBuildBoxDetail = new ArrayList<PalletBuildingBoxTicket>();
         try {
             listPalletBuildBoxDetail.clear();
-            rs = dbConnection.getResultSet("select *,strLPMDt=CONVERT(VARCHAR(10), LPMDt, 103) from tmpPalletBuild where deviceid='" + objGlobal.getDeviceName() + "' order by id desc", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("SELECT toteid,boxno,pallettype,boxremarks,qty,orapono = isnull(orapono,''), strLPMDt = ISNULL(CONVERT(VARCHAR(10), LPMDt, 103), '') " +
+                    "FROM tmpPalletBuild " +
+                    "WHERE deviceid='" + objGlobal.getDeviceName() + "' " +
+                    "ORDER BY id DESC", objGlobal.getConnection());
             while (rs.next()) {
                 listPalletBuildBoxDetail.add(new PalletBuildingBoxTicket(rs.getString("toteId").toString(),
                         rs.getString("boxNo").toString(), rs.getString("palletType").toString(),
