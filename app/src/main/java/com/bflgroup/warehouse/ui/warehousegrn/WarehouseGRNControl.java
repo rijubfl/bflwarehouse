@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WarehouseGRNControl {
 
@@ -305,10 +306,11 @@ public class WarehouseGRNControl {
             rs = dbConnection.getResultSet("select * from BFLDATA.dbo.WhGrnAllowMissing where Ginno='" + ginNo + "'", objGlobal.getConnection());
             if (rs.next()) allowMismatch = true;
             if (!allowMismatch) {
-                rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=0", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select boxno from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=0", objGlobal.getConnection());
                 if (rs.next()) {
+                    List<String> boxLists = new ArrayList<>();
                     if (rs.getInt("cnt") > 0) {
-                        objGlobal.setErrorMessage(rs.getString("cnt") + " boxes are not scanned yet. Please scan them before you try to save.");
+                        objGlobal.setErrorMessage(rs.getString("cnt") + " box(es) are not scanned yet. Please scan them before you try to save.");
                         return false;
                     }
                 }
