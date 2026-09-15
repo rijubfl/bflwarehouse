@@ -143,8 +143,14 @@ public class PalletBuildingFragment extends Fragment {
         arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
         sp_pallet_building_print_copies.setAdapter(arrayAdp);
 
-
-        
+        b_Result = objBluetoothDevices.loadBluetoothDevicesArray();
+        if (!b_Result) {
+            okMessage("Transfer",objGlobal.getErrorMessage());
+        } else {
+            ArrayAdapter<String> arrayAdpYellow;
+            arrayAdpYellow = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, objGlobal.getBluetoothDevices());
+            sp_pallet_building_printer.setAdapter(arrayAdpYellow);
+        }
 
         ch_pallet_building_printer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
