@@ -310,7 +310,8 @@ public class WarehouseGRNControl {
                 if (rs.next()) {
                     List<String> boxLists = new ArrayList<>();
                     if (rs.getInt("cnt") > 0) {
-                        objGlobal.setErrorMessage(rs.getString("cnt") + " box(es) are not scanned yet. Please scan them before you try to save.");
+                        String boxNumbers = String.join(", ", boxLists);
+                        objGlobal.setErrorMessage(boxLists.size() + " box(es) are not scanned yet: " + boxNumbers + ". Please scan them before you try to save.");
                         return false;
                     }
                 }
