@@ -307,14 +307,16 @@ public class WarehouseGRNControl {
             if (rs.next()) allowMismatch = true;
             if (!allowMismatch) {
                 rs = dbConnection.getResultSet("select boxno from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=0", objGlobal.getConnection());
-                if (rs.next()) {
-                    List<String> boxLists = new ArrayList<>();
-                    if (rs.getInt("cnt") > 0) {
-                        String boxNumbers = String.join(", ", boxLists);
-                        objGlobal.setErrorMessage(boxLists.size() + " box(es) are not scanned yet: " + boxNumbers + ". Please scan them before you try to save.");
-                        return false;
-                    }
+                List<String> boxLists = new ArrayList<>();
+                while (rs.next()) {
+                    boxLists.add(rs.getString("boxno"));
                 }
+                if (!boxLists.isEmpty()) {
+                    String boxNumbers = String.join(", ", boxLists);
+                    objGlobal.setErrorMessage(boxLists.size() + " box(es) are not scanned yet: " + boxNumbers + ". Please scan them before you try to save.");
+                    return false;
+                }
+
             }
             if (autoPost.equals("Y")) {
                 rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=1 and BoxNo not in(select BoxNo " +
