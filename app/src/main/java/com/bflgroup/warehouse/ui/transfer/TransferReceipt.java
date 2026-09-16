@@ -15,7 +15,7 @@ public class TransferReceipt {
     private TransferGlobal objTransferGlobal = TransferGlobal.getInstance();
     private ResultSet rs;
 
-    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String trftype, String regSIMExclude,String typeUsaTcm,String lpmDt,String oraPoNo) {
+    public boolean transferReceipt(String shopName, String palletBoxNo, String toteid, String transferType, String regSIMExclude,String typeUsaTcm,String lpmDt,String oraPoNo) {
         String dataName = "", trfRecNo = "", costCodeFrom = "", costCodeTo = "", locCodeFrom = "", locCodeTo = "", debitAc = "410005", creditAc = "129999", narration = "USA-New", fcCode = "AED", shopInShop = "";
         String approvedBy = "UHO-", preparedBy = "[" + objGlobal.getEmpCode() + "]", trfType = "R", trfPalletNo = "", cartonNo = "1", empName = "", storeIssue = palletBoxNo, firstScanTime = "";
         if (!objGlobal.getWorkLocation().equals("UAE")) preparedBy = objGlobal.getUserName();
@@ -35,11 +35,11 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:001");
                 return false;
             }
-            rs = dbConnection.getResultSet("select itemcode,qty=sum(qty) from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' group by itemcode", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select itemcode,rfid,SerializedCode,qty=sum(qty) from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' group by itemcode,rfid,SerializedCode", objGlobal.getConnection());
             while (rs.next()) {
-                if (!dbConnection.insertUpdate("insert into robotics.dbo.tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName) " +
+                if (!dbConnection.insertUpdate("insert into robotics.dbo.tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName,EPC,SerializedCode) " +
                         "values('" + rs.getString("itemcode") + "'," + rs.getInt("qty") + ",0.01,'','',''," + objGlobal.getUserId() + ",'',0,'',''," +
-                        "'" + objGlobal.getDeviceName() + "')", conRob)) {
+                        "'" + objGlobal.getDeviceName() + "','" + rs.getString("rfid") + "','" + rs.getString("SerializedCode") + "')", conRob)) {
                     objGlobal.setErrorNo("transferReceipt:002");
                     return false;
                 }
@@ -111,8 +111,8 @@ public class TransferReceipt {
             conRob.setAutoCommit(false);
             conLoc.setAutoCommit(false);
             //insert transfer detail start *****************************************
-            if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferdetail (trfno,itemcode,unitcode,quantity,rate,batchno,basicqty,basicrate,srno,upc," +
-                    "ItemType) select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'' from robotics.dbo.tmpTransfer " +
+            if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferdetail (trfno,itemcode,unitcode,quantity,rate,batchno,basicqty,basicrate,srno,upc,ItemType," +
+                    "SerializedCode,EPC) select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'',SerializedCode,EPC from robotics.dbo.tmpTransfer " +
                     "where DeviceName='" + objGlobal.getDeviceName() + "'", conRob)) {
                 conRob.rollback();
                 conLoc.rollback();
@@ -198,7 +198,7 @@ public class TransferReceipt {
                     return false;
                 }
             }
-            if (trftype.equals("P")) {
+            if (transferType.equals("Box")) {
                 if (!dbConnection.insertUpdate("Insert into usa.dbo.ExportTransfer(Dep,DataName,PalletNo,TrfNo,TrfDate,TrfTime,PurInvNo,PurRetNo,PreparedBy,UserId,BoxNo,ShopName,CostCode) " +
                         "select 'USA','" + dataName + "',BoxNo,'" + trfRecNo + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "','','','" + objGlobal.getUserName() + "'," +
                         "" + objGlobal.getUserId() + ",BoxNo,'" + shopName + "','" + costCodeTo + "' from usa.dbo.UPCBoxHead where BoxNo='" + palletBoxNo + "'", conLoc)) {
@@ -240,7 +240,7 @@ public class TransferReceipt {
                     }
                 }
             }
-            if (trftype.equals("P") || trftype.equals("T")) {
+            if (transferType.equals("Box") || transferType.equals("Transfer")) {
                 if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.CloseR1pallet values('" + typeUsaTcm + "','" + palletBoxNo + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "'," +
                         "'" + objGlobal.getUserId() + "','" + objGlobal.getUserName() + "','','',0,0,0,'Auto Closed Transfer PDA (" + trfRecNo + ")')", conLoc)) {
                     conRob.rollback();

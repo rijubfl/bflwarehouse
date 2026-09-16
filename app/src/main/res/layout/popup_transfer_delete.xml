@@ -15,7 +15,7 @@
         android:layout_height="50dp"
         android:layout_marginRight="5dp"
         android:background="@drawable/et_custom"
-        android:hint="RFID / Barcode"
+        android:hint="RFID / SerializedCode / Barcode"
         android:padding="10dp"
         android:textColor="@color/coloBlack"
         android:textSize="18dp"

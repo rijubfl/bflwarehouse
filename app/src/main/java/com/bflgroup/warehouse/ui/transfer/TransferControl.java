@@ -63,11 +63,11 @@ public class TransferControl {
         }
         try {
             arr = new ArrayList<String>();
-            if (shopType.equals("E")) {
+            if (shopType.equals("Box")) {
                 rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Dataname<>'' and ExportActive='Y' order by ShopName", objGlobal.getConnection());
-            } else if (shopType.equals("D")) {
+            } else if (shopType.equals("ROBO Direct")) {
                 rs = dbConnection.getResultSet("select ShopName=Result from bfldata.dbo.robodcresult order by ShopName", objGlobal.getConnection());
-            } else if (shopType.equals("T")) {
+            } else if (shopType.equals("Transfer")) {
                 rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Concept='P2EXP' order by ShopName", objGlobal.getConnection());
             } else {
                 rs = dbConnection.getResultSet("select ShopName from bfldata.dbo.DataSettings where Dataname<>'' order by ShopName", objGlobal.getConnection());
@@ -87,7 +87,6 @@ public class TransferControl {
             return false;
         }
         try {
-
             if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and qty<=0", objGlobal.getConnection())) {
                 return false;
             }
@@ -95,23 +94,33 @@ public class TransferControl {
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
             while (rs.next()) {
                 rcFound = true;
-                if (scanType.equals("R")) //RFID and BARCODE
-                    if (rs.getString("rfid").isEmpty()) {
-                        if (!validateBarcode(true, rs.getString("barcode"), rs.getInt("qty"), selShop))
-                            return false;
-                    } else {
-                        if (!validateRfid(true, rs.getString("rfid"), rs.getInt("qty"), selShop))
-                            return false;
-                    }
-                if (scanType.equals("I"))
-                    if (!validateItemcode(true, rs.getString("itemcode"), rs.getInt("qty"), selShop, scanType))
+                if (scanType.equals("RFID / SerializedCode")) {
+                    /*if (!validateRfid(true, rs.getString("rfid"), rs.getInt("qty"), selShop)) {
                         return false;
-                if (scanType.equals("D")) //add validation if needed
+                    }*/
+                    if (!validateRfid(true, rs.getString("serializedCode"), rs.getInt("qty"), selShop)) {
+                        return false;
+                    }
+                }
+                if (scanType.equals("Barcode")) {
+                    if (!validateBarcode(true, rs.getString("barcode"), rs.getInt("qty"), selShop)) {
+                        return false;
+                    }
+                }
+                if (scanType.equals("Itemcode")) {
+                    if (!validateItemcode(true, rs.getString("itemcode"), rs.getInt("qty"), selShop, scanType)) {
+                        return false;
+                    }
+                }
+                if (scanType.equals("ROBO Direct")) {
                     return true;
-                if (scanType.equals("P"))
+                }
+                if (scanType.equals("Box")) {
                     return true;
-                if (scanType.equals("T"))
+                }
+                if (scanType.equals("Transfer")) {
                     return true;
+                }
             }
             if (!rcFound) {
                 objGlobal.setErrorMessage("Records not found for Transfer");
@@ -275,17 +284,12 @@ public class TransferControl {
         return listPalletStatusTicket;
     }
 
-    public boolean validateRfid(boolean valid, String rfid, int qty, String selShop) {
-        String description = "", shopName = "", itemCode = "", trfNo = "", trfDate = "", barcode = "", size = "";
+    public boolean validateRfid(boolean valid, String scan, int qty, String selShop) {
+        String description = "", shopName = "", itemCode = "", trfNo = "", trfDate = "", barcode = "", rfid ="",serializedCode="";
         if (!checkConnection()) {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.RFIDMaster where rfid='" + rfid + "' and supplier<>''", objGlobal.getConnection());
-            if (!rs.next()) {
-                objGlobal.setErrorMessage("RFID not found in the master, " + rfid);
-                return false;
-            }
             rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and ShopName<>'" + selShop + "'", objGlobal.getConnection());
             if (rs.next()) {
                 if (rs.getInt("cnt") > 0) {
@@ -295,8 +299,10 @@ public class TransferControl {
             }
             if (objGlobal.getWorkLocation().equals("UAE")) {
                 rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                        "rfid='" + rfid + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
+                        "(rfid='" + scan + "' or SerializedCode='" + scan + "') order by entrydate desc,trntime desc", objGlobal.getConnection());
                 if (rs.next()) {
+                    rfid=rs.getString("rfid");
+                    serializedCode=rs.getString("serializedCode");
                     shopName = rs.getString("shopname");
                     itemCode = rs.getString("ItemCode");
                     barcode = rs.getString("Barcode");
@@ -307,8 +313,10 @@ public class TransferControl {
             }
             else{
                 rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from "+objGlobal.getCountryDbName()+".dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                        "rfid='" + rfid + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
+                        "(rfid='" + scan + "' or SerializedCode='" + scan + "') order by entrydate desc,trntime desc", objGlobal.getConnection());
                 if (rs.next()) {
+                    rfid=rs.getString("rfid");
+                    serializedCode=rs.getString("serializedCode");
                     shopName = rs.getString("shopname");
                     itemCode = rs.getString("ItemCode");
                     barcode = rs.getString("Barcode");
@@ -317,14 +325,12 @@ public class TransferControl {
                     description = rs.getString("descr");
                 }
             }
-
-
             if (shopName.isEmpty() || itemCode.isEmpty() || barcode.isEmpty() || trfDate.isEmpty() || description.isEmpty()) {
-                objGlobal.setErrorMessage("Pair information is not found, rfid:" + rfid);
+                objGlobal.setErrorMessage("Pair information is not found, rfid:" + scan);
                 return false;
             }
             if (!trfNo.isEmpty()) {
-                objGlobal.setErrorMessage("RFID: " + rfid + " is already paired with " + itemCode + " and transfered - " + shopName + " " + trfNo + " on " + trfDate);
+                objGlobal.setErrorMessage("(RFID/SerializedCode: " + scan + ") is already paired with " + itemCode + " and transfered - " + shopName + " " + trfNo + " on " + trfDate);
                 return false;
             }
             if (!selShop.equals(shopName) && !selShop.isEmpty()) {
@@ -332,13 +338,13 @@ public class TransferControl {
                 return false;
             }
             if (!valid) {
-                rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and rfid='" + rfid + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and (rfid='" + rfid + "' or SerializedCode='" + serializedCode + "')", objGlobal.getConnection());
                 if (rs.next()) {
-                    objGlobal.setErrorMessage("RFID Already scan, " + rfid);
+                    objGlobal.setErrorMessage("RFID/SerializedCode Already scan, " + rfid);
                     return false;
                 }
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Description,Qty,ScanTime) values('" + objGlobal.getDeviceName() + "'," +
-                        "'" + shopName + "','" + rfid + "','" + barcode + "','" + itemCode + "','" + description + "'," + qty + ",convert(varchar,getdate(),8))", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Description,Qty,ScanTime,SerializedCode) values('" + objGlobal.getDeviceName() + "'," +
+                        "'" + shopName + "','" + rfid + "','" + barcode + "','" + itemCode + "','" + description + "'," + qty + ",convert(varchar,getdate(),8),'" + serializedCode + "')", objGlobal.getConnection())) {
                     return false;
                 }
                 objTransferGlobal.setScanBarcode(barcode);
@@ -592,8 +598,8 @@ public class TransferControl {
                     return false;
                 }
             }
-            if (scanType.equals("I")) {
-                rs = dbConnection.getResultSet("select top 1 *,size = isnull((select top 1 isnull(size1,'') from usa..UPCBarCodes where a.itemcode = itemcode and size1 in ('S','XS','XXS','XXXS')),'') from HODATA.dbo.itemMaster a where " +
+            if (scanType.equals("Itemcode")) {
+                rs = dbConnection.getResultSet("select top 1 *,size = isnull((select top 1 isnull(size1,'') from usa.dbo.UPCBarCodes where a.itemcode = itemcode and size1 in ('S','XS','XXS','XXXS')),'') from HODATA.dbo.itemMaster a where " +
                         "itemcode='" + itemcode + "' ", objGlobal.getConnection());
                 if (rs.next()) {
                     shopName = selShop;

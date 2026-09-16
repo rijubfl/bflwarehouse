@@ -157,41 +157,39 @@ public class TransferFragment extends Fragment {
 
         objTransferGlobal.setRegSIMExclude("");
 
-        List<String> arr;
-        arr = new ArrayList<String>();
-        arr.add("RFID / Barcode");//0 R
-        arr.add("Itemcode");//1 I
-        arr.add("Box");//2 P
-        arr.add("ROBO Direct");//3 D
-        arr.add("Transfer");//4 T
-        ArrayAdapter<String> arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
-        sp_transfer_type.setAdapter(arrayAdp);
+        List<String> arrTrfType;
+        arrTrfType = new ArrayList<String>();
+        arrTrfType.add("RFID / SerializedCode");//0 R
+        arrTrfType.add("Barcode");//1 B
+        arrTrfType.add("Itemcode");//2 I
+        arrTrfType.add("Box");//3 P
+        arrTrfType.add("ROBO Direct");//4 D
+        arrTrfType.add("Transfer");//5 T
+        ArrayAdapter<String> arrayAdpTrfType = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arrTrfType);
+        sp_transfer_type.setAdapter(arrayAdpTrfType);
 
-        arr = new ArrayList<String>();
-        arr.add("1");
-        arr.add("2");
-        arr.add("3");
-        arr.add("4");
-        arrayAdp = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arr);
-        sp_transfer_print_copies.setAdapter(arrayAdp);
+        List<String> arrPrintCopy;
+        arrPrintCopy = new ArrayList<String>();
+        arrPrintCopy.add("1");
+        arrPrintCopy.add("2");
+        arrPrintCopy.add("3");
+        arrPrintCopy.add("4");
+        ArrayAdapter<String> arrayAdpPrintCopy = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arrPrintCopy);
+        sp_transfer_print_copies.setAdapter(arrayAdpPrintCopy);
         if (saredRef.loadPrintCopies().equals("")) {
             saredRef.savePrintCopies("1");
         }
-        sp_transfer_print_copies.setSelection(arrayAdp.getPosition(saredRef.loadPrintCopies().toString()));
+        sp_transfer_print_copies.setSelection(arrayAdpPrintCopy.getPosition(saredRef.loadPrintCopies().toString()));
 
+        listTransferScannedItems.clear();
         listTransferScannedItems = objTransferControl.loadScannedItems();
         objTransferScannedItemsAdp = new TransferFragment.TransferScannedItemsAdp(listTransferScannedItems);
-        listTransferScannedItems.clear();
         lv_transfer_items.setAdapter(objTransferScannedItemsAdp);
         tv_transfer_total.setText(String.valueOf(objTransferGlobal.getTotalScan()));
 
         et_transfer_pallet_box_no.setEnabled(false);
         if (!Objects.equals(saredRef.loadShopName(), "")) {
-            if (saredRef.loadScanType().equals("R")) sp_transfer_type.setSelection(0);
-            if (saredRef.loadScanType().equals("I")) sp_transfer_type.setSelection(1);
-            if (saredRef.loadScanType().equals("P")) sp_transfer_type.setSelection(2);
-            if (saredRef.loadScanType().equals("D")) sp_transfer_type.setSelection(3);
-            if (saredRef.loadScanType().equals("T")) sp_transfer_type.setSelection(4);
+            sp_transfer_type.setSelection(arrayAdpPrintCopy.getPosition(saredRef.loadShopName().toString()));
             sp_transfer_type.setEnabled(false);
             tv_transfer_shopname.setText(saredRef.loadShopName());
             et_transfer_pallet_box_no.setText(saredRef.loadPallet());
@@ -236,17 +234,19 @@ public class TransferFragment extends Fragment {
                 } else {
                     saredRef.savePrintCopies(sp_transfer_print_copies.getSelectedItem().toString());
                     saredRef.savePrinter(sp_transfer_printer.getSelectedItem().toString());
-                    if (sp_transfer_type.getSelectedItemId() == 0) {
+                    if (sp_transfer_type.getSelectedItem().toString().equals("RFID / SerializedCode")) {
                         openPopupScanBarcodeRfid();
-                    } else if (sp_transfer_type.getSelectedItemId() == 1) {
+                    } else if( sp_transfer_type.getSelectedItem().toString().equals("Barcode")){
+                        openPopupScanBarcodeRfid();
+                    } else if (sp_transfer_type.getSelectedItem().toString().equals("Itemcode")) {
                         b_Result = scanItemcode(shop);
                         if (b_Result) openPopupScanBarcodeRfid();
-                    } else if (sp_transfer_type.getSelectedItemId() == 2) {
+                    } else if (sp_transfer_type.getSelectedItem().toString().equals("Box")) {
                         b_Result = scanBoxPallet(boxPallet);
-                    } else if (sp_transfer_type.getSelectedItemId() == 3) {
+                    } else if (sp_transfer_type.getSelectedItem().toString().equals("ROBO Direct")) {
                         b_Result = scanRoboDc(shop);
                         if (b_Result) openPopupScanBarcodeRfid();
-                    } else if (sp_transfer_type.getSelectedItemId() == 4) {
+                    } else if (sp_transfer_type.getSelectedItem().toString().equals("Transfer")) {
                         b_Result = scanTransfer(shop, boxPallet);
                     }
                 }
@@ -316,15 +316,7 @@ public class TransferFragment extends Fragment {
                 if (allowChangeShop) {
                     Dialog dialog;
                     ArrayList<String> arraylist;
-                    if (sp_transfer_type.getSelectedItemId() == 2) {
-                        arraylist = objTransferControl.loadShops("E");
-                    } else if (sp_transfer_type.getSelectedItemId() == 3) {
-                        arraylist = objTransferControl.loadShops("D");
-                    } else if (sp_transfer_type.getSelectedItemId() == 4) {
-                        arraylist = objTransferControl.loadShops("T");
-                    } else {
-                        arraylist = objTransferControl.loadShops("");
-                    }
+                    arraylist = objTransferControl.loadShops(sp_transfer_type.getSelectedItem().toString());
                     dialog = new Dialog(getContext());
                     dialog.setContentView(R.layout.searchable_shopname);
                     dialog.getWindow().setLayout(600, 1000);
@@ -445,15 +437,10 @@ public class TransferFragment extends Fragment {
         String pallet = et_transfer_pallet_box_no.getText().toString();
         String printer = sp_transfer_printer.getSelectedItem().toString();
         String toteid = "";
-        String selType = "";
+        //String selType = "";
         objBuildingJafzaGLobal.setBoxNo("");
         objTransferGlobal.setTrfRecNo("");
         try {
-            if (sp_transfer_type.getSelectedItemId() == 0) selType = "R";
-            if (sp_transfer_type.getSelectedItemId() == 1) selType = "I";
-            if (sp_transfer_type.getSelectedItemId() == 2) selType = "P";
-            if (sp_transfer_type.getSelectedItemId() == 3) selType = "D";
-            if (sp_transfer_type.getSelectedItemId() == 4) selType = "T";
             if (shopname.isEmpty()) {
                 objGlobal.setErrorMessage("Shop Name is empty");
                 return false;
@@ -462,12 +449,12 @@ public class TransferFragment extends Fragment {
                 objGlobal.setErrorMessage("Please select printer");
                 b_Result = false;
             }
-            b_Result = objTransferControl.validateTransfer(selType, shopname);
+            b_Result = objTransferControl.validateTransfer(sp_transfer_type.getSelectedItem().toString(), shopname);
             if (!b_Result) {
                 objGlobal.setErrorMessage("validateTransfer: " + objGlobal.getErrorMessage());
                 return false;
             }
-            if (selType.equals("D")) {
+            if (sp_transfer_type.getSelectedItem().toString().equals("ROBO Direct")) {
                 b_Result = objTransferControl.transferCreatePairingSorting();
                 if (!b_Result) {
                     objGlobal.setErrorMessage("transferReceipt: " + objGlobal.getErrorMessage());
@@ -479,7 +466,7 @@ public class TransferFragment extends Fragment {
                     return false;
                 }
             } else {
-                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid, selType, objTransferGlobal.getRegSIMExclude(), objTransferGlobal.getTypeUsaTcm(),
+                b_Result = objTransferReceipt.transferReceipt(shopname, pallet, toteid, sp_transfer_type.getSelectedItem().toString(), objTransferGlobal.getRegSIMExclude(), objTransferGlobal.getTypeUsaTcm(),
                         objTransferGlobal.getLpmDt(), objTransferGlobal.getOraPoNo());
                 if (!b_Result) {
                     objGlobal.setErrorMessage("transferReceipt: " + objGlobal.getErrorMessage());
@@ -676,16 +663,12 @@ public class TransferFragment extends Fragment {
         tv_transfer_popup_robo_dc_palletno.setHint("");
         bt_transfer_popup_clear_robo_dc.setEnabled(false);
 
-        if (sp_transfer_type.getSelectedItemId() == 0) saredRef.saveScanType("R");
-        if (sp_transfer_type.getSelectedItemId() == 1) saredRef.saveScanType("I");
-        if (sp_transfer_type.getSelectedItemId() == 2) saredRef.saveScanType("P");
-        if (sp_transfer_type.getSelectedItemId() == 3) {
+        if (sp_transfer_type.getSelectedItem().toString().equals("ROBO Direct")) {
             tv_transfer_popup_robo_dc_palletno.setEnabled(true);
             bt_transfer_popup_clear_robo_dc.setEnabled(true);
             tv_transfer_popup_robo_dc_palletno.setHint("ROBO DC Cont.No. / Pallet No.");
-            saredRef.saveScanType("D");
         }
-        if (sp_transfer_type.getSelectedItemId() == 4) saredRef.saveScanType("T");
+        saredRef.saveScanType(sp_transfer_type.getSelectedItem().toString());
         tv_transfer_popup_barcode_rfid.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -743,8 +726,9 @@ public class TransferFragment extends Fragment {
                 myDialog.dismiss();
             }
         });
+
         tv_transfer_popup_barcode_rfid_last_scan_totqty.setText(String.valueOf(objTransferGlobal.getTotalScan()));
-        if (sp_transfer_type.getSelectedItemId() == 3)
+        if (sp_transfer_type.getSelectedItem().toString().equals("ROBO Direct"))
             tv_transfer_popup_robo_dc_palletno.requestFocus();
         else
             tv_transfer_popup_barcode_rfid.requestFocus();
@@ -840,19 +824,13 @@ public class TransferFragment extends Fragment {
         String scan = objControls.replaceString(rfid.toUpperCase());
         String shop = tv_transfer_shopname.getText().toString();
         String contno = tv_transfer_popup_robo_dc_palletno.getText().toString();
-        String scanType = "";
-        if (sp_transfer_type.getSelectedItemId() == 0) scanType = "R";
-        if (sp_transfer_type.getSelectedItemId() == 1) scanType = "I";
-        if (sp_transfer_type.getSelectedItemId() == 2) scanType = "P";
-        if (sp_transfer_type.getSelectedItemId() == 3) scanType = "D";
-        if (sp_transfer_type.getSelectedItemId() == 4) scanType = "T";
         saredRef.savePrinter(sp_transfer_printer.getSelectedItem().toString());
         saredRef.saveShopName(shop);
         int qty = 1;
         if (scan.isEmpty()) {
             scan = "";
         }
-        if (scanType.equals("D")) {
+        if (sp_transfer_type.getSelectedItem().toString().equals("ROBO Direct")) {
             if (contno.isEmpty()) {
                 tv_transfer_popup_barcode_rfid_last_result.setText("Please scan ROBO Direct checking container / pallet number");
                 tv_transfer_popup_barcode_rfid_last_result.setTextColor(getActivity().getResources().getColor(R.color.coloRed));
@@ -862,29 +840,32 @@ public class TransferFragment extends Fragment {
             }
         }
         if (scan.isEmpty()) {
-            tv_transfer_popup_barcode_rfid_last_result.setText("Please scan RFID / Barcode / Itemcde");
+            tv_transfer_popup_barcode_rfid_last_result.setText("Please scan RFID / SerializedCode / Barcode / Itemcde");
             tv_transfer_popup_barcode_rfid_last_result.setTextColor(getActivity().getResources().getColor(R.color.coloRed));
             vibrate(100);
             tv_transfer_popup_barcode_rfid.setText("");
             return false;
         }
         if (scan.length() > 50) {
-            tv_transfer_popup_barcode_rfid_last_result.setText("Please Double check the scan RFID / Barcode / Itemcode");
+            tv_transfer_popup_barcode_rfid_last_result.setText("Please Double check the scan RFID / SerializedCode / Barcode / Itemcode");
             tv_transfer_popup_barcode_rfid_last_result.setTextColor(getActivity().getResources().getColor(R.color.coloRed));
             vibrate(100);
             tv_transfer_popup_barcode_rfid.setText("");
             return false;
         }
         tv_transfer_popup_barcode_rfid_last_scan.setText(scan);
-        if (scanType.equals("R"))
-            if (scan.contains("/"))
-                b_Result = objTransferControl.validateBarcode(false, scan, qty, shop);
-            else
-                b_Result = objTransferControl.validateRfid(false, scan, qty, shop);
-        if (scanType.equals("I"))
-            b_Result = objTransferControl.validateItemcode(false, scan, qty, shop, scanType);
-        if (scanType.equals("D"))
+        if (sp_transfer_type.getSelectedItem().toString().equals("RFID / SerializedCode")) {
+            b_Result = objTransferControl.validateRfid(false, scan, qty, shop);
+        }
+        if (sp_transfer_type.getSelectedItem().toString().equals("Barcode")) {
+            b_Result = objTransferControl.validateBarcode(false, scan, qty, shop);
+        }
+        if (sp_transfer_type.getSelectedItem().toString().equals("Itemcode")) {
+            b_Result = objTransferControl.validateItemcode(false, scan, qty, shop, "Itemcode");
+        }
+        if (sp_transfer_type.getSelectedItem().toString().equals("ROBO Direct")) {
             b_Result = objTransferControl.validateRoboDirectCheckingResult(false, contno, scan, qty, shop);
+        }
         if (!b_Result) {
             if (objGlobal.getErrorMessage().contains("TransferControl")) {
                 okMessage("Transfer", objGlobal.getErrorMessage());
@@ -929,11 +910,11 @@ public class TransferFragment extends Fragment {
         allowChangeShop = true;
         sp_transfer_type.setEnabled(true);
         tv_transfer_shopname.setEnabled(true);
-        if ((sp_transfer_type.getSelectedItemId() == 2) || (sp_transfer_type.getSelectedItemId() == 4)) {
+        if ((sp_transfer_type.getSelectedItem().toString().equals("Box")) || (sp_transfer_type.getSelectedItem().toString().equals("Transfer"))) {
             tv_transfer_shopname.setEnabled(false);
         }
         et_transfer_pallet_box_no.setEnabled(false);
-        if (sp_transfer_type.getSelectedItemId() == 2 || sp_transfer_type.getSelectedItemId() == 4) et_transfer_pallet_box_no.setEnabled(true);
+        if (sp_transfer_type.getSelectedItem().toString().equals("Box") || sp_transfer_type.getSelectedItem().toString().equals("Transfer")) et_transfer_pallet_box_no.setEnabled(true);
         saredRef.saveScanType("");
         saredRef.saveShopName("");
         saredRef.savePallet("");
