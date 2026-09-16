@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WarehouseGRNControl {
 
@@ -305,13 +306,17 @@ public class WarehouseGRNControl {
             rs = dbConnection.getResultSet("select * from BFLDATA.dbo.WhGrnAllowMissing where Ginno='" + ginNo + "'", objGlobal.getConnection());
             if (rs.next()) allowMismatch = true;
             if (!allowMismatch) {
-                rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=0", objGlobal.getConnection());
-                if (rs.next()) {
-                    if (rs.getInt("cnt") > 0) {
-                        objGlobal.setErrorMessage(rs.getString("cnt") + " boxes are not scanned yet. Please scan them before you try to save.");
-                        return false;
-                    }
+                rs = dbConnection.getResultSet("select boxno from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=0", objGlobal.getConnection());
+                List<String> boxLists = new ArrayList<>();
+                while (rs.next()) {
+                    boxLists.add(rs.getString("boxno"));
                 }
+                if (!boxLists.isEmpty()) {
+                    String boxNumbers = String.join(", ", boxLists);
+                    objGlobal.setErrorMessage(boxLists.size() + " box(es) are not scanned yet: " + boxNumbers + ". Please scan them before you try to save.");
+                    return false;
+                }
+
             }
             if (autoPost.equals("Y")) {
                 rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpWarehouseGrnScanNew where DeviceId='" + objGlobal.getDeviceName() + "' and SCount=1 and BoxNo not in(select BoxNo " +

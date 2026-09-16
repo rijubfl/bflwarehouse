@@ -8,6 +8,7 @@ import com.bflgroup.warehouse.db.DBConnection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GinVerificationControl {
 
@@ -94,12 +95,15 @@ public class GinVerificationControl {
                 rs = dbConnection.getResultSet("select * from BFLDATA.dbo.WhGrnAllowMissing where Ginno='" + ginNo + "'", objGlobal.getConnection());
                 if (rs.next()) allowMismatch = true;
                 if (!allowMismatch) {
-                    rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "' and Verified<>'Y'", objGlobal.getConnection());
-                    if (rs.next()) {
-                        if (!rs.getString("cnt").equals("0")) {
-                            objGlobal.setErrorMessage(rs.getString("cnt") + " boxes are not scanned yet. Please scan them before you try to save.");
-                            return false;
-                        }
+                    List<String> trfList = new ArrayList<>();
+                    rs = dbConnection.getResultSet("select trfno from bfldata.dbo.tmpGinVerify where DeviceId='" + objGlobal.getDeviceName() + "' and Verified<>'Y'", objGlobal.getConnection());
+                    while(rs.next()){
+                        trfList.add(rs.getString("trfno"));
+                    }
+                    if (!trfList.isEmpty()){
+                        String trfNumbers = String.join(", ", trfList);
+                        objGlobal.setErrorMessage(trfList.size() + " box(es) are not scanned yet: " + trfNumbers + ". Please scan them before you try to save.");
+                        return false;
                     }
                 }
             } else {
