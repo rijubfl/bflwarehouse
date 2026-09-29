@@ -49,9 +49,9 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:001: "+objGlobal.getConnection().getClientInfo());
                 return false;
             }
-            if (!dbConnection.insertUpdate("insert into tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName) " +
-                    "select itemcode,sum(qty),0.01,'','',''," + objGlobal.getUserId() + ",'',0,'','','" + objGlobal.getDeviceName() + "' from SortingConformationDetail where TransferNo='' " +
-                    "and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode", con)) {
+            if (!dbConnection.insertUpdate("insert into tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName,EPC,SerializedCode) " +
+                    "select itemcode,sum(qty),0.01,'','',''," + objGlobal.getUserId() + ",'',0,'','','" + objGlobal.getDeviceName() + "',EPC,SerializedCode from SortingConformationDetail where TransferNo='' " +
+                    "and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode,isnull(SerializedCode,'')", con)) {
                 objGlobal.setErrorNo("transferReceipt:002");
                 return false;
             }
@@ -121,7 +121,7 @@ public class TransferReceipt {
             con.setAutoCommit(false);
             //insert transfer detail start *****************************************
             if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferdetail (trfno,itemcode,unitcode,quantity,rate,batchno,basicqty,basicrate,srno,upc," +
-                    "ItemType) select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'' from tmpTransfer " +
+                    "ItemType,SerializedCode,EPC) select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'',SerializedCode,Epc from tmpTransfer " +
                     "where DeviceName='" + objGlobal.getDeviceName() + "'", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:015");
@@ -139,13 +139,26 @@ public class TransferReceipt {
                 return false;
             }
             //Rfpair
-            if (!dbConnection.insertUpdate("update " + dataName + ".dbo.rfpair set TrfNo='" + trfRecNo + "' where rfid in(select Rfid from " +
-                    "SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' and rfid<>'')", con)) {
+            if (!dbConnection.insertUpdate("update " + dataName + ".dbo.rfpair set TrfNo='" + trfRecNo + "' where SerializedCode in(select SerializedCode from SortingConformationDetail " +
+                    "where TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' and isnull(SerializedCode,'')<>'')", con)) {
+                con.rollback();
+                objGlobal.setErrorNo("transferReceipt:022");
+                return false;
+            }
+            if (!dbConnection.insertUpdate("update " + dataName + ".dbo.rfpair set TrfNo='" + trfRecNo + "' where rfid in(select Rfid from SortingConformationDetail where " +
+                    "TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' and rfid<>'')", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:022");
                 return false;
             }
             //rfpairdetail
+            if (!dbConnection.insertUpdate("update bfldata.dbo.RFPairDetail set TrfNo='" + trfRecNo + "',trfdate='" + objGlobal.getServerDate() + "',PairSn=0 where TrfNo='' and " +
+                    "ShopName='" + shopName + "' and SerializedCode in(select SerializedCode SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
+                    "ShopId='" + shopId + "' and isnull(SerializedCode,'')<>'')", con)) {
+                con.rollback();
+                objGlobal.setErrorNo("transferReceipt:023");
+                return false;
+            }
             if (!dbConnection.insertUpdate("update bfldata.dbo.RFPairDetail set TrfNo='" + trfRecNo + "',trfdate='" + objGlobal.getServerDate() + "',PairSn=0 where TrfNo='' and " +
                     "ShopName='" + shopName + "' and rfid in(select Rfid from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
                     "ShopId='" + shopId + "' and rfid<>'')", con)) {
@@ -155,7 +168,8 @@ public class TransferReceipt {
             }
             //insert transfer no return************************************
             if (!dbConnection.insertUpdate("insert into bfldata.dbo.TransferNoReturn (TrnDate,ShopName,TrfNo,RetNo,Quantity,UserId,Dept,Dataname,isImport,ImpDateTime,isCountUpdate,CountUpdateDateTime,TrnTime) " +
-                    "values ('" + objGlobal.getServerDate() + "','" + shopName + "','" + trfRecNo + "',''," + totalQty + "," + objGlobal.getUserId() + ",'USA','" + dataName + "','N',null,'N',null,'" + objGlobal.getServerTime() + "')", con)) {
+                    "values ('" + objGlobal.getServerDate() + "','" + shopName + "','" + trfRecNo + "',''," + totalQty + "," + objGlobal.getUserId() + ",'USA','" + dataName + "','N',null,'N'," +
+                    "null,'" + objGlobal.getServerTime() + "')", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:025");
                 return false;
@@ -167,8 +181,8 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:026");
                 return false;
             }
-            if (!dbConnection.insertUpdate("insert into ChuteConfigurationlog (ChuteId,ShopId,ShopName,TotId,Trndate,userId,direction) " +
-                    "select ChuteId,ShopId,ShopName,TotId,getdate(),'" + objGlobal.getUserId() + "','OUT' from ChuteConfiguration where chuteid='" + chuteId + "'", con)) {
+            if (!dbConnection.insertUpdate("insert into ChuteConfigurationlog (ChuteId,ShopId,ShopName,TotId,Trndate,userId,direction) select ChuteId,ShopId,ShopName," +
+                    "TotId,getdate(),'" + objGlobal.getUserId() + "','OUT' from ChuteConfiguration where chuteid='" + chuteId + "'", con)) {
                 con.rollback();
                 return false;
             }
