@@ -140,13 +140,13 @@ public class TransferReceipt {
             }
             //Rfpair
             if (!dbConnection.insertUpdate("update " + dataName + ".dbo.rfpair set TrfNo='" + trfRecNo + "' where SerializedCode in(select SerializedCode from SortingConformationDetail " +
-                    "where TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' and isnull(SerializedCode,'')<>'')", con)) {
+                    "where TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' and isnull(SerializedCode,'')<>'') and isnull(SerializedCode,'')<>''", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:022");
                 return false;
             }
             if (!dbConnection.insertUpdate("update " + dataName + ".dbo.rfpair set TrfNo='" + trfRecNo + "' where rfid in(select Rfid from SortingConformationDetail where " +
-                    "TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' and rfid<>'')", con)) {
+                    "TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' and rfid<>'') and isnull(rfid,'')<>''", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:022");
                 return false;
@@ -154,14 +154,14 @@ public class TransferReceipt {
             //rfpairdetail
             if (!dbConnection.insertUpdate("update bfldata.dbo.RFPairDetail set TrfNo='" + trfRecNo + "',trfdate='" + objGlobal.getServerDate() + "',PairSn=0 where TrfNo='' and " +
                     "ShopName='" + shopName + "' and SerializedCode in(select SerializedCode SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
-                    "ShopId='" + shopId + "' and isnull(SerializedCode,'')<>'')", con)) {
+                    "ShopId='" + shopId + "' and isnull(SerializedCode,'')<>'') and isnull(SerializedCode,'')<>''", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:023");
                 return false;
             }
             if (!dbConnection.insertUpdate("update bfldata.dbo.RFPairDetail set TrfNo='" + trfRecNo + "',trfdate='" + objGlobal.getServerDate() + "',PairSn=0 where TrfNo='' and " +
                     "ShopName='" + shopName + "' and rfid in(select Rfid from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
-                    "ShopId='" + shopId + "' and rfid<>'')", con)) {
+                    "ShopId='" + shopId + "' and rfid<>'') and isnull(rfid,'')<>''", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:023");
                 return false;
