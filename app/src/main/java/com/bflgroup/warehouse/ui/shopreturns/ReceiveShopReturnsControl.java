@@ -374,20 +374,28 @@ public class ReceiveShopReturnsControl {
             objGlobal.getCloudCon().setAutoCommit(false);
             objGlobal.getConnection().setAutoCommit(false);
 
-            b_Result = dbConnection.insertUpdate("insert into StoreDetail select distinct '" + entryNo + "',itemcode,0,0,0 from bfldata.dbo.tmpShopRerturnScanItems where " +
-                    "deviceid='" + objGlobal.getDeviceName() + "' and ScanQty>0 and itemcode not in(select itemcode from StoreDetail where entryno='" + entryNo + "') group by itemcode", objGlobal.getCloudCon());
+            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.scan from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.EntryNo=b.EntryNo " +
+                    "and b.EntryNo='" + entryNo + "' and isnull(b.SerializedCode,'')<>'' and a.SerializedCode=b.SerializedCode", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
                 return false;
             }
-            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.ScanQty from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.deviceid='" + objGlobal.getDeviceName() + "' and " +
-                    "b.EntryNo='" + entryNo + "' and a.ScanQty>0 and a.itemcode=b.itemcode", objGlobal.getCloudCon());
+            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.scan from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.EntryNo=b.EntryNo " +
+                    "and b.EntryNo='" + entryNo + "' and isnull(b.SerializedCode,'')='' and isnull(b.rfid,'')<>'' and a.rfid=b.rfid", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
                 return false;
             }
+            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.scan from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.DeviceId='" + objGlobal.getDeviceName()  + "' and a.EntryNo=b.EntryNo " +
+                    "and b.EntryNo='" + entryNo + "' and isnull(b.SerializedCode,'')='' and isnull(b.rfid,'')='' and a.itemcode=b.itemcode", objGlobal.getCloudCon());
+            if (!b_Result) {
+                objGlobal.getCloudCon().rollback();
+                objGlobal.getConnection().rollback();
+                return false;
+            }
+
             b_Result = dbConnection.insertUpdate("update StoreHeader set RecUserId=" + objGlobal.getUserId() + ",RecDateTime=getdate() where EntryNo='" + entryNo + "'", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
@@ -395,7 +403,8 @@ public class ReceiveShopReturnsControl {
                 return false;
             }
             b_Result = dbConnection.insertUpdate("insert into bfldata.dbo.ShopToShopTransfer(ShopName,EntryNo,Trndate,TrnTime,TargetShop,TrfIssueNo,TrfRecNo,Category,EntryWise,AutoBoxNo) select ShopFrom,EntryNo," +
-                    "convert(varchar,getdate(),103),convert(varchar,getdate(),8),ShopName,'','',TrfNo1,'" + sItemScan + "','" + objReceiveShopReturnsGlobal.getBoxNo() + "' from StoreHeader where EntryNo='" + entryNo + "'", objGlobal.getCloudCon());
+                    "convert(varchar,getdate(),103),convert(varchar,getdate(),8),ShopName,'','',TrfNo1,'" + sItemScan + "','" + objReceiveShopReturnsGlobal.getBoxNo() + "' from StoreHeader where " +
+                    "EntryNo='" + entryNo + "'", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
@@ -403,14 +412,16 @@ public class ReceiveShopReturnsControl {
             }
             //localShopReturnHeader
             b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks,Warehouse) " +
-                    "values (" + slnoLocal + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection());
+                    "values (" + slnoLocal + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + "," +
+                    "'" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "')", objGlobal.getConnection());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
                 return false;
             }
-            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail select " + slnoLocal + ",ItemCode,sum(scanqty),sum(scanqty),0.01,'001',actions,'','','','',itemcode from " +
-                    "bfldata.dbo.tmpShopRerturnScanItems where DeviceId='" + objGlobal.getDeviceName() + "' and ScanQty>0 group by ItemCode,actions", objGlobal.getConnection());
+            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail(sn,ItemCode,SendQtyShop,RecdQtyHo,SPrice,Unit,Actions,Status,Dept,FixedBy,RowNo,item_remarks,Upc,Rfid,SerializedCode) " +
+                    "select " + slnoLocal + ",ItemCode,sum(scanqty),sum(scanqty),0.01,'001',actions,'','','','',itemcode,Rfid,SerializedCode from bfldata.dbo.tmpShopRerturnScanItems where " +
+                    "DeviceId='" + objGlobal.getDeviceName() + "' and ScanQty>0 group by ItemCode,actions", objGlobal.getConnection());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
@@ -418,14 +429,16 @@ public class ReceiveShopReturnsControl {
             }
             //cloud ShopReturnHeader
             b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnHeader(sn,ReturnNo,Edate,Category,ShoopName,TrfNo,RetNo,InvNo,TrfIssueNo,UserId,PrepareBy,Remarks,Warehouse) " +
-                    "values (" + slnoCloud + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "')", objGlobal.getCloudCon());
+                    "values (" + slnoCloud + ",'" + entryNo + "','" + objGlobal.getServerDate() + "','" + category + "','" + shopName + "','','','',''," + objGlobal.getUserId() + "," +
+                    "'" + objGlobal.getUserName() + "','" + remarks + "','" + objGlobal.getWarehouse() + "')", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
                 return false;
             }
-            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail select " + slnoCloud + ",ItemCode,sum(scanqty),sum(scanqty),0.01,'001',actions,'','','','',itemcode,'" + entryNo + "' from " +
-                    "bfldata.dbo.tmpShopRerturnScanItems where DeviceId='" + objGlobal.getDeviceName() + "' and ScanQty>0 group by ItemCode,actions", objGlobal.getCloudCon());
+            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail(sn,ItemCode,SendQtyShop,RecdQtyHo,SPrice,Unit,Actions,Status,Dept,FixedBy,RowNo,item_remarks,Upc,ReturnNo) " +
+                    "select " + slnoCloud + ",ItemCode,sum(scanqty),sum(scanqty),0.01,'001',actions,'','','','',itemcode,'" + entryNo + "',Rfid,SerializedCode from bfldata.dbo.tmpShopRerturnScanItems " +
+                    "where DeviceId='" + objGlobal.getDeviceName() + "' and ScanQty>0 group by ItemCode,actions", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();

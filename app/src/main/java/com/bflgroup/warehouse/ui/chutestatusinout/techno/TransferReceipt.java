@@ -50,8 +50,8 @@ public class TransferReceipt {
                 return false;
             }
             if (!dbConnection.insertUpdate("insert into tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName,EPC,SerializedCode) " +
-                    "select itemcode,sum(qty),0.01,'','',''," + objGlobal.getUserId() + ",'',0,'','','" + objGlobal.getDeviceName() + "',EPC,SerializedCode from SortingConformationDetail where TransferNo='' " +
-                    "and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode,isnull(SerializedCode,'')", con)) {
+                    "select itemcode,sum(qty),0.01,'','',''," + objGlobal.getUserId() + ",'',0,'','','" + objGlobal.getDeviceName() + "',Rfid,isnull(SerializedCode,'') from SortingConformationDetail where TransferNo='' " +
+                    "and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode,Rfid,isnull(SerializedCode,'')", con)) {
                 objGlobal.setErrorNo("transferReceipt:002");
                 return false;
             }
@@ -153,7 +153,7 @@ public class TransferReceipt {
             }
             //rfpairdetail
             if (!dbConnection.insertUpdate("update bfldata.dbo.RFPairDetail set TrfNo='" + trfRecNo + "',trfdate='" + objGlobal.getServerDate() + "',PairSn=0 where TrfNo='' and " +
-                    "ShopName='" + shopName + "' and SerializedCode in(select SerializedCode SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
+                    "ShopName='" + shopName + "' and SerializedCode in(select SerializedCode from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
                     "ShopId='" + shopId + "' and isnull(SerializedCode,'')<>'') and isnull(SerializedCode,'')<>''", con)) {
                 con.rollback();
                 objGlobal.setErrorNo("transferReceipt:023");
