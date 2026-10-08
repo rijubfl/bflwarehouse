@@ -436,7 +436,7 @@ public class ReceiveShopReturnsControl {
                 objGlobal.getConnection().rollback();
                 return false;
             }
-            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail(sn,ItemCode,SendQtyShop,RecdQtyHo,SPrice,Unit,Actions,Status,Dept,FixedBy,RowNo,item_remarks,Upc,ReturnNo) " +
+            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail(sn,ItemCode,SendQtyShop,RecdQtyHo,SPrice,Unit,Actions,Status,Dept,FixedBy,RowNo,item_remarks,Upc,ReturnNo,Rfid,SerializedCode) " +
                     "select " + slnoCloud + ",ItemCode,sum(scanqty),sum(scanqty),0.01,'001',actions,'','','','',itemcode,'" + entryNo + "',Rfid,SerializedCode from bfldata.dbo.tmpShopRerturnScanItems " +
                     "where DeviceId='" + objGlobal.getDeviceName() + "' and ScanQty>0 group by ItemCode,actions", objGlobal.getCloudCon());
             if (!b_Result) {
