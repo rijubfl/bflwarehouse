@@ -98,7 +98,10 @@ public class TransferControl {
                     /*if (!validateRfid(true, rs.getString("rfid"), rs.getInt("qty"), selShop)) {
                         return false;
                     }*/
-                    if (!validateRfid(true, rs.getString("serializedCode"), rs.getInt("qty"), selShop)) {
+                    String scan = rs.getString("serializedCode");
+                    if (scan.isEmpty())
+                        scan = rs.getString("RFID");
+                    if (!validateRfid(true, scan, rs.getInt("qty"), selShop)) {
                         return false;
                     }
                 }

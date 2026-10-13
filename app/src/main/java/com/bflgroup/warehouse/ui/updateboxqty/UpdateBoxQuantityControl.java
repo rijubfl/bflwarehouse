@@ -12,6 +12,7 @@ import com.bflgroup.warehouse.db.DBConnection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UpdateBoxQuantityControl {
 
@@ -221,11 +222,54 @@ public class UpdateBoxQuantityControl {
                         return false;
                     }
                 }
+                if (Integer.parseInt(rs.getString("NewBoxQty")) < Integer.parseInt(rs.getString("Qty"))){
+                    int removeQty = Integer.parseInt(rs.getString("Qty")) - Integer.parseInt(rs.getString("NewBoxQty"));
+                    String boxNo = rs.getString("BoxNo");
+                    String contno = (boxNo != null && boxNo.contains("-")) ? boxNo.substring(0, boxNo.indexOf('-')) : "";
+                    if (!contno.isEmpty() && removeQty > 0) {
+                        String itemCode = rs.getString("itemcode");
+                        String[] moveQueries = {
+                                "IF OBJECT_ID('tempdb..#delBP') IS NOT NULL DROP TABLE #delBP",
+                                "CREATE TABLE #delBP (SrlNo VARCHAR(50), RowNo VARCHAR(50), PRIMARY KEY (SrlNo, RowNo))",
+                                // Pick the top N items of this exact box from buildingprocessF
+                                "INSERT INTO #delBP (SrlNo, RowNo) SELECT TOP (" + removeQty + ") SrlNo, RowNo FROM tempdata..buildingprocessF "
+                                        + "WHERE BoxNoF = '" + boxNo + "' AND itemcode = '" + itemCode + "' ORDER BY SrlNo, RowNo",
+                                // Move the matching photos to DELPhotochecking; CmpName = <prefix>_<SrlNo>_<RowNo>
+                                "DELETE p OUTPUT deleted.*, 'ANDRPDA-" + boxNo + "-" + objGlobal.getUserName() + "' INTO ONLINE..DELPhotochecking "
+                                        + "FROM ONLINE..Photochecking p INNER JOIN #delBP d "
+                                        + "ON PARSENAME(REPLACE(p.CmpName, '_', '.'), 2) = d.SrlNo AND PARSENAME(REPLACE(p.CmpName, '_', '.'), 1) = d.RowNo "
+                                        + "WHERE p.contno = '" + contno + "' AND p.upc = '" + itemCode + "'",
+                                // Move the picked items to DELBuildingProcessF
+                                "DELETE b OUTPUT deleted.SrlNo, deleted.RowNo, deleted.BoxNo, deleted.TmpBoxNo, deleted.TypeName, deleted.Gender, deleted.CheckingType, "
+                                        + "deleted.Season, deleted.itemcode, deleted.Quantity, deleted.contNo, deleted.Status, deleted.UserID, deleted.TrnDate, deleted.TrnTime, "
+                                        + "deleted.PalletType, deleted.BoxNoF, deleted.groupcode, deleted.GenBarcode, deleted.userMachine, deleted.BlueBoxTotID, "
+                                        + "deleted.BlueTotException, deleted.LargeBulkyItem, 'ANDRPDA-" + boxNo + "-" + objGlobal.getUserName() + "', "
+                                        + "deleted.LPMDt, deleted.StoreId "
+                                        + "INTO tempdata..DELBuildingProcessF (SrlNo, RowNo, BoxNo, TmpBoxNo, TypeName, Gender, CheckingType, Season, itemcode, Quantity, "
+                                        + "contNo, Status, UserID, TrnDate, TrnTime, PalletType, BoxNoF, groupcode, GenBarcode, userMachine, BlueBoxTotID, "
+                                        + "BlueTotException, LargeBulkyItem, Delremarks, LPMDt, StoreId) "
+                                        + "FROM tempdata..buildingprocessF b INNER JOIN #delBP d ON b.SrlNo = d.SrlNo AND b.RowNo = d.RowNo "
+                                        + "WHERE b.BoxNoF = '" + boxNo + "'",
+                                "DROP TABLE #delBP"
+                        };
+                        for (String moveQuery : moveQueries) {
+                            if (!dbConnection.insertUpdate(moveQuery, objGlobal.getConnection())) {
+                                Log.e("Query4", moveQuery);
+                                objGlobal.getConnection().rollback();
+                                return false;
+                            }
+                        }
+                    }
+
+
+                }
             }
             objGlobal.getConnection().commit();
             objGlobal.getConnection().setAutoCommit(true);
         } catch (Exception e) {
             Log.e("Alert", e.toString());
+            objGlobal.getConnection().rollback();
+            return false;
         }
         return true;
     }
