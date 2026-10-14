@@ -157,14 +157,7 @@ public class TransferFragment extends Fragment {
 
         objTransferGlobal.setRegSIMExclude("");
 
-        List<String> arrTrfType;
-        arrTrfType = new ArrayList<String>();
-        arrTrfType.add("RFID / SerializedCode");//0 R
-        arrTrfType.add("Barcode");//1 B
-        arrTrfType.add("Itemcode");//2 I
-        arrTrfType.add("Box");//3 P
-        arrTrfType.add("ROBO Direct");//4 D
-        arrTrfType.add("Transfer");//5 T
+        List<String> arrTrfType=objTransferControl.loadTransferType();;
         ArrayAdapter<String> arrayAdpTrfType = new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, arrTrfType);
         sp_transfer_type.setAdapter(arrayAdpTrfType);
 
@@ -234,7 +227,9 @@ public class TransferFragment extends Fragment {
                 } else {
                     saredRef.savePrintCopies(sp_transfer_print_copies.getSelectedItem().toString());
                     saredRef.savePrinter(sp_transfer_printer.getSelectedItem().toString());
-                    if (sp_transfer_type.getSelectedItem().toString().equals("RFID / SerializedCode")) {
+                    if (sp_transfer_type.getSelectedItem().toString().equals("SerializedCode")) {
+                        openPopupScanBarcodeRfid();
+                    } else if (sp_transfer_type.getSelectedItem().toString().equals("RFID")) {
                         openPopupScanBarcodeRfid();
                     } else if( sp_transfer_type.getSelectedItem().toString().equals("Barcode")){
                         openPopupScanBarcodeRfid();
@@ -854,7 +849,10 @@ public class TransferFragment extends Fragment {
             return false;
         }
         tv_transfer_popup_barcode_rfid_last_scan.setText(scan);
-        if (sp_transfer_type.getSelectedItem().toString().equals("RFID / SerializedCode")) {
+        if (sp_transfer_type.getSelectedItem().toString().equals("SerializedCode")) {
+            b_Result = objTransferControl.validateSerializedCode(false, scan, qty, shop);
+        }
+        if (sp_transfer_type.getSelectedItem().toString().equals("RFID")) {
             b_Result = objTransferControl.validateRfid(false, scan, qty, shop);
         }
         if (sp_transfer_type.getSelectedItem().toString().equals("Barcode")) {
