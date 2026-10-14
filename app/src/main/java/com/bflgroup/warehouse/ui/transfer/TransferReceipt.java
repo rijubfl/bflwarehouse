@@ -39,7 +39,7 @@ public class TransferReceipt {
             while (rs.next()) {
                 if (!dbConnection.insertUpdate("insert into robotics.dbo.tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName,EPC,SerializedCode) " +
                         "values('" + rs.getString("itemcode") + "'," + rs.getInt("qty") + ",0.01,'','',''," + objGlobal.getUserId() + ",'',0,'',''," +
-                        "'" + objGlobal.getDeviceName() + "','" + rs.getString("rfid") + "','" + rs.getString("SerializedCode") + "')", conRob)) {
+                        "'" + objGlobal.getDeviceName() + "'," + sqlValue(rs.getString("rfid")) + "," + sqlValue(rs.getString("SerializedCode")) + ")", conRob)) {
                     objGlobal.setErrorNo("transferReceipt:002");
                     return false;
                 }
@@ -288,6 +288,11 @@ public class TransferReceipt {
             objGlobal.setErrorMessage(objGlobal.getErrorNo() + ":transferReceipt:exception:3: " + exception);
             return false;
         }
+    }
+
+    // Returns NULL for a missing value, otherwise the quoted string
+    private static String sqlValue(String value) {
+        return (value == null || value.isEmpty() || value.equalsIgnoreCase("null")) ? "NULL" : "'" + value + "'";
     }
 
     private String getCartonNo(Connection conRob, String dataName, String delDate, String costCodeTo, String locCodeTo) {

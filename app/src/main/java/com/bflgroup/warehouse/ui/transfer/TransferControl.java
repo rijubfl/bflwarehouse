@@ -82,6 +82,11 @@ public class TransferControl {
         }
     }
 
+    // Returns NULL for a missing value, otherwise the quoted string
+    private static String sqlValue(String value) {
+        return (value == null || value.isEmpty() || value.equalsIgnoreCase("null")) ? "NULL" : "'" + value + "'";
+    }
+
     public boolean validateTransfer(String scanType, String selShop) {
         if (!checkConnection()) {
             return false;
@@ -99,7 +104,7 @@ public class TransferControl {
                         return false;
                     }*/
                     String scan = rs.getString("serializedCode");
-                    if (scan.isEmpty())
+                    if (scan == null || scan.isEmpty())
                         scan = rs.getString("RFID");
                     if (!validateRfid(true, scan, rs.getInt("qty"), selShop)) {
                         return false;
@@ -341,13 +346,13 @@ public class TransferControl {
                 return false;
             }
             if (!valid) {
-                rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and (rfid='" + rfid + "' or SerializedCode='" + serializedCode + "')", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and (rfid=" + sqlValue(rfid) + " or SerializedCode=" + sqlValue(serializedCode) + ")", objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("RFID/SerializedCode Already scan, " + rfid);
                     return false;
                 }
                 if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Description,Qty,ScanTime,SerializedCode) values('" + objGlobal.getDeviceName() + "'," +
-                        "'" + shopName + "','" + rfid + "','" + barcode + "','" + itemCode + "','" + description + "'," + qty + ",convert(varchar,getdate(),8),'" + serializedCode + "')", objGlobal.getConnection())) {
+                        "'" + shopName + "'," + sqlValue(rfid) + ",'" + barcode + "','" + itemCode + "','" + description + "'," + qty + ",convert(varchar,getdate(),8)," + sqlValue(serializedCode) + ")", objGlobal.getConnection())) {
                     return false;
                 }
                 objTransferGlobal.setScanBarcode(barcode);
