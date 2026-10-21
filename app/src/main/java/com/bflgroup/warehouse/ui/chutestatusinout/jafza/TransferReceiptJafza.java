@@ -235,12 +235,12 @@ public class TransferReceiptJafza {
                     objGlobal.getDelDate() + "\",\"Remarks\":\"" + toteId + "\",\"PreparedBy\":\"" + objGlobal.getUserName() + "\",\"BoxNo\":\"" + cartonNo + "\",\"Quantity\":\"" + totalQty + "\"}");
             return true;
         } catch (Exception exception) {
-            try {
-                con.rollback();
-            } catch (SQLException sqlException) {
-                objGlobal.setErrorMessage("transferReceipt:sqlException:1: " + sqlException.toString());
-                return false;
-            }
+//            try {
+//                con.rollback();
+//            } catch (SQLException sqlException) {
+//                objGlobal.setErrorMessage("transferReceipt:sqlException:1: " + sqlException.toString());
+//                return false;
+//            }
             objGlobal.setErrorMessage(":transferReceipt:exception:2: " + exception.toString());
             return false;
         }

@@ -326,10 +326,10 @@ public class BuildingControl {
                 conRobo.rollback();
                 objGlobal.getConnection().rollback();
             } catch (SQLException sqlException) {
-                objGlobal.setErrorMessage("transferReceipt:sqlException:1: " + sqlException.toString());
+                objGlobal.setErrorMessage("buildingControl:sqlException:1: " + sqlException.toString());
                 return false;
             }
-            objGlobal.setErrorMessage(":transferReceipt:exception:2: " + exception.toString());
+            objGlobal.setErrorMessage(":buildingControl:exception:2: " + exception.toString());
             return false;
         }
     }

@@ -438,7 +438,7 @@ public class TransferControl {
                 return false;
             }
             if (!valid) {
-                rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and rfid=" + sqlValue(rfid) , objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and rfid=" + sqlValue(rfid), objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("RFID/SerializedCode Already scan, " + rfid);
                     return false;

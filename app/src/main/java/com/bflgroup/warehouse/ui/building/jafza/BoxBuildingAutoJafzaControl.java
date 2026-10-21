@@ -308,10 +308,10 @@ public class BoxBuildingAutoJafzaControl {
             try {
                 conRobo.rollback();
             } catch (SQLException sqlException) {
-                objGlobal.setErrorMessage("transferReceipt:sqlException:1: " + sqlException);
+                objGlobal.setErrorMessage(":boxBuildingAutoJafzaControl:sqlException:1: " + sqlException);
                 return false;
             }
-            objGlobal.setErrorMessage(":transferReceipt:exception:2: " + exception);
+            objGlobal.setErrorMessage(":boxBuildingAutoJafzaControl:exception:2: " + exception);
             return false;
         }
     }

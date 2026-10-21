@@ -232,7 +232,7 @@ public class TransferReceipt {
             try {
                 con.rollback();
             } catch (SQLException sqlException) {
-                objGlobal.setErrorMessage("transferReceipt:sqlException:1: " + sqlException);
+                objGlobal.setErrorMessage("technoTransferReceipt:sqlException:1: " + sqlException);
                 return false;
             }
             objGlobal.setErrorMessage(":transferReceipt:exception:2: " + exception);
