@@ -331,12 +331,13 @@ public class ReceiveShopReturnsControl {
             if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpShopRerturnScanItems where deviceid='" + objGlobal.getDeviceName() + "'", objGlobal.getCloudCon())) {
                 return false;
             }
-            rs = dbConnection.getResultSet("select DeviceId,itemcode,itemname,TrfQty=sum(TrfQty),ScanQty=sum(ScanQty),Actions from bfldata.dbo.tmpShopRerturnScanItems where " +
-                    "deviceid='" + objGlobal.getDeviceName() + "' group by DeviceId,itemcode,itemname,Actions", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select DeviceId,itemcode,itemname,TrfQty=sum(TrfQty),ScanQty=sum(ScanQty),Actions,Rfid,SerializedCode from bfldata.dbo.tmpShopRerturnScanItems where " +
+                    "deviceid='" + objGlobal.getDeviceName() + "' group by DeviceId,itemcode,itemname,Actions,Rfid,SerializedCode", objGlobal.getConnection());
             while (rs.next()) {
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpShopRerturnScanItems(DeviceId,itemcode,itemname,TrfQty,ScanQty,Actions) " +
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpShopRerturnScanItems(DeviceId,itemcode,itemname,TrfQty,ScanQty,Actions,Rfid,SerializedCode) " +
                         "values('" + objGlobal.getDeviceName() + "','" + rs.getString("itemcode").toString() + "',''," + rs.getInt("TrfQty") + "," +
-                        "" + rs.getInt("ScanQty") + ",'" + rs.getString("Actions").toString() + "')", objGlobal.getCloudCon())) {
+                        "" + rs.getInt("ScanQty") + ",'" + rs.getString("Actions").toString() + "','" + rs.getString("Rfid") + "'," +
+                        "'" + rs.getString("SerializedCode") + "')", objGlobal.getCloudCon())) {
                     return false;
                 }
                 if (!b_Result) {
@@ -374,22 +375,22 @@ public class ReceiveShopReturnsControl {
             objGlobal.getCloudCon().setAutoCommit(false);
             objGlobal.getConnection().setAutoCommit(false);
 
-            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.scan from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.EntryNo=b.EntryNo " +
-                    "and b.EntryNo='" + entryNo + "' and isnull(b.SerializedCode,'')<>'' and a.SerializedCode=b.SerializedCode", objGlobal.getCloudCon());
+            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.scanqty from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                    "b.EntryNo='" + entryNo + "' and isnull(b.SerializedCode,'')<>'' and a.SerializedCode=b.SerializedCode and a.ScanQty>0", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
                 return false;
             }
-            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.scan from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.DeviceId='" + objGlobal.getDeviceName() + "' and a.EntryNo=b.EntryNo " +
-                    "and b.EntryNo='" + entryNo + "' and isnull(b.SerializedCode,'')='' and isnull(b.rfid,'')<>'' and a.rfid=b.rfid", objGlobal.getCloudCon());
+            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.scanqty from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.DeviceId='" + objGlobal.getDeviceName() + "' and " +
+                    "b.EntryNo='" + entryNo + "' and isnull(b.SerializedCode,'')='' and isnull(b.rfid,'')<>'' and a.rfid=b.rfid and a.ScanQty>0", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
                 return false;
             }
-            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.scan from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.DeviceId='" + objGlobal.getDeviceName()  + "' and a.EntryNo=b.EntryNo " +
-                    "and b.EntryNo='" + entryNo + "' and isnull(b.SerializedCode,'')='' and isnull(b.rfid,'')='' and a.itemcode=b.itemcode", objGlobal.getCloudCon());
+            b_Result = dbConnection.insertUpdate("update StoreDetail set RecQty=a.scanqty from bfldata.dbo.tmpShopRerturnScanItems a,StoreDetail b where a.DeviceId='" + objGlobal.getDeviceName()  + "' and " +
+                    "b.EntryNo='" + entryNo + "' and isnull(b.SerializedCode,'')='' and isnull(b.rfid,'')='' and a.itemcode=b.itemcode and a.ScanQty>0", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
@@ -419,9 +420,9 @@ public class ReceiveShopReturnsControl {
                 objGlobal.getConnection().rollback();
                 return false;
             }
-            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail(sn,ItemCode,SendQtyShop,RecdQtyHo,SPrice,Unit,Actions,Status,Dept,FixedBy,RowNo,item_remarks,Upc,Rfid,SerializedCode) " +
+            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail(sn,ItemCode,SendQtyShop,RecdQtyHo,SPrice,Unit,Actions,Status,Dept,FixedBy,item_remarks,Upc,Rfid,SerializedCode) " +
                     "select " + slnoLocal + ",ItemCode,sum(scanqty),sum(scanqty),0.01,'001',actions,'','','','',itemcode,Rfid,SerializedCode from bfldata.dbo.tmpShopRerturnScanItems where " +
-                    "DeviceId='" + objGlobal.getDeviceName() + "' and ScanQty>0 group by ItemCode,actions", objGlobal.getConnection());
+                    "DeviceId='" + objGlobal.getDeviceName() + "' and ScanQty>0 group by ItemCode,actions,Rfid,SerializedCode", objGlobal.getConnection());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
@@ -436,9 +437,9 @@ public class ReceiveShopReturnsControl {
                 objGlobal.getConnection().rollback();
                 return false;
             }
-            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail(sn,ItemCode,SendQtyShop,RecdQtyHo,SPrice,Unit,Actions,Status,Dept,FixedBy,RowNo,item_remarks,Upc,ReturnNo,Rfid,SerializedCode) " +
+            b_Result = dbConnection.insertUpdate("insert into BFLDATA.dbo.ShopReturnDetail(sn,ItemCode,SendQtyShop,RecdQtyHo,SPrice,Unit,Actions,Status,Dept,FixedBy,item_remarks,Upc,ReturnNo,Rfid,SerializedCode) " +
                     "select " + slnoCloud + ",ItemCode,sum(scanqty),sum(scanqty),0.01,'001',actions,'','','','',itemcode,'" + entryNo + "',Rfid,SerializedCode from bfldata.dbo.tmpShopRerturnScanItems " +
-                    "where DeviceId='" + objGlobal.getDeviceName() + "' and ScanQty>0 group by ItemCode,actions", objGlobal.getCloudCon());
+                    "where DeviceId='" + objGlobal.getDeviceName() + "' and ScanQty>0 group by ItemCode,actions,Rfid,SerializedCode", objGlobal.getCloudCon());
             if (!b_Result) {
                 objGlobal.getCloudCon().rollback();
                 objGlobal.getConnection().rollback();
