@@ -117,7 +117,6 @@ public class Controls {
                 objGlobal.setErrorMessage("Transfer Prefix not set, Please Contact IT");
                 return false;
             }
-
             //robo api details
             String roboChuteStatusAPI = "", roboChuteMapingAPI = "", roboSortTaskAPI = "", roboLabelInfoAPI = "", roboServerIP = "";
             String roboChuteStatusAPIToken = "", roboChuteMapingAPIToken = "";
