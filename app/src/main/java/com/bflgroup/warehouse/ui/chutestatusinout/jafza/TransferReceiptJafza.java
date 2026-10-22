@@ -96,16 +96,17 @@ public class TransferReceiptJafza {
                 objGlobal.setErrorNo("transferReceipt:008");
                 return false;
             }
-            if(lpmDt.isEmpty()) {
-                rs = dbConnection.getResultSet("SELECT LpmDt=CONVERT(varchar(10),DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0),103)", con);
-                if (rs.next()) {
-                    lpmDt = rs.getString("LpmDt");
-                }
-            }
             if(oraPoNo.isEmpty()) {
                 rs = dbConnection.getResultSet("select top 1 LpmDt,oraPoNo from ROBOTICS.dbo.tmpTransfer where DeviceName='" + objGlobal.getDeviceName() + "'", con);
                 if (rs.next()) {
                     oraPoNo = rs.getString("oraPoNo");
+                    lpmDt = rs.getString("LpmDt");
+                }
+            }
+            if(lpmDt.isEmpty()) {
+                rs = dbConnection.getResultSet("SELECT LpmDt=CONVERT(varchar(10),DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0),103)", con);
+                if (rs.next()) {
+                    lpmDt = rs.getString("LpmDt");
                 }
             }
             objInOutJafzaGlobal.setChuteNo(getChuteNo(shopId));
