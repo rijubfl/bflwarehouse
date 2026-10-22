@@ -429,7 +429,7 @@ public boolean transferReceipt(String chuteId, String toteId, String shopId,
                             "DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0),103)";
 
             rs = dbConnection.getResultSet(
-                    currentQuery, objGlobal.getConnection());
+                    currentQuery, con);
 
             if (rs == null) {
                 throw new SQLException("ResultSet is NULL");
@@ -452,7 +452,7 @@ public boolean transferReceipt(String chuteId, String toteId, String shopId,
                             "where DeviceName='" + objGlobal.getDeviceName() + "'";
 
             rs = dbConnection.getResultSet(
-                    currentQuery, objGlobal.getConnection());
+                    currentQuery, con);
 
             if (rs == null) {
                 throw new SQLException("ResultSet is NULL");
