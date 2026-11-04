@@ -227,7 +227,10 @@ public class TransferFragment extends Fragment {
                 } else {
                     saredRef.savePrintCopies(sp_transfer_print_copies.getSelectedItem().toString());
                     saredRef.savePrinter(sp_transfer_printer.getSelectedItem().toString());
-                    if (sp_transfer_type.getSelectedItem().toString().equals("SerializedCode")) {
+                    if (sp_transfer_type.getSelectedItem().toString().equals("RFID/QR")) {
+                        openPopupScanBarcodeRfid();
+                    }
+                    else if (sp_transfer_type.getSelectedItem().toString().equals("SerializedCode")) {
                         openPopupScanBarcodeRfid();
                     } else if (sp_transfer_type.getSelectedItem().toString().equals("RFID")) {
                         openPopupScanBarcodeRfid();
@@ -849,6 +852,9 @@ public class TransferFragment extends Fragment {
             return false;
         }
         tv_transfer_popup_barcode_rfid_last_scan.setText(scan);
+        if (sp_transfer_type.getSelectedItem().toString().equals("RFID/QR")) {
+            b_Result = objTransferControl.validateRfidOrSerializedCode(false, scan, qty, shop);
+        }
         if (sp_transfer_type.getSelectedItem().toString().equals("SerializedCode")) {
             b_Result = objTransferControl.validateSerializedCode(false, scan, qty, shop);
         }

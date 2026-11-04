@@ -42,7 +42,7 @@ public class AddOrRemoveBoxInPalletFragment extends Fragment implements View.OnC
     private RadioButton rbAdd;
     private RadioButton rbRemove;
     private Button btnScan;
-    private List<BoxInOutRequestData> boxInOutDataList;
+    private List<BoxInOutRequestData> boxInOutDataList = new ArrayList<>();
     private List<BoxInOutRequestData> newBoxInOutDataList = new ArrayList<>();
     private ListView lvBoxInOut;
     private Button btClear;
@@ -342,6 +342,8 @@ public class AddOrRemoveBoxInPalletFragment extends Fragment implements View.OnC
             status = false;
             okMessage("Error!!", "Please enter the box number");
             vibrate(500);
+        } else if (!validateFields()) {
+            status = false;
         } else if (boxInAndOutControl.boxCheckInTempDB(etBoxNo.getText().toString())) {
             if (rbAdd.isChecked()) {
                 status = false;
@@ -358,7 +360,7 @@ public class AddOrRemoveBoxInPalletFragment extends Fragment implements View.OnC
             requestFocusForEditText(etBoxNo);
             vibrate(500);
         } else if (rbAdd.isChecked()) {
-            if (!boxInAndOutControl.addBoxChecking(boxInOutDataList.get(0).selectedPalletNo, etBoxNo.getText().toString())) {
+            if (!boxInAndOutControl.addBoxChecking(etPalletNo.getText().toString(), etBoxNo.getText().toString())) {
                 status = false;
                 okMessage("Error!!", "Cannot proceed,Mix pallet type not allowed");
                 etBoxNo.setText("");

@@ -473,13 +473,13 @@ public class AddOrRemoveTransferInPalletFragment extends Fragment implements Vie
                         if (i == newBoxInOutDataList.size() - 1) {
                             closeWaitDialog();
                             if (!boxes.toString().isEmpty())
-                                successText = "Success!! \n" + boxes + " are added to the pallet - " + newBoxInOutDataList.get(i).selectedPalletNo + "\n";
+                                successText = "Success!! \n" + boxes + "are added to the pallet - " + newBoxInOutDataList.get(i).selectedPalletNo + "\n";
                             if (!failedBoxes.toString().isEmpty())
-                                failureText = "Failed!! \n" + failedBoxes + " are failed to add to the pallet - " + newBoxInOutDataList.get(i).selectedPalletNo + "\n";
+                                failureText = "Failed!! \n" + failedBoxes + "are failed to add to the pallet - " + newBoxInOutDataList.get(i).selectedPalletNo + "\n";
                             if (!removeBoxes.toString().isEmpty())
-                                removeSuccessText = "Success!! \n" + removeBoxes + " are removed from the pallet - " + newBoxInOutDataList.get(i).selectedPalletNo + "\n";
+                                removeSuccessText = "Success!! \n" + removeBoxes + "are removed from the pallet - " + newBoxInOutDataList.get(i).selectedPalletNo + "\n";
                             if (!removeFailedBoxes.toString().isEmpty())
-                                removeFailureText = "Failed!! \n" + removeFailureText + " are failed to remove from the pallet - " + newBoxInOutDataList.get(i).selectedPalletNo + "\n";
+                                removeFailureText = "Failed!! \n" + removeFailureText + "are failed to remove from the pallet - " + newBoxInOutDataList.get(i).selectedPalletNo + "\n";
 
                             showAlert("Message", successText + failureText + removeSuccessText + removeFailureText, 0);
                             clearFields();

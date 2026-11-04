@@ -118,6 +118,15 @@ public class TransferControl {
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
             while (rs.next()) {
                 rcFound = true;
+                if (scanType.equals("RFID/QR")) {
+                    String scan = rs.getString("SerializedCode");
+                    if (scan == null || scan.isEmpty()) {
+                        scan = rs.getString("RFID");
+                    }
+                    if (!validateRfidOrSerializedCode(true, scan, rs.getInt("qty"), selShop)) {
+                        return false;
+                    }
+                }
                 if (scanType.equals("RFID / SerializedCode")) {
                     /*if (!validateRfid(true, rs.getString("rfid"), rs.getInt("qty"), selShop)) {
                         return false;
@@ -385,6 +394,14 @@ public class TransferControl {
     }
 
     public boolean validateRfid(boolean valid, String scan, int qty, String selShop) {
+        return validatePairCode(valid, scan, qty, selShop, false);
+    }
+
+    public boolean validateRfidOrSerializedCode(boolean valid, String scan, int qty, String selShop) {
+        return validatePairCode(valid, scan, qty, selShop, true);
+    }
+
+    private boolean validatePairCode(boolean valid, String scan, int qty, String selShop, boolean allowSerializedCode) {
         String description = "", shopName = "", itemCode = "", trfNo = "", trfDate = "", barcode = "", rfid ="",serializedCode="";
         if (!checkConnection()) {
             return false;
@@ -399,7 +416,9 @@ public class TransferControl {
             }
             if (objGlobal.getWorkLocation().equals("UAE")) {
                 rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                        "rfid='" + scan + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
+                        "(rfid=" + sqlValue(scan.replace("'", "''")) +
+                        (allowSerializedCode ? " OR SerializedCode=" + sqlValue(scan.replace("'", "''")) : "") +
+                        ") order by entrydate desc,trntime desc", objGlobal.getConnection());
                 if (rs.next()) {
                     rfid=rs.getString("rfid");
                     serializedCode=rs.getString("serializedCode");
@@ -413,7 +432,9 @@ public class TransferControl {
             }
             else{
                 rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from "+objGlobal.getCountryDbName()+".dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                        "rfid='" + scan + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
+                        "(rfid=" + sqlValue(scan.replace("'", "''")) +
+                        (allowSerializedCode ? " OR SerializedCode=" + sqlValue(scan.replace("'", "''")) : "") +
+                        ") order by entrydate desc,trntime desc", objGlobal.getConnection());
                 if (rs.next()) {
                     rfid=rs.getString("rfid");
                     serializedCode=rs.getString("serializedCode");
@@ -438,7 +459,11 @@ public class TransferControl {
                 return false;
             }
             if (!valid) {
-                rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and rfid=" + sqlValue(rfid), objGlobal.getConnection());
+                String duplicateCondition = "rfid=" + sqlValue(rfid);
+                if (allowSerializedCode) {
+                    duplicateCondition = "(" + duplicateCondition + " OR SerializedCode=" + sqlValue(serializedCode) + ")";
+                }
+                rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and " + duplicateCondition, objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setErrorMessage("RFID/SerializedCode Already scan, " + rfid);
                     return false;

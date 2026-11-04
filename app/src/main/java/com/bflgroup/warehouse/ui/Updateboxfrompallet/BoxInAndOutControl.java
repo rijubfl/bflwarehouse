@@ -181,11 +181,24 @@ public class BoxInAndOutControl {
     public boolean addBoxChecking(String palletNo, String boxNo) {
         String cShopEligiblePlt = "";
         String cShopEligibleBox = "";
-        String query = "Select ShopEligible from BFLDATA..PalletType where PalletType in(select top 1 PalletType from usa.dbo.vupcboxdet where palletno='" + palletNo + "')";
+        String query = "select top 1 ShopEligible=isnull(p.ShopEligible, '') from (" +
+                "select PalletType, Priority=0 from usa.dbo.vupcboxdet where palletno='" + palletNo + "' " +
+                "union all select h.PalletType, Priority=1 from ITWORK..tmpBoxInAndOut t " +
+                "inner join usa.dbo.upcboxhead h on h.BoxNo=t.BoxNo " +
+                "where t.SelectedPalletNo='" + palletNo + "' and t.DeviceId='" + objGlobal.getDeviceName() + "' " +
+                "and t.ActivityType=1) referenceBoxes " +
+                "left join BFLDATA..PalletType p on p.PalletType=referenceBoxes.PalletType " +
+                "order by referenceBoxes.Priority";
         ResultSet rs = dbConnection.getResultSet(query, objGlobal.getConnection());
+        if (rs == null) {
+            return false;
+        }
         try {
             if (rs.next()) {
                 cShopEligiblePlt = rs.getString("ShopEligible");
+            } else {
+                // The first box establishes the type of an empty pallet.
+                return true;
             }
             String query1 = "Select ShopEligible from BFLDATA..PalletType where PalletType in(select PalletType from usa.dbo.upcboxhead where (Boxno='" + boxNo + "' or toteid='" + boxNo + "') and closed = 'N')";
             ResultSet rs1 = dbConnection.getResultSet(query1, objGlobal.getConnection());

@@ -450,7 +450,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
                             if (dialog.isShowing()) dialog.dismiss();
                             okMessage("Chute status", "sortTask:objChuteCheckInCheckOutControl.updateChuteApi:onSuccess:" + objGlobal.getErrorMessage());
                         } else {
-                            if (!sortTask(chuteId, totId, shopId, shopName)) {
+                            if (!sortTask(chuteId, totId, shopName)) {
                                 clearAll();
                                 vibrate(500);
                                 if (dialog.isShowing()) dialog.dismiss();
@@ -573,12 +573,7 @@ public class ChuteCheckInCheckOutJafzaFragment extends Fragment {
         myDialog.show();
     }
 
-    private boolean sortTask(String chuteId, String totId, String shopId, String shopName) {
-        b_Result = objChuteCheckInCheckOutJafzaControl.saveChuteOut(chuteId, totId, shopId, shopName); //transfer receipt
-        if (!b_Result) {
-            okMessage("Chute Status IN", "ERR NO: " + objGlobal.getErrorNo() + ", " + objGlobal.getErrorMessage());
-            return false;
-        }
+    private boolean sortTask(String chuteId, String totId, String shopName) {
         tv_chute_status_inout_trfno.setText(chuteId + "  ;  " + totId + "  ;  " + objInOutJafzaGlobal.getTrfRecNo() + "  ;  " + objInOutJafzaGlobal.getTrfTotQty());
         tv_chute_status_inout_tot_qty.setText(String.valueOf(objInOutJafzaGlobal.getTrfTotQty()));
         b_Result = objChuteCheckInCheckOutJafzaControl.forPrint(shopName, objInOutJafzaGlobal.getTrfRecNo());

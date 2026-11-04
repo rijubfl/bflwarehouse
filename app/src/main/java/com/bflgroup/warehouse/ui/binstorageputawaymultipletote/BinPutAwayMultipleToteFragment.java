@@ -155,7 +155,7 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
                     toteId = objControls.replaceString(toteId);
                     b_Result = objBinPutAwayMultipleToteControl.validateToteid(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(), sp_bin_put_away_multiple_inout.getSelectedItem().toString(), toteId, location);
                     if (!b_Result) {
-                        okMessage("BinPutAwayMultipleToteFragment:et_bin_put_away_multiple_toteid", objGlobal.getErrorMessage());
+                        okMessage("Message", objGlobal.getErrorMessage());
                         vibrate(250);
                     }
                     ArrayList<BinPutAwayMultipleTotePendingSaveTicket> listBinPutAwayMultipleTotePendingSaveTicket = objBinPutAwayMultipleToteControl.loadBinPutAwayMultipleTotePendingSave();
@@ -177,7 +177,7 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
                     location = objControls.replaceString(location);
                     b_Result = objBinPutAwayMultipleToteControl.validateLocation(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(), location, sp_bin_put_away_multiple_inout.getSelectedItem().toString());
                     if (!b_Result) {
-                        okMessage("BinPutAwayMultipleToteFragment:et_bin_put_away_multiple_binlocation", objGlobal.getErrorMessage());
+                        okMessage("Message", objGlobal.getErrorMessage());
                         vibrate(250);
                         et_bin_put_away_multiple_binlocation.setText("");
                         et_bin_put_away_multiple_binlocation.setEnabled(true);
@@ -274,7 +274,7 @@ public class BinPutAwayMultipleToteFragment extends Fragment {
             et_bin_put_away_multiple_binlocation.setEnabled(true);
             sp_bin_put_away_multiple_inout.setEnabled(true);
         }  catch(Exception ex) {
-            objGlobal.setErrorMessage("BinPutAwayMultipleToteFragment:clearAll:" + ex.toString());
+            objGlobal.setErrorMessage( ex.toString() + "\n\n Function : Clear all");
             return false;
         }
         return true;

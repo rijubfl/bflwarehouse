@@ -28,6 +28,8 @@ import com.bflgroup.warehouse.db.DBConnection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -44,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     private Spinner signInWarehouse;
     private Button signInButton;
     private ProgressDialog mWaitDialog;
+    private final ExecutorService loginExecutor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,38 +83,64 @@ public class LoginActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean result;
-                mWaitDialog = ProgressDialog.show(LoginActivity.this, null, "Connecting...");
-                mWaitDialog.setCancelable(false);
-                result = setLocate(signInWarehouse.getSelectedItem().toString());
-                if (result) {
-                    result = dbConnection.connectDb();
-                    if (result) {
-                        result = dbConnection.connectCloudDb();
-                        if (result) {
-                            result = objControls.getControlMain();//assign global values
-                            if (result) {
-                                result = validateUser();//check the user details
-                                if (result) {
-                                    result = objControls.getControl();//assign global values
-                                    if (result) {
-                                        Intent intent;
-                                        objGlobal.setDelDate(getDelDate());
-                                        intent = new Intent(LoginActivity.this, MainActivity.class);
-                                        startActivity(intent);
-                                        closeWaitDialog();
-                                        finish();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                if (!result) {
-                    closeWaitDialog();
-                    okMessage("Login", objGlobal.getErrorMessage());
+                Object selectedWarehouse = signInWarehouse.getSelectedItem();
+                if (selectedWarehouse == null || TextUtils.isEmpty(selectedWarehouse.toString().trim())) {
+                    okMessage("Login", "Please select a warehouse");
+                    signInWarehouse.requestFocus();
                     vibrate(500);
+                    return;
                 }
+                String username = signInUserId.getText().toString();
+                String password = signInPasssword.getText().toString();
+                if (TextUtils.isEmpty(username)) {
+                    okMessage("Login", "Please enter username");
+                    signInUserId.requestFocus();
+                    return;
+                }
+                if (TextUtils.isEmpty(password)) {
+                    okMessage("Login", "Please enter password");
+                    signInPasssword.requestFocus();
+                    return;
+                }
+                if (!signInButton.isEnabled()) return;
+                signInButton.setEnabled(false);
+                mWaitDialog = new ProgressDialog(LoginActivity.this);
+                mWaitDialog.setTitle("Signing in");
+                mWaitDialog.setMessage("Please wait...");
+                mWaitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                mWaitDialog.setIndeterminate(true);
+                mWaitDialog.setCancelable(false);
+                mWaitDialog.show();
+                String warehouse = selectedWarehouse.toString().trim();
+                loginExecutor.execute(() -> {
+                    boolean result;
+                    try {
+                        result = setLocate(warehouse)
+                                && dbConnection.connectDb()
+                                && dbConnection.connectCloudDb()
+                                && objControls.getControlMain()
+                                && validateUser(username, password)
+                                && objControls.getControl();
+                        if (result) objGlobal.setDelDate(getDelDate());
+                    } catch (Exception exception) {
+                        objGlobal.setErrorMessage("Unable to sign in. Please try again.");
+                        result = false;
+                    }
+                    boolean loginSucceeded = result;
+                    String errorMessage = objGlobal.getErrorMessage();
+                    runOnUiThread(() -> {
+                        if (isFinishing() || isDestroyed()) return;
+                        closeWaitDialog();
+                        signInButton.setEnabled(true);
+                        if (loginSucceeded) {
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
+                        } else {
+                            okMessage("Login", errorMessage);
+                            vibrate(500);
+                        }
+                    });
+                });
             }
         });
     }
@@ -160,6 +189,13 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        closeWaitDialog();
+        loginExecutor.shutdownNow();
+        super.onDestroy();
+    }
+
     private void closeWaitDialog() {
         if (mWaitDialog != null) {
             mWaitDialog.dismiss();
@@ -167,18 +203,22 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public boolean validateUser() {
+    private boolean isVersionAtLeast(String installedVersion, String requiredVersion) {
+        String[] installedParts = installedVersion.trim().split("\\.", -1);
+        String[] requiredParts = requiredVersion.trim().split("\\.", -1);
+        int partCount = Math.max(installedParts.length, requiredParts.length);
+        for (int i = 0; i < partCount; i++) {
+            int installedPart = i < installedParts.length ? Integer.parseInt(installedParts[i]) : 0;
+            int requiredPart = i < requiredParts.length ? Integer.parseInt(requiredParts[i]) : 0;
+            if (installedPart != requiredPart) {
+                return installedPart > requiredPart;
+            }
+        }
+        return true;
+    }
+
+    private boolean validateUser(String username, String password) {
         String pdaVerActive = "", pdaVerDb = "";
-        if (TextUtils.isEmpty(signInUserId.getText())) {
-            objGlobal.setErrorMessage("Please enter username");
-            signInUserId.requestFocus();
-            return false;
-        }
-        if (TextUtils.isEmpty(signInPasssword.getText())) {
-            objGlobal.setErrorMessage("Please enter password");
-            signInPasssword.requestFocus();
-            return false;
-        }
         if (!deviceInfo()) return false;
         try {
             rs = dbConnection.getResultSet("select * from BFLDATA.Dbo.appversion where app='BFLWarehouse'", objGlobal.getCloudCon());
@@ -187,13 +227,13 @@ public class LoginActivity extends AppCompatActivity {
                 pdaVerDb = rs.getString("version");
             }
             if (pdaVerActive.equals("Y")) {
-                if (!pdaVerDb.equals(getApplicationContext().getString(R.string.app_version))) {
-                    objGlobal.setErrorMessage("Pls check the version. The latest version is - " + pdaVerDb);
+                if (!isVersionAtLeast(getApplicationContext().getString(R.string.app_version), pdaVerDb)) {
+                    objGlobal.setErrorMessage("Please update the app. Minimum required version is - " + pdaVerDb);
                     return false;
                 }
             }
             if (objGlobal.getWorkLocation().equals("3PL")) {
-                query = "select userid,username,SealPrint,FcCode,PrntName,empCode=username,Shop from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
+                query = "select userid,username,SealPrint,FcCode,PrntName,empCode=username,Shop from pdausers a where username='" + username + "' and pass='" + password + "'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setUserId(rs.getInt("userid"));
@@ -222,7 +262,7 @@ public class LoginActivity extends AppCompatActivity {
                     return false;
                 }
             } else {
-                query = "select userid,username,SealPrint,FcCode,PrntName,allB=isnull(UserAllowMixCategoryBuild,'N'),empCode=(select RecStartingNo from fabsmain.dbo.[user] where userid=a.mainuserid) from pdausers a where username='" + signInUserId.getText() + "' and pass='" + signInPasssword.getText() + "'";
+                query = "select userid,username,SealPrint,FcCode,PrntName,allB=isnull(UserAllowMixCategoryBuild,'N'),empCode=(select RecStartingNo from fabsmain.dbo.[user] where userid=a.mainuserid) from pdausers a where username='" + username + "' and pass='" + password + "'";
                 rs = dbConnection.getResultSet(query, objGlobal.getConnection());
                 if (rs.next()) {
                     objGlobal.setUserId(rs.getInt("userid"));

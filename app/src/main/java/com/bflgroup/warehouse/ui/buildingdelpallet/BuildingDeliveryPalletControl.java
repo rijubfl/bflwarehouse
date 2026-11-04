@@ -12,6 +12,7 @@ import com.bflgroup.warehouse.comm.Global;
 import com.bflgroup.warehouse.db.DBConnection;
 import com.bflgroup.warehouse.ui.buildingdelpallet.models.ShopInfo;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -72,10 +73,20 @@ public class BuildingDeliveryPalletControl {
         List<ShopInfo> shopNames = new ArrayList<>();
         try {
             if (objGlobal.getCountryCode().equals("UAE")) {
+                Connection conRob = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(), "BFLDATA");
+                if (conRob == null) {
+                    objGlobal.setErrorMessage("Connection error");
+                    return null;
+                }
                 rs = dbConnection.getResultSet("select ShopName,Dataname from bfldata.dbo.TransferNoReturn where trfno = '" + trfNo + "'", objGlobal.getConnection());
                 while (rs.next()) {
+                    String shopName = rs.getString("ShopName");
+                    ResultSet rs1 = dbConnection.getResultSet("select MainShop from bfldata..shopinshop where subshop ='"+shopName+"'",conRob);
+                    if (rs1.next()){
+                        shopName = rs1.getString("MainShop");
+                    }
                     shopNames.add(new ShopInfo(
-                            rs.getString("ShopName"),
+                           shopName,
                             rs.getString("Dataname")
                     ));
                 }
