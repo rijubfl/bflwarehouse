@@ -145,7 +145,7 @@ public class BinPutAwayFragment extends Fragment {
                     toteId=objControls.replaceString(toteId);
                     b_Result = objBinPutAwayControl.validateToteid(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(), sp_bin_put_away_inout.getSelectedItem().toString(), toteId);
                     if (!b_Result) {
-                        okMessage("BinPutAwayFragment:et_bin_put_away_toteid", objGlobal.getErrorMessage());
+                        okMessage("Message", objGlobal.getErrorMessage());
                         vibrate(250);
                         tv_bin_put_away_boxno.setText("");
                         et_bin_put_away_toteid.setText("");
@@ -171,7 +171,7 @@ public class BinPutAwayFragment extends Fragment {
                     b_Result = objBinPutAwayControl.validateLocation(tv_bin_put_away_multiple_warehouse.getSelectedItem().toString(),location, sp_bin_put_away_inout.getSelectedItem().toString(),toteId,
                             tv_bin_put_away_boxno.getText().toString());
                     if (!b_Result) {
-                        okMessage("BinPutAwayFragment:et_bin_put_away_binlocation", objGlobal.getErrorMessage());
+                        okMessage("Message", objGlobal.getErrorMessage());
                         vibrate(250);
                         tv_bin_put_away_doublebeep.setText("");
                         et_bin_put_away_binlocation.setText("");
@@ -230,7 +230,7 @@ public class BinPutAwayFragment extends Fragment {
                                     clearAll();
                                     et_bin_put_away_toteid.requestFocus();
                                 } else {
-                                    okMessage("BinPutAwayFragment",objGlobal.getErrorMessage());
+                                    okMessage("Message",objGlobal.getErrorMessage());
                                 }
                             }
                         })

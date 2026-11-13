@@ -124,14 +124,14 @@ public class PalletBuildingControl {
                     if (lpmVal == 1) {
                         if (lpmDate != null && palletLPMDate != null) {
                             if (!lpmDate.equals(palletLPMDate)) {
-                                objGlobal.setErrorMessage("The LPM date for this box is different: " + lpmDate + ". Please use another box with an LPM date of " + palletLPMDate + ".");
+                                objGlobal.setErrorMessage("The LPM date for the box - " + box + " - is different: " + lpmDate + ". Please use another box with an LPM date of " + palletLPMDate + ".");
                                 return false;
                             }
                         } else if (lpmDate != null && palletLPMDate == null) {
-                            objGlobal.setErrorMessage("The LPM date for this box is different: " + lpmDate + ". Please build it using boxes that do not have an LPM date.");
+                            objGlobal.setErrorMessage("The LPM date for the box - " + box + " - is different: " + lpmDate + ". Please build it using boxes that do not have an LPM date.");
                             return false;
                         } else if (lpmDate == null && palletLPMDate != null) {
-                            objGlobal.setErrorMessage("This box does not have an LPM date. Please use another box with an LPM date of " + palletLPMDate + ".");
+                            objGlobal.setErrorMessage("The box - " + box + " - does not have an LPM date. Please use another box with an LPM date of " + palletLPMDate + ".");
                             return false;
                         }
                     }
@@ -139,14 +139,14 @@ public class PalletBuildingControl {
                         if (!palletType.equals("R1")) {
                             if (orapoNo != null && palletOrapoNo != null) {
                                 if (!orapoNo.equals(palletOrapoNo)) {
-                                    objGlobal.setErrorMessage("The Po Number for this box is different: " + orapoNo + ". Please use another box with Po " + palletOrapoNo + ".");
+                                    objGlobal.setErrorMessage("The PO number for the box - " + box + " - is different: " + orapoNo + ". Please use another box with Po " + palletOrapoNo + ".");
                                     return false;
                                 }
                             } else if (orapoNo != null && palletOrapoNo == null) {
-                                objGlobal.setErrorMessage("The Po number for this box is different: " + orapoNo + ". Please build it using boxes that do not have Po number.");
+                                objGlobal.setErrorMessage("The PO number for the box - " + box + " - is different: " + orapoNo + ". Please build it using boxes that do not have Po number.");
                                 return false;
                             } else if (orapoNo == null && palletOrapoNo != null) {
-                                objGlobal.setErrorMessage("This box does not have Po Number. Please use another box with Po number " + palletOrapoNo + ".");
+                                objGlobal.setErrorMessage("The box - " + box + " - does not have a PO number. Please use another box with Po number " + palletOrapoNo + ".");
                                 return false;
                             }
                         }
@@ -165,8 +165,6 @@ public class PalletBuildingControl {
 
                     }
                 }
-
-
             }
             rs = dbConnection.getResultSet("select * from usa.dbo.BoXPallet where boxno='" + box + "'", objGlobal.getConnection());
             if (rs.next()) {

@@ -6,6 +6,7 @@ import com.bflgroup.warehouse.ui.building.jafza.BoxBuildingAutoJafzaControl;
 import com.bflgroup.warehouse.ui.chutestatusinout.jafza.TransferReceiptJafza;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -118,6 +119,11 @@ public class TransferControl {
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
             while (rs.next()) {
                 rcFound = true;
+                if (scanType.equals("SerializedCode")) {
+                    if (!validateSerializedCode(true, rs.getString("SerializedCode"), rs.getInt("qty"), selShop)) {
+                        return false;
+                    }
+                }
                 if (scanType.equals("RFID/QR")) {
                     String scan = rs.getString("SerializedCode");
                     if (scan == null || scan.isEmpty()) {
@@ -321,87 +327,19 @@ public class TransferControl {
     }
 
     public boolean validateSerializedCode(boolean valid, String scan, int qty, String selShop) {
-        String description = "", shopName = "", itemCode = "", trfNo = "", trfDate = "", barcode = "", rfid ="",serializedCode="";
-        if (!checkConnection()) {
-            return false;
-        }
-        try {
-            rs = dbConnection.getResultSet("select cnt=count(*) from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and ShopName<>'" + selShop + "'", objGlobal.getConnection());
-            if (rs.next()) {
-                if (rs.getInt("cnt") > 0) {
-                    objGlobal.setErrorMessage("Different shop not allowed");
-                    return false;
-                }
-            }
-            if (objGlobal.getWorkLocation().equals("UAE")) {
-                rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                        "SerializedCode='" + scan + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
-                if (rs.next()) {
-                    rfid=rs.getString("rfid");
-                    serializedCode=rs.getString("serializedCode");
-                    shopName = rs.getString("shopname");
-                    itemCode = rs.getString("ItemCode");
-                    barcode = rs.getString("Barcode");
-                    trfNo = rs.getString("TrfNo");
-                    trfDate = rs.getString("entrydate");
-                    description = rs.getString("descr");
-                }
-            }
-            else{
-                rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from "+objGlobal.getCountryDbName()+".dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                        "SerializedCode='" + scan + "' order by entrydate desc,trntime desc", objGlobal.getConnection());
-                if (rs.next()) {
-                    rfid=rs.getString("rfid");
-                    serializedCode=rs.getString("serializedCode");
-                    shopName = rs.getString("shopname");
-                    itemCode = rs.getString("ItemCode");
-                    barcode = rs.getString("Barcode");
-                    trfNo = rs.getString("TrfNo");
-                    trfDate = rs.getString("entrydate");
-                    description = rs.getString("descr");
-                }
-            }
-            if (shopName.isEmpty() || itemCode.isEmpty() || barcode.isEmpty() || trfDate.isEmpty() || description.isEmpty()) {
-                objGlobal.setErrorMessage("Pair information is not found, rfid:" + scan);
-                return false;
-            }
-            if (!trfNo.isEmpty()) {
-                objGlobal.setErrorMessage("(RFID/SerializedCode: " + scan + ") is already paired with " + itemCode + " and transfered - " + shopName + " " + trfNo + " on " + trfDate);
-                return false;
-            }
-            if (!selShop.equals(shopName) && !selShop.isEmpty()) {
-                objGlobal.setErrorMessage("Selected shop is (" + selShop + ") not match with paired shop (" + shopName + ")");
-                return false;
-            }
-            if (!valid) {
-                rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and SerializedCode='" + serializedCode + "'", objGlobal.getConnection());
-                if (rs.next()) {
-                    objGlobal.setErrorMessage("RFID/SerializedCode Already scan, " + rfid);
-                    return false;
-                }
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Description,Qty,ScanTime,SerializedCode) values('" + objGlobal.getDeviceName() + "'," +
-                        "'" + shopName + "','" + rfid + "','" + barcode + "','" + itemCode + "','" + description + "'," + qty + ",convert(varchar,getdate(),8),'" + serializedCode + "')", objGlobal.getConnection())) {
-                    return false;
-                }
-                objTransferGlobal.setScanBarcode(barcode);
-            }
-            objTransferGlobal.setShopName(shopName);
-            return true;
-        } catch (Exception e) {
-            objGlobal.setErrorMessage("TransferControl.validateRfid : " + e);
-            return false;
-        }
+        return validatePairCode(valid, scan, qty, selShop, false, true);
     }
 
     public boolean validateRfid(boolean valid, String scan, int qty, String selShop) {
-        return validatePairCode(valid, scan, qty, selShop, false);
+        return validatePairCode(valid, scan, qty, selShop, true, false);
     }
 
     public boolean validateRfidOrSerializedCode(boolean valid, String scan, int qty, String selShop) {
-        return validatePairCode(valid, scan, qty, selShop, true);
+        return validatePairCode(valid, scan, qty, selShop, true, true);
     }
 
-    private boolean validatePairCode(boolean valid, String scan, int qty, String selShop, boolean allowSerializedCode) {
+    private boolean validatePairCode(boolean valid, String scan, int qty, String selShop, boolean allowRfid, boolean allowSerializedCode) {
+        ResultSet rs;
         String description = "", shopName = "", itemCode = "", trfNo = "", trfDate = "", barcode = "", rfid ="",serializedCode="";
         if (!checkConnection()) {
             return false;
@@ -414,43 +352,108 @@ public class TransferControl {
                     return false;
                 }
             }
-            if (objGlobal.getWorkLocation().equals("UAE")) {
-                rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from hodata.dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                        "(rfid=" + sqlValue(scan.replace("'", "''")) +
-                        (allowSerializedCode ? " OR SerializedCode=" + sqlValue(scan.replace("'", "''")) : "") +
-                        ") order by entrydate desc,trntime desc", objGlobal.getConnection());
-                if (rs.next()) {
-                    rfid=rs.getString("rfid");
-                    serializedCode=rs.getString("serializedCode");
-                    shopName = rs.getString("shopname");
-                    itemCode = rs.getString("ItemCode");
-                    barcode = rs.getString("Barcode");
-                    trfNo = rs.getString("TrfNo");
-                    trfDate = rs.getString("entrydate");
-                    description = rs.getString("descr");
-                }
+            String itemDatabase = "UAE".equals(objGlobal.getWorkLocation()) ? "HODATA" : objGlobal.getCountryDbName();
+            String descriptionQuery = "(SELECT Description FROM [" + itemDatabase.replace("]", "]]") +
+                    "].dbo.ItemMaster WHERE ItemCode=a.ItemCode)";
+            String scanValue = sqlValue(scan.replace("'", "''"));
+            rs = dbConnection.getResultSet(
+                    "SELECT TOP 1 ISNULL(RFID,'') AS RFID, ISNULL(SerializedCode,'') AS SerializedCode, " +
+                    "ISNULL(ShopName,'') AS ShopName, ISNULL(ItemCode,'') AS ItemCode, " +
+                    "ISNULL(Barcode,'') AS Barcode, ISNULL(TrfNo,'') AS TrfNo, " +
+                    "ISNULL(CONVERT(varchar(10),EntryDate,103),'') AS EntryDate, " +
+                    "ISNULL(" + descriptionQuery + ",'') AS descr " +
+                    "FROM BFLDATA.dbo.RFPairDetail a WHERE (" +
+                    (allowRfid ? "RFID=" : "SerializedCode=") + scanValue +
+                    (allowRfid && allowSerializedCode ? " OR SerializedCode=" + scanValue : "") +
+                    ") ORDER BY a.EntryDate DESC, a.TrnTime DESC", objGlobal.getConnection());
+            if (rs == null) {
+                return false;
             }
-            else{
-                rs = dbConnection.getResultSet("select top 1 *,descr=(select Description from "+objGlobal.getCountryDbName()+".dbo.itemmaster where itemcode=a.itemcode) from BFLDATA.dbo.RFPairDetail a where " +
-                        "(rfid=" + sqlValue(scan.replace("'", "''")) +
-                        (allowSerializedCode ? " OR SerializedCode=" + sqlValue(scan.replace("'", "''")) : "") +
-                        ") order by entrydate desc,trntime desc", objGlobal.getConnection());
-                if (rs.next()) {
-                    rfid=rs.getString("rfid");
-                    serializedCode=rs.getString("serializedCode");
-                    shopName = rs.getString("shopname");
-                    itemCode = rs.getString("ItemCode");
-                    barcode = rs.getString("Barcode");
-                    trfNo = rs.getString("TrfNo");
-                    trfDate = rs.getString("entrydate");
-                    description = rs.getString("descr");
+            boolean pairFound = rs.next();
+            boolean foundInEpcBarcodes = false;
+            if (!pairFound) {
+                rs.close();
+                rs = dbConnection.getResultSet(
+                        "SELECT TOP 1 ISNULL(EPC,'') AS RFID, ISNULL(SerializedCode,'') AS SerializedCode, " +
+                        "ISNULL(ShopName,'') AS ShopName, ISNULL(ItemCode,'') AS ItemCode, " +
+                        "ISNULL(Barcode,'') AS Barcode, '' AS TrfNo, " +
+                        "ISNULL(CONVERT(varchar(10),createTS,103),'') AS EntryDate, " +
+                        "ISNULL(" + descriptionQuery + ",'') AS descr " +
+                        "FROM DATAREPORTING.dbo.EPCBarcodes a WHERE (" +
+                        (allowRfid ? "EPC=" : "SerializedCode=") + scanValue +
+                        (allowRfid && allowSerializedCode ? " OR SerializedCode=" + scanValue : "") +
+                        ") ORDER BY createTS DESC, Time1 DESC, IDNO DESC", objGlobal.getConnection());
+                if (rs == null) {
+                    return false;
                 }
+                pairFound = rs.next();
+                foundInEpcBarcodes = pairFound;
             }
+            if (pairFound) {
+                rfid = rs.getString("RFID");
+                serializedCode = rs.getString("SerializedCode");
+                shopName = rs.getString("ShopName");
+                itemCode = rs.getString("ItemCode");
+                barcode = rs.getString("Barcode");
+                trfNo = rs.getString("TrfNo");
+                trfDate = rs.getString("EntryDate");
+                description = rs.getString("descr");
+            }
+            rs.close();
             if (shopName.isEmpty() || itemCode.isEmpty() || barcode.isEmpty() || trfDate.isEmpty() || description.isEmpty()) {
                 objGlobal.setErrorMessage("Pair information is not found, rfid:" + scan);
                 return false;
             }
-            if (!trfNo.isEmpty()) {
+            boolean foundInTransferDetail = false;
+            if (foundInEpcBarcodes && allowSerializedCode) {
+                String dataName = "";
+                try (PreparedStatement settings = objGlobal.getConnection().prepareStatement(
+                        "SELECT DataName FROM BFLDATA.dbo.DataSettings WHERE ShopName = ?")) {
+                    settings.setString(1, shopName);
+                    try (ResultSet shopSettings = settings.executeQuery()) {
+                        if (shopSettings.next()) {
+                            String configuredDatabase = shopSettings.getString("DataName");
+                            if (configuredDatabase != null) {
+                                dataName = configuredDatabase.trim();
+                            }
+                        }
+                    }
+                }
+                if (dataName.isEmpty()) {
+                    objGlobal.setErrorMessage("Cannot check transfer history: database not configured for shop " + shopName);
+                    return false;
+                }
+                if (serializedCode.isEmpty() && (!allowRfid || rfid.isEmpty())) {
+                    objGlobal.setErrorMessage("Cannot check transfer history: RFID/SerializedCode is missing");
+                    return false;
+                }
+                try (Connection historyConnection = dbConnection.tmpConnectDb(objGlobal.getRoboServerIP(), "BFLDATA")) {
+                    if (historyConnection == null) {
+                        return false;
+                    }
+                    String historyDatabase = "[" + dataName.replace("]", "]]") + "]";
+                    String historyQuery = "SELECT TOP 1 ISNULL(a.TrfNo,'') AS TrfNo, " +
+                            "ISNULL(CONVERT(varchar(10),h.TrfDate,103),'') AS TrfDate FROM " +
+                            historyDatabase + ".dbo.TransferDetail a INNER JOIN " +
+                            historyDatabase + ".dbo.TransferHeader h ON h.TrfNo = a.TrfNo WHERE (" +
+                            "a.SerializedCode = ?" + (allowRfid && !rfid.isEmpty() ? " OR a.EPC = ?" : "") +
+                            ") ORDER BY h.TrfDate DESC, a.TrfNo DESC";
+                    try (PreparedStatement history = historyConnection.prepareStatement(historyQuery)) {
+                        history.setString(1, serializedCode.isEmpty() ? null : serializedCode);
+                        if (allowRfid && !rfid.isEmpty()) {
+                            history.setString(2, rfid);
+                        }
+                        try (ResultSet previousTransfer = history.executeQuery()) {
+                            if (previousTransfer.next()) {
+                                foundInTransferDetail = true;
+                                trfNo = previousTransfer.getString("TrfNo");
+                                trfDate = previousTransfer.getString("TrfDate");
+                            }
+                        }
+                    }
+                }
+            }
+            if (!trfNo.isEmpty() || foundInTransferDetail) {
                 objGlobal.setErrorMessage("(RFID/SerializedCode: " + scan + ") is already paired with " + itemCode + " and transfered - " + shopName + " " + trfNo + " on " + trfDate);
                 return false;
             }
@@ -459,8 +462,8 @@ public class TransferControl {
                 return false;
             }
             if (!valid) {
-                String duplicateCondition = "rfid=" + sqlValue(rfid);
-                if (allowSerializedCode) {
+                String duplicateCondition = allowRfid ? "rfid=" + sqlValue(rfid) : "SerializedCode=" + sqlValue(serializedCode);
+                if (allowRfid && allowSerializedCode) {
                     duplicateCondition = "(" + duplicateCondition + " OR SerializedCode=" + sqlValue(serializedCode) + ")";
                 }
                 rs = dbConnection.getResultSet("select * from tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' and " + duplicateCondition, objGlobal.getConnection());

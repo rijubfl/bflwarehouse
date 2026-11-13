@@ -184,7 +184,7 @@ public class PalletBuildingFragment extends Fragment {
                         b_Result = objPalletBuildingControl.validateBoxTotUsa(toteId,objPalletBuildingGlobal.getTotCnt());
                     }
                     if (!b_Result) {
-                        okMessage("BinBatchInFragment:et_bin_batch_in_toteid", objGlobal.getErrorMessage());
+                        okMessage("Message", objGlobal.getErrorMessage());
                         vibrate(500);
                         et_pallet_building_box_toteid.setText("");
                         et_pallet_building_box_toteid.requestFocus();
@@ -214,7 +214,7 @@ public class PalletBuildingFragment extends Fragment {
                     b_Result = objPalletBuildingControl.validateBoxTotUsa(toteId,objPalletBuildingGlobal.getTotCnt());
                 }
                 if (!b_Result) {
-                    okMessage("BinBatchInFragment:bt_pallet_building_scan", objGlobal.getErrorMessage());
+                    okMessage("Message", objGlobal.getErrorMessage());
                     vibrate(500);
                     et_pallet_building_box_toteid.setText("");
                     et_pallet_building_box_toteid.requestFocus();
@@ -235,7 +235,7 @@ public class PalletBuildingFragment extends Fragment {
             public void onClick(View v) {
                 b_Result = objPalletBuildingControl.validateMainUsa();
                 if (!b_Result) {
-                    okMessage("bt_bin_batch_in_save11", objGlobal.getErrorMessage());
+                    okMessage("Message", objGlobal.getErrorMessage());
                 } else {
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     alert.setMessage("Are You sure to save?")
@@ -294,7 +294,7 @@ public class PalletBuildingFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 b_Result=clearAll();
                                 if(!b_Result){
-                                    okMessage("PalletBuildingFragment:bt_pallet_building_clear", objGlobal.getErrorMessage());
+                                    okMessage("Message", objGlobal.getErrorMessage());
                                     vibrate(500);
                                 }
                             }
@@ -373,7 +373,7 @@ public class PalletBuildingFragment extends Fragment {
         try {
             b_Result = objPalletBuildingControl.clearTable();
             if (!b_Result) {
-                okMessage("PalletBuildingFragment:clearAll", objGlobal.getErrorMessage());
+                okMessage("Message", objGlobal.getErrorMessage());
                 vibrate(500);
                 return false;
             } else {

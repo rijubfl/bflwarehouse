@@ -181,17 +181,17 @@ public class DivisionSeperationFragment extends Fragment {
                     String trfno = et_div_seperate_trfno.getText().toString();
                     String scan = objControls.seperateBarcode(objControls.replaceString(et_div_seperate_scan.getText().toString()));
                     if (TextUtils.isEmpty(shopname)) {
-                        okMessage("DIV", "Please select shopname");
+                        okMessage("", "Please select shopname");
                         tv_div_seperate_shopname.requestFocus();
                         return true;
                     } else if (TextUtils.isEmpty(trfno)) {
-                        okMessage("DIV", "Please Enter transfer number");
+                        okMessage("", "Please Enter transfer number");
                         et_div_seperate_trfno.requestFocus();
                         return true;
                     } else {
                         b_Result = objDivisionSeperationControl.validateTransferItem(shopname, trfno, scan, 1);
                         if (!b_Result) {
-                            okMessage("DIV", objGlobal.getErrorMessage());
+                            okMessage("", objGlobal.getErrorMessage());
                             et_div_seperate_scan.setText("");
                             et_div_seperate_scan.requestFocus();
                             return true;
@@ -251,7 +251,7 @@ public class DivisionSeperationFragment extends Fragment {
                 String trfno = et_div_seperate_trfno.getText().toString();
                 b_Result = objDivisionSeperationControl.validateTransfer(shopname, trfno, true);
                 if (!b_Result) {
-                    okMessage("DIV", objGlobal.getErrorMessage());
+                    okMessage("", objGlobal.getErrorMessage());
                 } else {
                     AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
                     alert.setMessage("Are you sure to save?")
@@ -262,10 +262,10 @@ public class DivisionSeperationFragment extends Fragment {
                                 public void onClick(DialogInterface dialog, int which) {
                                     b_Result = objDivisionSeperationControl.save();
                                     if (!b_Result) {
-                                        okMessage("DIV", objGlobal.getErrorMessage());
+                                        okMessage("", objGlobal.getErrorMessage());
                                     } else {
                                         if (!objDivisionSeperationControl.clearTable()) {
-                                            okMessage("DIV", objGlobal.getErrorMessage());
+                                            okMessage("", objGlobal.getErrorMessage());
                                         } else {
                                             ArrayList<DivisionSeperationItemTicket> listLoadItems = objDivisionSeperationControl.loadDivSepItems();
                                             objMyDivisionSeperationItemTicketAdp = new DivisionSeperationFragment.MyDivisionSeperationItemTicketAdp(listLoadItems);
@@ -340,15 +340,15 @@ public class DivisionSeperationFragment extends Fragment {
         String shopname = tv_div_seperate_shopname.getText().toString();
         String trfno = et_div_seperate_trfno.getText().toString();
         if (TextUtils.isEmpty(shopname)) {
-            okMessage("DIV", "Please select shopname");
+            okMessage("", "Please select shopname");
             tv_div_seperate_shopname.requestFocus();
         } else if (TextUtils.isEmpty(trfno)) {
-            okMessage("DIV", "Please Enter transfer number");
+            okMessage("", "Please Enter transfer number");
             et_div_seperate_trfno.requestFocus();
         } else {
             b_Result = objDivisionSeperationControl.validateTransfer(shopname, trfno, false);
             if (!b_Result) {
-                okMessage("DIV", objGlobal.getErrorMessage());
+                okMessage("", objGlobal.getErrorMessage());
                 et_div_seperate_trfno.setText("");
                 et_div_seperate_trfno.requestFocus();
             } else {

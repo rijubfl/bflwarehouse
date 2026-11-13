@@ -75,7 +75,7 @@ public class DivisionSeperationControl {
             } else {
                 rs = dbConnection.getResultSet("select top 1 * from BFLDATA.dbo.GINDeleteItems where ShopName='" + shopName + "' and TrfNo='" + trfno + "'", objGlobal.getConnection());
                 if (!rs.next()) {
-                    objGlobal.setErrorMessage("The transfer number does not exist in the deletion list.");
+                    objGlobal.setErrorMessage("The transfer number - " + trfno + " - does not exist in the deletion list");
                     return false;
                 }
             }
