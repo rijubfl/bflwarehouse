@@ -768,7 +768,17 @@ public class UsaBoxBuildingFragment extends Fragment {
             if (!flagEdit)
                 et_build_usabox_popup_qty.setText("1");
         }
-        String itemcode = et_build_usabox_popup_itemcode.getText().toString();
+        String scan = et_build_usabox_popup_itemcode.getText().toString();
+        String itemcode="";
+        String pono="0000";
+        String[] parts;
+        if (scan.contains("/")) {
+            parts = scan.split("/");
+            itemcode = parts[0];
+            pono = parts[2];
+        } else {
+            itemcode = scan;
+        }
         int qty = Integer.parseInt(et_build_usabox_popup_qty.getText().toString());
         String palletType = tv_usa_box_pallettype.getText().toString();
         String allowMix = tv_usa_box_pallettype_allowmix.getText().toString();
@@ -778,8 +788,8 @@ public class UsaBoxBuildingFragment extends Fragment {
         String buildType = "";
         if (rb_usa_box_usa_category.isChecked()) buildType = "USA";
         if (rb_usa_box_tcm_category.isChecked()) buildType = "TCM";
-        tv_build_usabox_popup_last_scan.setText(itemcode);
-        b_Result = objUsaBoxBuildingControl.validateItemcode(flagEdit, itemcode, "", "", palletType, gender, qty, allowMix, buildType, selitems, contno);
+        tv_build_usabox_popup_last_scan.setText(scan);
+        b_Result = objUsaBoxBuildingControl.validateItemcode(flagEdit, itemcode, "", "", palletType, gender, qty, allowMix, buildType, selitems, contno,pono);
         et_build_usabox_popup_itemcode.setEnabled(true);
         if (!b_Result) {
             tv_build_usabox_popup_last_scan.setText(objGlobal.getErrorMessage());
@@ -802,6 +812,24 @@ public class UsaBoxBuildingFragment extends Fragment {
         et_build_usabox_popup_itemcode.setText("");
         et_build_usabox_popup_qty.setText("1");
         et_build_usabox_popup_itemcode.requestFocus();
+    }
+
+    String seperateBarcode(String barcode) {
+        String[] parts;
+        String part1;
+        int i;
+        if (barcode.contains("/")) {
+            parts = barcode.split("/");
+            part1 = parts[0];
+        } else {
+            part1 = barcode;
+        }
+        for (i = 0; i < part1.length() - 1; i++) {
+            if (part1.charAt(i) != '0') {
+                break;
+            }
+        }
+        return part1.substring(i);
     }
 
     private class MyLoadScanItemPopupAdp extends BaseAdapter {

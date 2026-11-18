@@ -12,8 +12,6 @@
         android:layout_height="match_parent"
         android:padding="10dp">
 
-
-
         <ListView
             android:id="@+id/lv_building_del_pallet_details"
             android:layout_width="0dp"
@@ -26,13 +24,11 @@
             app:layout_constraintTop_toBottomOf="@+id/TextView3"
             app:layout_constraintVertical_bias="0.0" />
 
-
-
         <TextView
             android:id="@+id/TextView3"
             android:layout_width="100dp"
             android:layout_height="30dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/et_custom_total"
             android:gravity="left"
             android:hint=""
@@ -41,7 +37,7 @@
             android:textColor="@color/coloBlack"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_pallet_status_last_palletno" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_pallet_status_last_pallet_lpmdate" />
 
         <TextView
             android:id="@+id/TextView4"
@@ -76,14 +72,14 @@
             android:id="@+id/TextView1"
             android:layout_width="100dp"
             android:layout_height="40dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
             android:background="@drawable/et_custom"
             android:gravity="left"
-            android:layout_marginRight="5dp"
-            android:textColor="@color/coloBlack"
             android:hint=""
-            android:layout_marginEnd="5dp"
             android:padding="10dp"
             android:text="Warehouse"
+            android:textColor="@color/coloBlack"
             android:textSize="14dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -109,7 +105,7 @@
             android:id="@+id/et_pallet_status_palletno"
             android:layout_width="0dp"
             android:layout_height="45dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
             android:background="@drawable/et_custom"
@@ -140,7 +136,7 @@
             android:id="@+id/tv_pallet_status_message"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Message"
@@ -157,7 +153,7 @@
             android:id="@+id/tv_pallet_status_last_scan"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Last Scan"
@@ -174,8 +170,8 @@
             android:id="@+id/tv_pallet_status_result"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="3dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="2dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Result"
@@ -193,8 +189,8 @@
             android:id="@+id/tv_pallet_status_last_palletno"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="3dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="2dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Pallet No."
@@ -211,8 +207,8 @@
             android:id="@+id/tv_pallet_status_last_building_category"
             android:layout_width="0dp"
             android:layout_height="100dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="4dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Building Categories"
@@ -229,7 +225,6 @@
             android:id="@+id/tv_pallet_status_last_building_golden"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginTop="5dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Golden Label"
@@ -239,14 +234,14 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_pallet_status_result" />
+            app:layout_constraintTop_toTopOf="@+id/tv_pallet_status_last_building_category" />
 
         <TextView
             android:id="@+id/tv_pallet_status_last_pallet_boxno"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="3dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="2dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Box No."
@@ -263,7 +258,7 @@
             android:id="@+id/tv_pallet_status_last_pallet_checking_type"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="3dp"
+            android:layout_marginLeft="2dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Checking Type"
@@ -280,7 +275,7 @@
             android:id="@+id/tv_pallet_status_last_pallet_toteid"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="3dp"
+            android:layout_marginLeft="2dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Tote Id"
@@ -297,7 +292,7 @@
             android:id="@+id/tv_pallet_status_last_pallet_pallettype"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="3dp"
+            android:layout_marginLeft="2dp"
             android:background="@drawable/et_custom"
             android:gravity="center"
             android:hint="Pallet Type"
@@ -309,6 +304,41 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView2"
             app:layout_constraintTop_toTopOf="@+id/tv_pallet_status_last_palletno" />
+
+        <TextView
+            android:id="@+id/tv_pallet_status_last_pallet_lpmdate"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="2dp"
+            android:background="@drawable/et_custom"
+            android:gravity="center"
+            android:hint="LPM Date"
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_pallet_status_last_palletno" />
+
+        <TextView
+            android:id="@+id/tv_pallet_status_last_pallet_orapono"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="2dp"
+            android:background="@drawable/et_custom"
+            android:gravity="center"
+            android:hint="PO. No."
+            android:padding="10dp"
+            android:text=""
+            android:textColor="@color/coloBlack"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toTopOf="@+id/tv_pallet_status_last_pallet_lpmdate" />
 
         <TextView
             android:id="@+id/textView2"

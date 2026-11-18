@@ -47,6 +47,8 @@ public class PalletStatusFragment extends Fragment {
     private TextView tv_pallet_status_last_pallet_boxno;
     private TextView tv_pallet_status_last_pallet_toteid;
     private TextView tv_pallet_status_last_pallet_pallettype;
+    private TextView tv_pallet_status_last_pallet_orapono;
+    private TextView tv_pallet_status_last_pallet_lpmdate;
     private TextView tv_pallet_status_last_pallet_checking_type;
     private TextView tv_pallet_status_last_building_golden;
     private Spinner sp_rack_in_out_warehouse;
@@ -79,6 +81,8 @@ public class PalletStatusFragment extends Fragment {
         tv_pallet_status_last_pallet_boxno = (TextView) view.findViewById(R.id.tv_pallet_status_last_pallet_boxno);
         tv_pallet_status_last_pallet_toteid = (TextView) view.findViewById(R.id.tv_pallet_status_last_pallet_toteid);
         tv_pallet_status_last_pallet_pallettype = (TextView) view.findViewById(R.id.tv_pallet_status_last_pallet_pallettype);
+        tv_pallet_status_last_pallet_orapono = (TextView) view.findViewById(R.id.tv_pallet_status_last_pallet_orapono);
+        tv_pallet_status_last_pallet_lpmdate = (TextView) view.findViewById(R.id.tv_pallet_status_last_pallet_lpmdate);
         tv_pallet_status_last_pallet_checking_type = (TextView) view.findViewById(R.id.tv_pallet_status_last_pallet_checking_type);
         tv_pallet_status_last_building_golden = (TextView) view.findViewById(R.id.tv_pallet_status_last_building_golden);
 
@@ -204,6 +208,8 @@ public class PalletStatusFragment extends Fragment {
                 tv_pallet_status_last_pallet_toteid.setText("");
                 tv_pallet_status_last_palletno.setText("");
                 tv_pallet_status_last_pallet_pallettype.setText("");
+                tv_pallet_status_last_pallet_orapono.setText("");
+                tv_pallet_status_last_pallet_lpmdate.setText("");
                 tv_pallet_status_last_building_category.setText("");
                 tv_pallet_status_last_pallet_checking_type.setText("");
                 tv_pallet_status_last_building_golden.setText("");
@@ -227,6 +233,8 @@ public class PalletStatusFragment extends Fragment {
                 tv_pallet_status_last_pallet_toteid.setText(objPalletStatusGlobal.getToteid());
                 tv_pallet_status_last_palletno.setText(objPalletStatusGlobal.getPalletno());
                 tv_pallet_status_last_pallet_pallettype.setText(objPalletStatusGlobal.getPltType());
+                tv_pallet_status_last_pallet_lpmdate.setText(objPalletStatusGlobal.getLpmDate());
+                tv_pallet_status_last_pallet_orapono.setText(objPalletStatusGlobal.getOraPoNo());
                 tv_pallet_status_last_building_category.setText(objPalletStatusGlobal.getBuildcategory());
                 tv_pallet_status_last_pallet_checking_type.setText(objPalletStatusGlobal.getCheckingType());
                 tv_pallet_status_last_building_golden.setBackground(getActivity().getResources().getDrawable(R.drawable.et_custom));

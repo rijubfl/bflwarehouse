@@ -41,7 +41,7 @@ public class PalletStatusControl {
     }
 
     boolean getPalletStatus(String scan, String warehouse) {
-        String pltType = "", boxno = "", toteid = "", palletno = "", status = "", buildCategory = "", type = "", checkingType = "", golden = "N";
+        String pltType = "", boxno = "", toteid = "", palletno = "", status = "", buildCategory = "", type = "", checkingType = "", golden = "N",lpmDate="",oraPoNo="";
         boolean found = false;
         if (!checkConnection()) {
             return false;
@@ -55,40 +55,49 @@ public class PalletStatusControl {
                 objGlobal.setErrorMessage("getPalletStatus:Datetime Error");
                 return false;
             }
-            rs = dbConnection.getResultSet("select top 1 * from bfldata.dbo.PalletStatus where warehouse='" + warehouse + "' and (palletno='" + scan + "' or boxno='" + scan + "' or ToteId='" + scan + "')", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select top 1 *,lpm=convert(varchar,LpmDate,103) from bfldata.dbo.PalletStatus where warehouse='" + warehouse + "' and (palletno='" + scan + "' or boxno='" + scan + "' or ToteId='" + scan + "')", objGlobal.getConnection());
             if (rs.next()) {
                 boxno = rs.getString("boxno");
                 toteid = rs.getString("toteid");
                 palletno = rs.getString("palletno");
                 pltType = rs.getString("PalletType");
                 status =  rs.getString("Status");
+                lpmDate=rs.getString("lpm");
+                oraPoNo=rs.getString("OraPono");
                 type = "UBOX";
                 found = true;
             }
             if (!found) {
-                rs = dbConnection.getResultSet("select top 1 boxno,toteid=isnull(toteid,''),palletno=isnull(palletno,''),PalletType=isnull(PalletType,'') from usa.dbo.vupcboxdet where closed='N' and Toteid='" + scan + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select top 1 boxno,toteid=isnull(toteid,''),palletno=isnull(palletno,''),PalletType=isnull(PalletType,''),LPMDt=convert(varchar,LPMDt,103)," +
+                        "OraPoNo=isnull(OraPoNo,'') from usa.dbo.vupcboxdet where closed='N' and Toteid='" + scan + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     boxno = rs.getString("boxno");
                     toteid = rs.getString("toteid");
                     palletno = rs.getString("palletno");
                     pltType = rs.getString("PalletType");
+                    lpmDate= rs.getString("LPMDt");
+                    oraPoNo= rs.getString("OraPoNo");
                     type = "UBOX";
                     found = true;
                 }
             }
             if (!found) {
-                rs = dbConnection.getResultSet("select top 1 boxno,toteid=isnull(toteid,''),palletno=isnull(palletno,''),PalletType=isnull(PalletType,'') from usa.dbo.vupcboxdet where closed='N' and BoxNo='" + scan + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select top 1 boxno,toteid=isnull(toteid,''),palletno=isnull(palletno,''),PalletType=isnull(PalletType,''),LPMDt=convert(varchar,LPMDt,103)," +
+                        "OraPoNo=isnull(OraPoNo,'') from usa.dbo.vupcboxdet where closed='N' and BoxNo='" + scan + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     boxno = rs.getString("boxno");
                     toteid = rs.getString("toteid");
                     palletno = rs.getString("palletno");
                     pltType = rs.getString("PalletType");
+                    lpmDate= rs.getString("LPMDt");
+                    oraPoNo= rs.getString("OraPoNo");
                     type = "UBOX";
                     found = true;
                 }
             }
             if (!found) {
-                rs = dbConnection.getResultSet("select top 1 boxno,toteid=isnull(TotId,''),palletno=isnull(palletno,''),PalletType=isnull(pallettype,'') from BFLDATA.dbo.vr1pallet where closed='N' and Totid='" + scan + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select top 1 boxno,toteid=isnull(TotId,''),palletno=isnull(palletno,''),PalletType=isnull(pallettype,'') from BFLDATA.dbo.vr1pallet where " +
+                        "closed='N' and Totid='" + scan + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     boxno = rs.getString("boxno");
                     toteid = rs.getString("toteid");
@@ -99,7 +108,8 @@ public class PalletStatusControl {
                 }
             }
             if (!found) {
-                rs = dbConnection.getResultSet("select top 1 boxno,toteid=isnull(TotId,''),palletno=isnull(palletno,''),PalletType=isnull(pallettype,'') from BFLDATA.dbo.vr1pallet where closed='N' and BoxNo='" + scan + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select top 1 boxno,toteid=isnull(TotId,''),palletno=isnull(palletno,''),PalletType=isnull(pallettype,'') from BFLDATA.dbo.vr1pallet where " +
+                        "closed='N' and BoxNo='" + scan + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     boxno = rs.getString("boxno");
                     toteid = rs.getString("toteid");
@@ -110,18 +120,22 @@ public class PalletStatusControl {
                 }
             }
             if (!found) {
-                rs = dbConnection.getResultSet("select top 1 boxno='',toteid='',palletno=isnull(palletno,''),PalletType=isnull(PalletType,'') from usa.dbo.vUPCBoxDet where closed='N' and PalletNo='" + scan + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select top 1 boxno='',toteid='',palletno=isnull(palletno,''),PalletType=isnull(PalletType,''),LPMDt=convert(varchar,LPMDt,103)," +
+                        "OraPoNo=isnull(OraPoNo,'') from usa.dbo.vUPCBoxDet where closed='N' and PalletNo='" + scan + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     boxno = rs.getString("boxno");
                     toteid = rs.getString("toteid");
                     palletno = rs.getString("palletno");
                     pltType = rs.getString("PalletType");
+                    lpmDate= rs.getString("LPMDt");
+                    oraPoNo= rs.getString("OraPoNo");
                     type = "UPLT";
                     found = true;
                 }
             }
             if (!found) {
-                rs = dbConnection.getResultSet("select top 1 boxno='',toteid='',palletno=isnull(palletno,''),PalletType=isnull(PalletType,'') from BFLDATA.dbo.vR1Pallet where closed='N' and PalletNo='" + scan + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select top 1 boxno='',toteid='',palletno=isnull(palletno,''),PalletType=isnull(PalletType,'') from BFLDATA.dbo.vR1Pallet where closed='N' " +
+                        "and PalletNo='" + scan + "'", objGlobal.getConnection());
                 if (rs.next()) {
                     boxno = rs.getString("boxno");
                     toteid = rs.getString("toteid");
@@ -233,9 +247,16 @@ public class PalletStatusControl {
             objPalletStatusGlobal.setBuildcategory(buildCategory);
             objPalletStatusGlobal.setCheckingType(checkingType);
             objPalletStatusGlobal.setGolden(golden);
+            objPalletStatusGlobal.setLpmDate(lpmDate);
+            objPalletStatusGlobal.setOraPoNo(oraPoNo);
+            if(lpmDate.isEmpty())
+                lpmDate="NULL";
+            else
+                lpmDate= "'" + lpmDate + "'";
 
-            if (!dbConnection.insertUpdate("insert into bfldata.dbo.PalletStatusScan (PalletNo,Status,UserId,TrnDate,TrnTime,Boxno,Toteid,warehouse,OrgPalletno) values ('" + scan + "','" + status + "'," + objGlobal.getUserId() + ",'" + objGlobal.getServerDate() + "'," +
-                    "'" + objGlobal.getServerTime() + "', '" + objPalletStatusGlobal.getBoxno() + "','" + objPalletStatusGlobal.getToteid() + "', '" + warehouse + "' ,'" + objPalletStatusGlobal.getPalletno() + "')", objGlobal.getConnection())) {
+            if (!dbConnection.insertUpdate("insert into bfldata.dbo.PalletStatusScan (PalletNo,Status,UserId,TrnDate,TrnTime,Boxno,Toteid,warehouse,OrgPalletno,LpmDate,OraPono) values ('" + scan + "'," +
+                    "'" + status + "'," + objGlobal.getUserId() + ",'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "', '" + objPalletStatusGlobal.getBoxno() + "'," +
+                    "'" + objPalletStatusGlobal.getToteid() + "', '" + warehouse + "' ,'" + objPalletStatusGlobal.getPalletno() + "'," + lpmDate + ",'" + oraPoNo + "')", objGlobal.getConnection())) {
                 return false;
             }
             return true;

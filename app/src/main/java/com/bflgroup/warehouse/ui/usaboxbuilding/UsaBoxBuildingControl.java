@@ -137,7 +137,7 @@ public class UsaBoxBuildingControl {
         }
     }
 
-    public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType, String selitems, String contno) {
+    public boolean validateItemcode(boolean edit, String itemcode, String selGroupCode, String selCategory, String selPalletype, String gender, int qty, String allowMix, String boxType, String selitems, String contno,String pono) {
         if (itemcode.trim().equals("")) {
             objGlobal.setErrorMessage("Empty itemcode, please rescan");
             return false;
@@ -180,26 +180,26 @@ public class UsaBoxBuildingControl {
                         }
                     }
             }
-            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "' and PoNo='"+ pono + "'", objGlobal.getConnection());
             if (rs.next()) {
                 if (edit) {
                     if (qty == 0) {
-                        if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "' and PoNo='"+ pono + "'", objGlobal.getConnection())) {
                             return false;
                         }
                     } else {
-                        if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                        if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "' and PoNo='"+ pono + "'", objGlobal.getConnection())) {
                             return false;
                         }
                     }
                 } else {
-                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=qty+" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "'", objGlobal.getConnection())) {
+                    if (!dbConnection.insertUpdate("update bfldata.dbo.tmpScanItemsBox set qty=qty+" + qty + " where DeviceId='" + objGlobal.getDeviceName() + "' and Itemcode='" + itemcode + "' and PoNo='"+ pono + "'", objGlobal.getConnection())) {
                         return false;
                     }
                 }
             } else {
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpScanItemsBox(DeviceId,Itemcode,itemname,GroupCode,season,qty,Division,Department) " +
-                        "values('" + objGlobal.getDeviceName() + "','" + itemcode + "','','',''," + qty + ",'','')", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpScanItemsBox(DeviceId,Itemcode,itemname,GroupCode,season,qty,Division,Department,PoNo) " +
+                        "values('" + objGlobal.getDeviceName() + "','" + itemcode + "','','',''," + qty + ",'','','" + pono + "')", objGlobal.getConnection())) {
                     return false;
                 }
                 if (objGlobal.getWorkLocation().equals("UAE")) {
@@ -372,7 +372,7 @@ public class UsaBoxBuildingControl {
                 }
             }
             if (!valid) {
-                if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where itemcode='" + itemcode + "' and DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("delete from bfldata.dbo.tmpScanItemsBox where itemcode='" + itemcode + "' and DeviceId='" + objGlobal.getDeviceName() + "' and PoNo='"+ pono + "'", objGlobal.getConnection())) {
                     valid = false;
                 }
             }
@@ -388,7 +388,7 @@ public class UsaBoxBuildingControl {
         try {
             listPopupScanItems.clear();
             int scanTotQty = 0;
-            rs = dbConnection.getResultSet("select itemcode,itemname,qty from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' order by sn desc", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select itemcode,itemname,qty=sum(qty) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' group by itemcode,itemname order by sn desc", objGlobal.getConnection());
             while (rs.next()) {
                 listPopupScanItems.add(new UsaBoxBuildingScaItemsPopupTicket(rs.getString("itemcode").toString(), rs.getString("qty").toString()));
                 scanTotQty = scanTotQty + rs.getInt("qty");
@@ -407,7 +407,8 @@ public class UsaBoxBuildingControl {
             listScanItems.clear();
             objUsaBoxBuildingGlobal.setBuildingCategory("");
 
-            rs = dbConnection.getResultSet("select itemcode,itemname=isnull(itemname,''),qty,Buildingcategory=isnull(Buildingcategory,'') from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' order by sn desc", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select itemcode,itemname=isnull(itemname,''),qty=sum(qty),Buildingcategory=isnull(Buildingcategory,'') from bfldata.dbo.tmpScanItemsBox where " +
+                    "DeviceId='" + objGlobal.getDeviceName() + "' group by itemcode,isnull(itemname,''),isnull(Buildingcategory,'') order by itemcode", objGlobal.getConnection());
             while (rs.next()) {
                 objUsaBoxBuildingGlobal.setBuildingCategory(rs.getString("Buildingcategory"));
                 listScanItems.add(new UsaBoxBuildingScanItemTicket(rs.getString("itemcode"), rs.getString("itemname"), rs.getString("qty")));
@@ -525,7 +526,7 @@ public class UsaBoxBuildingControl {
                     objGlobal.getConnection().rollback();
                     return false;
                 }
-                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxDet(BoxNo,Itemcode,Qty,QtyIssued,Status,UPC) select '" + objUsaBoxBuildingGlobal.getBoxNo() + "',Itemcode,Qty,0,'',Itemcode from " +
+                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxDet(BoxNo,Itemcode,Qty,QtyIssued,Status,UPC,pono) select '" + objUsaBoxBuildingGlobal.getBoxNo() + "',Itemcode,Qty,0,'',Itemcode,isnull(PoNo,'') from " +
                         "bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;

@@ -7,14 +7,12 @@ public class PalletStatusGlobal {
     private static String boxno;
     private static String toteid;
     private static String palletno;
-
-    private static  String status;
-    private static  String buildcategory;
+    private static String status;
+    private static String buildcategory;
     private static String checkingType;
     private static String golden;
-    public static String getPltType() {
-        return pltType;
-    }
+    private static String lpmDate;
+    private static String oraPoNo;
 
     public static void setPltType(String pltType) {
         PalletStatusGlobal.pltType = pltType;
@@ -74,6 +72,26 @@ public class PalletStatusGlobal {
 
     public static void setGolden(String golden) {
         PalletStatusGlobal.golden = golden;
+    }
+
+    public static String getPltType() {
+        return pltType;
+    }
+
+    public static String getLpmDate() {
+        return lpmDate;
+    }
+
+    public static void setLpmDate(String lpmDate) {
+        PalletStatusGlobal.lpmDate = lpmDate;
+    }
+
+    public static String getOraPoNo() {
+        return oraPoNo;
+    }
+
+    public static void setOraPoNo(String oraPoNo) {
+        PalletStatusGlobal.oraPoNo = oraPoNo;
     }
 
     public static synchronized PalletStatusGlobal getInstance() {
