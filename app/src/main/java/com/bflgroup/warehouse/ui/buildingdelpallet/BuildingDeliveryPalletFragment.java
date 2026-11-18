@@ -270,7 +270,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
                     //  if (getPltCount() == 0)
                     if (objbuildingdelPalletControl.transferCount(et_plt_shop_transferno.getText().toString().trim()) == 0) {
-                        objGlobal.setErrorMessage("Transfer is Invalid");
+                        objGlobal.setErrorMessage("The transfer number - " + et_plt_shop_transferno.getText().toString().trim() + " - is invalid");
                         okMessage("Message", objGlobal.getErrorMessage(), getActivity());
                         et_plt_shop_transferno.setText("");
                     } else if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0) {
@@ -400,7 +400,7 @@ public class BuildingDeliveryPalletFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (objbuildingdelPalletControl.transferCount(et_plt_shop_transferno.getText().toString().trim()) == 0) {
-                    objGlobal.setErrorMessage("Transfer is Invalid");
+                    objGlobal.setErrorMessage("The transfer number - " + et_plt_shop_transferno.getText().toString().trim() + " - is invalid");
                     okMessage("Message", objGlobal.getErrorMessage(), getActivity());
                     et_plt_shop_transferno.setText("");
                 } else if (PalletScanDeliveryItem != null && PalletScanDeliveryItem.size() != 0) {
