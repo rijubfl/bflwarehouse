@@ -35,11 +35,11 @@ public class TransferReceipt {
                 objGlobal.setErrorNo("transferReceipt:001");
                 return false;
             }
-            rs = dbConnection.getResultSet("select itemcode,rfid,SerializedCode,qty=sum(qty) from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' group by itemcode,rfid,SerializedCode", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select itemcode,rfid,SerializedCode,qty=sum(qty),StoreId from bfldata.dbo.tmpRfidPdaTransferItems where DeviceName='" + objGlobal.getDeviceName() + "' group by itemcode,rfid,SerializedCode,StoreId", objGlobal.getConnection());
             while (rs.next()) {
-                if (!dbConnection.insertUpdate("insert into robotics.dbo.tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName,EPC,SerializedCode) " +
-                        "values('" + rs.getString("itemcode") + "'," + rs.getInt("qty") + ",0.01,'','',''," + objGlobal.getUserId() + ",'',0,'',''," +
-                        "'" + objGlobal.getDeviceName() + "'," + sqlValue(rs.getString("rfid")) + "," + sqlValue(rs.getString("SerializedCode")) + ")", conRob)) {
+                if (!dbConnection.insertUpdate("insert into robotics.dbo.tmpTransfer(itemcode,qty,rate,description,groupcode,catcode,UserId,unitcode,SalesRate,Trf,ItemType,DeviceName,EPC,SerializedCode,StoreId) " +
+                        "values('" + rs.getString("itemcode") + "'," + rs.getInt("qty") + ",0.01,'','',''," + objGlobal.getUserId() + ",'',0,'','','" + objGlobal.getDeviceName() + "'," +
+                        "" + sqlValue(rs.getString("rfid")) + "," + sqlValue(rs.getString("SerializedCode")) + "," + sqlValue(rs.getString("StoreId")) + ")", conRob)) {
                     objGlobal.setErrorNo("transferReceipt:002");
                     return false;
                 }
@@ -111,8 +111,8 @@ public class TransferReceipt {
             conRob.setAutoCommit(false);
             conLoc.setAutoCommit(false);
             //insert transfer detail start *****************************************
-            if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferdetail (trfno,itemcode,unitcode,quantity,rate,batchno,basicqty,basicrate,srno,upc,ItemType," +
-                    "SerializedCode,EPC) select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'',SerializedCode,EPC from robotics.dbo.tmpTransfer " +
+            if (!dbConnection.insertUpdate("insert into " + dataName + ".dbo.transferdetail (trfno,itemcode,unitcode,quantity,rate,batchno,basicqty,basicrate,srno,upc,ItemType,SerializedCode,EPC,StoreId) " +
+                    "select '" + trfRecNo + "',itemcode,unitcode,qty,rate,'',qty,rate,(ROW_NUMBER() OVER(ORDER BY itemcode ASC)),itemcode,'',SerializedCode,EPC,StoreId from robotics.dbo.tmpTransfer " +
                     "where DeviceName='" + objGlobal.getDeviceName() + "'", conRob)) {
                 conRob.rollback();
                 conLoc.rollback();

@@ -937,8 +937,8 @@ public class TransferControl {
                 return false;
             }
             if (typeUsaTcm.equals("USABOX")) {
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Qty,ScanTime,HoQty) select '" + objGlobal.getDeviceName() + "'," +
-                        "'" + shopName + "','',Itemcode,itemcode,sum(qty),convert(varchar,getdate(),8),0 from usa.dbo.vupcboxdet where boxno='" + boxOrPalletNo + "' and closed='N' group by Itemcode", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpRfidPdaTransferItems(DeviceName,ShopName,rfid,barcode,itemcode,Qty,ScanTime,HoQty,StoreId) select '" + objGlobal.getDeviceName() + "'," +
+                        "'" + shopName + "','',Itemcode,itemcode,sum(qty),convert(varchar,getdate(),8),0,isnull(StoreId,'') from usa.dbo.vupcboxdet where boxno='" + boxOrPalletNo + "' and closed='N' group by Itemcode,isnull(StoreId,'')", objGlobal.getConnection())) {
                     return false;
                 }
             }
