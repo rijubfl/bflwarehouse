@@ -168,17 +168,17 @@ public class UsaBoxBuildingControl {
             rs = dbConnection.getResultSet("select top 1 divisionY from usa..usapriority where groupcode = '" + groupCode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 division = rs.getString("divisionY");
-                    rs = dbConnection.getResultSet("select top 1 division from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
-                    if (rs.next()) {
-                        if (!rs.getString("Division").equals("LFL") && division.equals("LFL")) {
-                            objGlobal.setErrorMessage("The scanned item " + itemcode + " is LFL item. Please build with LFL items only");
-                            return false;
-                        }
-                        if (rs.getString("Division").equals("LFL") && !division.equals("LFL")) {
-                            objGlobal.setErrorMessage("The scanned item " + itemcode + " is not LFL item. Please build with non-LFL items");
-                            return false;
-                        }
+                rs = dbConnection.getResultSet("select top 1 division from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());
+                if (rs.next()) {
+                    if (!rs.getString("Division").equals("LFL") && division.equals("LFL")) {
+                        objGlobal.setErrorMessage("The scanned item " + itemcode + " is LFL item. Please build with LFL items only");
+                        return false;
                     }
+                    if (rs.getString("Division").equals("LFL") && !division.equals("LFL")) {
+                        objGlobal.setErrorMessage("The scanned item " + itemcode + " is not LFL item. Please build with non-LFL items");
+                        return false;
+                    }
+                }
             }
             rs = dbConnection.getResultSet("select * from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' and itemcode='" + itemcode + "' and PoNo='"+ pono + "'", objGlobal.getConnection());
             if (rs.next()) {
