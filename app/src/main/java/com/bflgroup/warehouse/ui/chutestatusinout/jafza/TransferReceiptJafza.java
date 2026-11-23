@@ -585,7 +585,7 @@ public boolean transferReceipt(String chuteId, String toteId, String shopId,
                 "delete from " + dataName +
                         ".dbo.rfpair where rfid in " +
                         "(select rfid from ROBOTICS.dbo.SortingConformationDetail " +
-                        "where TransferNo='' and ChuiteId='' " +
+                        "where TransferNo='' and ChuiteId='" + chuteId + "' " +
                         "and ShopId='" + shopId + "' and rfid<>'')";
 
         if (!dbConnection.insertUpdate(currentQuery, con)) {
@@ -606,7 +606,7 @@ public boolean transferReceipt(String chuteId, String toteId, String shopId,
                         "',Barcode,'N','" +
                         objGlobal.getServerTime() +
                         "','N' from ROBOTICS.dbo.SortingConformationDetail " +
-                        "where TransferNo='' and ChuiteId='' " +
+                        "where TransferNo='' and ChuiteId='" + chuteId + "' " +
                         "and ShopId='" + shopId + "' and rfid<>''";
 
         if (!dbConnection.insertUpdate(currentQuery, con)) {
@@ -621,7 +621,7 @@ public boolean transferReceipt(String chuteId, String toteId, String shopId,
                 "delete from BFLDATA.dbo.RFPairDetail " +
                         "where rfid in " +
                         "(select RFID from ROBOTICS.dbo.SortingConformationDetail " +
-                        "where TransferNo='' and ChuiteId='' " +
+                        "where TransferNo='' and ChuiteId='" + chuteId + "' " +
                         "and ShopId='" + shopId + "' and rfid<>'')";
 
         if (!dbConnection.insertUpdate(currentQuery, con)) {
@@ -644,7 +644,7 @@ public boolean transferReceipt(String chuteId, String toteId, String shopId,
                         objGlobal.getServerDate() +
                         "',TotId,ContNo " +
                         "from ROBOTICS.dbo.SortingConformationDetail " +
-                        "where TransferNo='' and ChuiteId='' " +
+                        "where TransferNo='' and ChuiteId='" + chuteId + "' " +
                         "and ShopId='" + shopId + "' and rfid<>''";
 
         if (!dbConnection.insertUpdate(currentQuery, con)) {
