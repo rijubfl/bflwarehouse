@@ -165,7 +165,7 @@ public class UsaBoxBuildingControl {
             } else {
                 itemcode = objControls.seperateBarcode(objControls.replaceString(itemcode));
             }
-            rs = dbConnection.getResultSet("select top 1 divisionY from usa..usapriority where groupcode = '" + groupCode + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select top 1 divisionY from usa.dbo.usapriority where groupcode = '" + groupCode + "'", objGlobal.getConnection());
             if (rs.next()) {
                 division = rs.getString("divisionY");
                 rs = dbConnection.getResultSet("select top 1 division from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection());

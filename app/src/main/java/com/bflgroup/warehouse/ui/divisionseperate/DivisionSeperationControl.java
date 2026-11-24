@@ -160,7 +160,7 @@ public class DivisionSeperationControl {
                         "Transfer:" + rs.getString("trf").toString() + ", Scan:" + rs.getString("scan").toString());
                 return false;
             }
-            if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopname + "'," +
+            if (!dbConnection.insertUpdate("insert into BFLDATA.dbo.tmpDivSepItems select top 1 '" + objGlobal.getDeviceName() + "',TrfNo,'" + shopname + "'," +
                     "ItemCode,(select divisiony from usa.dbo.USAPriority where groupcode=a.groupcode)," + scanQty + ",0,'Y' from " + objDivisionSeperationGlobal.getDatabase() + ".dbo.vTransferDetail a " +
                     "where TrfNo='" + trfno + "' and ItemCode='" + itemcode + "'", objGlobal.getConnection())) {
                 return false;
