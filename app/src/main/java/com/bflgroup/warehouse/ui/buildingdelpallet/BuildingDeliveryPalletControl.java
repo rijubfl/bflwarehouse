@@ -81,10 +81,6 @@ public class BuildingDeliveryPalletControl {
                 rs = dbConnection.getResultSet("select ShopName,Dataname from bfldata.dbo.TransferNoReturn where trfno = '" + trfNo + "'", objGlobal.getConnection());
                 while (rs.next()) {
                     String shopName = rs.getString("ShopName");
-                    ResultSet rs1 = dbConnection.getResultSet("select MainShop from bfldata..shopinshop where subshop ='"+shopName+"'",conRob);
-                    if (rs1.next()){
-                        shopName = rs1.getString("MainShop");
-                    }
                     shopNames.add(new ShopInfo(
                            shopName,
                             rs.getString("Dataname")

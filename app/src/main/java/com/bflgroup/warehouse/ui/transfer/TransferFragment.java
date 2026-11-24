@@ -400,7 +400,7 @@ public class TransferFragment extends Fragment {
         @Override
         protected void onPostExecute(Integer result) {
             if (result == 0) {
-                okMessage("Box Build", "bt_usa_box_save:" + objGlobal.getErrorMessage());
+                okMessage("Transfer", "" + objGlobal.getErrorMessage());
                 vibrate(500);
             } else {
                 String shopname = tv_transfer_shopname.getText().toString();
