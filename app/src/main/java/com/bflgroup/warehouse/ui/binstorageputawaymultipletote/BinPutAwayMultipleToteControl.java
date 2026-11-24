@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class BinPutAwayMultipleToteControl {
     private DBConnection dbConnection = new DBConnection();
@@ -42,7 +43,12 @@ public class BinPutAwayMultipleToteControl {
         return true;
     }
 
+    private static String normalizeLocation(String location) {
+        return location == null ? "" : location.trim().toUpperCase(Locale.ROOT);
+    }
+
     public boolean validateToteid(String warehouse, String direction, String scan, String location) {
+        location = normalizeLocation(location);
         boolean found = false;
         if (!checkConnection()) {
             return false;
@@ -181,7 +187,7 @@ public class BinPutAwayMultipleToteControl {
                     }
                 }
                 int totTotCnt = 1;
-                rs = dbConnection.getResultSet("select tot=count(*) from BinRack where Warehouse='" + warehouse + "' and Location='" + location + "'", objGlobal.getConnection());
+                rs = dbConnection.getResultSet("select tot=count(*) from BinRack where Warehouse='" + warehouse + "' and UPPER(Location)=UPPER('" + location + "')", objGlobal.getConnection());
                 if (rs.next()) {
                     totTotCnt = totTotCnt + rs.getInt("tot");
                 }
@@ -198,7 +204,7 @@ public class BinPutAwayMultipleToteControl {
                 if (objBinPutAwayMultipleToteGlobal.getBoxNo().equals("")) {
                     rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "' and (Toteid='" + objBinPutAwayMultipleToteGlobal.getToteId() + "' or BoxNo='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "')", objGlobal.getConnection());
                     if (rs.next()) {
-                        if (!rs.getString("location").equals(location)) {
+                        if (!location.equalsIgnoreCase(rs.getString("location"))) {
                             objGlobal.setErrorMessage("Pallet/Box - " + objBinPutAwayMultipleToteGlobal.getToteId() + " is found in location - " + rs.getString("location"));
                             return false;
                         }
@@ -209,7 +215,7 @@ public class BinPutAwayMultipleToteControl {
                 } else {
                     rs = dbConnection.getResultSet("select * from BinRack where Warehouse='" + warehouse + "'  and (Toteid='" + objBinPutAwayMultipleToteGlobal.getToteId() + "' or BoxNo='" + objBinPutAwayMultipleToteGlobal.getBoxNo() + "')", objGlobal.getConnection());
                     if (rs.next()) {
-                        if (!rs.getString("location").equals(location)) {
+                        if (!location.equalsIgnoreCase(rs.getString("location"))) {
                             objGlobal.setErrorMessage("Pallet/Box - " + objBinPutAwayMultipleToteGlobal.getToteId() + " is found in location - " + rs.getString("location"));
                             return false;
                         }
@@ -243,6 +249,7 @@ public class BinPutAwayMultipleToteControl {
     }
 
     public boolean validateLocation(String warehouse, String location, String direction) {
+        location = normalizeLocation(location);
         if (!checkConnection()) {
             return false;
         }
@@ -255,7 +262,7 @@ public class BinPutAwayMultipleToteControl {
             return false;
         }
         try {
-            rs = dbConnection.getResultSet("select * from Racks.dbo.BinRackMaster where Warehouse='" + warehouse + "' and Barcode='" + location + "'", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select * from Racks.dbo.BinRackMaster where Warehouse='" + warehouse + "' and UPPER(Barcode)=UPPER('" + location + "')", objGlobal.getConnection());
             if (!rs.next()) {
                 objGlobal.setErrorMessage("Invalid Location, " + location);
                 return false;
@@ -283,6 +290,7 @@ public class BinPutAwayMultipleToteControl {
     }
 
     public boolean saveBinInOutMultiple(String warehouse, String direction, String location, String toteid) {
+        location = normalizeLocation(location);
         b_Result = validateLocation(warehouse, location, direction);
         if (!b_Result) {
             return false;
@@ -296,7 +304,7 @@ public class BinPutAwayMultipleToteControl {
             objGlobal.getConnection().setAutoCommit(false);
             if (!dbConnection.insertUpdate("insert into BinPutAwayHistory(Warehouse,TrnDate,TrnTime,ToteId,BoxNo,Direction,Location,UserId,UserName,DeviceId) " +
                     "select '" + warehouse + "','" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "',ToteId," +
-                    "BoxNo,Direction,Location," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "' from tmpToteScan where " +
+                    "BoxNo,Direction,UPPER(Location)," + objGlobal.getUserId() + ",'" + objGlobal.getUserName() + "','" + objGlobal.getDeviceName() + "' from tmpToteScan where " +
                     "DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                 objGlobal.getConnection().rollback();
                 return false;
@@ -311,7 +319,7 @@ public class BinPutAwayMultipleToteControl {
                         "SELECT" +
                         "    '" + warehouse + "'," +
                         "    Direction," +
-                        "    Location," +
+                        "    UPPER(Location)," +
                         "    ToteId," +
                         "    BoxNo," +
                         "    'HISTORY_INSERT'," +
@@ -325,7 +333,7 @@ public class BinPutAwayMultipleToteControl {
                 }
             }
             if (direction.equals("IN")) {
-                if (!dbConnection.insertUpdate("insert into BinRack(Warehouse,Location,ToteId,BoxNo) select '" + warehouse + "',Location,ToteId,BoxNo from tmpToteScan " +
+                if (!dbConnection.insertUpdate("insert into BinRack(Warehouse,Location,ToteId,BoxNo) select '" + warehouse + "',UPPER(Location),ToteId,BoxNo from tmpToteScan " +
                         "where DeviceId='" + objGlobal.getDeviceName() + "'", objGlobal.getConnection())) {
                     objGlobal.getConnection().rollback();
                     return false;
@@ -340,7 +348,7 @@ public class BinPutAwayMultipleToteControl {
                             "SELECT" +
                             "    '" + warehouse + "'," +
                             "    Direction," +
-                            "    Location," +
+                            "    UPPER(Location)," +
                             "    ToteId," +
                             "    BoxNo," +
                             "    'INSERT_BOX/TOTE'," +
@@ -357,13 +365,13 @@ public class BinPutAwayMultipleToteControl {
             if (direction.equals("OUT")) {
                 if (!objGlobal.getWorkLocation().equals("KSA")) {
                     if (toteid.isEmpty()) {
-                        if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and Location='" + location + "' and (toteid in(select ToteId from tmpToteScan where " +
+                        if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and UPPER(Location)=UPPER('" + location + "') and (toteid in(select ToteId from tmpToteScan where " +
                                 "DeviceId='" + objGlobal.getDeviceName() + "') or  boxno in(select BoxNo from tmpToteScan where DeviceId='" + objGlobal.getDeviceName() + "'))", objGlobal.getConnection())) {
                             objGlobal.getConnection().rollback();
                             return false;
                         }
                     } else {
-                        if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and Location='" + location + "' and (toteid='" + toteid + "' or boxno='" + toteid + "')", objGlobal.getConnection())) {
+                        if (!dbConnection.insertUpdate("delete from BinRack where Warehouse='" + warehouse + "' and UPPER(Location)=UPPER('" + location + "') and (toteid='" + toteid + "' or boxno='" + toteid + "')", objGlobal.getConnection())) {
                             objGlobal.getConnection().rollback();
                             return false;
                         }
@@ -384,7 +392,7 @@ public class BinPutAwayMultipleToteControl {
                             "SELECT" +
                             "    '"+warehouse+"'," +
                             "    Direction," +
-                            "    Location," +
+                            "    UPPER(Location)," +
                             "    ToteId," +
                             "    BoxNo," +
                             "    'DELETE_BOX/TOTE'," +
