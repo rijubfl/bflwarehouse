@@ -184,11 +184,11 @@ public class BoxBuildingAutoJafzaControl {
                 objGlobal.setErrorNo("saveChuteBuilding:001");
                 return false;
             }
-            rs = dbConnection.getResultSet("select ContNo,itemcode,qty=sum(qty) from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
-                    "ShopId='" + shopId + "' group by ContNo,itemcode", conRobo);
+            rs = dbConnection.getResultSet("select ContNo,itemcode,StoreId,qty=sum(qty) from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and " +
+                    "ShopId='" + shopId + "' group by ContNo,itemcode,StoreId", conRobo);
             while (rs.next()) {
-                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpBoxBuild(itemcode,qty,UserId,DeviceName,Trf) values('" + rs.getString("itemcode") + "'," + rs.getInt("qty") + "," +
-                        "" + objGlobal.getUserId() + ",'" + objGlobal.getDeviceName() + "','" + rs.getString("ContNo") + "')", conRobo)) {
+                if (!dbConnection.insertUpdate("insert into bfldata.dbo.tmpBoxBuild(itemcode,qty,UserId,DeviceName,Trf,StoreId) values('" + rs.getString("itemcode") + "'," + rs.getInt("qty") + "," +
+                        "" + objGlobal.getUserId() + ",'" + objGlobal.getDeviceName() + "','" + rs.getString("ContNo") + "','" + rs.getString("StoreId") + "')", conRobo)) {
                     objGlobal.setErrorNo("saveChuteBuilding:002");
                     return false;
                 }
@@ -253,8 +253,8 @@ public class BoxBuildingAutoJafzaControl {
                     objGlobal.setErrorNo("saveChuteBuilding:008");
                     return false;
                 }
-                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxDet(BoxNo,Itemcode,Qty,QtyIssued,Status,UPC,imgfile) select '" + objBuildingJafzaGLobal.getBoxNo() + "',Itemcode,sum(Qty),0,'',itemcode,Trf from " +
-                        "bfldata.dbo.tmpBoxBuild where devicename='" + objGlobal.getDeviceName() + "' group by Itemcode,Trf", conRobo)) {
+                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxDet(BoxNo,Itemcode,Qty,QtyIssued,Status,UPC,imgfile,StoreId) select '" + objBuildingJafzaGLobal.getBoxNo() + "',Itemcode,sum(Qty),0,''," +
+                        "itemcode,Trf,StoreId from bfldata.dbo.tmpBoxBuild where devicename='" + objGlobal.getDeviceName() + "' group by Itemcode,Trf,StoreId", conRobo)) {
                     conRobo.rollback();
                     objGlobal.setErrorNo("saveChuteBuilding:009");
                     return false;
