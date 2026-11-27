@@ -192,7 +192,7 @@ public class BuildingControl {
             }
             rs = dbConnection.getResultSet("select itemcode,OraPono,qty=sum(qty) from SortingConformationDetail where TransferNo='' and ChuiteId='" + chuteId + "' and ShopId='" + shopId + "' group by itemcode,OraPono", conRobo);
             while (rs.next()) {
-                if (!dbConnection.insertUpdate("insert into tmpBoxBuild(itemcode,qty,UserId,DeviceName,OraPono) " +
+                if (!dbConnection.insertUpdate("insert into tmpBoxBuild(itemcode,qty,UserId,DeviceName,Pono) " +
                         "values('" + rs.getString("itemcode") + "'," + rs.getInt("qty") + "," + objGlobal.getUserId() + ",'" + objGlobal.getDeviceName() + "'," +
                         "'" + rs.getString("OraPono") + "')", objGlobal.getConnection())) {
                     objGlobal.setErrorNo("saveChuteBuilding:002");
@@ -260,8 +260,8 @@ public class BuildingControl {
                     objGlobal.setErrorNo("saveChuteBuilding:008");
                     return false;
                 }
-                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxDet(BoxNo,Itemcode,Qty,QtyIssued,Status,UPC,OraPono) select '" + objBuildingGlobal.getBoxNo() + "',Itemcode,sum(Qty),0,'',itemcode,OraPono from " +
-                        "tmpBoxBuild where devicename='" + objGlobal.getDeviceName() + "' group by Itemcode,OraPono", objGlobal.getConnection())) {
+                if (!dbConnection.insertUpdate("insert into usa.dbo.UPCBoxDet(BoxNo,Itemcode,Qty,QtyIssued,Status,UPC,Pono) select '" + objBuildingGlobal.getBoxNo() + "',Itemcode,sum(Qty),0,'',itemcode,Pono from " +
+                        "tmpBoxBuild where devicename='" + objGlobal.getDeviceName() + "' group by Itemcode,Pono", objGlobal.getConnection())) {
                     conRobo.rollback();
                     objGlobal.getConnection().rollback();
                     objGlobal.setErrorNo("saveChuteBuilding:009");
