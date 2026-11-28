@@ -747,6 +747,10 @@ public class UsaBoxBuildingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ArrayList<UsaBoxBuildingScanItemTicket> listUsaBoxBuildingScaItems = objUsaBoxBuildingControl.loadScanItems();
+                if (listUsaBoxBuildingScaItems == null) {
+                    okMessage("USABox Build", objGlobal.getErrorMessage());
+                    return;
+                }
                 objMyLoadScanItemAdp = new MyLoadScanItemAdp(listUsaBoxBuildingScaItems);
                 lv_usa_box_details.setAdapter(objMyLoadScanItemAdp);
                 tv_usa_box_building_category.setText(objUsaBoxBuildingGlobal.getBuildingCategory());
@@ -755,6 +759,10 @@ public class UsaBoxBuildingFragment extends Fragment {
         });
 
         ArrayList<UsaBoxBuildingScaItemsPopupTicket> listUsaBoxBuildingScaItemsPopup = objUsaBoxBuildingControl.loadPopupScanItems();
+        if (listUsaBoxBuildingScaItemsPopup == null) {
+            okMessage("USABox Build", objGlobal.getErrorMessage());
+            return;
+        }
         objMyLoadScanItemPopupAdp = new MyLoadScanItemPopupAdp(listUsaBoxBuildingScaItemsPopup);
         lv_build_usabox_popup_scandetail.setAdapter(objMyLoadScanItemPopupAdp);
         tv_build_usabox_popup_total.setText(String.valueOf(objUsaBoxBuildingGlobal.getScanTotalQty()));
@@ -798,11 +806,19 @@ public class UsaBoxBuildingFragment extends Fragment {
             et_build_usabox_popup_itemcode.requestFocus();
         }
         ArrayList<UsaBoxBuildingScanItemTicket> listUsaBoxBuildingScaItems = objUsaBoxBuildingControl.loadScanItems();
+        if (listUsaBoxBuildingScaItems == null) {
+            okMessage("USABox Build", objGlobal.getErrorMessage());
+            return;
+        }
         objMyLoadScanItemAdp = new MyLoadScanItemAdp(listUsaBoxBuildingScaItems);
         lv_usa_box_details.setAdapter(objMyLoadScanItemAdp);
         tv_usa_box_building_category.setText(objUsaBoxBuildingGlobal.getBuildingCategory());
 
         ArrayList<UsaBoxBuildingScaItemsPopupTicket> listUsaBoxBuildingScaItemsPopup = objUsaBoxBuildingControl.loadPopupScanItems();
+        if (listUsaBoxBuildingScaItemsPopup == null) {
+            okMessage("USABox Build", objGlobal.getErrorMessage());
+            return;
+        }
         objMyLoadScanItemPopupAdp = new MyLoadScanItemPopupAdp(listUsaBoxBuildingScaItemsPopup);
         lv_build_usabox_popup_scandetail.setAdapter(objMyLoadScanItemPopupAdp);
 
@@ -836,7 +852,8 @@ public class UsaBoxBuildingFragment extends Fragment {
         public ArrayList<UsaBoxBuildingScaItemsPopupTicket> listLoadScanItemPopupTicket;
 
         public MyLoadScanItemPopupAdp(ArrayList<UsaBoxBuildingScaItemsPopupTicket> listLoadScanItemPopupTicket) {
-            this.listLoadScanItemPopupTicket = listLoadScanItemPopupTicket;
+            this.listLoadScanItemPopupTicket = listLoadScanItemPopupTicket != null
+                    ? listLoadScanItemPopupTicket : new ArrayList<>();
         }
 
         @Override
@@ -883,7 +900,8 @@ public class UsaBoxBuildingFragment extends Fragment {
         public ArrayList<UsaBoxBuildingScanItemTicket> listLoadScanItemTicket;
 
         public MyLoadScanItemAdp(ArrayList<UsaBoxBuildingScanItemTicket> listLoadScanItemTicket) {
-            this.listLoadScanItemTicket = listLoadScanItemTicket;
+            this.listLoadScanItemTicket = listLoadScanItemTicket != null
+                    ? listLoadScanItemTicket : new ArrayList<>();
         }
 
         @Override
@@ -1016,6 +1034,10 @@ public class UsaBoxBuildingFragment extends Fragment {
         tv_usa_box_boxprefix.setText(objGlobal.getCountryWiseBoxPrefix());
 
         ArrayList<UsaBoxBuildingScanItemTicket> listUsaBoxBuildingScaItems = objUsaBoxBuildingControl.loadScanItems();
+        if (listUsaBoxBuildingScaItems == null) {
+            okMessage("USABox Build", objGlobal.getErrorMessage());
+            return;
+        }
         objMyLoadScanItemAdp = new MyLoadScanItemAdp(listUsaBoxBuildingScaItems);
         lv_usa_box_details.setAdapter(objMyLoadScanItemAdp);
 

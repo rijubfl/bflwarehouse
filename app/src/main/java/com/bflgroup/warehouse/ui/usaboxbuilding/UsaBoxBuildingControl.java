@@ -388,9 +388,10 @@ public class UsaBoxBuildingControl {
         try {
             listPopupScanItems.clear();
             int scanTotQty = 0;
-            rs = dbConnection.getResultSet("select itemcode,itemname,qty=sum(qty) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' group by itemcode,itemname order by sn desc", objGlobal.getConnection());
+            rs = dbConnection.getResultSet("select itemcode,itemname,qty=sum(qty) from bfldata.dbo.tmpScanItemsBox where DeviceId='" + objGlobal.getDeviceName() + "' group by itemcode,itemname order by max(sn) desc", objGlobal.getConnection());
+            if (rs == null) return null;
             while (rs.next()) {
-                listPopupScanItems.add(new UsaBoxBuildingScaItemsPopupTicket(rs.getString("itemcode").toString(), rs.getString("qty").toString()));
+                listPopupScanItems.add(new UsaBoxBuildingScaItemsPopupTicket(rs.getString("itemcode"), rs.getString("qty")));
                 scanTotQty = scanTotQty + rs.getInt("qty");
             }
             objUsaBoxBuildingGlobal.setScanTotalQty(scanTotQty);
@@ -409,6 +410,7 @@ public class UsaBoxBuildingControl {
 
             rs = dbConnection.getResultSet("select itemcode,itemname=isnull(itemname,''),qty=sum(qty),Buildingcategory=isnull(Buildingcategory,'') from bfldata.dbo.tmpScanItemsBox where " +
                     "DeviceId='" + objGlobal.getDeviceName() + "' group by itemcode,isnull(itemname,''),isnull(Buildingcategory,'') order by itemcode", objGlobal.getConnection());
+            if (rs == null) return null;
             while (rs.next()) {
                 objUsaBoxBuildingGlobal.setBuildingCategory(rs.getString("Buildingcategory"));
                 listScanItems.add(new UsaBoxBuildingScanItemTicket(rs.getString("itemcode"), rs.getString("itemname"), rs.getString("qty")));

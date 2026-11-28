@@ -247,12 +247,14 @@ public class PalletStatusControl {
             objPalletStatusGlobal.setBuildcategory(buildCategory);
             objPalletStatusGlobal.setCheckingType(checkingType);
             objPalletStatusGlobal.setGolden(golden);
+            if (lpmDate == null) lpmDate = "";
             objPalletStatusGlobal.setLpmDate(lpmDate);
             objPalletStatusGlobal.setOraPoNo(oraPoNo);
-            if(lpmDate.isEmpty())
-                lpmDate="NULL";
-            else
-                lpmDate= "'" + lpmDate + "'";
+            if (lpmDate.isEmpty()) {
+                lpmDate = "NULL";
+            } else {
+                lpmDate = "'" + lpmDate + "'";
+            }
 
             if (!dbConnection.insertUpdate("insert into bfldata.dbo.PalletStatusScan (PalletNo,Status,UserId,TrnDate,TrnTime,Boxno,Toteid,warehouse,OrgPalletno,LpmDate,OraPono) values ('" + scan + "'," +
                     "'" + status + "'," + objGlobal.getUserId() + ",'" + objGlobal.getServerDate() + "','" + objGlobal.getServerTime() + "', '" + objPalletStatusGlobal.getBoxno() + "'," +
